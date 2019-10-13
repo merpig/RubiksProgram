@@ -1,0 +1,62 @@
+[
+    {
+      "id": 1,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png",
+      "clicked": false
+    },
+    {
+      "id": 2,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/squirtle.png",
+      "clicked": false
+    },
+    {
+      "id": 3,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/pikachu.png",
+      "clicked": false
+    },
+    {
+      "id": 4,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/ditto.png",
+      "clicked": false
+    },
+    {
+      "id": 5,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/cubone.png",
+      "clicked": false
+    },
+    {
+      "id": 6,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/mew.png",
+      "clicked": false
+    },
+    {
+      "id": 7,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/pidgey.png",
+      "clicked": false
+    },
+    {
+      "id": 8,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/rattata.png",
+      "clicked": false
+    },
+    {
+      "id": 9,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/celebi.png",
+      "clicked": false
+    },
+    {
+      "id": 10,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/abra.png",
+      "clicked": false
+    },
+    {
+      "id": 11,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/spearow.png",
+      "clicked": false
+    },
+    {
+      "id": 12,
+      "image": "https://img.pokemondb.net/sprites/x-y/normal/charmander.png",
+      "clicked": false
+    }
+  ]
