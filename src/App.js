@@ -262,6 +262,9 @@ class App extends Component {
     end : 0,              // End value for a roation or set of rotations
     turnDirection : 0,    // Dictates whether the rotation is clockwise or counterclockwise
     face : 0,             // The face being turned
+    cameraX : 5,
+    cameraY : -4,
+    cameraZ : 5
   };
 
   // For visual cube
@@ -452,14 +455,19 @@ class App extends Component {
     
   };
 
-  increaseSpeed = () => {
+  decreaseSpeed = () => {
     if(this.state.rotationSpeed<1000)
       this.setState({rotationSpeed : this.state.rotationSpeed+50});
   }
 
-  decreaseSpeed = () => {
-    if(this.state.rotationSpeed>100)
+  increaseSpeed = () => {
+    if(this.state.rotationSpeed>150)
       this.setState({rotationSpeed : this.state.rotationSpeed-50});
+  }
+
+  rotateCamera = () => {
+    //this.setState({cameraX : this.state.cameraX - 1});
+    
   }
 
   // Control when rotation buttons can be clicked
@@ -658,11 +666,11 @@ class App extends Component {
     
     // === THREE.JS CODE START ===
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, .1, 1000 );
+    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight/1.5, .1, 1000 );
     camera.lookAt(new THREE.Vector3(-1,0,0));
     
     var renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize( window.innerWidth/1.5, window.innerHeight);
     document.body.appendChild( renderer.domElement );
 
     let tempCubes = [];
@@ -687,10 +695,10 @@ class App extends Component {
     }
 
     // initial camera position
-    camera.position.z = 5;
+    /*camera.position.z = 5;
     camera.position.y = -4;
     camera.position.x = 5;
-    camera.lookAt(new THREE.Vector3( 1, 1, 1 ));
+    camera.lookAt(new THREE.Vector3( 1, 1, 1 ));*/
 
     // add cubes to state and then render
     this.setState({cubes : tempCubes}, () => {
@@ -705,6 +713,11 @@ class App extends Component {
     
     // Function runs continuously to animate cube
     var animate = () => {
+
+      camera.position.z = this.state.cameraZ;
+      camera.position.y = this.state.cameraY;
+      camera.position.x = this.state.cameraX;
+      camera.lookAt(new THREE.Vector3( 1, 1, 1 ));
 
       // state variables asigned for shorter names
       let cubes = this.state.cubes;
@@ -869,29 +882,30 @@ class App extends Component {
   // Renders html to the index.html page
   render() {
     return (
-      <div className="App">
+      <div className="App" >
         <Navbar
         title="Rubik's Cube"
         />
         
-        <Container></Container>
-        
-        <br></br>
-        <br></br>
-        <br></br>
-        <button onClick={this.rzl}>Rotate 0 (white middle) left</button> <button onClick={this.rzr}>Rotate 0 right</button>
-        <br></br>
-        <button onClick={this.rol}>Rotate 1 (blue middle) left</button> <button onClick={this.ror}>Rotate 1 right</button>
-        <br></br>
-        <button onClick={this.rtwl}>Rotate 2 (red middle) left</button> <button onClick={this.rtwr}>Rotate 2 right</button>
-        <br></br>
-        <button onClick={this.rthl}>Rotate 3 (yellow middle) left</button> <button onClick={this.rthr}>Rotate 3 right</button>
-        <br></br>
-        <button onClick={this.rfol}>Rotate 4 (orange middle) left</button> <button onClick={this.rfor}>Rotate 4 right</button>
-        <br></br>
-        <button onClick={this.rfil}>Rotate 5 (green middle) left</button> <button onClick={this.rfir}>Rotate 5 right</button>
-        <br></br>
-        <button onClick={this.scramble}>SCRAMBLE</button><button onClick={this.solveWhiteCross}>Solve White Cross</button>
+        <button onClick={this.increaseSpeed} style={{position:"fixed", top: "100px", left: "10px"}}>+ Increase Speed </button>
+        <button onClick={this.increaseSpeed} style={{position:"fixed", top: "130px", left: "10px"}}>- Decrease Speed</button>
+
+        <button onClick={this.rotateCamera} style={{position:"fixed", top: "160px", left: "10px"}}>Rotate X</button>
+
+        <button onClick={this.rzl} style={{position:"fixed", top: "100px", right: "130px"}}>Rotate 0 (white middle) left</button>
+        <button onClick={this.rzr} style={{position:"fixed", top: "100px", right: "10px"}}>Rotate 0 right</button>
+        <button onClick={this.rol} style={{position:"fixed", top: "150px", right: "130px"}}>Rotate 1 (blue middle) left</button>
+        <button onClick={this.ror} style={{position:"fixed", top: "150px", right: "10px"}}>Rotate 1 right</button>
+        <button onClick={this.rtwl} style={{position:"fixed", top: "200px", right: "130px"}}>Rotate 2 (red middle) left</button>
+        <button onClick={this.rtwr} style={{position:"fixed", top: "200px", right: "10px"}}>Rotate 2 right</button>
+        <button onClick={this.rthl} style={{position:"fixed", top: "250px", right: "130px"}}>Rotate 3 (yellow middle) left</button>
+        <button onClick={this.rthr} style={{position:"fixed", top: "250px", right: "10px"}}>Rotate 3 right</button>
+        <button onClick={this.rfol} style={{position:"fixed", top: "300px", right: "130px"}}>Rotate 4 (orange middle) left</button> 
+        <button onClick={this.rfor} style={{position:"fixed", top: "300px", right: "10px"}}>Rotate 4 right</button>
+        <button onClick={this.rfil} style={{position:"fixed", top: "350px", right: "130px"}}>Rotate 5 (green middle) left</button> 
+        <button onClick={this.rfir} style={{position:"fixed", top: "350px", right: "10px"}}>Rotate 5 right</button>
+        <button onClick={this.scramble} style={{position:"fixed", top: "400px", right: "10px"}}>SCRAMBLE</button>
+        <button onClick={this.solveWhiteCross} style={{position:"fixed", top: "400px", right: "130px"}}>Solve White Cross</button>
       
       </div>
       
