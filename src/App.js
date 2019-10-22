@@ -888,7 +888,7 @@ class App extends Component {
         />
         
         <button onClick={this.increaseSpeed} style={{position:"fixed", top: "100px", left: "10px"}}>+ Increase Speed </button>
-        <button onClick={this.increaseSpeed} style={{position:"fixed", top: "130px", left: "10px"}}>- Decrease Speed</button>
+        <button onClick={this.decreaseSpeed} style={{position:"fixed", top: "130px", left: "10px"}}>- Decrease Speed</button>
 
         <button onClick={this.rotateCamera} style={{position:"fixed", top: "160px", left: "10px"}}>Rotate X</button>
 
