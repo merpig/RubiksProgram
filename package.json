@@ -4,9 +4,12 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.3.1",
+    "mdbreact": "^4.21.1",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.14",
+    "react-bootstrap-sidebar": "0.0.1",
     "react-dom": "^16.8.6",
+    "react-metismenu": "^1.4.0",
     "react-scripts": "3.0.1",
     "three": "^0.109.0"
   },
