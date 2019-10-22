@@ -536,22 +536,86 @@ class App extends Component {
   }
 
   // Slows the solve function down to keep from breaking the cube
-  timingSolve = (arr, argArr, length, start) => {
+  timingSolve = (arr, length, start) => {
     // necessary to define myArr and myArgObj here to be in scope for setTimeout
     let myArr = arr;
-    let myArgObj = argArr;
+    //let myArgObj = argArr;
     console.log(arr);
-    console.log(myArgObj[start]);
+    //console.log(myArgObj[start]);
     console.log(start);
     console.log(length)
     let len = length;
     let str = start;
     let timingSolve = this.timingSolve;
     setTimeout(function () {
-      if(myArgObj[str] !== [-9,-9]) myArr[str](myArgObj[str][0],myArgObj[str][1]);
-      else myArr[str]();
+      //if(myArgObj[str] !== [-9,-9]) myArr[str](myArgObj[str][0],myArgObj[str][1]);
+      myArr[str]();
       if(str < len-1) {
-        timingSolve(myArr,myArgObj,len,str+1);
+        timingSolve(myArr,len,str+1);
+      }
+    }, 500);
+  }
+
+  checkerBoard = () => {
+    this.checkerBoardTimed(11,0);
+  }
+  checkerBoardTimed = (length, start) =>{
+
+    let rotateCubeFace = this.rotateCubeFace;
+    let checkerBoardTimed = this.checkerBoardTimed;
+
+    //let timingSolve = this.timingSolve;
+    setTimeout(function () {
+      //if(myArgObj[str] !== [-9,-9]) myArr[str](myArgObj[str][0],myArgObj[str][1]);
+      if(start <= length) {
+        if(start < 2) rotateCubeFace(1,-1);
+        else if (start < 4 ) rotateCubeFace(5,0);
+        else if (start < 6 ) rotateCubeFace(2,-1);
+        else if (start < 8 ) rotateCubeFace(4,0);
+        else if (start < 10 ) rotateCubeFace(0,-1);
+        else rotateCubeFace(3,0);
+        start = start + 1;
+        checkerBoardTimed(length,start);
+      }
+    }, 500);
+  }
+
+  cubeInACube = () => {
+    this.cubeInACubeTimed(19,0);
+  }
+
+  cubeInACubeTimed = (length, start) =>{
+
+    let rotateCubeFace = this.rotateCubeFace;
+    let cubeInACubeTimed = this.cubeInACubeTimed;
+    console.log(start);
+    //let timingSolve = this.timingSolve;
+    setTimeout(function () {
+      //if(myArgObj[str] !== [-9,-9]) myArr[str](myArgObj[str][0],myArgObj[str][1]);
+      if(start <= length) {
+        if(start === 0) rotateCubeFace(3,0);
+        else if(start === 1) rotateCubeFace(4,0);
+        else if(start === 2) rotateCubeFace(3,0);
+        else if(start === 3) rotateCubeFace(1,0);
+        else if(start === 4) rotateCubeFace(2,-1);
+        else if(start === 5) rotateCubeFace(2,-1);
+        else if(start === 6) rotateCubeFace(5,0);
+        else if(start === 7) rotateCubeFace(2,-1);
+        else if(start === 8) rotateCubeFace(1,-1);
+        else if(start === 9) rotateCubeFace(3,-1);
+        else if(start === 10) rotateCubeFace(5,-1);
+        else if(start === 11) rotateCubeFace(5,-1);
+        else if(start === 12) rotateCubeFace(3,-1);
+        else if(start === 13) rotateCubeFace(5,0);
+        else if(start === 14) rotateCubeFace(4,-1);
+        else if(start === 15) rotateCubeFace(3,0);
+        else if(start === 16) rotateCubeFace(1,-1);
+        else if(start === 17) rotateCubeFace(3,-1);
+        else if(start === 18) rotateCubeFace(2,-1);
+        else if(start === 19) rotateCubeFace(1,0);
+        
+        start = start + 1;
+        cubeInACubeTimed(length,start);
       }
     }, 500);
   }
@@ -560,8 +624,12 @@ class App extends Component {
   scramble = () => {
     if(this.state.canScramble){
       this.setState({canScramble : false});
-      this.timingScramble(25);
+      this.timingScramble(250);
     }
+  }
+
+  reset = () => {
+    window.location.reload();
   }
 
   // Incase of rendering conflicts, reload cube color positions
@@ -658,7 +726,7 @@ class App extends Component {
         }
       }
     }*/
-    if(moveArray.length) this.timingSolve(moveArray,argArr,moveArray.length,0);
+    if(moveArray.length) this.timingSolve(moveArray,moveArray.length,0);
   }
 
   // Initialization and animation functions
@@ -889,8 +957,10 @@ class App extends Component {
         
         <button onClick={this.increaseSpeed} style={{position:"fixed", top: "100px", left: "10px"}}>+ Increase Speed </button>
         <button onClick={this.decreaseSpeed} style={{position:"fixed", top: "130px", left: "10px"}}>- Decrease Speed</button>
-
         <button onClick={this.rotateCamera} style={{position:"fixed", top: "160px", left: "10px"}}>Rotate X</button>
+
+        <button onClick={this.checkerBoard} style={{position:"fixed", top: "190px", left: "10px"}}>Checkerboard</button>
+        <button onClick={this.cubeInACube} style={{position:"fixed", top: "220px", left: "10px"}}>Cube in a cube</button>
 
         <button onClick={this.rzl} style={{position:"fixed", top: "100px", right: "130px"}}>Rotate 0 (white middle) left</button>
         <button onClick={this.rzr} style={{position:"fixed", top: "100px", right: "10px"}}>Rotate 0 right</button>
@@ -906,6 +976,7 @@ class App extends Component {
         <button onClick={this.rfir} style={{position:"fixed", top: "350px", right: "10px"}}>Rotate 5 right</button>
         <button onClick={this.scramble} style={{position:"fixed", top: "400px", right: "10px"}}>SCRAMBLE</button>
         <button onClick={this.solveWhiteCross} style={{position:"fixed", top: "400px", right: "130px"}}>Solve White Cross</button>
+        <button onClick={this.reset} style={{position:"fixed", top: "450px", right: "10px"}}>RESET</button>
       
       </div>
       
