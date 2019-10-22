@@ -2,6 +2,9 @@
   "name": "rubiksprogram",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+      "node": "11.12.0"
+  },
   "dependencies": {
     "bootstrap": "^4.3.1",
     "mdbreact": "^4.21.1",
