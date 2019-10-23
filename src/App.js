@@ -756,9 +756,11 @@ class App extends Component {
 
 
   reverseMoves = () => {
-    this.setState({reversing : true});
+    if(this.state.reversing===true) return;
+    
     console.log(this.state.moveLog);
     if(!this.state.moveLog.length) return;
+    this.setState({reversing : true});
     let moveString = this.state.moveLog;
     this.setState({moveLog : ""});
     this.setState({currentFunc : "Reverse Moves"});
