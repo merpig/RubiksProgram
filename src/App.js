@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Navbar from "./components/Navbar/Navbar";
-import Container from "./components/Container";
 import * as THREE from "three";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -256,15 +255,19 @@ class App extends Component {
         0]
     ],                    // Contains memory cube
     speed : 10,           // Control individual piece rotation speed (don't change)
-    rotationSpeed : 500,  // Controls visual rotation speed
+    rotationSpeed : 200,  // Controls visual rotation speed
     canScramble: true,    // Manual rotations can't happen while this is false
+    canMove: true,
     start : 10,           // Start value for a rotation or set of rotations
     end : 0,              // End value for a roation or set of rotations
     turnDirection : 0,    // Dictates whether the rotation is clockwise or counterclockwise
     face : 0,             // The face being turned
     cameraX : 5,
-    cameraY : -4,
-    cameraZ : 5
+    cameraY : -5,
+    cameraZ : 5,
+    currentFunc : "None",
+    moveLog : "",
+    reversing : false
   };
 
   // For visual cube
@@ -446,11 +449,16 @@ class App extends Component {
 
       let reloadCubes = this.reloadCubes;
       let rotationSpeed = this.state.rotationSpeed;
+      let moveOn = this.moveOn;
+      let scope = this;
+      let canMove = this.state.canMove;
 
       // Necessary to keep rendering conflicts from happening
       setTimeout(function () {
+        if(!canMove) scope.setState({currentFunc: "None"});
         reloadCubes();
-      }, rotationSpeed-1);
+        moveOn();
+      }, rotationSpeed-5);
     });
     
   };
@@ -471,26 +479,54 @@ class App extends Component {
   }
 
   // Control when rotation buttons can be clicked
-  rzl = () => {if(this.state.canScramble) this.rotateCubeFace(0,0);}
-  rzr = () => {if(this.state.canScramble) this.rotateCubeFace(0,-1);}
+  rzl = () => {
+    if(this.state.canScramble && this.state.canMove) {
+      this.setState({currentFunc: "F'"});
+      this.rotateCubeFace(0,0);
+    }
+  }
+  rzr = () => {
+    if(this.state.canScramble && this.state.canMove) {
+      this.setState({currentFunc: "F"});
+      this.rotateCubeFace(0,-1);
+    }
+  }
 
-  rol = () => {if(this.state.canScramble) this.rotateCubeFace(1,0);}
-  ror = () => {if(this.state.canScramble) this.rotateCubeFace(1,-1);}
+  rol = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(1,0);}
+  ror = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(1,-1);}
 
-  rtwl = () => {if(this.state.canScramble) this.rotateCubeFace(2,0);}
-  rtwr = () => {if(this.state.canScramble) this.rotateCubeFace(2,-1);}
+  rtwl = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(2,0);}
+  rtwr = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(2,-1);}
 
-  rthl = () => {if(this.state.canScramble) this.rotateCubeFace(3,0);}
-  rthr = () => {if(this.state.canScramble) this.rotateCubeFace(3,-1);}
+  rthl = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(3,0);}
+  rthr = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(3,-1);}
 
-  rfol = () => {if(this.state.canScramble) this.rotateCubeFace(4,0);}
-  rfor = () => {if(this.state.canScramble) this.rotateCubeFace(4,-1);}
+  rfol = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(4,0);}
+  rfor = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(4,-1);}
 
-  rfil = () => {if(this.state.canScramble) this.rotateCubeFace(5,0);}
-  rfir = () => {if(this.state.canScramble) this.rotateCubeFace(5,-1);}
+  rfil = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(5,0);}
+  rfir = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(5,-1);}
 
   // Changes values in state to trigger face rotation
   rotateCubeFace = (face,direction) => {
+
+    if(!this.state.reversing){
+      console.log("adding move")
+      let tempMove = "";
+      if(face === 0) tempMove += "F";
+      else if(face === 1) tempMove += "U";
+      else if(face === 2) tempMove += "R";
+      else if(face === 3) tempMove += "B";
+      else if(face === 4) tempMove += "L";
+      else if(face === 5) tempMove += "D";
+      if(direction === -1) tempMove += "'";
+      if(this.state.moveLog.length > 0)
+        this.setState({moveLog : this.state.moveLog + " " + tempMove});
+      else
+        this.setState({moveLog : this.state.moveLog + tempMove});
+    }
+
+    if(this.state.canScramble) this.moveOff();
 
     // Faces on opposite side of cube rotate backwards
     if(face>2 && direction === -1) direction = 0;
@@ -511,6 +547,14 @@ class App extends Component {
     this.setState({canScramble : false});
   }
 
+  moveOn = () => {
+    this.setState({canMove : true});
+  }
+
+  moveOff = () => {
+    this.setState({canMove : false});
+  }
+
   // Slows the scramble function down to keep from breaking the cube
   timingScramble = iteration => {
 
@@ -519,17 +563,22 @@ class App extends Component {
     let timingScramble = this.timingScramble;
     let scrambleOn = this.scrambleOn;
     let rotationSpeed = this.state.rotationSpeed;
-
+    let scope = this;
     // use recursion with a timeout to prevent turns from overlapping
     if(iteration>0)
       setTimeout(function () {
-        rotateCubeFace(Math.floor((Math.random() * 6)),Math.floor((Math.random() * 2)-1));
+        let randFace = Math.floor((Math.random() * 6));
+        let randTurn = Math.floor((Math.random() * 2)-1);
+        
+        rotateCubeFace(randFace, randTurn);
         timingScramble(iteration-1);
       }, rotationSpeed);
 
     else {
       setTimeout(function () {
         console.log("Scramble finished");
+        console.log(rotationSpeed);
+        scope.setState({currentFunc: "None"});
         scrambleOn();
       }, rotationSpeed);
     }
@@ -556,78 +605,179 @@ class App extends Component {
     }, 500);
   }
 
+  // Converts move string to move array
+  moveStringToArray = str => {
+    let tempArray = str.split(" ");
+    let moveArray = [];
+
+    // Run through split string and create duplicates where needed
+    for(let i = 0; i < tempArray.length;i++){
+      if(tempArray[i].length === 2 && tempArray[i].slice(1,2)==="2") {
+        let tempMove = tempArray[i].slice(0,1);
+        moveArray.push(tempMove);
+        moveArray.push(tempMove);
+      }
+      else {
+        moveArray.push(tempArray[i]);
+      }
+    }
+    return moveArray;
+  }
+
+  // Algorithm for Checkerboard
   checkerBoard = () => {
-    this.checkerBoardTimed(11,0);
-  }
-  checkerBoardTimed = (length, start) =>{
+    let moveString = "U2 D2 R2 L2 F2 B2";
+    const moveArray = this.moveStringToArray(moveString);
+    this.setState({currentFunc : "Checkerboard"});
 
-    let rotateCubeFace = this.rotateCubeFace;
-    let checkerBoardTimed = this.checkerBoardTimed;
-
-    //let timingSolve = this.timingSolve;
-    setTimeout(function () {
-      //if(myArgObj[str] !== [-9,-9]) myArr[str](myArgObj[str][0],myArgObj[str][1]);
-      if(start <= length) {
-        if(start < 2) rotateCubeFace(1,-1);
-        else if (start < 4 ) rotateCubeFace(5,0);
-        else if (start < 6 ) rotateCubeFace(2,-1);
-        else if (start < 8 ) rotateCubeFace(4,0);
-        else if (start < 10 ) rotateCubeFace(0,-1);
-        else rotateCubeFace(3,0);
-        start = start + 1;
-        checkerBoardTimed(length,start);
-      }
-    }, 500);
+    if(this.state.canScramble){
+      this.moveSetTimed(moveArray,moveArray.length-1,0);
+    }
   }
 
+  // Algorithm for Checkerboard1
+  checkerBoard1 = () => {
+    let moveString = "U' R2 L2 F2 B2 U' R L F B' U F2 D2 R2 L2 F2 U2 F2 U' F2";
+    const moveArray = this.moveStringToArray(moveString);
+    this.setState({currentFunc : "Checkboard1"});
+  
+    if(this.state.canScramble){
+      this.moveSetTimed(moveArray,moveArray.length-1,0);
+    }
+  }
+
+  // Algorithm for Cube in a cube in a cube
   cubeInACube = () => {
-    this.cubeInACubeTimed(19,0);
+    let moveString = "U' L' U' F' R2 B' R F U B2 U B' L U' F U R F'"
+    const moveArray = this.moveStringToArray(moveString);
+    this.setState({currentFunc : "Cube x3"});
+
+    if(this.state.canScramble){
+      this.moveSetTimed(moveArray,moveArray.length-1,0);
+    }
   }
 
-  cubeInACubeTimed = (length, start) =>{
+  // Algorithm for Cube in a cube
+  cubeIn = () => {
+    let moveString = "F L F U' R U F2 L2 U' L' B D' B' L2 U";
+    const moveArray = this.moveStringToArray(moveString);
+    this.setState({currentFunc : "Cube x2"});
+
+    if(this.state.canScramble){
+      this.moveSetTimed(moveArray,moveArray.length-1,0);
+    }
+  }
+
+  // Algorithm for isolating middles
+  sixSpots = () => {
+    let moveString = "U D' R L' F B' U D'"
+    const moveArray = this.moveStringToArray(moveString);
+    this.setState({currentFunc : "Six Spots"});
+
+    if(this.state.canScramble){
+      this.moveSetTimed(moveArray,moveArray.length-1,0);
+    }
+  }
+
+  // Algorithm for coss
+  cross = () => {
+    /*let scope = this;
+    if(this.state.moveLog.length) {
+      let rotations = this.reverseMoves()+2;
+      setTimeout(function () {
+        scope.cross();
+      }, scope.state.rotationSpeed*rotations);
+      return;
+    }*/
+    
+    let moveString = "R2 L' D F2 R' D' R' L U' D R D B2 R' U D2";
+    //this.setState({moveLog : moveString});
+    const moveArray = this.moveStringToArray(moveString);
+    this.setState({currentFunc : "Cross"});
+
+    if(this.state.canScramble){
+      this.moveSetTimed(moveArray,moveArray.length-1,0);
+    }
+  }
+
+  // Generalized time move function. Takes in move array and creates small delay between moves
+  moveSetTimed = (moveArray,length, start) =>{
+
+    // Breaks at faster speeds
+    if(this.state.rotationSpeed < 200)
+      this.setState({rotationSpeed: 200});
+
+    if(start === 0)
+      this.setState({canScramble : false});
+
+    let tempFace = 0;
+    let tempDirection = -1;
+    if(start <= length){
+      if(moveArray[start].length === 2) tempDirection=0;
+      
+      if(moveArray[start].slice(0,1) === "U") tempFace = 1;
+      else if(moveArray[start].slice(0,1) === "F") tempFace = 0;
+      else if(moveArray[start].slice(0,1) === "B") tempFace = 3;
+      else if(moveArray[start].slice(0,1) === "R") tempFace = 2;
+      else if(moveArray[start].slice(0,1) === "L") tempFace = 4;
+      else if(moveArray[start].slice(0,1) === "D") tempFace = 5;
+    }
 
     let rotateCubeFace = this.rotateCubeFace;
-    let cubeInACubeTimed = this.cubeInACubeTimed;
-    console.log(start);
-    //let timingSolve = this.timingSolve;
+    let moveSetTimed = this.moveSetTimed;
+    let scope = this;
     setTimeout(function () {
-      //if(myArgObj[str] !== [-9,-9]) myArr[str](myArgObj[str][0],myArgObj[str][1]);
-      if(start <= length) {
-        if(start === 0) rotateCubeFace(3,0);
-        else if(start === 1) rotateCubeFace(4,0);
-        else if(start === 2) rotateCubeFace(3,0);
-        else if(start === 3) rotateCubeFace(1,0);
-        else if(start === 4) rotateCubeFace(2,-1);
-        else if(start === 5) rotateCubeFace(2,-1);
-        else if(start === 6) rotateCubeFace(5,0);
-        else if(start === 7) rotateCubeFace(2,-1);
-        else if(start === 8) rotateCubeFace(1,-1);
-        else if(start === 9) rotateCubeFace(3,-1);
-        else if(start === 10) rotateCubeFace(5,-1);
-        else if(start === 11) rotateCubeFace(5,-1);
-        else if(start === 12) rotateCubeFace(3,-1);
-        else if(start === 13) rotateCubeFace(5,0);
-        else if(start === 14) rotateCubeFace(4,-1);
-        else if(start === 15) rotateCubeFace(3,0);
-        else if(start === 16) rotateCubeFace(1,-1);
-        else if(start === 17) rotateCubeFace(3,-1);
-        else if(start === 18) rotateCubeFace(2,-1);
-        else if(start === 19) rotateCubeFace(1,0);
-        
-        start = start + 1;
-        cubeInACubeTimed(length,start);
+      if(start===length+2) {
+        scope.setState({reversing : false});
+        return;
       }
-    }, 500);
+      if(start <= length) {
+        rotateCubeFace(tempFace,tempDirection);
+      }
+      start = start + 1;
+      moveSetTimed(moveArray,length,start);
+    }, this.state.rotationSpeed);
+    if(start === length+1) {
+      this.setState({currentFunc : "None"});
+      this.setState({canScramble : true});
+      
+    }
   }
 
   // Scrambles the cube
   scramble = () => {
     if(this.state.canScramble){
+      this.setState({currentFunc : "Scrambling"});
       this.setState({canScramble : false});
-      this.timingScramble(250);
+      this.timingScramble(25);
     }
   }
 
+
+
+  reverseMoves = () => {
+    this.setState({reversing : true});
+    console.log(this.state.moveLog);
+    if(!this.state.moveLog.length) return;
+    let moveString = this.state.moveLog;
+    this.setState({moveLog : ""});
+    this.setState({currentFunc : "Reverse Moves"});
+
+    const tempArray = this.moveStringToArray(moveString);
+    const moveArray = [];
+    for(let i = tempArray.length-1; i >= 0; i--){
+      moveArray.push(tempArray[i]);
+    }
+    
+    if(this.state.canScramble){
+      this.moveSetTimed(moveArray,moveArray.length-1,0);
+      
+    }
+    
+    return moveArray.length;
+  }
+
+  // Refreshes page to reset cube
   reset = () => {
     window.location.reload();
   }
@@ -734,11 +884,11 @@ class App extends Component {
     
     // === THREE.JS CODE START ===
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight/1.5, .1, 1000 );
+    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, .1, 1000 );
     camera.lookAt(new THREE.Vector3(-1,0,0));
     
     var renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth/1.5, window.innerHeight);
+    renderer.setSize( window.innerWidth, window.innerHeight-10);
     document.body.appendChild( renderer.domElement );
 
     let tempCubes = [];
@@ -954,29 +1104,40 @@ class App extends Component {
         <Navbar
         title="Rubik's Cube"
         />
+        <p style={{position:"fixed", top: "75px", left: "10px",color: "white"}}>Speed: {this.state.rotationSpeed}</p>
+        <p style={{position:"fixed", top: "75px", right: "10px",color: "white"}}>Current Function: {this.state.currentFunc}</p>
+
+        {/* Top Left */}
+        <button onClick={this.increaseSpeed} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "white"}}>+ Speed</button>
+        <button onClick={this.decreaseSpeed} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "white"}}>- Speed</button>
+        <button onClick={this.rotateCamera} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "white"}}>Rotate X</button>
+
+        {/* Bottom Left */}
+        <button onClick={this.cross} style={{position:"fixed", bottom: "160px", left: "10px",backgroundColor: "white"}}>Cross</button>
+        <button onClick={this.checkerBoard} style={{position:"fixed", bottom: "130px", left: "10px",backgroundColor: "white"}}>Checkerboard</button>
+        <button onClick={this.checkerBoard1} style={{position:"fixed", bottom: "100px", left: "10px",backgroundColor: "white"}}>Checkerboard1</button>
+        <button onClick={this.cubeIn} style={{position:"fixed", bottom: "70px", left: "10px",backgroundColor: "white"}}>Cube x2</button>
+        <button onClick={this.cubeInACube} style={{position:"fixed", bottom: "40px", left: "10px",backgroundColor: "white"}}>Cube x3</button>
+        <button onClick={this.sixSpots} style={{position:"fixed", bottom: "10px", left: "10px",backgroundColor: "white"}}>Six Spots</button>
         
-        <button onClick={this.increaseSpeed} style={{position:"fixed", top: "100px", left: "10px"}}>+ Increase Speed </button>
-        <button onClick={this.decreaseSpeed} style={{position:"fixed", top: "130px", left: "10px"}}>- Decrease Speed</button>
-        <button onClick={this.rotateCamera} style={{position:"fixed", top: "160px", left: "10px"}}>Rotate X</button>
+        {/* Top Right */}
+        <button onClick={this.rzl} style={{position:"fixed", top: "100px", right: "50px",backgroundColor: "white"}}>F'</button>
+        <button onClick={this.rzr} style={{position:"fixed", top: "100px", right: "10px",backgroundColor: "white"}}>F</button>
+        <button onClick={this.rol} style={{position:"fixed", top: "140px", right: "50px",backgroundColor: "blue",color: "white"}}>U'</button>
+        <button onClick={this.ror} style={{position:"fixed", top: "140px", right: "10px",backgroundColor: "blue",color: "white"}}>U</button>
+        <button onClick={this.rtwl} style={{position:"fixed", top: "180px", right: "50px",backgroundColor: "red",color: "white"}}>R'</button>
+        <button onClick={this.rtwr} style={{position:"fixed", top: "180px", right: "10px",backgroundColor: "red",color: "white"}}>R</button>
+        <button onClick={this.rthl} style={{position:"fixed", top: "220px", right: "50px",backgroundColor: "yellow"}}>B'</button>
+        <button onClick={this.rthr} style={{position:"fixed", top: "220px", right: "10px",backgroundColor: "yellow"}}>B</button>
+        <button onClick={this.rfol} style={{position:"fixed", top: "260px", right: "50px",backgroundColor: "orange"}}>L'</button> 
+        <button onClick={this.rfor} style={{position:"fixed", top: "260px", right: "10px",backgroundColor: "orange"}}>L</button>
+        <button onClick={this.rfil} style={{position:"fixed", top: "300px", right: "50px",backgroundColor: "green",color: "white"}}>D'</button> 
+        <button onClick={this.rfir} style={{position:"fixed", top: "300px", right: "10px",backgroundColor: "green",color: "white"}}>D</button>
 
-        <button onClick={this.checkerBoard} style={{position:"fixed", top: "190px", left: "10px"}}>Checkerboard</button>
-        <button onClick={this.cubeInACube} style={{position:"fixed", top: "220px", left: "10px"}}>Cube in a cube</button>
-
-        <button onClick={this.rzl} style={{position:"fixed", top: "100px", right: "130px"}}>Rotate 0 (white middle) left</button>
-        <button onClick={this.rzr} style={{position:"fixed", top: "100px", right: "10px"}}>Rotate 0 right</button>
-        <button onClick={this.rol} style={{position:"fixed", top: "150px", right: "130px"}}>Rotate 1 (blue middle) left</button>
-        <button onClick={this.ror} style={{position:"fixed", top: "150px", right: "10px"}}>Rotate 1 right</button>
-        <button onClick={this.rtwl} style={{position:"fixed", top: "200px", right: "130px"}}>Rotate 2 (red middle) left</button>
-        <button onClick={this.rtwr} style={{position:"fixed", top: "200px", right: "10px"}}>Rotate 2 right</button>
-        <button onClick={this.rthl} style={{position:"fixed", top: "250px", right: "130px"}}>Rotate 3 (yellow middle) left</button>
-        <button onClick={this.rthr} style={{position:"fixed", top: "250px", right: "10px"}}>Rotate 3 right</button>
-        <button onClick={this.rfol} style={{position:"fixed", top: "300px", right: "130px"}}>Rotate 4 (orange middle) left</button> 
-        <button onClick={this.rfor} style={{position:"fixed", top: "300px", right: "10px"}}>Rotate 4 right</button>
-        <button onClick={this.rfil} style={{position:"fixed", top: "350px", right: "130px"}}>Rotate 5 (green middle) left</button> 
-        <button onClick={this.rfir} style={{position:"fixed", top: "350px", right: "10px"}}>Rotate 5 right</button>
-        <button onClick={this.scramble} style={{position:"fixed", top: "400px", right: "10px"}}>SCRAMBLE</button>
-        <button onClick={this.solveWhiteCross} style={{position:"fixed", top: "400px", right: "130px"}}>Solve White Cross</button>
-        <button onClick={this.reset} style={{position:"fixed", top: "450px", right: "10px"}}>RESET</button>
+        {/* Bottom Right */}
+        <button onClick={this.scramble} style={{position:"fixed", bottom: "70px", right: "10px",backgroundColor: "white"}}>SCRAMBLE</button>
+        <button onClick={this.reverseMoves} style={{position:"fixed", bottom: "40px", right: "10px",backgroundColor: "white"}}>Reverse Moves</button>
+        <button onClick={this.reset} style={{position:"fixed", bottom: "10px", right: "10px",backgroundColor: "white"}}>RESET</button>
       
       </div>
       
