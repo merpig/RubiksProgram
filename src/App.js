@@ -756,7 +756,7 @@ class App extends Component {
 
 
   reverseMoves = () => {
-    if(this.state.reversing===true) return;
+    if(this.state.reversing===true || !this.state.canScramble) return;
     
     console.log(this.state.moveLog);
     if(!this.state.moveLog.length) return;
