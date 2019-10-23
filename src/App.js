@@ -895,7 +895,7 @@ class App extends Component {
 
     // generate cubes with colors based off rubiksObject
     for(let i = 0; i <=26; i++){
-      var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+      var geometry = new THREE.BoxGeometry( .95, .95, .95 );
       var cubeMaterials = [ 
         new THREE.MeshBasicMaterial({color:this.state.rubiksObject[i][2], opacity:0.8, side: THREE.DoubleSide}),
         new THREE.MeshBasicMaterial({color:this.state.rubiksObject[i][4], opacity:0.8, side: THREE.DoubleSide}), 
@@ -912,16 +912,18 @@ class App extends Component {
       tempCubes[i].translateZ(this.state.rubiksObject[i][8]/* + this.state.rubiksObject[i][8]/10)*/); 
     }
 
-    // initial camera position
-    /*camera.position.z = 5;
-    camera.position.y = -4;
-    camera.position.x = 5;
-    camera.lookAt(new THREE.Vector3( 1, 1, 1 ));*/
-
     // add cubes to state and then render
     this.setState({cubes : tempCubes}, () => {
       for(let i = 0; i <=26; i++){
         scene.add( this.state.cubes[i] );
+        let geo = new THREE.EdgesGeometry(this.state.cubes[i].geometry);
+        let mat = new THREE.LineBasicMaterial({
+          color : 0x000000, linewidth: 1
+        });
+        let wireframe = new THREE.LineSegments(geo,mat);
+        wireframe.renderOrder = 1;
+        this.state.cubes[i].add(wireframe);
+        
       }
       renderer.render( scene, camera );
       animate();
