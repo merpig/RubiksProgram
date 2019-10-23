@@ -464,18 +464,28 @@ class App extends Component {
   };
 
   decreaseSpeed = () => {
-    if(this.state.rotationSpeed<1000)
+    if(this.state.rotationSpeed<1000){
       this.setState({rotationSpeed : this.state.rotationSpeed+50});
+      /*if(this.state.rotationSpeed>=500){
+        this.setState({speed : 5});
+      }*/
+    }
   }
 
   increaseSpeed = () => {
-    if(this.state.rotationSpeed>150)
+    if(this.state.rotationSpeed>200){
       this.setState({rotationSpeed : this.state.rotationSpeed-50});
+      /*if(this.state.rotationSpeed<500){
+        this.setState({speed : 10});
+      }*/
+    }
   }
 
   rotateCamera = () => {
-    //this.setState({cameraX : this.state.cameraX - 1});
-    
+    let theta = .5*Math.PI/180; 
+    let newCameraX = (Math.cos(theta) * (this.state.cameraX-1) - Math.sin(theta) * (this.state.cameraY-1) + 1);
+    let newCameraY = (Math.sin(theta) * (this.state.cameraX-1) + Math.cos(theta) * (this.state.cameraY-1) + 1);
+    this.setState({cameraX : newCameraX,cameraY : newCameraY});
   }
 
   // Control when rotation buttons can be clicked
@@ -753,8 +763,8 @@ class App extends Component {
     }
   }
 
-
-
+  // Rewinds all moves that have been done to the cube since unsolved state
+  // Add in solved array to compare for when the cube becomes solved
   reverseMoves = () => {
     if(this.state.reversing===true || !this.state.canScramble) return;
     
@@ -767,13 +777,13 @@ class App extends Component {
 
     const tempArray = this.moveStringToArray(moveString);
     const moveArray = [];
+
     for(let i = tempArray.length-1; i >= 0; i--){
       moveArray.push(tempArray[i]);
     }
     
     if(this.state.canScramble){
       this.moveSetTimed(moveArray,moveArray.length-1,0);
-      
     }
     
     return moveArray.length;
@@ -890,6 +900,7 @@ class App extends Component {
     camera.lookAt(new THREE.Vector3(-1,0,0));
     
     var renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor(new THREE.Color(0,0,0),1);
     renderer.setSize( window.innerWidth, window.innerHeight-10);
     document.body.appendChild( renderer.domElement );
 
@@ -918,14 +929,16 @@ class App extends Component {
     this.setState({cubes : tempCubes}, () => {
       for(let i = 0; i <=26; i++){
         scene.add( this.state.cubes[i] );
+
+        //Add outlines to each piece
         let geo = new THREE.EdgesGeometry(this.state.cubes[i].geometry);
         let mat = new THREE.LineBasicMaterial({
           color : 0x000000, linewidth: 1
         });
         let wireframe = new THREE.LineSegments(geo,mat);
         wireframe.renderOrder = 1;
-        this.state.cubes[i].add(wireframe);
-        
+        this.state.cubes[i].add(wireframe); 
+
       }
       renderer.render( scene, camera );
       animate();
@@ -935,7 +948,7 @@ class App extends Component {
     
     // Function runs continuously to animate cube
     var animate = () => {
-
+      this.rotateCamera();
       camera.position.z = this.state.cameraZ;
       camera.position.y = this.state.cameraY;
       camera.position.x = this.state.cameraX;
@@ -1114,7 +1127,7 @@ class App extends Component {
         {/* Top Left */}
         <button onClick={this.increaseSpeed} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "white"}}>+ Speed</button>
         <button onClick={this.decreaseSpeed} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "white"}}>- Speed</button>
-        <button onClick={this.rotateCamera} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "white"}}>Rotate X</button>
+        
 
         {/* Bottom Left */}
         <button onClick={this.cross} style={{position:"fixed", bottom: "160px", left: "10px",backgroundColor: "white"}}>Cross</button>
