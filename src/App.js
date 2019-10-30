@@ -23,7 +23,7 @@ class App extends Component {
     currentFunc : "None",
     moveLog : "",
     reversing : false,
-    angle : 0,
+    angle : 3.9,
     cubeDimension : 10
   };
 
@@ -49,7 +49,7 @@ class App extends Component {
         }
       }
     }
-    console.log(tempArr);
+    //console.log(tempArr);
     return tempArr;
   }
 
@@ -268,6 +268,9 @@ class App extends Component {
 
   rotateCamera = (key) => {
     let y = this.state.cameraY;
+    console.log(this.state.cameraX);
+    console.log(this.state.cameraZ);
+    console.log(this.state.angle);
 
     if(key === 37){
       this.setState({angle: this.state.angle+.2});
@@ -328,7 +331,7 @@ class App extends Component {
   rotateCubeFace = (face,direction) => {
 
     if(!this.state.reversing){
-      console.log("adding move")
+      //console.log("adding move")
       let tempMove = "";
       if(face === 0) tempMove += "F";
       else if(face === 1) tempMove += "U";
@@ -817,7 +820,10 @@ class App extends Component {
 
   // Initialization and animation functions
   componentDidMount() {
-    let cD = parseInt(this.getUrlVars().substring("http://mighty-fortress-00882.herokuapp.com/id=".length));
+    let url = this.getUrlVars();
+    let cD;
+    if(url.length < 30) cD = parseInt(url.substring(25));
+    else cD = parseInt(url.substring("http://mighty-fortress-00882.herokuapp.com/id=".length+1));
     if(cD <= 20 || cD >= 2);
     else cD = 3;
     this.setState({cubeDimension : cD});
@@ -870,16 +876,21 @@ class App extends Component {
     // add cubes to state and then render
     this.setState({cubes : tempCubes}, () => {
       for(let i = 0; i < rubiksObject.length; i++){
-        scene.add( this.state.cubes[i] );
+        if((this.state.cubes[i].position.x === 0 || this.state.cubes[i].position.x === this.state.cubeDimension-1) ||
+            (this.state.cubes[i].position.y === 0 || this.state.cubes[i].position.y === this.state.cubeDimension-1) ||
+            (this.state.cubes[i].position.z === 0 || this.state.cubes[i].position.z === this.state.cubeDimension-1)){
+              console.log(this.state.cubes[i]);
+          scene.add( this.state.cubes[i] );
 
-        //Add outlines to each piece
-        let geo = new THREE.EdgesGeometry(this.state.cubes[i].geometry);
-        let mat = new THREE.LineBasicMaterial({
-          color : 0x000000, linewidth: 1
-        });
-        let wireframe = new THREE.LineSegments(geo,mat);
-        wireframe.renderOrder = 1;
-        this.state.cubes[i].add(wireframe); 
+          //Add outlines to each piece
+          let geo = new THREE.EdgesGeometry(this.state.cubes[i].geometry);
+          let mat = new THREE.LineBasicMaterial({
+            color : 0x000000, linewidth: 1
+          });
+          let wireframe = new THREE.LineSegments(geo,mat);
+          wireframe.renderOrder = 1;
+          this.state.cubes[i].add(wireframe);
+        } 
 
       }
       renderer.render( scene, camera );
