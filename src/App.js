@@ -817,7 +817,7 @@ class App extends Component {
 
   // Initialization and animation functions
   componentDidMount() {
-    let cD = parseInt(this.getUrlVars().substring("http://mighty-fortress-00882.herokuapp.com/id="));
+    let cD = parseInt(this.getUrlVars().substring("http://mighty-fortress-00882.herokuapp.com/id=".length));
     if(cD <= 20 || cD >= 2);
     else cD = 3;
     this.setState({cubeDimension : cD});
