@@ -1,4 +1,8 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).  
+[Live Link](https://mighty-fortress-00882.herokuapp.com/). May take a minute to load initially
+
+## Resources
+[threejs](https://www.npmjs.com/package/three).
 
 ## Available Scripts
 
