@@ -7,268 +7,51 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 class App extends Component {
   state = {
     cubes : [],           // Contains visual cube
-    rubiksObject : [
-      [ "white",  // 0
-        "blue",   // 1
-        "black",  // 2 
-        "black",  // 3
-        "orange", // 4
-        "black",  // 5
-        0,        // x
-        0,        // y
-        2],       // z
-      [ "white",
-        "blue",
-        "black",
-        "black",
-        "black",
-        "black",
-        1,
-        0,
-        2],
-      [ "white",
-        "blue",
-        "red",
-        "black",
-        "black",
-        "black",
-        2,
-        0,
-        2],
-      [ "white",
-        "black",
-        "black",
-        "black",
-        "orange",
-        "black",
-        0,
-        0,
-        1],
-      [ "white",
-        "black",
-        "black",
-        "black",
-        "black",
-        "black",
-        1,
-        0,
-        1],
-      [ "white",
-        "black",
-        "red",
-        "black",
-        "black",
-        "black",
-        2,
-        0,
-        1],
-      [ "white",
-        "black",
-        "black",
-        "black",
-        "orange",
-        "green",
-        0,
-        0,
-        0],
-      [ "white",
-        "black",
-        "black",
-        "black",
-        "black",
-        "green",
-        1,
-        0,
-        0],
-      [ "white",
-        "black",
-        "red",
-        "black",
-        "black",
-        "green",
-        2,
-        0,
-        0],
-      //Second set
-      [ "black",
-        "blue",
-        "black",
-        "black",
-        "orange",
-        "black",
-        0,
-        1,
-        2],
-      [ "black",
-        "blue",
-        "black",
-        "black",
-        "black",
-        "black",
-        1,
-        1,
-        2],
-      [ "black",
-        "blue",
-        "red",
-        "black",
-        "black",
-        "black",
-        2,
-        1,
-        2],
-      [ "black",
-        "black",
-        "black",
-        "black",
-        "orange",
-        "black",
-        0,
-        1,
-        1],
-      [ "black",
-        "black",
-        "black",
-        "black",
-        "black",
-        "black",
-        1,
-        1,
-        1],
-      [ "black",
-        "black",
-        "red",
-        "black",
-        "black",
-        "black",
-        2,
-        1,
-        1],
-      [ "black",
-        "black",
-        "black",
-        "black",
-        "orange",
-        "green",
-        0,
-        1,
-        0],
-      [ "black",
-        "black",
-        "black",
-        "black",
-        "black",
-        "green",
-        1,
-        1,
-        0],
-      [ "black",
-        "black",
-        "red",
-        "black",
-        "black",
-        "green",
-        2,
-        1,
-        0],
-      //Last Set
-      [ "black",
-        "blue",
-        "black",
-        "yellow",
-        "orange",
-        "black",
-        0,
-        2,
-        2],
-      [ "black",
-        "blue",
-        "black",
-        "yellow",
-        "black",
-        "black",
-        1,
-        2,
-        2],
-      [ "black",
-        "blue",
-        "red",
-        "yellow",
-        "black",
-        "black",
-        2,
-        2,
-        2],
-      [ "black",
-        "black",
-        "black",
-        "yellow",
-        "orange",
-        "black",
-        0,
-        2,
-        1],
-      [ "black",
-        "black",
-        "black",
-        "yellow",
-        "black",
-        "black",
-        1,
-        2,
-        1],
-      [ "black",
-        "black",
-        "red",
-        "yellow",
-        "black",
-        "black",
-        2,
-        2,
-        1],
-      [ "black",
-        "black",
-        "black",
-        "yellow",
-        "orange",
-        "green",
-        0,
-        2,
-        0],
-      [ "black",
-        "black",
-        "black",
-        "yellow",
-        "black",
-        "green",
-        1,
-        2,
-        0],
-      [ "black",
-        "black",
-        "red",
-        "yellow",
-        "black",
-        "green",
-        2,
-        2,
-        0]
-    ],                    // Contains memory cube
+    rubiksObject : [],      // Contains memory cube
     speed : 10,           // Control individual piece rotation speed (don't change)
-    rotationSpeed : 200,  // Controls visual rotation speed
+    rotationSpeed : 500,  // Controls visual rotation speed
     canScramble: true,    // Manual rotations can't happen while this is false
     canMove: true,
     start : 10,           // Start value for a rotation or set of rotations
     end : 0,              // End value for a roation or set of rotations
     turnDirection : 0,    // Dictates whether the rotation is clockwise or counterclockwise
     face : 0,             // The face being turned
-    cameraX : 5,
-    cameraY : -5,
-    cameraZ : 5,
+    cameraX : 10,
+    cameraY : -10,
+    cameraZ : 10,
+    theta : 5,
     currentFunc : "None",
     moveLog : "",
-    reversing : false
+    reversing : false,
+    angle : 0,
+    cubeDimension : 10
   };
+
+  generateSolved = (_x,_y,_z) =>{
+    let tempArr = [];
+    for(let j = 0; j < _y; j++){
+      for(let k = _z-1; k >= 0; k--){
+        for(let i = 0; i < _x; i++){
+          let side0 = "black";
+          let side1 = "black";
+          let side2 = "black";
+          let side3 = "black";
+          let side4 = "black";
+          let side5 = "black";
+          if(i===_x-1) side2 = "red";
+          else if (i===0) side4 ="orange";
+          if(j===_y-1) side3 = "yellow";
+          else if (j===0) side0 ="white";
+          if(k===_z-1) side1 = "blue";
+          else if (k===0) side5 ="green";
+          tempArr.push([side0,side1,side2,side3,side4,side5,i,j,k]);
+          //console.log("x: [" + i + "], y: [" + j + "], z: [" + k + "]");
+        }
+      }
+    }
+    console.log(tempArr);
+    return tempArr;
+  }
 
   // For visual cube
   rotatePoint = (c1,c2,direction,p1,p2,rotation) =>{
@@ -288,7 +71,7 @@ class App extends Component {
 
   // rotate colors on face
   rotateFace = (cubeFace,direction) => {
-
+    let centerPoint = this.state.cubeDimension/2-.5;
     let rubiksObject = this.state.rubiksObject;
     let degrees = 90;
 
@@ -296,13 +79,13 @@ class App extends Component {
 
     // Side 0 (white center piece)
     if (cubeFace === 0){
-        for(let i = 0; i <= 26; i++){
+        for(let i = 0; i < rubiksObject.length; i++){
 
             // white side is y===0
             if (rubiksObject[i][7] === 0){
 
                 // Rotate rubiksObject pieces to new location generated by rotatePoint2
-                let newPoint = this.rotatePoint2(1,1,degrees,rubiksObject[i][6],rubiksObject[i][8]);
+                let newPoint = this.rotatePoint2(centerPoint,centerPoint,degrees,rubiksObject[i][6],rubiksObject[i][8]);
                 rubiksObject[i][6] = newPoint.p1;
                 rubiksObject[i][8] = newPoint.p2;
 
@@ -327,9 +110,9 @@ class App extends Component {
 
     // Side 1 (blue center piece)
     if (cubeFace === 1){
-        for(let i = 0; i <= 26; i++){
-            if (rubiksObject[i][8] === 2){
-                let newPoint = this.rotatePoint2(1,1,degrees,rubiksObject[i][6],rubiksObject[i][7]);
+        for(let i = 0; i < rubiksObject.length; i++){
+            if (rubiksObject[i][8] === this.state.cubeDimension-1){
+                let newPoint = this.rotatePoint2(centerPoint,centerPoint,degrees,rubiksObject[i][6],rubiksObject[i][7]);
                 rubiksObject[i][6] = newPoint.p1;
                 rubiksObject[i][7] = newPoint.p2;
                 if(direction === 0){
@@ -351,9 +134,9 @@ class App extends Component {
     
     // Side 2 (red center piece)
     if (cubeFace === 2){
-        for(let i = 0; i <= 26; i++){
-            if (rubiksObject[i][6] === 2){
-                let newPoint = this.rotatePoint2(1,1,degrees,rubiksObject[i][7],rubiksObject[i][8]);
+        for(let i = 0; i < rubiksObject.length; i++){
+            if (rubiksObject[i][6] === this.state.cubeDimension-1){
+                let newPoint = this.rotatePoint2(centerPoint,centerPoint,degrees,rubiksObject[i][7],rubiksObject[i][8]);
                 rubiksObject[i][7] = newPoint.p1;
                 rubiksObject[i][8] = newPoint.p2;
                 if(direction === 0){
@@ -375,9 +158,9 @@ class App extends Component {
     
     // Side 3 (yellow center piece)
     if (cubeFace === 3){
-        for(let i = 0; i <= 26; i++){
-            if (rubiksObject[i][7] === 2){
-                let newPoint = this.rotatePoint2(1,1,degrees,rubiksObject[i][6],rubiksObject[i][8]);
+        for(let i = 0; i < rubiksObject.length; i++){
+            if (rubiksObject[i][7] === this.state.cubeDimension-1){
+                let newPoint = this.rotatePoint2(centerPoint,centerPoint,degrees,rubiksObject[i][6],rubiksObject[i][8]);
                 rubiksObject[i][6] = newPoint.p1;
                 rubiksObject[i][8] = newPoint.p2;
                 if(direction === -1){
@@ -399,9 +182,9 @@ class App extends Component {
 
     // Side 4 (orange center piece)
     if (cubeFace === 4){
-        for(let i = 0; i <= 26; i++){
+        for(let i = 0; i < rubiksObject.length; i++){
             if (rubiksObject[i][6] === 0){
-                let newPoint = this.rotatePoint2(1,1,degrees,rubiksObject[i][7],rubiksObject[i][8]);
+                let newPoint = this.rotatePoint2(centerPoint,centerPoint,degrees,rubiksObject[i][7],rubiksObject[i][8]);
                 rubiksObject[i][7] = newPoint.p1;
                 rubiksObject[i][8] = newPoint.p2;
                 if(direction === -1){
@@ -423,9 +206,9 @@ class App extends Component {
 
     // Side 5 (green center piece)
     if (cubeFace === 5){
-        for(let i = 0; i <= 26; i++){
+        for(let i = 0; i < rubiksObject.length; i++){
             if (rubiksObject[i][8] === 0){
-                let newPoint = this.rotatePoint2(1,1,degrees,rubiksObject[i][6],rubiksObject[i][7]);
+                let newPoint = this.rotatePoint2(centerPoint,centerPoint,degrees,rubiksObject[i][6],rubiksObject[i][7]);
                 rubiksObject[i][6] = newPoint.p1;
                 rubiksObject[i][7] = newPoint.p2;
                 if(direction === -1){
@@ -463,6 +246,7 @@ class App extends Component {
     
   };
 
+  // Needs a bit of work
   decreaseSpeed = () => {
     if(this.state.rotationSpeed<1000){
       this.setState({rotationSpeed : this.state.rotationSpeed+50});
@@ -472,6 +256,7 @@ class App extends Component {
     }
   }
 
+  // Needs a bit of work
   increaseSpeed = () => {
     if(this.state.rotationSpeed>200){
       this.setState({rotationSpeed : this.state.rotationSpeed-50});
@@ -481,11 +266,33 @@ class App extends Component {
     }
   }
 
-  rotateCamera = () => {
-    let theta = .5*Math.PI/180; 
-    let newCameraX = (Math.cos(theta) * (this.state.cameraX-1) - Math.sin(theta) * (this.state.cameraY-1) + 1);
-    let newCameraY = (Math.sin(theta) * (this.state.cameraX-1) + Math.cos(theta) * (this.state.cameraY-1) + 1);
-    this.setState({cameraX : newCameraX,cameraY : newCameraY});
+  rotateCamera = (key) => {
+    let y = this.state.cameraY;
+
+    if(key === 37){
+      this.setState({angle: this.state.angle+.2});
+      console.log("left");
+    }
+    if(key === 38){
+      if(y < 7.5)
+        this.setState({cameraY: y + 2});
+      console.log("up");
+    }
+    if(key === 39){
+      this.setState({angle: this.state.angle-.2});
+      console.log("right");
+    }
+    if(key === 40){
+      if(y > -7.5)
+        this.setState({cameraY: y - 2});
+      console.log("down");
+    }
+  }
+
+  keyHandling = e => {
+    // Handle event	    
+    console.log("Key code: " + e.keyCode);
+    this.rotateCamera(e.keyCode);
   }
 
   // Control when rotation buttons can be clicked
@@ -691,20 +498,9 @@ class App extends Component {
 
   // Algorithm for coss
   cross = () => {
-    /*let scope = this;
-    if(this.state.moveLog.length) {
-      let rotations = this.reverseMoves()+2;
-      setTimeout(function () {
-        scope.cross();
-      }, scope.state.rotationSpeed*rotations);
-      return;
-    }*/
-    
     let moveString = "R2 L' D F2 R' D' R' L U' D R D B2 R' U D2";
-    //this.setState({moveLog : moveString});
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Cross"});
-
     if(this.state.canScramble){
       this.moveSetTimed(moveArray,moveArray.length-1,0);
     }
@@ -713,6 +509,7 @@ class App extends Component {
   // Generalized time move function. Takes in move array and creates small delay between moves
   moveSetTimed = (moveArray,length, start) =>{
 
+    let solve = this.solveWhiteCross;
     // Breaks at faster speeds
     if(this.state.rotationSpeed < 200)
       this.setState({rotationSpeed: 200});
@@ -749,9 +546,14 @@ class App extends Component {
     }, this.state.rotationSpeed);
     if(start === length+1) {
       this.setState({currentFunc : "None"});
-      this.setState({canScramble : true});
-      
+      this.setState({canScramble : true}); 
     }
+    // if solve is on, set timeout to length of moves and then
+    // call scramble function again
+    /*if(this.state.solving)
+      setTimeout(function () {
+        solve();
+      }, this.state.rotationSpeed * length+1);*/
   }
 
   // Scrambles the cube
@@ -797,7 +599,8 @@ class App extends Component {
   // Incase of rendering conflicts, reload cube color positions
   reloadCubes = () => {
     let cubes = [...this.state.cubes];
-    for(let i = 0; i<27;i++){
+    
+    for(let i = 0; i<this.state.rubiksObject.length;i++){
       let cube = {...cubes[i]};
       cube.material[0].color = new THREE.Color(this.state.rubiksObject[i][2]);
       cube.material[1].color = new THREE.Color(this.state.rubiksObject[i][4]);
@@ -811,123 +614,262 @@ class App extends Component {
     this.setState({cubes});
   }
 
+
+
   // Primitive function for beginning solve steps
   // Research ways to map out possible moves to find a good move
   solveWhiteCross = () => {
+    this.setState({currentFunc : "Cross"});
+    //this.setState({solving : true})
     if(!this.state.canScramble) return;
-    let moveArray = [];
-    let argArr = [];
-    let solved = 0;
-    /*for(let i = 0; i < 27; i++){
-      if(this.state.rubiksObject[i].includes("white")){
+
+    let moveString = "";
+    let cube = this.state.rubiksObject;
+    let space = "";
+
+    for(let i = 0; i < 27; i++){
+      if(moveString.length) space = " ";
+      if(cube[i].includes("white")){
+
         let emptyCount = 0;
         let whiteSide = -1;
         let otherSide = -1;
+        let cubeX = cube[i][6];
+        let cubeY = cube[i][7];
+        let cubeZ = cube[i][8];
+        
+
         for(let j = 0; j < 6; j++){
-          if (this.state.rubiksObject[i][j] === "black") emptyCount++;
+          if (cube[i][j] === "black") emptyCount++;
           else {
-            if(this.state.rubiksObject[i][j] === "white") whiteSide = j;
+            if(cube[i][j] === "white") whiteSide = j;
             else otherSide = j;
           }
         }
 
         // If edge piece
         if(emptyCount === 4) {
-          // Y coord is 0
-          if(this.state.rubiksObject[i][7] === 0){
-            console.log(this.state.rubiksObject[i]);
-            // Check if white side is on white face
-            if(whiteSide === 0){
-              if(i === 1){
-                if(this.state.rubiksObject[i][6] === 0){
-                  argArr.push([-9,-9]);
-                  moveArray.push(rotationArray[1]);
-                }
-                else if (this.state.rubiksObject[i][8] === 0){
-                  argArr.push([-9,-9],[-9,-9]);
-                  moveArray.push(rotationArray[1],rotationArray[1]);
-                }
-                else if (this.state.rubiksObject[i][6] === 2){
-                  argArr.push([-9,-9]);
-                  moveArray.push(rotationArray[0]);
-                }
-              }
+          console.log(i);
+          // Solve piece one in cross
+          if(i===1){
+            console.log("analyzing piece 1");
+            console.log(cubeX);
+            console.log(cubeY);
+            console.log(cubeZ);
+            if(cubeX===1 && cubeY===0 && cubeZ===2){
+              if(!whiteSide) console.log("piece 1 already solved");
+              else moveString+= space + "U' R' F'";
+              console.log("1 and whiteside = " + whiteSide);
             }
-            // 
-            else {
-              if(i === 1){
-                //if(whiteSide===1);
-                  //
-                  // 
-                  // Make generalized rotateFace function to take a face and a direction.
-                  // May need to check that face rotation matches direction. Set value
-                  // in state for counterClockwise and clockwise.
-                  //
-                  // 
-                  argArr.push([whiteSide,0]);
-                  moveArray.push(this.rotateCubeFace);
-                  //i=0;
-                  //
-              }
+            else if(cubeX===2 && cubeY===0 && cubeZ===1){
+              if(!whiteSide) moveString+= space + "F'";
+              else moveString+= space + "R U";
+              console.log("2 and whiteside = " + whiteSide);
             }
+            else if(cubeX===1 && cubeY===0 && cubeZ===0){
+              if(!whiteSide) moveString+= space + "F2";
+              else moveString+= space + "D R F'";
+              console.log("3 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===0 && cubeY===0 && cubeZ===1){
+              if(!whiteSide) moveString+= space + "F";// works
+              else moveString+= space + "L' U'";// works
+              console.log("4 and whiteside = " + whiteSide); 
+            }
+
+            //If piece one is in y section 1
+            else if(cubeX===0 && cubeY===1 && cubeZ===2){
+              if(whiteSide===1) moveString+= space + "L F";
+              else moveString+= space + "U'";
+              console.log("5 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===2 && cubeY===1 && cubeZ===2){
+              if(whiteSide===1) moveString+= space + "R' F'";
+              else moveString+= space + "U";
+              console.log("6 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===2 && cubeY===1 && cubeZ===0){
+              if(whiteSide===2) moveString+= space + "D' F2";
+              else moveString+= space + "R F'";
+              console.log("7 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===0 && cubeY===1 && cubeZ===0){
+              if(whiteSide===4) moveString+= space + "D F2"; // works
+              else moveString+= space + "L' F";
+              console.log("8 and whiteside = " + whiteSide);
+            }
+
+            //If piece one is in y section 2
+            else if(cubeX===1 && cubeY===2 && cubeZ===2){
+              if(whiteSide===3) moveString+= space + "U2";
+              else moveString+= space + "B L U'";
+              console.log("9 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===2 && cubeY===2 && cubeZ===1){
+              if(whiteSide===3) moveString+= space + "R2 F'";
+              else moveString+= space + "R' U";
+              console.log("10 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===1 && cubeY===2 && cubeZ===0){
+              if(whiteSide===3) moveString+= space + "B2 U2";
+              else moveString+= space + "B' L U'";
+              console.log("11 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===0 && cubeY===2 && cubeZ===1){
+              if(whiteSide===3) moveString+= space + "B' U2";
+              else moveString+= space + "L U'";
+              console.log("12 and whiteside = " + whiteSide);
+            }
+            if(this.canQueue(moveString)) return;
           }
-          else if(this.state.rubiksObject[i][7] === 1){
-            if(((whiteSide === 1 && otherSide === 4) ||
-               (whiteSide === 2 && otherSide === 1) ||
-               (whiteSide === 5 && otherSide === 2) ||
-               (whiteSide === 4 && otherSide === 5 )) && i === 1){
-                argArr.push([otherSide,-1]);
-                moveArray.push(this.rotateCubeFace);
-                //this.timingSolve(moveArray,argArr,moveArray.length,0);
-                //moveArray = [];
-                //argArr = [];
-                //i--;
-              }
-             
+
+          // Solve piece five in cross
+          if(i===3){
+            /*console.log("analyzing piece 3");
+            
+            if(cubeX===0 && cubeY===0 && cubeZ===1){
+              if(!whiteSide) console.log("already solved 3");
+              else moveString+= space + "L' R U' R'";
+              console.log("piece (3) 1 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===1 && cubeY===0 && cubeZ===0){
+              if(!whiteSide) moveString+= space + "B' F' B F";
+              else moveString+= space + "B' L'";
+              console.log("5.3 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===2 && cubeY===0 && cubeZ===1){
+              if(!whiteSide) moveString+= space + "R F2 R' F2";// works
+              else moveString+= space + "R F U F'";// works
+              console.log("5.4 and whiteside = " + whiteSide); 
+            }*/
+
+            //If piece five is in y section 1
+            /*if(cubeX===0 && cubeY===1 && cubeZ===2){
+              if(whiteSide===1) moveString+= space + "L F";
+              else moveString+= space + "U'";
+              console.log("5 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===2 && cubeY===1 && cubeZ===2){
+              if(whiteSide===1) moveString+= space + "R' F'";
+              else moveString+= space + "U";
+              console.log("6 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===2 && cubeY===1 && cubeZ===0){
+              if(whiteSide===2) moveString+= space + "D' F2";
+              else moveString+= space + "R F'";
+              console.log("7 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===0 && cubeY===1 && cubeZ===0){
+              if(whiteSide===4) moveString+= space + "D F2"; // works
+              else moveString+= space + "L' F";
+              console.log("8 and whiteside = " + whiteSide);
+            }
+
+            //If piece one is in y section 2
+            if(cubeX===1 && cubeY===2 && cubeZ===2){
+              if(whiteSide===3) moveString+= space + "U2";
+              else moveString+= space + "B L U'";
+              console.log("9 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===2 && cubeY===2 && cubeZ===1){
+              if(whiteSide===3) moveString+= space + "R2 F'";
+              else moveString+= space + "R' F'";
+              console.log("10 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===1 && cubeY===2 && cubeZ===0){
+              if(whiteSide===3) moveString+= space + "B2 U2";
+              else moveString+= space + "B' L U'";
+              console.log("11 and whiteside = " + whiteSide);
+            }
+            else if(cubeX===0 && cubeY===2 && cubeZ===1){
+              if(whiteSide===3) moveString+= space + "B' U2";
+              else moveString+= space + "L U'";
+              console.log("12 and whiteside = " + whiteSide);
+            }*/
+            //if(this.canQueue(moveString)) return;
           }
         }
       }
+    }
+    
+    
+    //const moveArray = this.moveStringToArray(moveString);
+    
+
+    /*if(this.state.canScramble){
+      this.moveSetTimed(moveArray,moveArray.length-1,0);
     }*/
-    if(moveArray.length) this.timingSolve(moveArray,moveArray.length,0);
   }
+
+  componentWillUnmount() {
+    // Remove event listener on compenent unmount	    
+    window.removeEventListener("keydown", this.keyHandling);
+  }
+
+  getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return parts;
+  }
+  
 
   // Initialization and animation functions
   componentDidMount() {
+    let cD = parseInt(this.getUrlVars().substring("http://mighty-fortress-00882.herokuapp.com/id="));
+    if(cD <= 20 || cD >= 2);
+    else cD = 3;
+    this.setState({cubeDimension : cD});
     
+    let rubiksObject = this.generateSolved(cD,cD,cD);
+    this.setState({rubiksObject : rubiksObject});
+    window.addEventListener("keydown", this.keyHandling);
+
     // === THREE.JS CODE START ===
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, .1, 1000 );
-    camera.lookAt(new THREE.Vector3(-1,0,0));
-    
     var renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(new THREE.Color(0,0,0),1);
     renderer.setSize( window.innerWidth, window.innerHeight-10);
     document.body.appendChild( renderer.domElement );
-
+    
     let tempCubes = [];
-
-    // generate cubes with colors based off rubiksObject
-    for(let i = 0; i <=26; i++){
-      var geometry = new THREE.BoxGeometry( .95, .95, .95 );
+    // generate cubes with face colors based off rubiksObject
+    for(let i = 0; i < rubiksObject.length; i++){
+      let cubeX = rubiksObject[i][6];
+      let cubeY = rubiksObject[i][7];
+      let cubeZ = rubiksObject[i][8];
+      /*let sizeModY = 1;
+      let offSetY = 0;
+      if (cubeY === 2) {
+        sizeModY = .5; 
+        offSetY  = .25;
+      }
+      
+      else if (cubeY === 1) offSetY = .5;
+      else sizeModY = 2;*/
+      var geometry = new THREE.BoxGeometry( .95, .95 /** sizeModY*/, .95 );
       var cubeMaterials = [ 
-        new THREE.MeshBasicMaterial({color:this.state.rubiksObject[i][2], opacity:0.8, side: THREE.DoubleSide}),
-        new THREE.MeshBasicMaterial({color:this.state.rubiksObject[i][4], opacity:0.8, side: THREE.DoubleSide}), 
-        new THREE.MeshBasicMaterial({color:this.state.rubiksObject[i][3], opacity:0.8, side: THREE.DoubleSide}),
-        new THREE.MeshBasicMaterial({color:this.state.rubiksObject[i][0], opacity:0.8, side: THREE.DoubleSide}), 
-        new THREE.MeshBasicMaterial({color:this.state.rubiksObject[i][1], opacity:0.8, side: THREE.DoubleSide}), 
-        new THREE.MeshBasicMaterial({color:this.state.rubiksObject[i][5], opacity:0.8, side: THREE.DoubleSide}), 
+        new THREE.MeshBasicMaterial({color:rubiksObject[i][2], opacity:0.8, side: THREE.DoubleSide}),
+        new THREE.MeshBasicMaterial({color:rubiksObject[i][4], opacity:0.8, side: THREE.DoubleSide}), 
+        new THREE.MeshBasicMaterial({color:rubiksObject[i][3], opacity:0.8, side: THREE.DoubleSide}),
+        new THREE.MeshBasicMaterial({color:rubiksObject[i][0], opacity:0.8, side: THREE.DoubleSide}), 
+        new THREE.MeshBasicMaterial({color:rubiksObject[i][1], opacity:0.8, side: THREE.DoubleSide}), 
+        new THREE.MeshBasicMaterial({color:rubiksObject[i][5], opacity:0.8, side: THREE.DoubleSide}), 
       ]; 
       var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
     
       tempCubes[i] = new THREE.Mesh(geometry, cubeMaterial);
-      tempCubes[i].translateX(this.state.rubiksObject[i][6]/* + this.state.rubiksObject[i][6]/10*/);
-      tempCubes[i].translateY(this.state.rubiksObject[i][7]/* + this.state.rubiksObject[i][7]/10)*/);
-      tempCubes[i].translateZ(this.state.rubiksObject[i][8]/* + this.state.rubiksObject[i][8]/10)*/); 
+      
+      tempCubes[i].translateX(cubeX);
+      tempCubes[i].translateY(cubeY /*+ offSetY*/);
+      tempCubes[i].translateZ(cubeZ); 
     }
 
     // add cubes to state and then render
     this.setState({cubes : tempCubes}, () => {
-      for(let i = 0; i <=26; i++){
+      for(let i = 0; i < rubiksObject.length; i++){
         scene.add( this.state.cubes[i] );
 
         //Add outlines to each piece
@@ -948,38 +890,40 @@ class App extends Component {
     
     // Function runs continuously to animate cube
     var animate = () => {
-      this.rotateCamera();
-      camera.position.z = this.state.cameraZ;
+      let centerPoint = this.state.cubeDimension/2-.5;
+      camera.position.z = this.state.cameraZ * Math.sin( this.state.angle );
       camera.position.y = this.state.cameraY;
-      camera.position.x = this.state.cameraX;
+      camera.position.x = this.state.cameraX * Math.cos( this.state.angle );
       camera.lookAt(new THREE.Vector3( 1, 1, 1 ));
-
-      // state variables asigned for shorter names
-      let cubes = this.state.cubes;
       requestAnimationFrame( animate );
+      // state variables asigned for shorter names
+      
+      
+      if(this.state.start<=this.state.end){
+        let cubes = this.state.cubes;
+      
       let turnDirection = this.state.turnDirection;
       let speed = this.state.speed;
       let start = this.state.start;
       let face = this.state.face;
-      //let randomize = this.state.randomize;
-      
-      if(start<=this.state.end){
 
         this.setState({start : start+speed});
 
         //Rotate white center piece Face
         if(face === 0){
-          for(let i = 0; i<27;i++){
+          for(let i = 0; i<this.state.rubiksObject.length;i++){
             if(cubes[i].position.y === 0){
               
               // Turn piece based on rotation direction
-              if(turnDirection<0)
+              if(turnDirection<0){
                 cubes[i].rotation.y += .1745*speed/10;
-              else
+              }
+              else {
                 cubes[i].rotation.y -= .1745*speed/10;
+              }
 
               // Calculate circular movement
-              let newPoint = rotate(1,1,turnDirection,cubes[i].position.x,cubes[i].position.z,10*speed/10);
+              let newPoint = rotate(centerPoint,centerPoint,turnDirection,cubes[i].position.x,cubes[i].position.z,10*speed/10);
 
               // corrects rounding errors
               if(start % 90 === 0){
@@ -996,15 +940,15 @@ class App extends Component {
 
         //Rotate blue Face
         if(face === 1){
-          for(let i = 0; i<27;i++){
-            if(cubes[i].position.z === 2){
+          for(let i = 0; i<this.state.rubiksObject.length;i++){
+            if(cubes[i].position.z === this.state.cubeDimension-1){
 
               if(turnDirection<0)
                 cubes[i].rotation.z -= .1745*speed/10;
               else 
                 cubes[i].rotation.z += .1745*speed/10;
 
-              let newPoint = rotate(1,1,turnDirection,cubes[i].position.x,cubes[i].position.y,10*speed/10);
+              let newPoint = rotate(centerPoint,centerPoint,turnDirection,cubes[i].position.x,cubes[i].position.y,10*speed/10);
               
               if(start % 90 === 0){
                 newPoint.p1 = Math.round(newPoint.p1);
@@ -1019,15 +963,15 @@ class App extends Component {
 
         // red
         if(face === 2){
-          for(let i = 0; i<27;i++){
-            if(tempCubes[i].position.x === 2){
+          for(let i = 0; i<this.state.rubiksObject.length;i++){
+            if(tempCubes[i].position.x === this.state.cubeDimension-1){
 
               if(turnDirection<0)
                 tempCubes[i].rotation.x -= .1745*speed/10;
               else 
                 tempCubes[i].rotation.x += .1745*speed/10;
 
-              let newPoint = rotate(1,1,turnDirection,tempCubes[i].position.y,tempCubes[i].position.z,10*speed/10);
+              let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.y,tempCubes[i].position.z,10*speed/10);
               
               if(start % 90 === 0){
                 newPoint.p1 = Math.round(newPoint.p1);
@@ -1042,15 +986,15 @@ class App extends Component {
 
         // yellow
         if(face === 3){
-          for(let i = 0; i<27;i++){
-            if(tempCubes[i].position.y === 2){
+          for(let i = 0; i<this.state.rubiksObject.length;i++){
+            if(tempCubes[i].position.y === this.state.cubeDimension-1){
 
               if(turnDirection<0)
                 tempCubes[i].rotation.y += .1745*speed/10;
               else 
                 tempCubes[i].rotation.y -= .1745*speed/10;
 
-              let newPoint = rotate(1,1,turnDirection,tempCubes[i].position.x,tempCubes[i].position.z,10*speed/10);
+              let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.x,tempCubes[i].position.z,10*speed/10);
               
               if(start % 90 === 0){
                 newPoint.p1 = Math.round(newPoint.p1);
@@ -1065,7 +1009,7 @@ class App extends Component {
 
         // orange
         if(face === 4){
-          for(let i = 0; i<27;i++){
+          for(let i = 0; i<this.state.rubiksObject.length;i++){
             if(tempCubes[i].position.x === 0){
 
               if(turnDirection<0)
@@ -1073,7 +1017,7 @@ class App extends Component {
               else 
                 tempCubes[i].rotation.x += .1745*speed/10;
 
-              let newPoint = rotate(1,1,turnDirection,tempCubes[i].position.y,tempCubes[i].position.z,10*speed/10);
+              let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.y,tempCubes[i].position.z,10*speed/10);
               
               if(start % 90 === 0){
                 newPoint.p1 = Math.round(newPoint.p1);
@@ -1088,7 +1032,7 @@ class App extends Component {
 
         // green
         if(face === 5){
-          for(let i = 0; i<27;i++){
+          for(let i = 0; i<this.state.rubiksObject.length;i++){
             if(tempCubes[i].position.z === 0){
 
               if(turnDirection<0)
@@ -1096,7 +1040,7 @@ class App extends Component {
               else 
                 tempCubes[i].rotation.z += .1745*speed/10;
 
-              let newPoint = rotate(1,1,turnDirection,tempCubes[i].position.x,tempCubes[i].position.y,10*speed/10);
+              let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.x,tempCubes[i].position.y,10*speed/10);
               
               if(start % 90 === 0){
                 newPoint.p1 = Math.round(newPoint.p1);
@@ -1121,6 +1065,7 @@ class App extends Component {
         <Navbar
         title="Rubik's Cube"
         />
+        
         <p style={{position:"fixed", top: "75px", left: "10px",color: "white"}}>Speed: {this.state.rotationSpeed}</p>
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white"}}>Current Function: {this.state.currentFunc}</p>
 
@@ -1152,12 +1097,14 @@ class App extends Component {
         <button onClick={this.rfir} style={{position:"fixed", top: "300px", right: "10px",backgroundColor: "green",color: "white"}}>D</button>
 
         {/* Bottom Right */}
+        
         <button onClick={this.scramble} style={{position:"fixed", bottom: "70px", right: "10px",backgroundColor: "white"}}>SCRAMBLE</button>
         <button onClick={this.reverseMoves} style={{position:"fixed", bottom: "40px", right: "10px",backgroundColor: "white"}}>Reverse Moves</button>
         <button onClick={this.reset} style={{position:"fixed", bottom: "10px", right: "10px",backgroundColor: "white"}}>RESET</button>
-      
+        
+          
+        
       </div>
-      
     );
   }
 }
