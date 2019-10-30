@@ -72,7 +72,6 @@ class App extends Component {
 
   // rotate colors on face
   rotateFace = (cubeFace,direction,cubeDepth) => {
-    console.log(cubeDepth);
     let centerPoint = this.state.cubeDimension/2-.5;
     let rubiksObject = this.state.rubiksObject;
     let degrees = 90;
@@ -331,9 +330,7 @@ class App extends Component {
 
   // Changes values in state to trigger face rotation
   rotateCubeFace = (face,direction,cubeDepth) => {
-    console.log("rotateCubeFace: " + cubeDepth);
     if(!this.state.reversing){
-      //console.log("adding move")
       let tempMove = "";
       if(cubeDepth<10) tempMove+="0"+cubeDepth;
       else tempMove += cubeDepth;
@@ -361,8 +358,8 @@ class App extends Component {
     this.setState({face : face,
                    turnDirection : direction,
                    end : this.state.end + 90,
-                   cubeDepth : cubeDepth}, () =>{
-                     console.log("rotateFace: " + cubeDepth);
+                   cubeDepth : cubeDepth},
+                   () =>{
       this.rotateFace(face,direction,cubeDepth);
     });
   }
@@ -443,8 +440,8 @@ class App extends Component {
 
     // Run through split string and create duplicates where needed
     for(let i = 0; i < tempArray.length;i++){
-      if(tempArray[i].length === 2 && tempArray[i].slice(1,2)==="2") {
-        let tempMove = tempArray[i].slice(0,1);
+      if(tempArray[i].length === 4 && tempArray[i].slice(3,4)==="2") {
+        let tempMove = tempArray[i].slice(0,3);
         moveArray.push(tempMove);
         moveArray.push(tempMove);
       }
@@ -457,7 +454,7 @@ class App extends Component {
 
   // Algorithm for Checkerboard
   checkerBoard = () => {
-    let moveString = "U2 D2 R2 L2 F2 B2";
+    let moveString = "01U2 01D2 01R2 01L2 01F2 01B2";
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Checkerboard"});
 
@@ -468,7 +465,7 @@ class App extends Component {
 
   // Algorithm for Checkerboard1
   checkerBoard1 = () => {
-    let moveString = "U' R2 L2 F2 B2 U' R L F B' U F2 D2 R2 L2 F2 U2 F2 U' F2";
+    let moveString = "01U' 01R2 01L2 01F2 01B2 01U' 01R 01L 01F 01B' 01U 01F2 01D2 01R2 01L2 01F2 01U2 01F2 01U' 01F2";
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Checkboard1"});
   
@@ -479,7 +476,7 @@ class App extends Component {
 
   // Algorithm for Cube in a cube in a cube
   cubeInACube = () => {
-    let moveString = "U' L' U' F' R2 B' R F U B2 U B' L U' F U R F'"
+    let moveString = "01U' 01L' 01U' 01F' 01R2 01B' 01R 01F 01U 01B2 01U 01B' 01L 01U' 01F 01U 01R 01F'"
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Cube x3"});
 
@@ -490,7 +487,7 @@ class App extends Component {
 
   // Algorithm for Cube in a cube
   cubeIn = () => {
-    let moveString = "F L F U' R U F2 L2 U' L' B D' B' L2 U";
+    let moveString = "01F 01L 01F 01U' 01R 01U 01F2 01L2 01U' 01L' 01B 01D' 01B' 01L2 01U";
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Cube x2"});
 
@@ -501,7 +498,7 @@ class App extends Component {
 
   // Algorithm for isolating middles
   sixSpots = () => {
-    let moveString = "U D' R L' F B' U D'"
+    let moveString = "01U 01D' 01R 01L' 01F 01B' 01U 01D'"
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Six Spots"});
 
@@ -512,7 +509,7 @@ class App extends Component {
 
   // Algorithm for coss
   cross = () => {
-    let moveString = "R2 L' D F2 R' D' R' L U' D R D B2 R' U D2";
+    let moveString = "01R2 01L' 01D 01F2 01R' 01D' 01R' 01L 01U' 01D 01R 01D 01B2 01R' 01U 01D2";
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Cross"});
     if(this.state.canScramble){
@@ -537,6 +534,7 @@ class App extends Component {
     if(start <= length){
       if(moveArray[start].length === 4) tempDirection=0;
       tempDepth = parseInt(moveArray[start].slice(0,2));
+
       if(moveArray[start].slice(2,3) === "U") tempFace = 1;
       else if(moveArray[start].slice(2,3) === "F") tempFace = 0;
       else if(moveArray[start].slice(2,3) === "B") tempFace = 3;
@@ -611,6 +609,9 @@ class App extends Component {
     
     for(let i = 0; i<this.state.rubiksObject.length;i++){
       let cube = {...cubes[i]};
+      if((this.state.cubes[i].position.x === 0 || this.state.cubes[i].position.x === this.state.cubeDimension-1) ||
+            (this.state.cubes[i].position.y === 0 || this.state.cubes[i].position.y === this.state.cubeDimension-1)||
+            (this.state.cubes[i].position.z === 0 || this.state.cubes[i].position.z === this.state.cubeDimension-1)){
       cube.material[0].color = new THREE.Color(this.state.rubiksObject[i][2]);
       cube.material[1].color = new THREE.Color(this.state.rubiksObject[i][4]);
       cube.material[2].color = new THREE.Color(this.state.rubiksObject[i][3]);
@@ -619,11 +620,10 @@ class App extends Component {
       cube.material[5].color = new THREE.Color(this.state.rubiksObject[i][5]);
       cube.rotation.x = 0; cube.rotation.y = 0; cube.rotation.z = 0;
       cubes[i] = cube;
+            }
     }
     this.setState({cubes});
   }
-
-
 
   // Primitive function for beginning solve steps
   // Research ways to map out possible moves to find a good move
@@ -849,19 +849,12 @@ class App extends Component {
     let tempCubes = [];
     // generate cubes with face colors based off rubiksObject
     for(let i = 0; i < rubiksObject.length; i++){
+      
       let cubeX = rubiksObject[i][6];
       let cubeY = rubiksObject[i][7];
       let cubeZ = rubiksObject[i][8];
-      /*let sizeModY = 1;
-      let offSetY = 0;
-      if (cubeY === 2) {
-        sizeModY = .5; 
-        offSetY  = .25;
-      }
-      
-      else if (cubeY === 1) offSetY = .5;
-      else sizeModY = 2;*/
-      var geometry = new THREE.BoxGeometry( .95, .95 /** sizeModY*/, .95 );
+
+      var geometry = new THREE.BoxGeometry( .95, .95, .95 );
       var cubeMaterials = [ 
         new THREE.MeshBasicMaterial({color:rubiksObject[i][2], opacity:0.8, side: THREE.DoubleSide}),
         new THREE.MeshBasicMaterial({color:rubiksObject[i][4], opacity:0.8, side: THREE.DoubleSide}), 
@@ -929,7 +922,6 @@ class App extends Component {
 
         //Rotate white center piece Face
         if(face === 0){
-          console.log(this.state.cubeDepth);
           for(let i = 0; i<this.state.rubiksObject.length;i++){
             if(cubes[i].position.y > -1 && cubes[i].position.y < cubeDepth){
               
