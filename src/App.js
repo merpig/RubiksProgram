@@ -9,11 +9,11 @@ class App extends Component {
   state = {
     cubes : [],           // Contains visual cube
     rubiksObject : [],      // Contains memory cube
-    speed : 3,           // Control individual piece rotation speed (don't change)
-    rotationSpeed : 750,  // Controls visual rotation speed
+    speed : 7.5,           // Control individual piece rotation speed (don't change)
+    rotationSpeed : 350,  // Controls visual rotation speed
     canScramble: true,    // Manual rotations can't happen while this is false
     canMove: true,
-    start : 3,           // Start value for a rotation or set of rotations
+    start : 7.5,           // Start value for a rotation or set of rotations
     end : 0,              // End value for a roation or set of rotations
     turnDirection : 0,    // Dictates whether the rotation is clockwise or counterclockwise
     face : 0,             // The face being turned
@@ -26,7 +26,8 @@ class App extends Component {
     reversing : false,
     angle : 3.9,
     cubeDimension : 10,
-    cubeDepth : 1
+    cubeDepth : 1,
+    currentSpeed : "Medium",
   };
 
   // Generates the inital solved state of rubiksObject
@@ -267,37 +268,37 @@ class App extends Component {
 
   speedFastest = () => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({speed: 30, start: 30, end: 0, rotationSpeed: 100});
+    this.setState({currentSpeed: "Fastest",speed: 30, start: 30, end: 0, rotationSpeed: 100});
   }
 
   speedFaster = () => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({speed: 15, start: 15, end: 0, rotationSpeed: 175});
+    this.setState({currentSpeed: "Faster",speed: 15, start: 15, end: 0, rotationSpeed: 175});
   }
 
   speedFast = () => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({speed: 10, start: 10, end: 0, rotationSpeed: 250});
+    this.setState({currentSpeed: "Fast",speed: 10, start: 10, end: 0, rotationSpeed: 250});
   }
 
   speedMedium = () => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({speed: 7.5, start: 7.5, end: 0, rotationSpeed: 350});
+    this.setState({currentSpeed: "Medium",speed: 7.5, start: 7.5, end: 0, rotationSpeed: 350});
   }
 
   speedSlow = () => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({speed: 5, start: 5, end: 0, rotationSpeed: 500});
+    this.setState({currentSpeed: "Slow",speed: 5, start: 5, end: 0, rotationSpeed: 500});
   }
 
   speedSlower = () => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({speed: 3, start: 3, end: 0, rotationSpeed: 750});
+    this.setState({currentSpeed: "Slower",speed: 3, start: 3, end: 0, rotationSpeed: 750});
   }
 
   speedSlowest = () => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({speed: 1.5, start: 1.5, end: 0, rotationSpeed: 1050});
+    this.setState({currentSpeed: "Slowest",speed: 1.5, start: 1.5, end: 0, rotationSpeed: 1050});
   }
 
   rotateCamera = (key) => {
@@ -1640,7 +1641,7 @@ class App extends Component {
         title="Rubik's Cube"
         />
         
-        <p style={{position:"fixed", top: "75px", left: "10px",color: "white"}}>Speed: {this.state.speed/7.5}x</p>
+        <p style={{position:"fixed", top: "75px", left: "10px",color: "white"}}>Speed: {this.state.currentSpeed}</p>
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white"}}>Current Function: {this.state.currentFunc}</p>
 
         {/* Top Left */}
