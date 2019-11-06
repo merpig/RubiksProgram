@@ -1644,13 +1644,13 @@ class App extends Component {
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white"}}>Current Function: {this.state.currentFunc}</p>
 
         {/* Top Left */}
-        <button onClick={this.speedFastest} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "red",width: "68.5px"}}>Fastest</button>
-        <button onClick={this.speedFaster} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "orange",width: "68.5px"}}>Faster</button>
-        <button onClick={this.speedFast} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "yellow",width: "68.5px"}}>Fast</button>
-        <button onClick={this.speedMedium} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "green",width: "68.5px"}}>Medium</button>
-        <button onClick={this.speedSlow} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "lightblue",width: "68.5px"}}>Slow</button>
-        <button onClick={this.speedSlower} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "blue",width: "68.5px"}}>Slower</button>
-        <button onClick={this.speedSlowest} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "navy",width: "68.5px"}}>Slowest</button>
+        <button onClick={this.speedFastest} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "red",width: "72px"}}>Fastest</button>
+        <button onClick={this.speedFaster} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "orange",width: "72px"}}>Faster</button>
+        <button onClick={this.speedFast} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "yellow",width: "72px"}}>Fast</button>
+        <button onClick={this.speedMedium} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "green",width: "72px"}}>Medium</button>
+        <button onClick={this.speedSlow} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "lightblue",width: "72px"}}>Slow</button>
+        <button onClick={this.speedSlower} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "blue",width: "72px"}}>Slower</button>
+        <button onClick={this.speedSlowest} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "navy",width: "72px"}}>Slowest</button>
         
         {/* Bottom Left */}
         <button onClick={this.cross} style={{position:"fixed", bottom: "160px", left: "10px",backgroundColor: "white"}}>Cross</button>

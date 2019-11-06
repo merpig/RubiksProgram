@@ -14,9 +14,9 @@ const Navbar = props => (
             <Dropdown.Item href="https://mighty-fortress-00882.herokuapp.com/id=2" style={{backgroundColor:"lightgrey"}}>2 X 2 X 2</Dropdown.Item>
             <Dropdown.Item href="https://mighty-fortress-00882.herokuapp.com/id=3">3 X 3 X 3</Dropdown.Item>
             <Dropdown.Item href="https://mighty-fortress-00882.herokuapp.com/id=4" style={{backgroundColor:"lightgrey"}}>4 X 4 X 4</Dropdown.Item>
-            <Dropdown.Item href="https://mighty-fortress-00882.herokuapp.com/id=3">5 X 5 X 5</Dropdown.Item>
-            <Dropdown.Item href="https://mighty-fortress-00882.herokuapp.com/id=4" style={{backgroundColor:"lightgrey"}}>6 X 6 X 6</Dropdown.Item>
-            <Dropdown.Item href="https://mighty-fortress-00882.herokuapp.com/id=3">7 X 7 X 7</Dropdown.Item>
+            <Dropdown.Item href="https://mighty-fortress-00882.herokuapp.com/id=5">5 X 5 X 5</Dropdown.Item>
+            <Dropdown.Item href="https://mighty-fortress-00882.herokuapp.com/id=6" style={{backgroundColor:"lightgrey"}}>6 X 6 X 6</Dropdown.Item>
+            <Dropdown.Item href="https://mighty-fortress-00882.herokuapp.com/id=7">7 X 7 X 7</Dropdown.Item>
           </Dropdown.Menu>
         </DropdownButton>
       </li>
