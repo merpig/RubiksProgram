@@ -329,6 +329,7 @@ class App extends Component {
       this.rotateCubeFace(0,0,1);
     }
   }
+  
   rzr = () => {
     if(this.state.canScramble && this.state.canMove) {
       this.setState({currentFunc: "F"});
@@ -336,20 +337,75 @@ class App extends Component {
     }
   }
 
-  rol = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(1,0,1);}
-  ror = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(1,-1,1);}
+  rol = () => {
+    if(this.state.canScramble && this.state.canMove) {
+      this.setState({currentFunc: "U'"});
+      this.rotateCubeFace(1,0,1);
+    }
+  }
 
-  rtwl = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(2,0,1);}
-  rtwr = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(2,-1,1);}
+  ror = () => {
+    if(this.state.canScramble && this.state.canMove){
+      this.setState({currentFunc: "U"});
+      this.rotateCubeFace(1,-1,1);
+    }
+  }
 
-  rthl = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(3,0,1);}
-  rthr = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(3,-1,1);}
+  rtwl = () => {
+    if(this.state.canScramble && this.state.canMove){
+      this.setState({currentFunc: "R'"});
+      this.rotateCubeFace(2,0,1);
+    }
+  }
 
-  rfol = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(4,0,1);}
-  rfor = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(4,-1,1);}
+  rtwr = () => {
+    if(this.state.canScramble && this.state.canMove){
+      this.setState({currentFunc: "R"});
+      this.rotateCubeFace(2,-1,1);
+    }
+  }
 
-  rfil = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(5,0,1);}
-  rfir = () => {if(this.state.canScramble && this.state.canMove) this.rotateCubeFace(5,-1,1);}
+  rthl = () => {
+    if(this.state.canScramble && this.state.canMove){
+      this.setState({currentFunc: "B'"});
+      this.rotateCubeFace(3,0,1);
+    }
+  }
+
+  rthr = () => {
+    if(this.state.canScramble && this.state.canMove){
+      this.setState({currentFunc: "B"});
+      this.rotateCubeFace(3,-1,1);
+    }
+  }
+
+  rfol = () => {
+    if(this.state.canScramble && this.state.canMove){
+      this.setState({currentFunc: "L'"});
+      this.rotateCubeFace(4,0,1);
+    }
+  }
+
+  rfor = () => {
+    if(this.state.canScramble && this.state.canMove){
+      this.setState({currentFunc: "L"});
+      this.rotateCubeFace(4,-1,1);
+    }
+  }
+
+  rfil = () => {
+    if(this.state.canScramble && this.state.canMove){
+      this.setState({currentFunc: "D'"});
+      this.rotateCubeFace(5,0,1);
+    }
+  }
+
+  rfir = () => {
+    if(this.state.canScramble && this.state.canMove){
+      this.setState({currentFunc: "D"});
+      this.rotateCubeFace(5,-1,1);
+    }
+  }
 
   // Changes values in state to trigger face rotation
   rotateCubeFace = (face,direction,cubeDepth) => {
@@ -1452,9 +1508,9 @@ class App extends Component {
         new THREE.MeshBasicMaterial({color:rubiksObject[i][1], opacity:0.8, side: THREE.DoubleSide}), 
         new THREE.MeshBasicMaterial({color:rubiksObject[i][5], opacity:0.8, side: THREE.DoubleSide}), 
       ]; 
-      var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
+      //var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
     
-      tempCubes[i] = new THREE.Mesh(geometry, cubeMaterial);
+      tempCubes[i] = new THREE.Mesh(geometry, cubeMaterials);
       
       tempCubes[i].translateX(cubeX);
       tempCubes[i].translateY(cubeY /*+ offSetY*/);
