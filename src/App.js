@@ -9,11 +9,11 @@ class App extends Component {
   state = {
     cubes : [],           // Contains visual cube
     rubiksObject : [],      // Contains memory cube
-    speed : 10,           // Control individual piece rotation speed (don't change)
-    rotationSpeed : 250,  // Controls visual rotation speed
+    speed : 3,           // Control individual piece rotation speed (don't change)
+    rotationSpeed : 750,  // Controls visual rotation speed
     canScramble: true,    // Manual rotations can't happen while this is false
     canMove: true,
-    start : 10,           // Start value for a rotation or set of rotations
+    start : 3,           // Start value for a rotation or set of rotations
     end : 0,              // End value for a roation or set of rotations
     turnDirection : 0,    // Dictates whether the rotation is clockwise or counterclockwise
     face : 0,             // The face being turned
@@ -248,17 +248,56 @@ class App extends Component {
   };
 
   // Needs a bit of work
+  // remove
   decreaseSpeed = () => {
-    if(this.state.rotationSpeed<1000){
+    if(this.state.rotationSpeed<1050 && this.state.canScramble && this.state.canMove){
       this.setState({rotationSpeed : this.state.rotationSpeed+50});
+      this.setState({speed: this.state.speed - 1.5});
     }
   }
 
   // Needs a bit of work
+  // remove
   increaseSpeed = () => {
-    if(this.state.rotationSpeed>200){
+    if(this.state.rotationSpeed>100){
       this.setState({rotationSpeed : this.state.rotationSpeed-50});
+      this.setState({speed: this.state.speed + 1.5});
     }
+  }
+
+  speedFastest = () => {
+    if(this.state.currentFunc !== "None") return;
+    this.setState({speed: 30, start: 30, end: 0, rotationSpeed: 100});
+  }
+
+  speedFaster = () => {
+    if(this.state.currentFunc !== "None") return;
+    this.setState({speed: 15, start: 15, end: 0, rotationSpeed: 175});
+  }
+
+  speedFast = () => {
+    if(this.state.currentFunc !== "None") return;
+    this.setState({speed: 10, start: 10, end: 0, rotationSpeed: 250});
+  }
+
+  speedMedium = () => {
+    if(this.state.currentFunc !== "None") return;
+    this.setState({speed: 7.5, start: 7.5, end: 0, rotationSpeed: 350});
+  }
+
+  speedSlow = () => {
+    if(this.state.currentFunc !== "None") return;
+    this.setState({speed: 5, start: 5, end: 0, rotationSpeed: 500});
+  }
+
+  speedSlower = () => {
+    if(this.state.currentFunc !== "None") return;
+    this.setState({speed: 3, start: 3, end: 0, rotationSpeed: 750});
+  }
+
+  speedSlowest = () => {
+    if(this.state.currentFunc !== "None") return;
+    this.setState({speed: 1.5, start: 1.5, end: 0, rotationSpeed: 1050});
   }
 
   rotateCamera = (key) => {
@@ -482,8 +521,8 @@ class App extends Component {
   moveSetTimed = (moveArray,length, start, solving) =>{
 
     // Breaks at faster speeds
-    if(this.state.rotationSpeed < 200)
-      this.setState({rotationSpeed: 200});
+    /*if(this.state.rotationSpeed < 150)
+      this.setState({rotationSpeed: 200});*/
 
     if(start === 0)
       this.setState({canScramble : false});
@@ -516,8 +555,10 @@ class App extends Component {
 
     
     if(start === length+1) {
-      this.setState({currentFunc : "None"});
-      this.setState({canScramble : true});
+      if(!solving)
+        this.setState({currentFunc : "None"});
+        this.setState({canScramble : true});
+      
 
       // required for functions to be in scope of setTimeout
       let solveWhiteCross = this.solveWhiteCross;
@@ -556,7 +597,7 @@ class App extends Component {
   reverseMoves = () => {
     if(this.state.reversing===true || !this.state.canScramble) return;
     
-    console.log(this.state.moveLog);
+    //console.log(this.state.moveLog);
     if(!this.state.moveLog.length) return;
     this.setState({reversing : true});
     let moveString = this.state.moveLog;
@@ -1330,7 +1371,7 @@ class App extends Component {
             //console.log("piece two is positioned correctly");
             if(cube[pieceThree][6]===0 && cube[pieceThree][8]===0){
               //console.log("Solved!")
-              scope.setState({moveLog : "",currentFunc: "none"});
+              scope.setState({moveLog : "",currentFunc: "None"});
             }
             else {
               //console.log("Anomoly found! Solution: ");
@@ -1352,7 +1393,7 @@ class App extends Component {
       // else
       else {
         //console.log("Solved!");
-        scope.setState({moveLog : "",currentFunc: "none"});
+        scope.setState({moveLog : "",currentFunc: "None"});
       }
     }
   }
@@ -1377,7 +1418,7 @@ class App extends Component {
     let cD;
     if(url.length < 30) cD = parseInt(url.substring(25));
     else cD = parseInt(url.substring("http://mighty-fortress-00882.herokuapp.com/id=".length+1));
-    if(cD <= 20 || cD >= 2);
+    if(cD <= 7 && cD >= 2);
     else cD = 3;
     this.setState({cubeDimension : cD});
     
@@ -1587,20 +1628,29 @@ class App extends Component {
     };
   }
 
+
   // Renders html to the index.html page
   render() {
+    let solveBtn;
+    if(this.state.cubeDimension < 4)
+      solveBtn = <button onClick={this.solveWhiteCross} style={{position:"fixed", bottom: "100px", right: "10px",backgroundColor: "white"}}>SOLVE</button>;
     return (
       <div className="App" >
         <Navbar
         title="Rubik's Cube"
         />
         
-        <p style={{position:"fixed", top: "75px", left: "10px",color: "white"}}>Speed: {this.state.rotationSpeed}</p>
+        <p style={{position:"fixed", top: "75px", left: "10px",color: "white"}}>Speed: {this.state.speed/7.5}x</p>
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white"}}>Current Function: {this.state.currentFunc}</p>
 
         {/* Top Left */}
-        <button onClick={this.increaseSpeed} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "white"}}>+ Speed</button>
-        <button onClick={this.decreaseSpeed} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "white"}}>- Speed</button>
+        <button onClick={this.speedFastest} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "red",width: "68.5px"}}>Fastest</button>
+        <button onClick={this.speedFaster} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "orange",width: "68.5px"}}>Faster</button>
+        <button onClick={this.speedFast} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "yellow",width: "68.5px"}}>Fast</button>
+        <button onClick={this.speedMedium} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "green",width: "68.5px"}}>Medium</button>
+        <button onClick={this.speedSlow} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "lightblue",width: "68.5px"}}>Slow</button>
+        <button onClick={this.speedSlower} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "blue",width: "68.5px"}}>Slower</button>
+        <button onClick={this.speedSlowest} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "navy",width: "68.5px"}}>Slowest</button>
         
         {/* Bottom Left */}
         <button onClick={this.cross} style={{position:"fixed", bottom: "160px", left: "10px",backgroundColor: "white"}}>Cross</button>
@@ -1625,7 +1675,7 @@ class App extends Component {
         <button onClick={this.rfir} style={{position:"fixed", top: "300px", right: "10px",backgroundColor: "green",color: "white"}}>D</button>
 
         {/* Bottom Right */} 
-        <button onClick={this.solveWhiteCross} style={{position:"fixed", bottom: "100px", right: "10px",backgroundColor: "white"}}>SOLVE</button>
+        {solveBtn}
         <button onClick={this.scramble} style={{position:"fixed", bottom: "70px", right: "10px",backgroundColor: "white"}}>SCRAMBLE</button>
         <button onClick={this.reverseMoves} style={{position:"fixed", bottom: "40px", right: "10px",backgroundColor: "white"}}>Reverse Moves</button>
         <button onClick={this.reset} style={{position:"fixed", bottom: "10px", right: "10px",backgroundColor: "white"}}>RESET</button>
