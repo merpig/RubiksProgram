@@ -248,22 +248,11 @@ class App extends Component {
     
   };
 
-  // Needs a bit of work
-  // remove
-  decreaseSpeed = () => {
-    if(this.state.rotationSpeed<1050 && this.state.canScramble && this.state.canMove){
-      this.setState({rotationSpeed : this.state.rotationSpeed+50});
-      this.setState({speed: this.state.speed - 1.5});
-    }
-  }
-
-  // Needs a bit of work
-  // remove
-  increaseSpeed = () => {
-    if(this.state.rotationSpeed>100){
-      this.setState({rotationSpeed : this.state.rotationSpeed-50});
-      this.setState({speed: this.state.speed + 1.5});
-    }
+  // Functions to change speed
+  // Add an option to slows these down a bit for slower GPUs
+  speedZoomin = () => {
+    if(this.state.currentFunc !== "None") return;
+    this.setState({currentSpeed: "Zoomin",speed: 90, start: 90, end: 0, rotationSpeed: 20});
   }
 
   speedFastest = () => {
@@ -614,7 +603,8 @@ class App extends Component {
     if(start === length+1) {
       if(!solving)
         this.setState({currentFunc : "None"});
-        this.setState({canScramble : true});
+        
+      this.setState({canScramble : true});
       
 
       // required for functions to be in scope of setTimeout
@@ -1499,7 +1489,8 @@ class App extends Component {
       let cubeY = rubiksObject[i][7];
       let cubeZ = rubiksObject[i][8];
 
-      var geometry = new THREE.BoxGeometry( .95, .95, .95 );
+      var geometry = new THREE.BoxGeometry( .90, .90, .90 );
+      
       var cubeMaterials = [ 
         new THREE.MeshBasicMaterial({color:rubiksObject[i][2], opacity:0.8, side: THREE.DoubleSide}),
         new THREE.MeshBasicMaterial({color:rubiksObject[i][4], opacity:0.8, side: THREE.DoubleSide}), 
@@ -1511,6 +1502,7 @@ class App extends Component {
       //var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
     
       tempCubes[i] = new THREE.Mesh(geometry, cubeMaterials);
+      //let originalGeometry = new THREE.BoxGeometry(1, 1, 1);
       
       tempCubes[i].translateX(cubeX);
       tempCubes[i].translateY(cubeY /*+ offSetY*/);
@@ -1529,7 +1521,8 @@ class App extends Component {
           //Add outlines to each piece
           let geo = new THREE.EdgesGeometry(this.state.cubes[i].geometry);
           let mat = new THREE.LineBasicMaterial({
-            color : 0x000000, linewidth: 1
+            color : 0x000000, linewidth: .5
+
           });
           let wireframe = new THREE.LineSegments(geo,mat);
           wireframe.renderOrder = 1;
@@ -1685,7 +1678,6 @@ class App extends Component {
     };
   }
 
-
   // Renders html to the index.html page
   render() {
     let solveBtn;
@@ -1701,13 +1693,14 @@ class App extends Component {
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white"}}>Current Function: {this.state.currentFunc}</p>
 
         {/* Top Left */}
-        <button onClick={this.speedFastest} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "red",width: "90px",color:"white"}}>Fastest</button>
-        <button onClick={this.speedFaster} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "orange",width: "90px"}}>Faster</button>
-        <button onClick={this.speedFast} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "yellow",width: "90px"}}>Fast</button>
-        <button onClick={this.speedMedium} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "green",width: "90px",color:"white"}}>Medium</button>
-        <button onClick={this.speedSlow} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "lightblue",width: "90px"}}>Slow</button>
-        <button onClick={this.speedSlower} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "blue",width: "90px",color:"white"}}>Slower</button>
-        <button onClick={this.speedSlowest} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "navy",width: "90px",color:"white"}}>Slowest</button>
+        <button onClick={this.speedZoomin} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "black",width: "90px",color:"white"}}>Zoomin</button>
+        <button onClick={this.speedFastest} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "red",width: "90px",color:"white"}}>Fastest</button>
+        <button onClick={this.speedFaster} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "orange",width: "90px"}}>Faster</button>
+        <button onClick={this.speedFast} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "yellow",width: "90px"}}>Fast</button>
+        <button onClick={this.speedMedium} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "green",width: "90px",color:"white"}}>Medium</button>
+        <button onClick={this.speedSlow} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "lightblue",width: "90px"}}>Slow</button>
+        <button onClick={this.speedSlower} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "blue",width: "90px",color:"white"}}>Slower</button>
+        <button onClick={this.speedSlowest} style={{position:"fixed", top: "310px", left: "10px",backgroundColor: "navy",width: "90px",color:"white"}}>Slowest</button>
         
         {/* Bottom Left */}
         <button onClick={this.cross} style={{position:"fixed", bottom: "160px", left: "10px",backgroundColor: "white"}}>Cross</button>
