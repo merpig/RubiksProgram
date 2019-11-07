@@ -313,84 +313,84 @@ class App extends Component {
 
   // Control when rotation buttons can be clicked
   rzl = () => {
-    if(this.state.canScramble && this.state.canMove) {
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None") {
       this.setState({currentFunc: "F'"});
       this.rotateCubeFace(0,0,1);
     }
   }
   
   rzr = () => {
-    if(this.state.canScramble && this.state.canMove) {
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None") {
       this.setState({currentFunc: "F"});
       this.rotateCubeFace(0,-1,1);
     }
   }
 
   rol = () => {
-    if(this.state.canScramble && this.state.canMove) {
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None") {
       this.setState({currentFunc: "U'"});
       this.rotateCubeFace(1,0,1);
     }
   }
 
   ror = () => {
-    if(this.state.canScramble && this.state.canMove){
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
       this.setState({currentFunc: "U"});
       this.rotateCubeFace(1,-1,1);
     }
   }
 
   rtwl = () => {
-    if(this.state.canScramble && this.state.canMove){
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
       this.setState({currentFunc: "R'"});
       this.rotateCubeFace(2,0,1);
     }
   }
 
   rtwr = () => {
-    if(this.state.canScramble && this.state.canMove){
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
       this.setState({currentFunc: "R"});
       this.rotateCubeFace(2,-1,1);
     }
   }
 
   rthl = () => {
-    if(this.state.canScramble && this.state.canMove){
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
       this.setState({currentFunc: "B'"});
       this.rotateCubeFace(3,0,1);
     }
   }
 
   rthr = () => {
-    if(this.state.canScramble && this.state.canMove){
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
       this.setState({currentFunc: "B"});
       this.rotateCubeFace(3,-1,1);
     }
   }
 
   rfol = () => {
-    if(this.state.canScramble && this.state.canMove){
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
       this.setState({currentFunc: "L'"});
       this.rotateCubeFace(4,0,1);
     }
   }
 
   rfor = () => {
-    if(this.state.canScramble && this.state.canMove){
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
       this.setState({currentFunc: "L"});
       this.rotateCubeFace(4,-1,1);
     }
   }
 
   rfil = () => {
-    if(this.state.canScramble && this.state.canMove){
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
       this.setState({currentFunc: "D'"});
       this.rotateCubeFace(5,0,1);
     }
   }
 
   rfir = () => {
-    if(this.state.canScramble && this.state.canMove){
+    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
       this.setState({currentFunc: "D"});
       this.rotateCubeFace(5,-1,1);
     }
@@ -500,6 +500,7 @@ class App extends Component {
 
   // Algorithm for Checkerboard
   checkerBoard = () => {
+    if(this.state.currentFunc !== "None") return;
     let moveString = "01U2 01D2 01R2 01L2 01F2 01B2";
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Checkerboard"});
@@ -511,6 +512,7 @@ class App extends Component {
 
   // Algorithm for Checkerboard1
   checkerBoard1 = () => {
+    if(this.state.currentFunc !== "None") return;
     let moveString = "01U' 01R2 01L2 01F2 01B2 01U' 01R 01L 01F 01B' 01U 01F2 01D2 01R2 01L2 01F2 01U2 01F2 01U' 01F2";
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Checkboard1"});
@@ -522,6 +524,7 @@ class App extends Component {
 
   // Algorithm for Cube in a cube in a cube
   cubeInACube = () => {
+    if(this.state.currentFunc !== "None") return;
     let moveString = "01U' 01L' 01U' 01F' 01R2 01B' 01R 01F 01U 01B2 01U 01B' 01L 01U' 01F 01U 01R 01F'"
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Cube x3"});
@@ -533,6 +536,7 @@ class App extends Component {
 
   // Algorithm for Cube in a cube
   cubeIn = () => {
+    if(this.state.currentFunc !== "None") return;
     let moveString = "01F 01L 01F 01U' 01R 01U 01F2 01L2 01U' 01L' 01B 01D' 01B' 01L2 01U";
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Cube x2"});
@@ -544,6 +548,7 @@ class App extends Component {
 
   // Algorithm for isolating middles
   sixSpots = () => {
+    if(this.state.currentFunc !== "None") return;
     let moveString = "01U 01D' 01R 01L' 01F 01B' 01U 01D'"
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Six Spots"});
@@ -555,6 +560,7 @@ class App extends Component {
 
   // Algorithm for coss
   cross = () => {
+    if(this.state.currentFunc !== "None") return;
     let moveString = "01R2 01L' 01D 01F2 01R' 01D' 01R' 01L 01U' 01D 01R 01D 01B2 01R' 01U 01D2";
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Cross"});
@@ -632,6 +638,7 @@ class App extends Component {
 
   // Scrambles the cube
   scramble = () => {
+    if(this.state.currentFunc !== "None") return;
     if(this.state.canScramble){
       this.setState({currentFunc : "Scrambling"});
       this.setState({canScramble : false});
@@ -642,6 +649,7 @@ class App extends Component {
   // Rewinds all moves that have been done to the cube since unsolved state
   // Add in solved array to compare for when the cube becomes solved
   reverseMoves = () => {
+    if(this.state.currentFunc !== "None") return;
     if(this.state.reversing===true || !this.state.canScramble) return;
     
     //console.log(this.state.moveLog);
@@ -694,9 +702,9 @@ class App extends Component {
 
   // Solves white (front) cross for 3x3 and greater
   solveWhiteCross = () => {
-    this.setState({currentFunc : "Solving White Cross"});
-    //this.setState({solving : true})
+
     if(!this.state.canScramble) return;
+    this.setState({currentFunc : "Solving White Cross"});
     let moveString = "";
     let cube = this.state.rubiksObject;
     let space = "";
@@ -1680,9 +1688,7 @@ class App extends Component {
 
   // Renders html to the index.html page
   render() {
-    let solveBtn;
-    if(this.state.cubeDimension < 4)
-      solveBtn = <button onClick={this.solveWhiteCross} style={{position:"fixed", bottom: "100px", right: "10px",backgroundColor: "white"}}>SOLVE</button>;
+    let solveBtn = (this.state.cubeDimension < 4) ? <button onClick={this.solveWhiteCross} style={{position:"fixed", bottom: "100px", right: "10px",backgroundColor: "white"}}>SOLVE</button> : "";
     return (
       <div className="App" >
         <Navbar
