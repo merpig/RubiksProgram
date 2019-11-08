@@ -28,6 +28,8 @@ class App extends Component {
     cubeDimension : 10,
     cubeDepth : 1,
     currentSpeed : "Medium",
+    moves : 0,
+    reload : false
   };
 
   // Generates the inital solved state of rubiksObject
@@ -239,11 +241,11 @@ class App extends Component {
       let canMove = this.state.canMove;
 
       // Necessary to keep rendering conflicts from happening
-      setTimeout(function () {
-        if(!canMove) scope.setState({currentFunc: "None"});
-        reloadCubes();
-        moveOn();
-      }, rotationSpeed);
+      //setTimeout(function () {
+        //if(!canMove) scope.setState({currentFunc: "None"});
+        //reloadCubes();
+        //moveOn();
+      //}, rotationSpeed);
     });
     
   };
@@ -415,7 +417,7 @@ class App extends Component {
         this.setState({moveLog : this.state.moveLog + tempMove});
     }
 
-    if(this.state.canScramble) this.moveOff();
+    //if(this.state.canScramble) this.moveOff();
 
     // Faces on opposite side of cube rotate backwards
     if(face>2 && direction === -1) direction = 0;
@@ -450,33 +452,19 @@ class App extends Component {
 
   // Slows the scramble function down to keep from breaking the cube
   // Consider removing this and using moveSetTimed
-  timingScramble = iteration => {
+  timingScramble = () => {
 
-    // put variables in scope of setTimeout
-    let rotateCubeFace = this.rotateCubeFace;
-    let timingScramble = this.timingScramble;
-    let scrambleOn = this.scrambleOn;
-    let rotationSpeed = this.state.rotationSpeed;
-    let scope = this;
-    // use recursion with a timeout to prevent turns from overlapping
-    if(iteration>0)
-      setTimeout(function () {
-        let maxDepth = Math.floor((scope.state.cubeDimension/2));
-        let randFace = Math.floor((Math.random() * 6));
-        let randTurn = Math.floor((Math.random() * 2)-1);
-        let randDepth = 1;
-        if(scope.state.cubeDimension>3) 
-          randDepth = Math.floor((Math.random() * maxDepth)) + 1;
-        rotateCubeFace(randFace, randTurn,randDepth);
-        timingScramble(iteration-1);
-      }, rotationSpeed);
+    this.setState({moves:this.state.moves+1});
 
-    else {
-      setTimeout(function () {
-        scope.setState({currentFunc: "None"});
-        scrambleOn();
-      }, rotationSpeed);
-    }
+    let maxDepth = Math.floor((this.state.cubeDimension/2));
+    let randFace = Math.floor((Math.random() * 6));
+    let randTurn = Math.floor((Math.random() * 2)-1);
+    let randDepth = 1;
+
+    if(this.state.cubeDimension>3) 
+      randDepth = Math.floor((Math.random() * maxDepth)) + 1;
+
+    this.rotateCubeFace(randFace, randTurn,randDepth);
   }
 
   // Converts move string to move array
@@ -638,11 +626,9 @@ class App extends Component {
 
   // Scrambles the cube
   scramble = () => {
-    if(this.state.currentFunc !== "None") return;
-    if(this.state.canScramble){
+    if(this.state.currentFunc === "None"){
+      console.log("should do stuff");
       this.setState({currentFunc : "Scrambling"});
-      this.setState({canScramble : false});
-      this.timingScramble(25);
     }
   }
 
@@ -697,7 +683,7 @@ class App extends Component {
       cubes[i] = cube;
             }
     }
-    this.setState({cubes});
+    this.setState({cubes,reload : false});
   }
 
   // Solves white (front) cross for 3x3 and greater
@@ -1553,6 +1539,8 @@ class App extends Component {
       requestAnimationFrame( animate );
       
       if(this.state.start<=this.state.end){
+        this.setState({reload : true});
+        console.log("turning");
         // state variables asigned for shorter names
         let cubes = this.state.cubes;
         let turnDirection = this.state.turnDirection;
@@ -1681,6 +1669,17 @@ class App extends Component {
             }
           }
         } 
+      }
+      else {
+        if(this.state.reload) this.reloadCubes();
+
+
+        if(this.state.currentFunc==="Scrambling" && this.state.moves < 25)
+          this.timingScramble();
+
+        else if(this.state.currentFunc==="Scrambling" && this.state.moves === 25)
+          this.setState({currentFunc : "None",moves : 0});
+        //console.log("end of turn");
       }
       renderer.render( scene, camera );     
     };
