@@ -11,8 +11,6 @@ class App extends Component {
     rubiksObject : [],      // Contains memory cube
     speed : 7.5,           // Control individual piece rotation speed (don't change)
     rotationSpeed : 350,  // Controls visual rotation speed
-    canScramble: true,    // Manual rotations can't happen while this is false
-    canMove: true,
     start : 7.5,           // Start value for a rotation or set of rotations
     end : 0,              // End value for a roation or set of rotations
     turnDirection : 0,    // Dictates whether the rotation is clockwise or counterclockwise
@@ -23,13 +21,14 @@ class App extends Component {
     theta : 5,
     currentFunc : "None",
     moveLog : "",
-    reversing : false,
+    moveSet : [],
     angle : 3.9,
     cubeDimension : 10,
     cubeDepth : 1,
     currentSpeed : "Medium",
     moves : 0,
-    reload : false
+    reload : false,
+    solveState : 0,
   };
 
   // Generates the inital solved state of rubiksObject
@@ -234,11 +233,11 @@ class App extends Component {
 
     this.setState({rubiksObject : rubiksObject}, () =>{
 
-      let reloadCubes = this.reloadCubes;
-      let rotationSpeed = this.state.rotationSpeed;
-      let moveOn = this.moveOn;
-      let scope = this;
-      let canMove = this.state.canMove;
+      //let reloadCubes = this.reloadCubes;
+      //let rotationSpeed = this.state.rotationSpeed;
+      //let moveOn = this.moveOn;
+      //let scope = this;
+      //let canMove = this.state.canMove;
 
       // Necessary to keep rendering conflicts from happening
       //setTimeout(function () {
@@ -251,45 +250,10 @@ class App extends Component {
   };
 
   // Functions to change speed
-  // Add an option to slows these down a bit for slower GPUs
-  speedZoomin = () => {
+  // Condense into one speed function
+  changeSpeed = (_speed,_rotationSpeed) => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({currentSpeed: "Zoomin",speed: 90, start: 90, end: 0, rotationSpeed: 20});
-  }
-
-  speedFastest = () => {
-    if(this.state.currentFunc !== "None") return;
-    this.setState({currentSpeed: "Fastest",speed: 30, start: 30, end: 0, rotationSpeed: 100});
-  }
-
-  speedFaster = () => {
-    if(this.state.currentFunc !== "None") return;
-    this.setState({currentSpeed: "Faster",speed: 15, start: 15, end: 0, rotationSpeed: 175});
-  }
-
-  speedFast = () => {
-    if(this.state.currentFunc !== "None") return;
-    this.setState({currentSpeed: "Fast",speed: 10, start: 10, end: 0, rotationSpeed: 250});
-  }
-
-  speedMedium = () => {
-    if(this.state.currentFunc !== "None") return;
-    this.setState({currentSpeed: "Medium",speed: 7.5, start: 7.5, end: 0, rotationSpeed: 350});
-  }
-
-  speedSlow = () => {
-    if(this.state.currentFunc !== "None") return;
-    this.setState({currentSpeed: "Slow",speed: 5, start: 5, end: 0, rotationSpeed: 500});
-  }
-
-  speedSlower = () => {
-    if(this.state.currentFunc !== "None") return;
-    this.setState({currentSpeed: "Slower",speed: 3, start: 3, end: 0, rotationSpeed: 750});
-  }
-
-  speedSlowest = () => {
-    if(this.state.currentFunc !== "None") return;
-    this.setState({currentSpeed: "Slowest",speed: 1.5, start: 1.5, end: 0, rotationSpeed: 1050});
+    this.setState({currentSpeed: "Zoomin",speed: _speed, start: _speed, end: 0, rotationSpeed: _rotationSpeed});
   }
 
   rotateCamera = (key) => {
@@ -314,87 +278,12 @@ class App extends Component {
   }
 
   // Control when rotation buttons can be clicked
-  rzl = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None") {
-      this.setState({currentFunc: "F'"});
-      this.rotateCubeFace(0,0,1);
-    }
-  }
-  
-  rzr = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None") {
-      this.setState({currentFunc: "F"});
-      this.rotateCubeFace(0,-1,1);
-    }
-  }
-
-  rol = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None") {
-      this.setState({currentFunc: "U'"});
-      this.rotateCubeFace(1,0,1);
-    }
-  }
-
-  ror = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
-      this.setState({currentFunc: "U"});
-      this.rotateCubeFace(1,-1,1);
-    }
-  }
-
-  rtwl = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
-      this.setState({currentFunc: "R'"});
-      this.rotateCubeFace(2,0,1);
-    }
-  }
-
-  rtwr = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
-      this.setState({currentFunc: "R"});
-      this.rotateCubeFace(2,-1,1);
-    }
-  }
-
-  rthl = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
-      this.setState({currentFunc: "B'"});
-      this.rotateCubeFace(3,0,1);
-    }
-  }
-
-  rthr = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
-      this.setState({currentFunc: "B"});
-      this.rotateCubeFace(3,-1,1);
-    }
-  }
-
-  rfol = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
-      this.setState({currentFunc: "L'"});
-      this.rotateCubeFace(4,0,1);
-    }
-  }
-
-  rfor = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
-      this.setState({currentFunc: "L"});
-      this.rotateCubeFace(4,-1,1);
-    }
-  }
-
-  rfil = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
-      this.setState({currentFunc: "D'"});
-      this.rotateCubeFace(5,0,1);
-    }
-  }
-
-  rfir = () => {
-    if(this.state.canScramble && this.state.canMove && this.state.currentFunc === "None"){
-      this.setState({currentFunc: "D"});
-      this.rotateCubeFace(5,-1,1);
+  // Switch over from timed moves
+  rotateOneFace = (e,vals) => {
+    //console.log(e);
+    if(this.state.currentFunc === "None") {
+      this.setState({currentFunc: e});
+      this.rotateCubeFace(vals[0],vals[1],vals[2]);
     }
   }
 
@@ -432,22 +321,6 @@ class App extends Component {
                    () =>{
       this.rotateFace(face,direction,cubeDepth);
     });
-  }
-
-  scrambleOn = () => {
-    this.setState({canScramble : true});
-  }
-
-  scrambleOff = () => {
-    this.setState({canScramble : false});
-  }
-
-  moveOn = () => {
-    this.setState({canMove : true});
-  }
-
-  moveOff = () => {
-    this.setState({canMove : false});
   }
 
   // Slows the scramble function down to keep from breaking the cube
@@ -491,11 +364,7 @@ class App extends Component {
     if(this.state.currentFunc !== "None") return;
     let moveString = "01U2 01D2 01R2 01L2 01F2 01B2";
     const moveArray = this.moveStringToArray(moveString);
-    this.setState({currentFunc : "Checkerboard"});
-
-    if(this.state.canScramble){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,0);
-    }
+    this.setState({currentFunc : "Checkerboard", moveSet : moveArray});
   }
 
   // Algorithm for Checkerboard1
@@ -503,11 +372,7 @@ class App extends Component {
     if(this.state.currentFunc !== "None") return;
     let moveString = "01U' 01R2 01L2 01F2 01B2 01U' 01R 01L 01F 01B' 01U 01F2 01D2 01R2 01L2 01F2 01U2 01F2 01U' 01F2";
     const moveArray = this.moveStringToArray(moveString);
-    this.setState({currentFunc : "Checkboard1"});
-  
-    if(this.state.canScramble){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,0);
-    }
+    this.setState({currentFunc : "Checkerboard1", moveSet : moveArray});
   }
 
   // Algorithm for Cube in a cube in a cube
@@ -515,11 +380,7 @@ class App extends Component {
     if(this.state.currentFunc !== "None") return;
     let moveString = "01U' 01L' 01U' 01F' 01R2 01B' 01R 01F 01U 01B2 01U 01B' 01L 01U' 01F 01U 01R 01F'"
     const moveArray = this.moveStringToArray(moveString);
-    this.setState({currentFunc : "Cube x3"});
-
-    if(this.state.canScramble){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,0);
-    }
+    this.setState({currentFunc : "Cube x3", moveSet : moveArray});
   }
 
   // Algorithm for Cube in a cube
@@ -527,11 +388,7 @@ class App extends Component {
     if(this.state.currentFunc !== "None") return;
     let moveString = "01F 01L 01F 01U' 01R 01U 01F2 01L2 01U' 01L' 01B 01D' 01B' 01L2 01U";
     const moveArray = this.moveStringToArray(moveString);
-    this.setState({currentFunc : "Cube x2"});
-
-    if(this.state.canScramble){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,0);
-    }
+    this.setState({currentFunc : "Cube x2", moveSet : moveArray});
   }
 
   // Algorithm for isolating middles
@@ -539,11 +396,7 @@ class App extends Component {
     if(this.state.currentFunc !== "None") return;
     let moveString = "01U 01D' 01R 01L' 01F 01B' 01U 01D'"
     const moveArray = this.moveStringToArray(moveString);
-    this.setState({currentFunc : "Six Spots"});
-
-    if(this.state.canScramble){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,0);
-    }
+    this.setState({currentFunc : "Six Spots", moveSet : moveArray});
   }
 
   // Algorithm for coss
@@ -551,10 +404,7 @@ class App extends Component {
     if(this.state.currentFunc !== "None") return;
     let moveString = "01R2 01L' 01D 01F2 01R' 01D' 01R' 01L 01U' 01D 01R 01D 01B2 01R' 01U 01D2";
     const moveArray = this.moveStringToArray(moveString);
-    this.setState({currentFunc : "Cross"});
-    if(this.state.canScramble){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,0);
-    }
+    this.setState({currentFunc : "Cross", moveSet : moveArray});
   }
 
   // Generalized time move function. Takes in move array and creates small delay between moves
@@ -564,45 +414,51 @@ class App extends Component {
     /*if(this.state.rotationSpeed < 150)
       this.setState({rotationSpeed: 200});*/
 
-    if(start === 0)
-      this.setState({canScramble : false});
+    //if(start === 0)
+    //  this.setState({canScramble : false});
+    //console.log(moveArray);
+    let shifted = moveArray.shift();
+    
+   // console.log(shifted);
+   // console.log(moveArray);
+    //return;
 
     let tempFace = 0;
     let tempDirection = -1;
     let tempDepth = 1;
-    if(start <= length){
-      if(moveArray[start].length === 4) tempDirection=0;
-      tempDepth = parseInt(moveArray[start].slice(0,2));
+    //if(start <= length){
+      if(shifted.length === 4) tempDirection=0;
+      tempDepth = parseInt(shifted.slice(0,2));
 
-      if(moveArray[start].slice(2,3) === "U") tempFace = 1;
-      else if(moveArray[start].slice(2,3) === "F") tempFace = 0;
-      else if(moveArray[start].slice(2,3) === "B") tempFace = 3;
-      else if(moveArray[start].slice(2,3) === "R") tempFace = 2;
-      else if(moveArray[start].slice(2,3) === "L") tempFace = 4;
-      else if(moveArray[start].slice(2,3) === "D") tempFace = 5;
-    }
+      if(shifted.slice(2,3) === "U") tempFace = 1;
+      else if(shifted.slice(2,3) === "F") tempFace = 0;
+      else if(shifted.slice(2,3) === "B") tempFace = 3;
+      else if(shifted.slice(2,3) === "R") tempFace = 2;
+      else if(shifted.slice(2,3) === "L") tempFace = 4;
+      else if(shifted.slice(2,3) === "D") tempFace = 5;
+    //}
 
-    let rotateCubeFace = this.rotateCubeFace;
-    let moveSetTimed = this.moveSetTimed;
+    //let rotateCubeFace = this.rotateCubeFace;
+    //let moveSetTimed = this.moveSetTimed;
 
-    setTimeout(function () {
-      if(start <= length) {
-        rotateCubeFace(tempFace,tempDirection,tempDepth);
-      }
-      start = start + 1;
-      moveSetTimed(moveArray,length,start,solving);
-    }, this.state.rotationSpeed);
+    //setTimeout(function () {
+      //if(start <= length) {
+        this.rotateCubeFace(tempFace,tempDirection,tempDepth);
+      //}
+      //start = start + 1;
+      //moveSetTimed(moveArray,length,start,solving);
+    //}, this.state.rotationSpeed);
 
     
-    if(start === length+1) {
+    /*if(start === length+1) {
       if(!solving)
         this.setState({currentFunc : "None"});
         
-      this.setState({canScramble : true});
+      this.setState({canScramble : true});*/
       
 
       // required for functions to be in scope of setTimeout
-      let solveWhiteCross = this.solveWhiteCross;
+      /*let solveWhiteCross = this.solveWhiteCross;
       let solveWhiteCorners = this.solveWhiteCorners;
       let solveMiddleEdges = this.solveMiddleEdges;
       let solveYellowCross = this.solveYellowCross;
@@ -621,13 +477,13 @@ class App extends Component {
       else if(solving === 5)  setTimeout(function () {alignYellowCross();}, 50);
       else if(solving === 6)  setTimeout(function () {alignYellowCorners();}, 50);
       else if(solving === 7)  setTimeout(function () {solveYellowCorners(scope);}, 50);
-    }
+    }*/
   }
 
   // Scrambles the cube
   scramble = () => {
     if(this.state.currentFunc === "None"){
-      console.log("should do stuff");
+      //console.log("should do stuff");
       this.setState({currentFunc : "Scrambling"});
     }
   }
@@ -635,12 +491,8 @@ class App extends Component {
   // Rewinds all moves that have been done to the cube since unsolved state
   // Add in solved array to compare for when the cube becomes solved
   reverseMoves = () => {
-    if(this.state.currentFunc !== "None") return;
-    if(this.state.reversing===true || !this.state.canScramble) return;
-    
-    //console.log(this.state.moveLog);
+
     if(!this.state.moveLog.length) return;
-    this.setState({reversing : true});
     let moveString = this.state.moveLog;
     this.setState({moveLog : ""});
     this.setState({currentFunc : "Reverse Moves"});
@@ -651,12 +503,8 @@ class App extends Component {
     for(let i = tempArray.length-1; i >= 0; i--){
       moveArray.push(tempArray[i]);
     }
-    
-    if(this.state.canScramble){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,0);
-    }
-    
-    return moveArray.length;
+
+    this.setState({moveSet : moveArray});
   }
 
   // Refreshes page to reset cube
@@ -686,11 +534,14 @@ class App extends Component {
     this.setState({cubes,reload : false});
   }
 
-  // Solves white (front) cross for 3x3 and greater
+  beginSolve = () => {
+    if(this.state.currentFunc !== "None") return;
+    this.setState({currentFunc : "Solving",solveState : 1});
+  }
+  // Solves white (front) cross for 3x3 and greater.
+  // Solve state = 1
   solveWhiteCross = () => {
 
-    if(!this.state.canScramble) return;
-    this.setState({currentFunc : "Solving White Cross"});
     let moveString = "";
     let cube = this.state.rubiksObject;
     let space = "";
@@ -980,16 +831,18 @@ class App extends Component {
     //console.log(moveArray);
 
     if(solvedEdges < 4){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,1);
+      //this.moveSetTimed(moveArray,moveArray.length-1,0,1);
+      this.setState({moveSet : moveArray});
     }
     else {
-      this.solveWhiteCorners();
+      this.setState({solveState : 2});
     }
   }
 
   // Solves white (front) corners
+  // Solve state = 2
   solveWhiteCorners = () => {
-    this.setState({currentFunc : "Solving White Corners"});
+    //this.setState({currentFunc : "Solving White Corners"});
     let moveString = "";
     let cube = this.state.rubiksObject;
     let space = "";
@@ -1091,17 +944,19 @@ class App extends Component {
     //console.log(moveArray);
 
     if(solvedCorners < 4){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,2);
+      //this.moveSetTimed(moveArray,moveArray.length-1,0,2);
+      this.setState({moveSet : moveArray});
     }
     else{
-      if(dim < 3) this.alignYellowCorners();
-      else this.solveMiddleEdges();
+      if(dim < 3) this.setState({solveState : 6});
+      else this.setState({solveState : 3});
     }
   }
 
   // Correctly positions the middle edges for 3x3 and greater
+  // Solve state = 3
   solveMiddleEdges = () => {
-    this.setState({currentFunc : "Solving Midde Edges"});
+    //this.setState({currentFunc : "Solving Midde Edges"});
     let moveString = "";
     let cube = this.state.rubiksObject;
     let space = "";
@@ -1204,16 +1059,19 @@ class App extends Component {
     //console.log(moveArray);
 
     if(solvedEdges < 4){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,3);
+      this.setState({moveSet : moveArray});
+      //this.moveSetTimed(moveArray,moveArray.length-1,0,3);
     }
     else{
-      this.solveYellowCross();
+      //this.solveYellowCross();
+      this.setState({solveState : 4});
     }
   }
 
   // Solves the yellow (back) cross for 3x3 and greater
+  // Solve state = 4
   solveYellowCross = () => {
-    this.setState({currentFunc : "solving yellow cross"});
+    //this.setState({currentFunc : "solving yellow cross"});
     let moveString = "";
     let cube = this.state.rubiksObject;
     let recipe = "01U 01R 01B 01R' 01B' 01U'";
@@ -1258,16 +1116,18 @@ class App extends Component {
     //console.log(moveArray);
 
     if(moveString.length){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,4);
+      //this.moveSetTimed(moveArray,moveArray.length-1,0,4);
+      this.setState({moveSet : moveArray});
     }
     else{
-      this.alignYellowCross();
+      this.setState({solveState:5});
     }
   }
 
   // Aligns the yellow (back) cross
+  // Solve state = 5
   alignYellowCross = () =>{
-    this.setState({currentFunc : "Aligning Yellow Edges"});
+    //this.setState({currentFunc : "Aligning Yellow Edges"});
     let moveString = "";
     let cube = this.state.rubiksObject;
 
@@ -1295,16 +1155,19 @@ class App extends Component {
     //console.log(moveArray);
 
     if(moveString.length){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,5);
+      this.setState({moveSet : moveArray});
+      //this.moveSetTimed(moveArray,moveArray.length-1,0,5);
     }
     else{
-      this.alignYellowCorners();
+      //this.alignYellowCorners();
+      this.setState({solveState:6});
     }
   }
 
   // Aligns the yellow (back) corners
+  // Solve state = 6
   alignYellowCorners = () =>{
-    this.setState({currentFunc : "Aligning Yellow Corners"});
+    //this.setState({currentFunc : "Aligning Yellow Corners"});
     let moveString = "";
     let cube = this.state.rubiksObject;
 
@@ -1330,22 +1193,25 @@ class App extends Component {
     //console.log(moveArray);
 
     if(moveString.length){
-      this.moveSetTimed(moveArray,moveArray.length-1,0,6);
+      this.setState({moveSet : moveArray});
+      //this.moveSetTimed(moveArray,moveArray.length-1,0,6);
     }
     else{
-      let scope = this;
-      this.solveYellowCorners(scope);
+      this.setState({solveState:7});
+      //let scope = this;
+      //this.solveYellowCorners(scope);
     }
   }
 
   // Solves the yellow (back) corners
-  solveYellowCorners(scope){
+  // Solve state = 7
+  solveYellowCorners(){
     //console.log(scope);
-    scope.setState({currentFunc : "Solving Yellow Corners"});
+    //scope.setState({currentFunc : "Solving Yellow Corners"});
     let moveString = "";
-    let cube = scope.state.rubiksObject;
+    let cube = this.state.rubiksObject;
     
-    let dim = scope.state.cubeDimension;
+    let dim = this.state.cubeDimension;
 
     let pieceOne = cube.length - (dim*dim);
     let pieceTwo = pieceOne + (dim-1);
@@ -1396,11 +1262,13 @@ class App extends Component {
       }
     }
 
-    let moveArray = scope.moveStringToArray(moveString);
+    let moveArray = this.moveStringToArray(moveString);
     //console.log(moveArray);
 
     if(moveString.length){
-      scope.moveSetTimed(moveArray,moveArray.length-1,0,7);
+
+      this.setState({moveSet:moveArray});
+      //scope.moveSetTimed(moveArray,moveArray.length-1,0,7);
     }
     else{
       if(dim === 2) {
@@ -1412,29 +1280,31 @@ class App extends Component {
             //console.log("piece two is positioned correctly");
             if(cube[pieceThree][6]===0 && cube[pieceThree][8]===0){
               //console.log("Solved!")
-              scope.setState({moveLog : "",currentFunc: "None"});
+              this.setState({moveLog : "",currentFunc: "None",moveSet:[],solveState:0});
             }
             else {
               //console.log("Anomoly found! Solution: ");
               moveString = "01R 01D' 01R' 01F' 01R' 01F 01D";
-              moveArray = scope.moveStringToArray(moveString);
+              moveArray = this.moveStringToArray(moveString);
               //console.log(moveArray);
-              scope.moveSetTimed(moveArray,moveArray.length-1,0,7);
+              this.setState({moveSet:moveArray});
+              //this.moveSetTimed(moveArray,moveArray.length-1,0,7);
             }
           }
         }
         else {
           moveString = "01B";
-          moveArray = scope.moveStringToArray(moveString);
+          moveArray = this.moveStringToArray(moveString);
           //console.log(moveArray);
-          scope.moveSetTimed(moveArray,moveArray.length-1,0,7);
+          //scope.moveSetTimed(moveArray,moveArray.length-1,0,7);
+          this.setState({moveSet:moveArray});
         }
       }
 
       // else
       else {
         //console.log("Solved!");
-        scope.setState({moveLog : "",currentFunc: "None"});
+        this.setState({moveLog : "",currentFunc: "None",moveSet:[],solveState:0});
       }
     }
   }
@@ -1540,7 +1410,7 @@ class App extends Component {
       
       if(this.state.start<=this.state.end){
         this.setState({reload : true});
-        console.log("turning");
+        //console.log("turning");
         // state variables asigned for shorter names
         let cubes = this.state.cubes;
         let turnDirection = this.state.turnDirection;
@@ -1672,14 +1542,35 @@ class App extends Component {
       }
       else {
         if(this.state.reload) this.reloadCubes();
+        if(this.state.currentFunc !== "None"){
 
+          // Moves based on active function
+          if (this.state.currentFunc==="Scrambling")
+            this.state.moves < 25 ?
+              this.timingScramble() : this.setState({currentFunc : "None",moves : 0});
 
-        if(this.state.currentFunc==="Scrambling" && this.state.moves < 25)
-          this.timingScramble();
+          else if (this.state.currentFunc==="Solving"){
+            if(!this.state.moveSet.length) {
+              //console.log(this.state.solveState);
+              if(this.state.solveState === 1) this.solveWhiteCross();
+              if(this.state.solveState === 2) this.solveWhiteCorners();
+              if(this.state.solveState === 3) this.solveMiddleEdges();
+              if(this.state.solveState === 4) this.solveYellowCross();
+              if(this.state.solveState === 5) this.alignYellowCross();
+              if(this.state.solveState === 6) this.alignYellowCorners();
+              if(this.state.solveState === 7) this.solveYellowCorners();
+            }
+            else this.moveSetTimed(this.state.moveSet,0,0,0);
+          }
+          
+          else 
+            this.state.moveSet.length ?
+              this.moveSetTimed(this.state.moveSet,0,0,0) : this.setState({currentFunc:"None"}); 
 
-        else if(this.state.currentFunc==="Scrambling" && this.state.moves === 25)
-          this.setState({currentFunc : "None",moves : 0});
-        //console.log("end of turn");
+          
+          
+        }
+
       }
       renderer.render( scene, camera );     
     };
@@ -1687,7 +1578,7 @@ class App extends Component {
 
   // Renders html to the index.html page
   render() {
-    let solveBtn = (this.state.cubeDimension < 4) ? <button onClick={this.solveWhiteCross} style={{position:"fixed", bottom: "100px", right: "10px",backgroundColor: "white"}}>SOLVE</button> : "";
+    let solveBtn = (this.state.cubeDimension < 4) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "100px", right: "10px",backgroundColor: "white"}}>SOLVE</button> : "";
     return (
       <div className="App" >
         <Navbar
@@ -1698,14 +1589,14 @@ class App extends Component {
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white"}}>Current Function: {this.state.currentFunc}</p>
 
         {/* Top Left */}
-        <button onClick={this.speedZoomin} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "black",width: "90px",color:"white"}}>Zoomin</button>
-        <button onClick={this.speedFastest} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "red",width: "90px",color:"white"}}>Fastest</button>
-        <button onClick={this.speedFaster} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "orange",width: "90px"}}>Faster</button>
-        <button onClick={this.speedFast} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "yellow",width: "90px"}}>Fast</button>
-        <button onClick={this.speedMedium} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "green",width: "90px",color:"white"}}>Medium</button>
-        <button onClick={this.speedSlow} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "lightblue",width: "90px"}}>Slow</button>
-        <button onClick={this.speedSlower} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "blue",width: "90px",color:"white"}}>Slower</button>
-        <button onClick={this.speedSlowest} style={{position:"fixed", top: "310px", left: "10px",backgroundColor: "navy",width: "90px",color:"white"}}>Slowest</button>
+        <button onClick={() => this.changeSpeed(90,20)} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "black",width: "90px",color:"white"}}>Zoomin</button>
+        <button onClick={() => this.changeSpeed(30,100)} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "red",width: "90px",color:"white"}}>Fastest</button>
+        <button onClick={() => this.changeSpeed(15,175)} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "orange",width: "90px"}}>Faster</button>
+        <button onClick={() => this.changeSpeed(10,250)} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "yellow",width: "90px"}}>Fast</button>
+        <button onClick={() => this.changeSpeed(7.5,350)} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "green",width: "90px",color:"white"}}>Medium</button>
+        <button onClick={() => this.changeSpeed(5,500)} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "lightblue",width: "90px"}}>Slow</button>
+        <button onClick={() => this.changeSpeed(3,750)} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "blue",width: "90px",color:"white"}}>Slower</button>
+        <button onClick={() => this.changeSpeed(1.5,1050)} style={{position:"fixed", top: "310px", left: "10px",backgroundColor: "navy",width: "90px",color:"white"}}>Slowest</button>
         
         {/* Bottom Left */}
         <button onClick={this.cross} style={{position:"fixed", bottom: "160px", left: "10px",backgroundColor: "white"}}>Cross</button>
@@ -1716,18 +1607,18 @@ class App extends Component {
         <button onClick={this.sixSpots} style={{position:"fixed", bottom: "10px", left: "10px",backgroundColor: "white"}}>Six Spots</button>
         
         {/* Top Right */}
-        <button onClick={this.rzl} style={{position:"fixed", top: "100px", right: "50px",backgroundColor: "white"}}>F'</button>
-        <button onClick={this.rzr} style={{position:"fixed", top: "100px", right: "10px",backgroundColor: "white"}}>F</button>
-        <button onClick={this.rol} style={{position:"fixed", top: "140px", right: "50px",backgroundColor: "blue",color: "white"}}>U'</button>
-        <button onClick={this.ror} style={{position:"fixed", top: "140px", right: "10px",backgroundColor: "blue",color: "white"}}>U</button>
-        <button onClick={this.rtwl} style={{position:"fixed", top: "180px", right: "50px",backgroundColor: "red",color: "white"}}>R'</button>
-        <button onClick={this.rtwr} style={{position:"fixed", top: "180px", right: "10px",backgroundColor: "red",color: "white"}}>R</button>
-        <button onClick={this.rthl} style={{position:"fixed", top: "220px", right: "50px",backgroundColor: "yellow"}}>B'</button>
-        <button onClick={this.rthr} style={{position:"fixed", top: "220px", right: "10px",backgroundColor: "yellow"}}>B</button>
-        <button onClick={this.rfol} style={{position:"fixed", top: "260px", right: "50px",backgroundColor: "orange"}}>L'</button> 
-        <button onClick={this.rfor} style={{position:"fixed", top: "260px", right: "10px",backgroundColor: "orange"}}>L</button>
-        <button onClick={this.rfil} style={{position:"fixed", top: "300px", right: "50px",backgroundColor: "green",color: "white"}}>D'</button> 
-        <button onClick={this.rfir} style={{position:"fixed", top: "300px", right: "10px",backgroundColor: "green",color: "white"}}>D</button>
+        <button onClick={() => this.rotateOneFace("F'",[0,0,1])} style={{position:"fixed", top: "100px", right: "50px",backgroundColor: "white"}}>F'</button>
+        <button onClick={() => this.rotateOneFace("F",[0,-1,1])} style={{position:"fixed", top: "100px", right: "10px",backgroundColor: "white"}}>F</button>
+        <button onClick={() => this.rotateOneFace("U'",[1,0,1])} style={{position:"fixed", top: "140px", right: "50px",backgroundColor: "blue",color: "white"}}>U'</button>
+        <button onClick={() => this.rotateOneFace("U",[1,-1,1])} style={{position:"fixed", top: "140px", right: "10px",backgroundColor: "blue",color: "white"}}>U</button>
+        <button onClick={() => this.rotateOneFace("R'",[2,0,1])} style={{position:"fixed", top: "180px", right: "50px",backgroundColor: "red",color: "white"}}>R'</button>
+        <button onClick={() => this.rotateOneFace("R",[2,-1,1])} style={{position:"fixed", top: "180px", right: "10px",backgroundColor: "red",color: "white"}}>R</button>
+        <button onClick={() => this.rotateOneFace("B'",[3,0,1])} style={{position:"fixed", top: "220px", right: "50px",backgroundColor: "yellow"}}>B'</button>
+        <button onClick={() => this.rotateOneFace("B",[3,-1,1])} style={{position:"fixed", top: "220px", right: "10px",backgroundColor: "yellow"}}>B</button>
+        <button onClick={() => this.rotateOneFace("L'",[4,0,1])} style={{position:"fixed", top: "260px", right: "50px",backgroundColor: "orange"}}>L'</button> 
+        <button onClick={() => this.rotateOneFace("L",[4,-1,1])} style={{position:"fixed", top: "260px", right: "10px",backgroundColor: "orange"}}>L</button>
+        <button onClick={() => this.rotateOneFace("D'",[5,0,1])} style={{position:"fixed", top: "300px", right: "50px",backgroundColor: "green",color: "white"}}>D'</button> 
+        <button onClick={() => this.rotateOneFace("D",[5,-1,1])} style={{position:"fixed", top: "300px", right: "10px",backgroundColor: "green",color: "white"}}>D</button>
 
         {/* Bottom Right */} 
         {solveBtn}
