@@ -251,9 +251,9 @@ class App extends Component {
 
   // Functions to change speed
   // Condense into one speed function
-  changeSpeed = (_speed,_rotationSpeed) => {
+  changeSpeed = (_speed,_rotationSpeed,_name) => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({currentSpeed: "Zoomin",speed: _speed, start: _speed, end: 0, rotationSpeed: _rotationSpeed});
+    this.setState({currentSpeed: _name,speed: _speed, start: _speed, end: 0, rotationSpeed: _rotationSpeed});
   }
 
   rotateCamera = (key) => {
@@ -1589,14 +1589,14 @@ class App extends Component {
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white"}}>Current Function: {this.state.currentFunc}</p>
 
         {/* Top Left */}
-        <button onClick={() => this.changeSpeed(90,20)} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "black",width: "90px",color:"white"}}>Zoomin</button>
-        <button onClick={() => this.changeSpeed(30,100)} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "red",width: "90px",color:"white"}}>Fastest</button>
-        <button onClick={() => this.changeSpeed(15,175)} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "orange",width: "90px"}}>Faster</button>
-        <button onClick={() => this.changeSpeed(10,250)} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "yellow",width: "90px"}}>Fast</button>
-        <button onClick={() => this.changeSpeed(7.5,350)} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "green",width: "90px",color:"white"}}>Medium</button>
-        <button onClick={() => this.changeSpeed(5,500)} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "lightblue",width: "90px"}}>Slow</button>
-        <button onClick={() => this.changeSpeed(3,750)} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "blue",width: "90px",color:"white"}}>Slower</button>
-        <button onClick={() => this.changeSpeed(1.5,1050)} style={{position:"fixed", top: "310px", left: "10px",backgroundColor: "navy",width: "90px",color:"white"}}>Slowest</button>
+        <button onClick={() => this.changeSpeed(90,20,"Zoomin")} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "black",width: "90px",color:"white"}}>Zoomin</button>
+        <button onClick={() => this.changeSpeed(30,100,"Fastest")} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "red",width: "90px",color:"white"}}>Fastest</button>
+        <button onClick={() => this.changeSpeed(15,175,"Faster")} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "orange",width: "90px"}}>Faster</button>
+        <button onClick={() => this.changeSpeed(10,250,"Fast")} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "yellow",width: "90px"}}>Fast</button>
+        <button onClick={() => this.changeSpeed(7.5,350,"Medium")} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "green",width: "90px",color:"white"}}>Medium</button>
+        <button onClick={() => this.changeSpeed(5,500,"Slow")} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "lightblue",width: "90px"}}>Slow</button>
+        <button onClick={() => this.changeSpeed(3,750,"Slower")} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "blue",width: "90px",color:"white"}}>Slower</button>
+        <button onClick={() => this.changeSpeed(1.5,1050,"Slowest")} style={{position:"fixed", top: "310px", left: "10px",backgroundColor: "navy",width: "90px",color:"white"}}>Slowest</button>
         
         {/* Bottom Left */}
         <button onClick={this.cross} style={{position:"fixed", bottom: "160px", left: "10px",backgroundColor: "white"}}>Cross</button>
