@@ -18,7 +18,6 @@ class App extends Component {
     cameraX : 10,
     cameraY : -10,
     cameraZ : 10,
-    theta : 5,
     currentFunc : "None",
     moveLog : "",
     moveSet : [],
@@ -232,19 +231,6 @@ class App extends Component {
     }
 
     this.setState({rubiksObject : rubiksObject}, () =>{
-
-      //let reloadCubes = this.reloadCubes;
-      //let rotationSpeed = this.state.rotationSpeed;
-      //let moveOn = this.moveOn;
-      //let scope = this;
-      //let canMove = this.state.canMove;
-
-      // Necessary to keep rendering conflicts from happening
-      //setTimeout(function () {
-        //if(!canMove) scope.setState({currentFunc: "None"});
-        //reloadCubes();
-        //moveOn();
-      //}, rotationSpeed);
     });
     
   };
@@ -278,9 +264,7 @@ class App extends Component {
   }
 
   // Control when rotation buttons can be clicked
-  // Switch over from timed moves
   rotateOneFace = (e,vals) => {
-    //console.log(e);
     if(this.state.currentFunc === "None") {
       this.setState({currentFunc: e});
       this.rotateCubeFace(vals[0],vals[1],vals[2]);
@@ -410,80 +394,29 @@ class App extends Component {
   // Generalized time move function. Takes in move array and creates small delay between moves
   moveSetTimed = (moveArray,length, start, solving) =>{
 
-    // Breaks at faster speeds
-    /*if(this.state.rotationSpeed < 150)
-      this.setState({rotationSpeed: 200});*/
-
-    //if(start === 0)
-    //  this.setState({canScramble : false});
-    //console.log(moveArray);
     let shifted = moveArray.shift();
-    
-   // console.log(shifted);
-   // console.log(moveArray);
-    //return;
 
     let tempFace = 0;
     let tempDirection = -1;
     let tempDepth = 1;
-    //if(start <= length){
-      if(shifted.length === 4) tempDirection=0;
-      tempDepth = parseInt(shifted.slice(0,2));
 
-      if(shifted.slice(2,3) === "U") tempFace = 1;
-      else if(shifted.slice(2,3) === "F") tempFace = 0;
-      else if(shifted.slice(2,3) === "B") tempFace = 3;
-      else if(shifted.slice(2,3) === "R") tempFace = 2;
-      else if(shifted.slice(2,3) === "L") tempFace = 4;
-      else if(shifted.slice(2,3) === "D") tempFace = 5;
-    //}
+    if(shifted.length === 4) tempDirection=0;
+    tempDepth = parseInt(shifted.slice(0,2));
 
-    //let rotateCubeFace = this.rotateCubeFace;
-    //let moveSetTimed = this.moveSetTimed;
+    if(shifted.slice(2,3) === "U") tempFace = 1;
+    else if(shifted.slice(2,3) === "F") tempFace = 0;
+    else if(shifted.slice(2,3) === "B") tempFace = 3;
+    else if(shifted.slice(2,3) === "R") tempFace = 2;
+    else if(shifted.slice(2,3) === "L") tempFace = 4;
+    else if(shifted.slice(2,3) === "D") tempFace = 5;
 
-    //setTimeout(function () {
-      //if(start <= length) {
-        this.rotateCubeFace(tempFace,tempDirection,tempDepth);
-      //}
-      //start = start + 1;
-      //moveSetTimed(moveArray,length,start,solving);
-    //}, this.state.rotationSpeed);
+    this.rotateCubeFace(tempFace,tempDirection,tempDepth);
 
-    
-    /*if(start === length+1) {
-      if(!solving)
-        this.setState({currentFunc : "None"});
-        
-      this.setState({canScramble : true});*/
-      
-
-      // required for functions to be in scope of setTimeout
-      /*let solveWhiteCross = this.solveWhiteCross;
-      let solveWhiteCorners = this.solveWhiteCorners;
-      let solveMiddleEdges = this.solveMiddleEdges;
-      let solveYellowCross = this.solveYellowCross;
-      let alignYellowCross = this.alignYellowCross;
-      let alignYellowCorners = this.alignYellowCorners;
-      let solveYellowCorners = this.solveYellowCorners;
-
-      // required for this to be in scope of setTimeout
-      let scope = this;
-
-      // Check if move set is part of the solve functions
-      if(solving === 1) setTimeout(function () {solveWhiteCross();}, 50);
-      else if(solving === 2 ) setTimeout(function () {solveWhiteCorners();}, 50);
-      else if(solving === 3 ) setTimeout(function () {solveMiddleEdges();}, 50);
-      else if(solving === 4)  setTimeout(function () {solveYellowCross();}, 50);
-      else if(solving === 5)  setTimeout(function () {alignYellowCross();}, 50);
-      else if(solving === 6)  setTimeout(function () {alignYellowCorners();}, 50);
-      else if(solving === 7)  setTimeout(function () {solveYellowCorners(scope);}, 50);
-    }*/
   }
 
   // Scrambles the cube
   scramble = () => {
     if(this.state.currentFunc === "None"){
-      //console.log("should do stuff");
       this.setState({currentFunc : "Scrambling"});
     }
   }
@@ -491,7 +424,7 @@ class App extends Component {
   // Rewinds all moves that have been done to the cube since unsolved state
   // Add in solved array to compare for when the cube becomes solved
   reverseMoves = () => {
-
+    if(this.state.currentFunc !== "None") return;
     if(!this.state.moveLog.length) return;
     let moveString = this.state.moveLog;
     this.setState({moveLog : ""});
@@ -539,7 +472,6 @@ class App extends Component {
     this.setState({currentFunc : "Solving",solveState : 1});
   }
   // Solves white (front) cross for 3x3 and greater.
-  // Solve state = 1
   solveWhiteCross = () => {
 
     let moveString = "";
@@ -828,10 +760,8 @@ class App extends Component {
     
     
     const moveArray = this.moveStringToArray(moveString);
-    //console.log(moveArray);
 
     if(solvedEdges < 4){
-      //this.moveSetTimed(moveArray,moveArray.length-1,0,1);
       this.setState({moveSet : moveArray});
     }
     else {
@@ -840,9 +770,7 @@ class App extends Component {
   }
 
   // Solves white (front) corners
-  // Solve state = 2
   solveWhiteCorners = () => {
-    //this.setState({currentFunc : "Solving White Corners"});
     let moveString = "";
     let cube = this.state.rubiksObject;
     let space = "";
@@ -941,10 +869,8 @@ class App extends Component {
     }
 
     const moveArray = this.moveStringToArray(moveString);
-    //console.log(moveArray);
 
     if(solvedCorners < 4){
-      //this.moveSetTimed(moveArray,moveArray.length-1,0,2);
       this.setState({moveSet : moveArray});
     }
     else{
@@ -954,9 +880,7 @@ class App extends Component {
   }
 
   // Correctly positions the middle edges for 3x3 and greater
-  // Solve state = 3
   solveMiddleEdges = () => {
-    //this.setState({currentFunc : "Solving Midde Edges"});
     let moveString = "";
     let cube = this.state.rubiksObject;
     let space = "";
@@ -1056,22 +980,17 @@ class App extends Component {
     }
 
     const moveArray = this.moveStringToArray(moveString);
-    //console.log(moveArray);
 
     if(solvedEdges < 4){
       this.setState({moveSet : moveArray});
-      //this.moveSetTimed(moveArray,moveArray.length-1,0,3);
     }
     else{
-      //this.solveYellowCross();
       this.setState({solveState : 4});
     }
   }
 
   // Solves the yellow (back) cross for 3x3 and greater
-  // Solve state = 4
   solveYellowCross = () => {
-    //this.setState({currentFunc : "solving yellow cross"});
     let moveString = "";
     let cube = this.state.rubiksObject;
     let recipe = "01U 01R 01B 01R' 01B' 01U'";
@@ -1093,12 +1012,11 @@ class App extends Component {
         cube[cubeIndex[i]][8] === 0) cubeAtIndex[3] = cube[cubeIndex[i]][3];
     }
 
-    //console.log(cubeAtIndex[0],cubeAtIndex[1],cubeAtIndex[2],cubeAtIndex[3]);
     if(cube[19][3] === "yellow" &&
       cube[21][3] === "yellow" &&
       cube[23][3] === "yellow" &&
       cube[25][3] === "yellow" 
-      ) ;//console.log("Cross already solved");
+      ) ;
 
     //Line
     else if (cubeAtIndex[0] === "yellow" && cubeAtIndex[3] === "yellow" ) {moveString = "01B " + recipe;}
@@ -1113,10 +1031,8 @@ class App extends Component {
     else moveString = recipe;
     
     const moveArray = this.moveStringToArray(moveString);
-    //console.log(moveArray);
 
     if(moveString.length){
-      //this.moveSetTimed(moveArray,moveArray.length-1,0,4);
       this.setState({moveSet : moveArray});
     }
     else{
@@ -1125,16 +1041,14 @@ class App extends Component {
   }
 
   // Aligns the yellow (back) cross
-  // Solve state = 5
   alignYellowCross = () =>{
-    //this.setState({currentFunc : "Aligning Yellow Edges"});
     let moveString = "";
     let cube = this.state.rubiksObject;
 
     if(cube[19][6] === 1 && cube[19][7] === 2 && cube[19][8] === 2){
       //Check if other pieces are in place
       if(cube[21][6] === 0 && cube[21][8] === 1 &&
-         cube[23][6] === 2 && cube[23][8] === 1);// console.log("top aligned");
+         cube[23][6] === 2 && cube[23][8] === 1);
 
       else if(cube[21][6] === 2 && cube[23][8] === 1 &&
               cube[25][6] === 1 && cube[25][8] === 0) moveString = "01D 01B 01D' 01B 01D 01B2 01D' 01B2 01L 01B 01L' 01B 01L 01B2 01L' 01B";
@@ -1152,22 +1066,17 @@ class App extends Component {
     else moveString = "01B'"
 
     const moveArray = this.moveStringToArray(moveString);
-    //console.log(moveArray);
 
     if(moveString.length){
       this.setState({moveSet : moveArray});
-      //this.moveSetTimed(moveArray,moveArray.length-1,0,5);
     }
     else{
-      //this.alignYellowCorners();
       this.setState({solveState:6});
     }
   }
 
   // Aligns the yellow (back) corners
-  // Solve state = 6
   alignYellowCorners = () =>{
-    //this.setState({currentFunc : "Aligning Yellow Corners"});
     let moveString = "";
     let cube = this.state.rubiksObject;
 
@@ -1180,7 +1089,7 @@ class App extends Component {
 
 
     if(cube[pieceOne][6] === 0 && cube[pieceOne][8] === dim-1 &&
-       cube[pieceTwo][6] === dim-1 && cube[pieceTwo][8] === dim-1);// console.log("corners aligned");
+       cube[pieceTwo][6] === dim-1 && cube[pieceTwo][8] === dim-1);
 
     else if(cube[pieceOne][6] === 0 && cube[pieceOne][8] === dim-1) moveString = "01B 01U 01B' 01D' 01B 01U' 01B' 01D";
     else if(cube[pieceTwo][6] === dim-1 && cube[pieceTwo][8] === dim-1) moveString = "01B 01R 01B' 01L' 01B 01R' 01B' 01L";
@@ -1190,24 +1099,17 @@ class App extends Component {
     else moveString = "01B 01U 01B' 01D' 01B 01U' 01B' 01D";
 
     const moveArray = this.moveStringToArray(moveString);
-    //console.log(moveArray);
 
     if(moveString.length){
       this.setState({moveSet : moveArray});
-      //this.moveSetTimed(moveArray,moveArray.length-1,0,6);
     }
     else{
       this.setState({solveState:7});
-      //let scope = this;
-      //this.solveYellowCorners(scope);
     }
   }
 
   // Solves the yellow (back) corners
-  // Solve state = 7
   solveYellowCorners(){
-    //console.log(scope);
-    //scope.setState({currentFunc : "Solving Yellow Corners"});
     let moveString = "";
     let cube = this.state.rubiksObject;
     
@@ -1222,19 +1124,14 @@ class App extends Component {
        cube[pieceTwo][3] === "yellow" &&
        cube[pieceThree][3] === "yellow" &&
        cube[pieceFour][3] === "yellow"){
-      //console.log(cube[pieceOne])
       if(cube[pieceOne][6] === 0 && cube[pieceOne][8] === dim-1);
-        //console.log("yellow corners solved");
       else moveString = "01B";
     }
     else if(cube[pieceOne][3]!== "yellow"){
-      //console.log("cube[pieceOne]");
       moveString = "01U' 01F' 01U 01F 01U' 01F' 01U 01F";
     }
     else if(cube[pieceTwo][3]!== "yellow"){
-      //console.log(cube[pieceTwo]);
       if(cube[pieceTwo][6] === 0 && cube[pieceTwo][8] === dim-1) {
-        //console.log("cube[pieceTwo]");
         moveString = "01U' 01F' 01U 01F 01U' 01F' 01U 01F";
       }
       else {
@@ -1242,9 +1139,7 @@ class App extends Component {
       }
     }
     else if(cube[pieceFour][3]!== "yellow"){
-      //console.log(cube[pieceFour]);
       if(cube[pieceFour][6] === 0 && cube[pieceFour][8] === dim-1) {
-        //console.log("cube[pieceFour]");
         moveString = "01U' 01F' 01U 01F 01U' 01F' 01U 01F";
       }
       else{
@@ -1252,9 +1147,7 @@ class App extends Component {
       }
     }
     else if(cube[pieceThree][3]!== "yellow"){
-      //console.log(cube[pieceThree][6],cube[pieceThree][8]);
       if(cube[pieceThree][6] === 0 && cube[pieceThree][8] === dim-1) {
-        //console.log("cube[pieceThree]");
         moveString = "01U' 01F' 01U 01F 01U' 01F' 01U 01F";
       }
       else {
@@ -1263,47 +1156,32 @@ class App extends Component {
     }
 
     let moveArray = this.moveStringToArray(moveString);
-    //console.log(moveArray);
 
     if(moveString.length){
-
       this.setState({moveSet:moveArray});
-      //scope.moveSetTimed(moveArray,moveArray.length-1,0,7);
     }
     else{
+      //check for anomoly
       if(dim === 2) {
-        //console.log("checking for anomoly");
-        //console.log(cube[pieceOne]);
         if(cube[pieceOne][6]===0 && cube[pieceOne][8]===dim-1) {
-          //console.log("piece one is positioned correctly");
           if(cube[pieceTwo][6]===dim-1 && cube[pieceTwo][8]===dim-1){
-            //console.log("piece two is positioned correctly");
             if(cube[pieceThree][6]===0 && cube[pieceThree][8]===0){
-              //console.log("Solved!")
               this.setState({moveLog : "",currentFunc: "None",moveSet:[],solveState:0});
             }
             else {
-              //console.log("Anomoly found! Solution: ");
               moveString = "01R 01D' 01R' 01F' 01R' 01F 01D";
               moveArray = this.moveStringToArray(moveString);
-              //console.log(moveArray);
               this.setState({moveSet:moveArray});
-              //this.moveSetTimed(moveArray,moveArray.length-1,0,7);
             }
           }
         }
         else {
           moveString = "01B";
           moveArray = this.moveStringToArray(moveString);
-          //console.log(moveArray);
-          //scope.moveSetTimed(moveArray,moveArray.length-1,0,7);
           this.setState({moveSet:moveArray});
         }
       }
-
-      // else
       else {
-        //console.log("Solved!");
         this.setState({moveLog : "",currentFunc: "None",moveSet:[],solveState:0});
       }
     }
@@ -1336,12 +1214,14 @@ class App extends Component {
     let rubiksObject = this.generateSolved(cD,cD,cD);
     this.setState({rubiksObject : rubiksObject});
     window.addEventListener("keydown", this.keyHandling);
+   
 
     // === THREE.JS CODE START ===
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, .1, 1000 );
     var renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(new THREE.Color(0,0,0),1);
+    
+    renderer.setClearColor(new THREE.Color("black"),1);
     renderer.setSize( window.innerWidth, window.innerHeight-10);
     document.body.appendChild( renderer.domElement );
     
@@ -1385,7 +1265,7 @@ class App extends Component {
           //Add outlines to each piece
           let geo = new THREE.EdgesGeometry(this.state.cubes[i].geometry);
           let mat = new THREE.LineBasicMaterial({
-            color : 0x000000, linewidth: .5
+            color : "black", linewidth: .5
 
           });
           let wireframe = new THREE.LineSegments(geo,mat);
@@ -1393,14 +1273,38 @@ class App extends Component {
           this.state.cubes[i].add(wireframe);
         } 
       }
+          // remember these initial values
+      var tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
+      var windowHeight = window.innerHeight;
+          window.addEventListener( 'resize', onWindowResize, false );
+
+      function onWindowResize( event ) {
+
+          camera.aspect = window.innerWidth / window.innerHeight;
+          
+          // adjust the FOV
+          camera.fov = ( 360 / Math.PI ) * Math.atan( tanFOV * ( window.innerHeight / windowHeight ) );
+          
+          camera.updateProjectionMatrix();
+          camera.lookAt( scene.position );
+
+          renderer.setSize( window.innerWidth, window.innerHeight );
+          renderer.render( scene, camera );
+          
+      }
+
       renderer.render( scene, camera );
       animate();
     });
 
     let rotate = this.rotatePoint;
+
+
+
     
     // Function runs continuously to animate cube
     var animate = () => {
+      
       let centerPoint = this.state.cubeDimension/2-.5;
       camera.position.z = this.state.cameraZ * Math.sin( this.state.angle );
       camera.position.y = this.state.cameraY;
@@ -1410,7 +1314,7 @@ class App extends Component {
       
       if(this.state.start<=this.state.end){
         this.setState({reload : true});
-        //console.log("turning");
+
         // state variables asigned for shorter names
         let cubes = this.state.cubes;
         let turnDirection = this.state.turnDirection;
@@ -1566,11 +1470,7 @@ class App extends Component {
           else 
             this.state.moveSet.length ?
               this.moveSetTimed(this.state.moveSet,0,0,0) : this.setState({currentFunc:"None"}); 
-
-          
-          
         }
-
       }
       renderer.render( scene, camera );     
     };
@@ -1578,53 +1478,52 @@ class App extends Component {
 
   // Renders html to the index.html page
   render() {
-    let solveBtn = (this.state.cubeDimension < 4) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "100px", right: "10px",backgroundColor: "white"}}>SOLVE</button> : "";
+    let solveBtn = (this.state.cubeDimension < 4) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "100px", right: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>SOLVE</button> : "";
     return (
       <div className="App" >
         <Navbar
         title="Rubik's Cube"
         />
-        
         <p style={{position:"fixed", top: "75px", left: "10px",color: "white"}}>Speed: {this.state.currentSpeed}</p>
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white"}}>Current Function: {this.state.currentFunc}</p>
 
         {/* Top Left */}
-        <button onClick={() => this.changeSpeed(90,20,"Zoomin")} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "black",width: "90px",color:"white"}}>Zoomin</button>
-        <button onClick={() => this.changeSpeed(30,100,"Fastest")} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "red",width: "90px",color:"white"}}>Fastest</button>
-        <button onClick={() => this.changeSpeed(15,175,"Faster")} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "orange",width: "90px"}}>Faster</button>
-        <button onClick={() => this.changeSpeed(10,250,"Fast")} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "yellow",width: "90px"}}>Fast</button>
-        <button onClick={() => this.changeSpeed(7.5,350,"Medium")} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "green",width: "90px",color:"white"}}>Medium</button>
-        <button onClick={() => this.changeSpeed(5,500,"Slow")} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "lightblue",width: "90px"}}>Slow</button>
-        <button onClick={() => this.changeSpeed(3,750,"Slower")} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "blue",width: "90px",color:"white"}}>Slower</button>
-        <button onClick={() => this.changeSpeed(1.5,1050,"Slowest")} style={{position:"fixed", top: "310px", left: "10px",backgroundColor: "navy",width: "90px",color:"white"}}>Slowest</button>
+        <button onClick={() => this.changeSpeed(90,20,"Zoomin")} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "black",width: "90px",color:"white"}}>ZOOMIN</button>
+        <button onClick={() => this.changeSpeed(30,100,"Fastest")} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "red",width: "90px",color:"white"}}>FASTEST</button>
+        <button onClick={() => this.changeSpeed(15,175,"Faster")} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "orange",width: "90px"}}>FASTER</button>
+        <button onClick={() => this.changeSpeed(10,250,"Fast")} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "yellow",width: "90px"}}>FAST</button>
+        <button onClick={() => this.changeSpeed(7.5,350,"Medium")} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "green",width: "90px",color:"white"}}>MEDIUM</button>
+        <button onClick={() => this.changeSpeed(5,500,"Slow")} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "lightblue",width: "90px"}}>SLOW</button>
+        <button onClick={() => this.changeSpeed(3,750,"Slower")} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "blue",width: "90px",color:"white"}}>SLOWER</button>
+        <button onClick={() => this.changeSpeed(1.5,1050,"Slowest")} style={{position:"fixed", top: "310px", left: "10px",backgroundColor: "navy",width: "90px",color:"white"}}>SLOWEST</button>
         
         {/* Bottom Left */}
-        <button onClick={this.cross} style={{position:"fixed", bottom: "160px", left: "10px",backgroundColor: "white"}}>Cross</button>
-        <button onClick={this.checkerBoard} style={{position:"fixed", bottom: "130px", left: "10px",backgroundColor: "white"}}>Checkerboard</button>
-        <button onClick={this.checkerBoard1} style={{position:"fixed", bottom: "100px", left: "10px",backgroundColor: "white"}}>Checkerboard1</button>
-        <button onClick={this.cubeIn} style={{position:"fixed", bottom: "70px", left: "10px",backgroundColor: "white"}}>Cube x2</button>
-        <button onClick={this.cubeInACube} style={{position:"fixed", bottom: "40px", left: "10px",backgroundColor: "white"}}>Cube x3</button>
-        <button onClick={this.sixSpots} style={{position:"fixed", bottom: "10px", left: "10px",backgroundColor: "white"}}>Six Spots</button>
+        <button onClick={this.cross} style={{position:"fixed", bottom: "160px", left: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>CROSS</button>
+        <button onClick={this.checkerBoard} style={{position:"fixed", bottom: "130px", left: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>CHECKERBOARD</button>
+        <button onClick={this.checkerBoard1} style={{position:"fixed", bottom: "100px", left: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>CHECKERBOARD1</button>
+        <button onClick={this.cubeIn} style={{position:"fixed", bottom: "70px", left: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>CUBE X2</button>
+        <button onClick={this.cubeInACube} style={{position:"fixed", bottom: "40px", left: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>CUBE X3</button>
+        <button onClick={this.sixSpots} style={{position:"fixed", bottom: "10px", left: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>SIX SPOTS</button>
         
         {/* Top Right */}
-        <button onClick={() => this.rotateOneFace("F'",[0,0,1])} style={{position:"fixed", top: "100px", right: "50px",backgroundColor: "white"}}>F'</button>
-        <button onClick={() => this.rotateOneFace("F",[0,-1,1])} style={{position:"fixed", top: "100px", right: "10px",backgroundColor: "white"}}>F</button>
-        <button onClick={() => this.rotateOneFace("U'",[1,0,1])} style={{position:"fixed", top: "140px", right: "50px",backgroundColor: "blue",color: "white"}}>U'</button>
-        <button onClick={() => this.rotateOneFace("U",[1,-1,1])} style={{position:"fixed", top: "140px", right: "10px",backgroundColor: "blue",color: "white"}}>U</button>
-        <button onClick={() => this.rotateOneFace("R'",[2,0,1])} style={{position:"fixed", top: "180px", right: "50px",backgroundColor: "red",color: "white"}}>R'</button>
-        <button onClick={() => this.rotateOneFace("R",[2,-1,1])} style={{position:"fixed", top: "180px", right: "10px",backgroundColor: "red",color: "white"}}>R</button>
-        <button onClick={() => this.rotateOneFace("B'",[3,0,1])} style={{position:"fixed", top: "220px", right: "50px",backgroundColor: "yellow"}}>B'</button>
-        <button onClick={() => this.rotateOneFace("B",[3,-1,1])} style={{position:"fixed", top: "220px", right: "10px",backgroundColor: "yellow"}}>B</button>
-        <button onClick={() => this.rotateOneFace("L'",[4,0,1])} style={{position:"fixed", top: "260px", right: "50px",backgroundColor: "orange"}}>L'</button> 
-        <button onClick={() => this.rotateOneFace("L",[4,-1,1])} style={{position:"fixed", top: "260px", right: "10px",backgroundColor: "orange"}}>L</button>
-        <button onClick={() => this.rotateOneFace("D'",[5,0,1])} style={{position:"fixed", top: "300px", right: "50px",backgroundColor: "green",color: "white"}}>D'</button> 
-        <button onClick={() => this.rotateOneFace("D",[5,-1,1])} style={{position:"fixed", top: "300px", right: "10px",backgroundColor: "green",color: "white"}}>D</button>
+        <button className="moveBtn" onClick={() => this.rotateOneFace("F'",[0,0,1])} style={{position:"fixed", top: "100px", right: "50px",backgroundColor: "white",width:"30px"}}>F'</button>
+        <button className="moveBtn" onClick={() => this.rotateOneFace("F",[0,-1,1])} style={{position:"fixed", top: "100px", right: "10px",backgroundColor: "white",width:"30px"}}>F</button>
+        <button className="moveBtn" onClick={() => this.rotateOneFace("U'",[1,0,1])} style={{position:"fixed", top: "140px", right: "50px",backgroundColor: "blue",color: "white",width:"30px"}}>U'</button>
+        <button className="moveBtn" onClick={() => this.rotateOneFace("U",[1,-1,1])} style={{position:"fixed", top: "140px", right: "10px",backgroundColor: "blue",color: "white",width:"30px"}}>U</button>
+        <button className="moveBtn" onClick={() => this.rotateOneFace("R'",[2,0,1])} style={{position:"fixed", top: "180px", right: "50px",backgroundColor: "red",color: "white",width:"30px"}}>R'</button>
+        <button className="moveBtn" onClick={() => this.rotateOneFace("R",[2,-1,1])} style={{position:"fixed", top: "180px", right: "10px",backgroundColor: "red",color: "white",width:"30px"}}>R</button>
+        <button className="moveBtn" onClick={() => this.rotateOneFace("B'",[3,0,1])} style={{position:"fixed", top: "220px", right: "50px",backgroundColor: "yellow",width:"30px"}}>B'</button>
+        <button className="moveBtn" onClick={() => this.rotateOneFace("B",[3,-1,1])} style={{position:"fixed", top: "220px", right: "10px",backgroundColor: "yellow",width:"30px"}}>B</button>
+        <button className="moveBtn" onClick={() => this.rotateOneFace("L'",[4,0,1])} style={{position:"fixed", top: "260px", right: "50px",backgroundColor: "orange",width:"30px"}}>L'</button> 
+        <button className="moveBtn" onClick={() => this.rotateOneFace("L",[4,-1,1])} style={{position:"fixed", top: "260px", right: "10px",backgroundColor: "orange",width:"30px"}}>L</button>
+        <button className="moveBtn" onClick={() => this.rotateOneFace("D'",[5,0,1])} style={{position:"fixed", top: "300px", right: "50px",backgroundColor: "green",color: "white",width:"30px"}}>D'</button> 
+        <button className="moveBtn" onClick={() => this.rotateOneFace("D",[5,-1,1])} style={{position:"fixed", top: "300px", right: "10px",backgroundColor: "green",color: "white",width:"30px"}}>D</button>
 
         {/* Bottom Right */} 
         {solveBtn}
-        <button onClick={this.scramble} style={{position:"fixed", bottom: "70px", right: "10px",backgroundColor: "white"}}>SCRAMBLE</button>
-        <button onClick={this.reverseMoves} style={{position:"fixed", bottom: "40px", right: "10px",backgroundColor: "white"}}>Reverse Moves</button>
-        <button onClick={this.reset} style={{position:"fixed", bottom: "10px", right: "10px",backgroundColor: "white"}}>RESET</button>
+        <button onClick={this.scramble} style={{position:"fixed", bottom: "70px", right: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>SCRAMBLE</button>
+        <button onClick={this.reverseMoves} style={{position:"fixed", bottom: "40px", right: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>REVERSE MOVES</button>
+        <button onClick={this.reset} style={{position:"fixed", bottom: "10px", right: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>RESET</button>
       </div>
     );
   }
