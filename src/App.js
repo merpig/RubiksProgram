@@ -1182,8 +1182,8 @@ class App extends Component {
     const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
     let url = this.getUrlVars();
     let cD;
-    if(url.length < 30) cD = parseInt(url.substring(25));
-    else cD = parseInt(url.substring("https://mighty-fortress-00882.herokuapp.com/id=".length));
+    if(url.length < "https://rubiksprogram.herokuapp.com/id=".length) cD = parseInt(url.substring(25));
+    else cD = parseInt(url.substring("https://rubiksprogram.herokuapp.com/id=".length));
     if(cD <= 7 && cD >= 2);
     else cD = 3;
     this.setState({cubeDimension : cD});
