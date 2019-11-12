@@ -8,34 +8,35 @@ import 'bootstrap';
 class App extends Component {
   state = {
     cubes : [],           // Contains visual cube
-    rubiksObject : [],      // Contains memory cube
-    speed : 7.5,           // Control individual piece rotation speed (don't change)
+    rubiksObject : [],    // Contains memory cube
+    speed : 7.5,          // Control individual piece rotation speed (don't change)
     rotationSpeed : 350,  // Controls visual rotation speed
-    start : 7.5,           // Start value for a rotation or set of rotations
+    start : 7.5,          // Start value for a rotation or set of rotations
     end : 0,              // End value for a roation or set of rotations
     turnDirection : 0,    // Dictates whether the rotation is clockwise or counterclockwise
     face : 0,             // The face being turned
-    cameraX : 10,
-    cameraY : -10,
-    cameraZ : 10,
-    currentFunc : "None",
-    moveLog : "",
-    moveSet : [],
-    angle : 3.9,
-    cubeDimension : 10,
-    cubeDepth : 1,
-    currentSpeed : "Medium",
-    moves : 0,
-    reload : false,
-    solveState : 0,
+    cameraX : 10,         // Camera position x
+    cameraY : -10,        // Camera position y
+    cameraZ : 10,         // Camera position z
+    currentFunc : "None", // Variable used to display current function
+    moveLog : "",         // Keeps a log of all moves
+    moveSet : [],         // Algorithms queue moves through this variable
+    angle : 3.9,          // Camera angle
+    cubeDimension : 10,   // Cube dimensions. Ex: 3 => 3x3x3 cube
+    cubeDepth : 1,        // Used to determine rotation depth on cubes greater than 3
+    currentSpeed:"Medium",// Displays which speed is selected
+    moves : 0,            // Used by scramble functions
+    reload : false,       // Lets animate know when to reload the cube (after every move)
+    solveState : 0,       // Dictates progression of solve function
+
   };
 
   // Generates the inital solved state of rubiksObject
   generateSolved = (_x,_y,_z) =>{
     let tempArr = [];
-    for(let j = 0; j < _y; j++){
-      for(let k = _z-1; k >= 0; k--){
-        for(let i = 0; i < _x; i++){
+    for(let j = 0; j < _y; j++){      // Move back along the y-axis
+      for(let k = _z-1; k >= 0; k--){ // Move down through the z-axis
+        for(let i = 0; i < _x; i++){  // Traverse across the x-axis
           let side0 = "black";
           let side1 = "black";
           let side2 = "black";
@@ -133,7 +134,6 @@ class App extends Component {
             }
         }
     }
-    
     // Side 2 (red center piece)
     if (cubeFace === 2){
         for(let i = 0; i < rubiksObject.length; i++){
@@ -157,7 +157,6 @@ class App extends Component {
             }
         }
     }
-    
     // Side 3 (yellow center piece)
     if (cubeFace === 3){
         for(let i = 0; i < rubiksObject.length; i++){
@@ -181,7 +180,6 @@ class App extends Component {
             }
         }
     }
-
     // Side 4 (orange center piece)
     if (cubeFace === 4){
         for(let i = 0; i < rubiksObject.length; i++){
@@ -205,7 +203,6 @@ class App extends Component {
             }
         } 
     }
-
     // Side 5 (green center piece)
     if (cubeFace === 5){
         for(let i = 0; i < rubiksObject.length; i++){
@@ -230,13 +227,126 @@ class App extends Component {
         } 
     }
 
+    //add the move updates to state
     this.setState({rubiksObject : rubiksObject}, () =>{
     });
-    
   };
 
+  rotatePieces = (rotate,tempCubes) => {
+    this.setState({reload : true});
+
+    // state variables asigned for shorter names
+    let centerPoint = this.state.cubeDimension/2-.5;
+    let cubes = this.state.cubes;
+    let turnDirection = this.state.turnDirection;
+    let speed = this.state.speed;
+    let start = this.state.start;
+    let face = this.state.face;
+    let cubeDepth = this.state.cubeDepth;
+
+    this.setState({start : start+speed});
+
+    //Rotate white center piece Face
+    if(face === 0){
+      for(let i = 0; i<this.state.rubiksObject.length;i++){
+        if(cubes[i].position.y > -1 && cubes[i].position.y < cubeDepth){
+          
+          // Turn piece based on rotation direction
+          turnDirection<0 ? cubes[i].rotation.y += .1745*speed/10 : cubes[i].rotation.y -= .1745*speed/10;
+
+          // Calculate circular movement
+          let newPoint = rotate(centerPoint,centerPoint,turnDirection,cubes[i].position.x,cubes[i].position.z,speed);
+
+          // corrects rounding errors
+          if(start % 90 === 0){
+            newPoint.p1 = Math.round(newPoint.p1);
+            newPoint.p2 = Math.round(newPoint.p2);
+          }
+          
+          // set new locations for face 0
+          cubes[i].position.x = newPoint.p1;
+          cubes[i].position.z = newPoint.p2;
+        }
+      }     
+    }
+    // blue
+    if(face === 1){
+      for(let i = 0; i<this.state.rubiksObject.length;i++){
+        if(cubes[i].position.z < this.state.cubeDimension && cubes[i].position.z > this.state.cubeDimension - 1 - cubeDepth){
+          turnDirection<0 ? cubes[i].rotation.z -= .1745*speed/10 : cubes[i].rotation.z += .1745*speed/10;
+          let newPoint = rotate(centerPoint,centerPoint,turnDirection,cubes[i].position.x,cubes[i].position.y,10*speed/10);
+          if(start % 90 === 0){
+            newPoint.p1 = Math.round(newPoint.p1);
+            newPoint.p2 = Math.round(newPoint.p2);
+          }
+          cubes[i].position.x = newPoint.p1;
+          cubes[i].position.y = newPoint.p2;
+        }
+      }
+    }
+    // red
+    if(face === 2){
+      for(let i = 0; i<this.state.rubiksObject.length;i++){
+        if(tempCubes[i].position.x < this.state.cubeDimension && cubes[i].position.x > this.state.cubeDimension - 1 - cubeDepth){
+          turnDirection<0 ? tempCubes[i].rotation.x -= .1745*speed/10 : tempCubes[i].rotation.x += .1745*speed/10;
+          let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.y,tempCubes[i].position.z,10*speed/10);
+          if(start % 90 === 0){
+            newPoint.p1 = Math.round(newPoint.p1);
+            newPoint.p2 = Math.round(newPoint.p2);
+          }
+          tempCubes[i].position.y = newPoint.p1;
+          tempCubes[i].position.z = newPoint.p2;
+        }
+      }
+    }
+    // yellow
+    if(face === 3){
+      for(let i = 0; i<this.state.rubiksObject.length;i++){
+        if(tempCubes[i].position.y < this.state.cubeDimension && cubes[i].position.y > this.state.cubeDimension - 1 - cubeDepth){
+          turnDirection<0 ? tempCubes[i].rotation.y += .1745*speed/10 : tempCubes[i].rotation.y -= .1745*speed/10;
+          let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.x,tempCubes[i].position.z,10*speed/10);
+          if(start % 90 === 0){
+            newPoint.p1 = Math.round(newPoint.p1);
+            newPoint.p2 = Math.round(newPoint.p2);
+          }
+          tempCubes[i].position.x = newPoint.p1;
+          tempCubes[i].position.z = newPoint.p2;
+        }
+      }
+    }
+    // orange
+    if(face === 4){
+      for(let i = 0; i<this.state.rubiksObject.length;i++){
+        if(tempCubes[i].position.x > -1 && cubes[i].position.x < cubeDepth){
+          turnDirection<0 ? tempCubes[i].rotation.x -= .1745*speed/10 : tempCubes[i].rotation.x += .1745*speed/10;
+          let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.y,tempCubes[i].position.z,10*speed/10);              
+          if(start % 90 === 0){
+            newPoint.p1 = Math.round(newPoint.p1);
+            newPoint.p2 = Math.round(newPoint.p2);
+          }
+          tempCubes[i].position.y = newPoint.p1;
+          tempCubes[i].position.z = newPoint.p2;
+        }
+      }
+    }
+    // green
+    if(face === 5){
+      for(let i = 0; i<this.state.rubiksObject.length;i++){
+        if(tempCubes[i].position.z > -1 && cubes[i].position.z < cubeDepth){
+          turnDirection<0 ? tempCubes[i].rotation.z -= .1745*speed/10 : tempCubes[i].rotation.z += .1745*speed/10;
+          let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.x,tempCubes[i].position.y,10*speed/10);
+          if(start % 90 === 0){
+            newPoint.p1 = Math.round(newPoint.p1);
+            newPoint.p2 = Math.round(newPoint.p2);
+          }
+          tempCubes[i].position.x = newPoint.p1;
+          tempCubes[i].position.y = newPoint.p2;
+        }
+      }
+    } 
+  }
+
   // Functions to change speed
-  // Condense into one speed function
   changeSpeed = (_speed,_rotationSpeed,_name) => {
     if(this.state.currentFunc !== "None") return;
     this.setState({currentSpeed: _name,speed: _speed, start: _speed, end: 0, rotationSpeed: _rotationSpeed});
@@ -422,7 +532,6 @@ class App extends Component {
   }
 
   // Rewinds all moves that have been done to the cube since unsolved state
-  // Add in solved array to compare for when the cube becomes solved
   reverseMoves = () => {
     if(this.state.currentFunc !== "None") return;
     if(!this.state.moveLog.length) return;
@@ -494,7 +603,6 @@ class App extends Component {
 
         let emptyCount = 0;
         let whiteSide = -1;
-        //let otherSide = -1;
         let cubeX = cube[i][6];
         let cubeY = cube[i][7];
         let cubeZ = cube[i][8];
@@ -504,269 +612,169 @@ class App extends Component {
           if (cube[i][j] === "black") emptyCount++;
           else {
             if(cube[i][j] === "white") whiteSide = j;
-            //else otherSide = j;
           }
         }
 
         // If edge piece
         if(emptyCount === 4) {
           if(i===pieceOne && solvedEdges === 0 ){
-            //console.log("analyzing piece 1");
-            if(cubeX===1 && cubeY===0 && cubeZ===2){
-              if(!whiteSide) {solvedEdges++;}
-              else moveString+= space + "01U' 01R' 01F'";
-              //console.log("1 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===0 && cubeZ===1){
-              if(!whiteSide) moveString+= space + "01F'";
-              else moveString+= space + "01R 01U";
-              //console.log("2 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===1 && cubeY===0 && cubeZ===0){
-              if(!whiteSide) moveString+= space + "01F2";
-              else moveString+= space + "01D 01R 01F'";
-              //console.log("3 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===0 && cubeY===0 && cubeZ===1){
-              if(!whiteSide) moveString+= space + "01F";// works
-              else moveString+= space + "01L' 01U'";// works
-              //console.log("4 and whiteside = " + whiteSide); 
-            }
+            if(cubeX===1 && cubeY===0 && cubeZ===2)
+              !whiteSide ? solvedEdges++ : moveString+= space + "01U' 01R' 01F'";
+            
+            else if(cubeX===2 && cubeY===0 && cubeZ===1)
+              !whiteSide ? moveString+= space + "01F'" : moveString+= space + "01R 01U";
+            
+            else if(cubeX===1 && cubeY===0 && cubeZ===0)
+              !whiteSide ? moveString+= space + "01F2" : moveString+= space + "01D 01R 01F'";
+
+            else if(cubeX===0 && cubeY===0 && cubeZ===1)
+              !whiteSide ? moveString+= space + "01F" : moveString+= space + "01L' 01U'";
 
             //If piece one is in y section 1
-            else if(cubeX===0 && cubeY===1 && cubeZ===2){
-              if(whiteSide===1) moveString+= space + "01L 01F";
-              else moveString+= space + "01U'";
-              //console.log("5 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===1 && cubeZ===2){
-              if(whiteSide===1) moveString+= space + "01R' 01F'";
-              else moveString+= space + "01U";
-              //console.log("6 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===1 && cubeZ===0){
-              if(whiteSide===2) moveString+= space + "01D' 01F2";
-              else moveString+= space + "01R 01F'";
-              //console.log("7 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===0 && cubeY===1 && cubeZ===0){
-              if(whiteSide===4) moveString+= space + "01D 01F2"; // works
-              else moveString+= space + "01L' 01F";
-              //console.log("8 and whiteside = " + whiteSide);
-            }
+            else if(cubeX===0 && cubeY===1 && cubeZ===2)
+              whiteSide===1 ? moveString+= space + "01L 01F" : moveString+= space + "01U'";
+            
+            else if(cubeX===2 && cubeY===1 && cubeZ===2)
+              whiteSide===1 ? moveString+= space + "01R' 01F'" : moveString+= space + "01U";
+            
+            else if(cubeX===2 && cubeY===1 && cubeZ===0)
+              whiteSide===2 ? moveString+= space + "01D' 01F2" : moveString+= space + "01R 01F'";
+            
+            else if(cubeX===0 && cubeY===1 && cubeZ===0)
+              whiteSide===4 ? moveString+= space + "01D 01F2" : moveString+= space + "01L' 01F";
+            
 
             //If piece one is in y section 2
-            else if(cubeX===1 && cubeY===2 && cubeZ===2){
-              if(whiteSide===3) moveString+= space + "01U2";
-              else moveString+= space + "01B 01L 01U'";
-              //console.log("9 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===2 && cubeZ===1){
-              if(whiteSide===3) moveString+= space + "01R2 01F'";
-              else moveString+= space + "01R' 01U";
-              //console.log("10 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===1 && cubeY===2 && cubeZ===0){
-              if(whiteSide===3) moveString+= space + "01B2 01U2";
-              else moveString+= space + "01B' 01L 01U'";
-              //console.log("11 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===0 && cubeY===2 && cubeZ===1){
-              if(whiteSide===3) moveString+= space + "01B' 01U2";
-              else moveString+= space + "01L 01U'";
-              //console.log("12 and whiteside = " + whiteSide);
-            }
-            //if(this.canQueue(moveString)) return;
+            else if(cubeX===1 && cubeY===2 && cubeZ===2)
+              whiteSide===3 ? moveString+= space + "01U2" : moveString+= space + "01B 01L 01U'";
+            
+            else if(cubeX===2 && cubeY===2 && cubeZ===1)
+              whiteSide===3 ? moveString+= space + "01R2 01F'" : moveString+= space + "01R' 01U";
+            
+            else if(cubeX===1 && cubeY===2 && cubeZ===0)
+              whiteSide===3 ? moveString+= space + "01B2 01U2" : moveString+= space + "01B' 01L 01U'";
+            
+            else if(cubeX===0 && cubeY===2 && cubeZ===1)
+              whiteSide===3 ? moveString+= space + "01B' 01U2" : moveString+= space + "01L 01U'";
+            
           }
           if(i===pieceTwo && solvedEdges === 1){
-            //console.log("analyzing piece 3");
             
-            if(cubeX===0 && cubeY===0 && cubeZ===1){
-              if(!whiteSide) {solvedEdges++;}
-              else moveString+= space + "01L' 01R 01U' 01R'";
-              //console.log("piece (3) 1 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===1 && cubeY===0 && cubeZ===0){
-              if(!whiteSide) moveString+= space + "01D' 01F' 01D 01F";
-              else moveString+= space + "01D' 01L'";
-              //console.log("5.3 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===0 && cubeZ===1){
-              if(!whiteSide) moveString+= space + "01R 01F2 01R' 01F2";// works
-              else moveString+= space + "01R 01F 01U 01F'";// works
-              //console.log("5.4 and whiteside = " + whiteSide); 
-            }
+            if(cubeX===0 && cubeY===0 && cubeZ===1)
+              !whiteSide ? solvedEdges++ : moveString+= space + "01L' 01R 01U' 01R'";
+            
+            else if(cubeX===1 && cubeY===0 && cubeZ===0)
+              !whiteSide ? moveString+= space + "01D' 01F' 01D 01F" : moveString+= space + "01D' 01L'";
+            
+            else if(cubeX===2 && cubeY===0 && cubeZ===1)
+              !whiteSide ? moveString+= space + "01R 01F2 01R' 01F2" : moveString+= space + "01R 01F 01U 01F'";
+            
 
-            //If piece three is in y section 1
-            if(cubeX===0 && cubeY===1 && cubeZ===2){
-              if(whiteSide===1) moveString+= space + "01L";
-              else moveString+= space + "01F 01U' 01F'";
-              //console.log("5 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===1 && cubeZ===2){
-              if(whiteSide===1) moveString+= space + "01F2 01R' 01F2";
-              else moveString+= space + "01U 01F' 01U'";
-              //console.log("6 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===1 && cubeZ===0){
-              if(whiteSide===2) moveString+= space + "01F' 01D' 01F";
-              else moveString+= space + "01F2 01R 01F2";
-              //console.log("7 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===0 && cubeY===1 && cubeZ===0){
-              if(whiteSide===4) moveString+= space + "01F' 01D 01F"; // works
-              else moveString+= space + "01L'";
-              //console.log("8 and whiteside = " + whiteSide);
-            }
+            //If piece two is in y section 1
+            if(cubeX===0 && cubeY===1 && cubeZ===2)
+              whiteSide===1 ? moveString+= space + "01L" : moveString+= space + "01F 01U' 01F'";
+            
+            else if(cubeX===2 && cubeY===1 && cubeZ===2)
+              whiteSide===1 ? moveString+= space + "01F2 01R' 01F2" : moveString+= space + "01U 01F' 01U'";
+            
+            else if(cubeX===2 && cubeY===1 && cubeZ===0)
+              whiteSide===2 ? moveString+= space + "01F' 01D' 01F" : moveString+= space + "01F2 01R 01F2";
+            
+            else if(cubeX===0 && cubeY===1 && cubeZ===0)
+              whiteSide===4 ? moveString+= space + "01F' 01D 01F" : moveString+= space + "01L'";
+            
 
-            //If piece one is in y section 2
-            if(cubeX===1 && cubeY===2 && cubeZ===2){
-              if(whiteSide===3) moveString+= space + "01F 01U2 01F'";
-              else moveString+= space + "01U' 01L 01U";
-              //console.log("9 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===2 && cubeZ===1){
-              if(whiteSide===3) moveString+= space + "01B2 01L2";
-              else moveString+= space + "01R' 01F 01U 01F'";
-              //console.log("10 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===1 && cubeY===2 && cubeZ===0){
-              if(whiteSide===3) moveString+= space + "01F' 01D2 01F";
-              else moveString+= space + "01D 01L'";
-              //console.log("11 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===0 && cubeY===2 && cubeZ===1){
-              if(whiteSide===3) moveString+= space + "01L2";
-              else moveString+= space + "01B' 01U' 01L 01U";
-              //console.log("12 and whiteside = " + whiteSide);
-            }
-            //if(this.canQueue(moveString)) return;*/
-            //continueSolve = !continueSolve;
+            //If piece two is in y section 2
+            if(cubeX===1 && cubeY===2 && cubeZ===2)
+              whiteSide===3 ? moveString+= space + "01F 01U2 01F'" : moveString+= space + "01U' 01L 01U";
+            
+            else if(cubeX===2 && cubeY===2 && cubeZ===1)
+              whiteSide===3 ? moveString+= space + "01B2 01L2" : moveString+= space + "01R' 01F 01U 01F'";
+            
+            else if(cubeX===1 && cubeY===2 && cubeZ===0)
+              whiteSide===3 ? moveString+= space + "01F' 01D2 01F" : moveString+= space + "01D 01L'";
+            
+            else if(cubeX===0 && cubeY===2 && cubeZ===1)
+              whiteSide===3 ? moveString+= space + "01L2" : moveString+= space + "01B' 01U' 01L 01U";
+            
           }
           if(i===pieceThree && solvedEdges === 2){
-            //console.log("analyzing piece 5");
   
-            if(cubeX===1 && cubeY===0 && cubeZ===0){
-              if(!whiteSide) moveString+= space + "01D 01F 01D' 01F'";
-              else moveString+= space + "01D 01R";
-              //console.log("5.3 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===0 && cubeZ===1){
-              if(!whiteSide) {solvedEdges++;}
-              else moveString+= space + "01R 01F' 01U 01F";// works
-              //console.log("5.4 and whiteside = " + whiteSide); 
-            }
+            if(cubeX===1 && cubeY===0 && cubeZ===0)
+              !whiteSide ? moveString+= space + "01D 01F 01D' 01F'" : moveString+= space + "01D 01R";
+            
+            else if(cubeX===2 && cubeY===0 && cubeZ===1)
+              !whiteSide ? solvedEdges++ : moveString+= space + "01R 01F' 01U 01F";
+            
             
             //If piece three is in y section 1
-            if(cubeX===0 && cubeY===1 && cubeZ===2){
-              if(whiteSide===1) moveString+= space + "01F2 01L 01F2";
-              else moveString+= space + "01F' 01U' 01F";
-              //console.log("5 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===1 && cubeZ===2){
-              if(whiteSide===1) moveString+= space + "01R'";
-              else moveString+= space + "01F' 01U 01F";
-              //console.log("6 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===1 && cubeZ===0){
-              if(whiteSide===2) moveString+= space + "01F 01D' 01F'";
-              else moveString+= space + "01R";
-              //console.log("7 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===0 && cubeY===1 && cubeZ===0){
-              if(whiteSide===4) moveString+= space + "01F 01D 01F'"; // works
-              else moveString+= space + "01F2 01L' 01F2";
-              //console.log("8 and whiteside = " + whiteSide);
-            }
+            if(cubeX===0 && cubeY===1 && cubeZ===2)
+              whiteSide===1 ? moveString+= space + "01F2 01L 01F2" : moveString+= space + "01F' 01U' 01F";
+            
+            else if(cubeX===2 && cubeY===1 && cubeZ===2)
+              whiteSide===1 ? moveString+= space + "01R'" : moveString+= space + "01F' 01U 01F";
+            
+            else if(cubeX===2 && cubeY===1 && cubeZ===0)
+              whiteSide===2 ? moveString+= space + "01F 01D' 01F'" : moveString+= space + "01R";
+            
+            else if(cubeX===0 && cubeY===1 && cubeZ===0)
+              whiteSide===4 ? moveString+= space + "01F 01D 01F'" : moveString+= space + "01F2 01L' 01F2";
+            
 
-            //If piece one is in y section 2
-            if(cubeX===1 && cubeY===2 && cubeZ===2){
-              if(whiteSide===3) moveString+= space + "01F' 01U2 01F";
-              else moveString+= space + "01U 01R' 01U'";
-              //console.log("9 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===2 && cubeZ===1){
-              if(whiteSide===3) moveString+= space + "01R2";
-              else moveString+= space + "01R' 01F' 01U 01F";
-              //console.log("10 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===1 && cubeY===2 && cubeZ===0){
-              if(whiteSide===3) moveString+= space + "01F 01D2 01F'";
-              else moveString+= space + "01D' 01L";
-              //console.log("11 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===0 && cubeY===2 && cubeZ===1){
-              if(whiteSide===3) moveString+= space + "01B2 01R2";
-              else moveString+= space + "01B' 01U 01R' 01U'";
-              //console.log("12 and whiteside = " + whiteSide);
-            }
+            //If piece three is in y section 2
+            if(cubeX===1 && cubeY===2 && cubeZ===2)
+              whiteSide===3 ? moveString+= space + "01F' 01U2 01F" : moveString+= space + "01U 01R' 01U'";
+            
+            else if(cubeX===2 && cubeY===2 && cubeZ===1)
+              whiteSide===3 ? moveString+= space + "01R2" : moveString+= space + "01R' 01F' 01U 01F";
+            
+            else if(cubeX===1 && cubeY===2 && cubeZ===0)
+              whiteSide===3 ? moveString+= space + "01F 01D2 01F'" : moveString+= space + "01D' 01L";
+            
+            else if(cubeX===0 && cubeY===2 && cubeZ===1)
+              whiteSide===3 ? moveString+= space + "01B2 01R2" : moveString+= space + "01B' 01U 01R' 01U'";
+            
           }
           if(i===pieceFour && solvedEdges === 3){
-            //console.log("analyzing piece 7");
   
-            if(cubeX===1 && cubeY===0 && cubeZ===0){
-              if(!whiteSide) {solvedEdges++;}
-              else moveString+= space + "01D 01F' 01R 01F";
-              //console.log("5.3 and whiteside = " + whiteSide);
-            }
+            if(cubeX===1 && cubeY===0 && cubeZ===0)
+              !whiteSide ? solvedEdges++ : moveString+= space + "01D 01F' 01R 01F";
             
-            //If piece three is in y section 1
-            if(cubeX===0 && cubeY===1 && cubeZ===2){
-              if(whiteSide===1) moveString+= space + "01F 01L 01F'";
-              else moveString+= space + "01F2 01U' 01F2";
-              //console.log("5 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===1 && cubeZ===2){
-              if(whiteSide===1) moveString+= space + "01F' 01R' 01F";
-              else moveString+= space + "01F2 01U 01F2";
-              //console.log("6 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===1 && cubeZ===0){
-              if(whiteSide===2) moveString+= space + "01D'";
-              else moveString+= space + "01F' 01R 01F";
-              //console.log("7 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===0 && cubeY===1 && cubeZ===0){
-              if(whiteSide===4) moveString+= space + "01D"; // works
-              else moveString+= space + "01F 01L' 01F'";
-              //console.log("8 and whiteside = " + whiteSide);
-            }
+            //If piece four is in y section 1
+            if(cubeX===0 && cubeY===1 && cubeZ===2)
+              whiteSide===1 ? moveString+= space + "01F 01L 01F'" : moveString+= space + "01F2 01U' 01F2";
+            
+            else if(cubeX===2 && cubeY===1 && cubeZ===2)
+              whiteSide===1 ? moveString+= space + "01F' 01R' 01F" : moveString+= space + "01F2 01U 01F2";
+            
+            else if(cubeX===2 && cubeY===1 && cubeZ===0)
+              whiteSide===2 ? moveString+= space + "01D'" : moveString+= space + "01F' 01R 01F";
+            
+            else if(cubeX===0 && cubeY===1 && cubeZ===0)
+              whiteSide===4 ? moveString+= space + "01D" : moveString+= space + "01F 01L' 01F'";
+            
 
-            //If piece one is in y section 2
-            if(cubeX===1 && cubeY===2 && cubeZ===2){
-              if(whiteSide===3) moveString+= space + "01F2 01U2 01F2";
-              else moveString+= space + "01B 01L' 01D 01L";
-              //console.log("9 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===2 && cubeY===2 && cubeZ===1){
-              if(whiteSide===3) moveString+= space + "01F' 01R2 01F";
-              else moveString+= space + "01R 01D' 01R'";
-              //console.log("10 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===1 && cubeY===2 && cubeZ===0){
-              if(whiteSide===3) moveString+= space + "01D2";
-              else moveString+= space + "01D' 01F' 01R 01F";
-              //console.log("11 and whiteside = " + whiteSide);
-            }
-            else if(cubeX===0 && cubeY===2 && cubeZ===1){
-              if(whiteSide===3) moveString+= space + "01F 01L2 01F'";
-              else moveString+= space + "01L' 01D 01L";
-              //console.log("12 and whiteside = " + whiteSide);
-            }
+            //If piece four is in y section 2
+            if(cubeX===1 && cubeY===2 && cubeZ===2)
+              whiteSide===3 ? moveString+= space + "01F2 01U2 01F2" : moveString+= space + "01B 01L' 01D 01L";
+            
+            else if(cubeX===2 && cubeY===2 && cubeZ===1)
+              whiteSide===3 ? moveString+= space + "01F' 01R2 01F" : moveString+= space + "01R 01D' 01R'";
+            
+            else if(cubeX===1 && cubeY===2 && cubeZ===0)
+              whiteSide===3 ? moveString+= space + "01D2" : moveString+= space + "01D' 01F' 01R 01F";
+            
+            else if(cubeX===0 && cubeY===2 && cubeZ===1)
+              whiteSide===3 ? moveString+= space + "01F 01L2 01F'" : moveString+= space + "01L' 01D 01L";
+            
           }
         }
       }
     }
     
-    
     const moveArray = this.moveStringToArray(moveString);
 
-    if(solvedEdges < 4){
-      this.setState({moveSet : moveArray});
-    }
-    else {
-      this.setState({solveState : 2});
-    }
+    solvedEdges < 4 ? this.setState({moveSet : moveArray}) : this.setState({solveState : 2});  
   }
 
   // Solves white (front) corners
@@ -870,13 +878,8 @@ class App extends Component {
 
     const moveArray = this.moveStringToArray(moveString);
 
-    if(solvedCorners < 4){
-      this.setState({moveSet : moveArray});
-    }
-    else{
-      if(dim < 3) this.setState({solveState : 6});
-      else this.setState({solveState : 3});
-    }
+    solvedCorners < 4 ? this.setState({moveSet : moveArray}) :
+      dim < 3 ? this.setState({solveState : 6}) : this.setState({solveState : 3});
   }
 
   // Correctly positions the middle edges for 3x3 and greater
@@ -911,17 +914,15 @@ class App extends Component {
         if(emptyCount === 4){
           if(i===9 && solvedEdges === 0){
             //Front
-            if(cubeX === 0 && cubeY === 1 && cubeZ === 2){
-              if(blueSide === 1){solvedEdges++;}
-              else moveString+= space + moveFromMiddle012;
-            }
+            if(cubeX === 0 && cubeY === 1 && cubeZ === 2)
+              blueSide === 1 ? solvedEdges++ : moveString+= space + moveFromMiddle012;
+            
             else if(cubeX === 2 && cubeY === 1 && cubeZ === 2) moveString+= space + moveFromMiddle212;
             else if(cubeX === 0 && cubeY === 1 && cubeZ === 0) moveString+= space + moveFromMiddle010;
             else if(cubeX === 2 && cubeY === 1 && cubeZ === 0) moveString+= space + moveFromMiddle210;
             //Back
             else if(cubeX === 0 && cubeY === 2 && cubeZ === 1) {
-              if(blueSide === 3) moveString+= space + moveFromMiddle012;
-              else moveString+= space + "01B2 01L' 01B' 01L 01B 01U 01B 01U'";
+              blueSide === 3 ? moveString+= space + moveFromMiddle012 : moveString+= space + "01B2 01L' 01B' 01L 01B 01U 01B 01U'";
             }
             else if(cubeX === 1 && cubeY === 2 && cubeZ === 2) moveString+= space + "01B";
             else if(cubeX === 2 && cubeY === 2 && cubeZ === 1) moveString+= space + "01B2";
@@ -930,15 +931,13 @@ class App extends Component {
           if(i===11 && solvedEdges === 1){
             //Front
             if(cubeX === 2 && cubeY === 1 && cubeZ === 2){
-              if(blueSide === 1){solvedEdges++;}
-              else moveString+= space + moveFromMiddle212;
+              blueSide === 1 ? solvedEdges++ : moveString+= space + moveFromMiddle212;
             }
             else if(cubeX === 0 && cubeY === 1 && cubeZ === 0) moveString+= space + moveFromMiddle010;
             else if(cubeX === 2 && cubeY === 1 && cubeZ === 0) moveString+= space + moveFromMiddle210;
             //Back
             else if(cubeX === 1 && cubeY === 2 && cubeZ === 2) {
-              if(blueSide === 1) moveString+= space + moveFromMiddle212;
-              else moveString+= space + "01B2 01U' 01B' 01U 01B 01R 01B 01R'";
+              blueSide === 1 ? moveString+= space + moveFromMiddle212 : moveString+= space + "01B2 01U' 01B' 01U 01B 01R 01B 01R'";
             }
             else if(cubeX === 2 && cubeY === 2 && cubeZ === 1) moveString+= space + "01B";
             else if(cubeX === 1 && cubeY === 2 && cubeZ === 0) moveString+= space + "01B2";
@@ -947,14 +946,12 @@ class App extends Component {
           if(i===15 && solvedEdges === 2){
             //Front
             if(cubeX === 0 && cubeY === 1 && cubeZ === 0){
-              if(greenSide === 5){solvedEdges++;}
-              else moveString+= space + moveFromMiddle010;
+              greenSide === 5 ? solvedEdges++ : moveString+= space + moveFromMiddle010;
             }
             else if(cubeX === 2 && cubeY === 1 && cubeZ === 0) moveString+= space + moveFromMiddle210;
             //Back
             else if(cubeX === 1 && cubeY === 2 && cubeZ === 0){
-              if(greenSide === 5) moveString+= space + moveFromMiddle010;
-              else moveString+= space + "01B2 01D' 01B' 01D 01B 01L 01B 01L'";
+              greenSide === 5 ? moveString+= space + moveFromMiddle010 : moveString+= space + "01B2 01D' 01B' 01D 01B 01L 01B 01L'";
             }
             else if(cubeX === 0 && cubeY === 2 && cubeZ === 1) moveString+= space + "01B";
             else if(cubeX === 1 && cubeY === 2 && cubeZ === 2) moveString+= space + "01B2";
@@ -963,13 +960,11 @@ class App extends Component {
           if(i===17 && solvedEdges === 3){
             //Front
             if(cubeX === 2 && cubeY === 1 && cubeZ === 0){
-              if(greenSide === 5){solvedEdges++;}
-              else moveString+= space + moveFromMiddle210;
+              greenSide === 5 ? solvedEdges++ : moveString+= space + moveFromMiddle210;
             }
             //Back
             else if(cubeX === 2 && cubeY === 2 && cubeZ === 1){
-              if(greenSide === 3) moveString+= space + moveFromMiddle210;
-              else moveString+= space + "01B2 01R' 01B' 01R 01B 01D 01B 01D'";
+              greenSide === 3 ? moveString+= space + moveFromMiddle210 : moveString+= space + "01B2 01R' 01B' 01R 01B 01D 01B 01D'";
             }
             else if(cubeX === 1 && cubeY === 2 && cubeZ === 0) moveString+= space + "01B";
             else if(cubeX === 0 && cubeY === 2 && cubeZ === 1) moveString+= space + "01B2";
@@ -981,12 +976,7 @@ class App extends Component {
 
     const moveArray = this.moveStringToArray(moveString);
 
-    if(solvedEdges < 4){
-      this.setState({moveSet : moveArray});
-    }
-    else{
-      this.setState({solveState : 4});
-    }
+    solvedEdges < 4 ? this.setState({moveSet : moveArray}) : this.setState({solveState : 4});
   }
 
   // Solves the yellow (back) cross for 3x3 and greater
@@ -1032,12 +1022,7 @@ class App extends Component {
     
     const moveArray = this.moveStringToArray(moveString);
 
-    if(moveString.length){
-      this.setState({moveSet : moveArray});
-    }
-    else{
-      this.setState({solveState:5});
-    }
+    moveString.length ? this.setState({moveSet : moveArray}) : this.setState({solveState:5});
   }
 
   // Aligns the yellow (back) cross
@@ -1067,12 +1052,7 @@ class App extends Component {
 
     const moveArray = this.moveStringToArray(moveString);
 
-    if(moveString.length){
-      this.setState({moveSet : moveArray});
-    }
-    else{
-      this.setState({solveState:6});
-    }
+    moveString.length ? this.setState({moveSet : moveArray}) : this.setState({solveState:6});
   }
 
   // Aligns the yellow (back) corners
@@ -1100,12 +1080,7 @@ class App extends Component {
 
     const moveArray = this.moveStringToArray(moveString);
 
-    if(moveString.length){
-      this.setState({moveSet : moveArray});
-    }
-    else{
-      this.setState({solveState:7});
-    }
+    moveString.length ? this.setState({moveSet : moveArray}) : this.setState({solveState:7});
   }
 
   // Solves the yellow (back) corners
@@ -1203,45 +1178,65 @@ class App extends Component {
 
   // Initialization and animation functions
   componentDidMount() {
+    //const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnD4iY40esr6P1gsyrpJMwUQQ26s-ok2UiW21TjysH-gzeR6r8&s');
+    const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
     let url = this.getUrlVars();
     let cD;
     if(url.length < 30) cD = parseInt(url.substring(25));
-    else cD = parseInt(url.substring("http://mighty-fortress-00882.herokuapp.com/id=".length+1));
+    else cD = parseInt(url.substring("https://mighty-fortress-00882.herokuapp.com/id=".length));
     if(cD <= 7 && cD >= 2);
     else cD = 3;
     this.setState({cubeDimension : cD});
     
     let rubiksObject = this.generateSolved(cD,cD,cD);
     this.setState({rubiksObject : rubiksObject});
-    window.addEventListener("keydown", this.keyHandling);
-   
 
+    function onMouseMove( event ) {
+      // calculate mouse position in normalized device coordinates
+      // (-1 to +1) for both components
+      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+      mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;   
+    }
+
+    window.addEventListener("keydown", this.keyHandling);
+    window.addEventListener("mousemove", onMouseMove, false );
+    
     // === THREE.JS CODE START ===
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, .1, 1000 );
     var renderer = new THREE.WebGLRenderer();
     
+    var raycaster = new THREE.Raycaster();
+    var mouse = new THREE.Vector2();
+
+    var light = new THREE.AmbientLight( 0xffffff ); // soft white light
+    scene.add( light );
+    
+
     renderer.setClearColor(new THREE.Color("black"),1);
     renderer.setSize( window.innerWidth, window.innerHeight-10);
     document.body.appendChild( renderer.domElement );
     
     let tempCubes = [];
+    console.log(this.state.textureRed);
     // generate cubes with face colors based off rubiksObject
+    loader.anisotropy = renderer.getMaxAnisotropy();
     for(let i = 0; i < rubiksObject.length; i++){
 
       let cubeX = rubiksObject[i][6];
       let cubeY = rubiksObject[i][7];
       let cubeZ = rubiksObject[i][8];
 
-      var geometry = new THREE.BoxGeometry( .90, .90, .90 );
-      
+      var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+
       var cubeMaterials = [ 
-        new THREE.MeshBasicMaterial({color:rubiksObject[i][2], opacity:0.8, side: THREE.DoubleSide}),
-        new THREE.MeshBasicMaterial({color:rubiksObject[i][4], opacity:0.8, side: THREE.DoubleSide}), 
-        new THREE.MeshBasicMaterial({color:rubiksObject[i][3], opacity:0.8, side: THREE.DoubleSide}),
-        new THREE.MeshBasicMaterial({color:rubiksObject[i][0], opacity:0.8, side: THREE.DoubleSide}), 
-        new THREE.MeshBasicMaterial({color:rubiksObject[i][1], opacity:0.8, side: THREE.DoubleSide}), 
-        new THREE.MeshBasicMaterial({color:rubiksObject[i][5], opacity:0.8, side: THREE.DoubleSide}), 
+        //new THREE.MeshLambertMaterial({color:rubiksObject[i][2], opacity:0.8, side: THREE.DoubleSide}),
+        new THREE.MeshBasicMaterial({ map: loader }),
+        new THREE.MeshBasicMaterial({ map: loader }), 
+        new THREE.MeshBasicMaterial({ map: loader }),
+        new THREE.MeshBasicMaterial({ map: loader }), 
+        new THREE.MeshBasicMaterial({ map: loader }), 
+        new THREE.MeshBasicMaterial({ map: loader }), 
       ]; 
       //var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
     
@@ -1256,22 +1251,22 @@ class App extends Component {
     // add cubes to state and then render
     this.setState({cubes : tempCubes}, () => {
       for(let i = 0; i < rubiksObject.length; i++){
-        if((this.state.cubes[i].position.x === 0 || this.state.cubes[i].position.x === this.state.cubeDimension-1) ||
+        /*if((this.state.cubes[i].position.x === 0 || this.state.cubes[i].position.x === this.state.cubeDimension-1) ||
             (this.state.cubes[i].position.y === 0 || this.state.cubes[i].position.y === this.state.cubeDimension-1)||
-            (this.state.cubes[i].position.z === 0 || this.state.cubes[i].position.z === this.state.cubeDimension-1)){
+            (this.state.cubes[i].position.z === 0 || this.state.cubes[i].position.z === this.state.cubeDimension-1)){*/
 
           scene.add( this.state.cubes[i] );
 
           //Add outlines to each piece
-          let geo = new THREE.EdgesGeometry(this.state.cubes[i].geometry);
+          /*let geo = new THREE.EdgesGeometry(this.state.cubes[i].geometry);
           let mat = new THREE.LineBasicMaterial({
             color : "black", linewidth: .5
 
           });
           let wireframe = new THREE.LineSegments(geo,mat);
           wireframe.renderOrder = 1;
-          this.state.cubes[i].add(wireframe);
-        } 
+          this.state.cubes[i].add(wireframe);*/
+        //} 
       }
           // remember these initial values
       var tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
@@ -1292,20 +1287,40 @@ class App extends Component {
           renderer.render( scene, camera );
           
       }
-
       renderer.render( scene, camera );
       animate();
     });
 
     let rotate = this.rotatePoint;
 
-
-
-    
     // Function runs continuously to animate cube
     var animate = () => {
+      if(this.state.currentFunc === "None") {
+        this.reloadCubes();
+      //
+        raycaster.setFromCamera( mouse, camera );
+
+        // calculate objects intersecting the picking ray
+        var intersects = raycaster.intersectObjects( scene.children );
+        if (intersects[0] && intersects[0].object.material.length){
+          
+          // Get faces to line up properly
+          let faceInteresected = intersects[0].faceIndex;
+          let tempIndex = -1;
+          
+          // Assign the intersected face index to be recolored on hover
+          for(let i = 0; i < 6; i++)
+            if(faceInteresected===i*2 || faceInteresected=== i*2+1) tempIndex = i;
+          
+          // Recolor
+          if(intersects[0].object.material[tempIndex] && tempIndex > -1)
+            if(intersects[0].object.material[tempIndex].color)
+              if(intersects[0].object.material[tempIndex].color!=="black"){
+                intersects[0].object.material[tempIndex].color.set("lightblue");
+              }
+        }
+      }
       
-      let centerPoint = this.state.cubeDimension/2-.5;
       camera.position.z = this.state.cameraZ * Math.sin( this.state.angle );
       camera.position.y = this.state.cameraY;
       camera.position.x = this.state.cameraX * Math.cos( this.state.angle );
@@ -1313,136 +1328,7 @@ class App extends Component {
       requestAnimationFrame( animate );
       
       if(this.state.start<=this.state.end){
-        this.setState({reload : true});
-
-        // state variables asigned for shorter names
-        let cubes = this.state.cubes;
-        let turnDirection = this.state.turnDirection;
-        let speed = this.state.speed;
-        let start = this.state.start;
-        let face = this.state.face;
-        let cubeDepth = this.state.cubeDepth;
-
-        this.setState({start : start+speed});
-
-        //Rotate white center piece Face
-        if(face === 0){
-          for(let i = 0; i<this.state.rubiksObject.length;i++){
-            if(cubes[i].position.y > -1 && cubes[i].position.y < cubeDepth){
-              
-              // Turn piece based on rotation direction
-              if(turnDirection<0){
-                cubes[i].rotation.y += .1745*speed/10;
-              }
-              else {
-                cubes[i].rotation.y -= .1745*speed/10;
-              }
-
-              // Calculate circular movement
-              let newPoint = rotate(centerPoint,centerPoint,turnDirection,cubes[i].position.x,cubes[i].position.z,speed);
-
-              // corrects rounding errors
-              if(start % 90 === 0){
-                newPoint.p1 = Math.round(newPoint.p1);
-                newPoint.p2 = Math.round(newPoint.p2);
-              }
-              
-              // set new locations for face 0
-              cubes[i].position.x = newPoint.p1;
-              cubes[i].position.z = newPoint.p2;
-            }
-          }     
-        }
-        // blue
-        if(face === 1){
-          for(let i = 0; i<this.state.rubiksObject.length;i++){
-            if(cubes[i].position.z < this.state.cubeDimension && cubes[i].position.z > this.state.cubeDimension - 1 - cubeDepth){
-              if(turnDirection<0)
-                cubes[i].rotation.z -= .1745*speed/10;
-              else 
-                cubes[i].rotation.z += .1745*speed/10;
-              let newPoint = rotate(centerPoint,centerPoint,turnDirection,cubes[i].position.x,cubes[i].position.y,10*speed/10);
-              if(start % 90 === 0){
-                newPoint.p1 = Math.round(newPoint.p1);
-                newPoint.p2 = Math.round(newPoint.p2);
-              }
-              cubes[i].position.x = newPoint.p1;
-              cubes[i].position.y = newPoint.p2;
-            }
-          }
-        }
-        // red
-        if(face === 2){
-          for(let i = 0; i<this.state.rubiksObject.length;i++){
-            if(tempCubes[i].position.x < this.state.cubeDimension && cubes[i].position.x > this.state.cubeDimension - 1 - cubeDepth){
-              if(turnDirection<0)
-                tempCubes[i].rotation.x -= .1745*speed/10;
-              else 
-                tempCubes[i].rotation.x += .1745*speed/10;
-              let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.y,tempCubes[i].position.z,10*speed/10);
-              if(start % 90 === 0){
-                newPoint.p1 = Math.round(newPoint.p1);
-                newPoint.p2 = Math.round(newPoint.p2);
-              }
-              tempCubes[i].position.y = newPoint.p1;
-              tempCubes[i].position.z = newPoint.p2;
-            }
-          }
-        }
-        // yellow
-        if(face === 3){
-          for(let i = 0; i<this.state.rubiksObject.length;i++){
-            if(tempCubes[i].position.y < this.state.cubeDimension && cubes[i].position.y > this.state.cubeDimension - 1 - cubeDepth){
-              if(turnDirection<0)
-                tempCubes[i].rotation.y += .1745*speed/10;
-              else 
-                tempCubes[i].rotation.y -= .1745*speed/10;
-              let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.x,tempCubes[i].position.z,10*speed/10);
-              if(start % 90 === 0){
-                newPoint.p1 = Math.round(newPoint.p1);
-                newPoint.p2 = Math.round(newPoint.p2);
-              }
-              tempCubes[i].position.x = newPoint.p1;
-              tempCubes[i].position.z = newPoint.p2;
-            }
-          }
-        }
-        // orange
-        if(face === 4){
-          for(let i = 0; i<this.state.rubiksObject.length;i++){
-            if(tempCubes[i].position.x > -1 && cubes[i].position.x < cubeDepth){
-              if(turnDirection<0)
-                tempCubes[i].rotation.x -= .1745*speed/10;
-              else 
-                tempCubes[i].rotation.x += .1745*speed/10;
-              let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.y,tempCubes[i].position.z,10*speed/10);              
-              if(start % 90 === 0){
-                newPoint.p1 = Math.round(newPoint.p1);
-                newPoint.p2 = Math.round(newPoint.p2);
-              }
-              tempCubes[i].position.y = newPoint.p1;
-              tempCubes[i].position.z = newPoint.p2;
-            }
-          }
-        }
-        // green
-        if(face === 5){
-          for(let i = 0; i<this.state.rubiksObject.length;i++){
-            if(tempCubes[i].position.z > -1 && cubes[i].position.z < cubeDepth){
-              if(turnDirection<0)
-                tempCubes[i].rotation.z -= .1745*speed/10;
-              else 
-                tempCubes[i].rotation.z += .1745*speed/10;
-              let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.x,tempCubes[i].position.y,10*speed/10);
-              if(start % 90 === 0){
-                newPoint.p1 = Math.round(newPoint.p1);
-                newPoint.p2 = Math.round(newPoint.p2);
-              }
-              tempCubes[i].position.x = newPoint.p1;
-              tempCubes[i].position.y = newPoint.p2;
-            }
-          }
-        } 
+        this.rotatePieces(rotate,tempCubes);
       }
       else {
         if(this.state.reload) this.reloadCubes();
@@ -1455,7 +1341,6 @@ class App extends Component {
 
           else if (this.state.currentFunc==="Solving"){
             if(!this.state.moveSet.length) {
-              //console.log(this.state.solveState);
               if(this.state.solveState === 1) this.solveWhiteCross();
               if(this.state.solveState === 2) this.solveWhiteCorners();
               if(this.state.solveState === 3) this.solveMiddleEdges();
