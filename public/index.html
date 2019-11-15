@@ -22,25 +22,67 @@
     <title>React App</title>
 
     <link
-  rel="stylesheet"
-  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-  crossorigin="anonymous"
-/>
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     
   </head>
   <body style="background-color: black;">
       <style>
         button:hover,.dropdown-item:hover{
-          background-color: lightgray!important;
-          color: #343a40!important;
+          background-color: gray!important;
+          color: white!important;
         }
         
         .btn-primary {
           background-color: #343a40;
           color: lightgray;
+        }
+
+        #triggerBtn{
+          background-color: #343a40;
+          color: lightgray;
+          border-radius: .25rem;
+          border: 1px solid #007bff;
+        }
+
+        #closeBtn{
+          color: lightgray;
+        }
+
+        .popup-content{
+          border: none!important;
+          background: transparent!important;
+          box-shadow: none!important;
+        }
+
+        .popup-arrow {
+          display: none!important;
+        }
+
+        .popupDiv {
+          position: fixed;
+          top:10%;
+          left:50%;
+          width:75%;  /* adjust as per your needs */
+          min-height:50%;   /* adjust as per your needs */
+          margin-left:-37.5%;   /* negative half of width above */
+          
+          background-color: #343a40;
+          border-radius: .25rem;
+          border: 1.5px solid #007bff;
+          color: lightgray;
+        }
+
+        .popupDiv p{
+          text-align: left;
+          padding-right: 5px;
+          padding-left: 5px;
         }
   
       </style>
@@ -57,6 +99,10 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    
+    <script>
+      $(document).ready(function() {
+          $("#triggerBtn").click();
+        });
+    </script>
   </body>
 </html>
