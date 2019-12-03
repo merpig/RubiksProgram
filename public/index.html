@@ -44,7 +44,7 @@
           color: lightgray;
         }
 
-        #triggerBtn{
+        #triggerBtn, #fullscreenBtn{
           background-color: #343a40;
           color: lightgray;
           border-radius: .25rem;
@@ -111,7 +111,23 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <script>
       $(document).ready(function() {
-          $("#triggerBtn").click();
+          let isFull = false;
+          let element = document.body;
+          $("#fullscreenBtn").on("click" , (e) =>{
+            let requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
+            let exitMethod = document.exitFullScreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+            let buttonType = e.target.value;
+            if (requestMethod) { // Native full screen.
+                !isFull ? (e.target.textContent = "Exit") && requestMethod.call(element) : (e.target.textContent = "Fullscreen") && exitMethod.call(document);
+                //!isFull ?  : e.target.textContent = "Fullscreen"
+                isFull=!isFull;
+            } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
+                let wscript = new ActiveXObject("WScript.Shell");
+                if (wscript !== null) {
+                    wscript.SendKeys("{F11}");
+                }
+            }
+          })
         });
     </script>
   </body>
