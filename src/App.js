@@ -28,7 +28,7 @@ class App extends Component {
     currentSpeed:"Medium",// Displays which speed is selected
     moves : 0,            // Used by scramble functions
     reload : false,       // Lets animate know when to reload the cube (after every move)
-    solveState : 0,       // Dictates progression of solve function
+    solveState : -1,       // Dictates progression of solve function
     solveMoves : "",
     facePosX : null,
     facePosY : null,
@@ -458,7 +458,7 @@ class App extends Component {
       this.state.moveLog.length > 0 ?
         this.setState({moveLog : this.state.moveLog + " " + tempMove}) :
         this.setState({moveLog : this.state.moveLog + tempMove});
-      if(this.state.solveState) 
+      if(this.state.solveState > -1) 
         this.setState({solveMoves : this.state.solveMoves.length ? this.state.solveMoves + " " + tempMove : this.state.solveMoves + tempMove});
     }
 
@@ -490,7 +490,7 @@ class App extends Component {
     let randTurn = Math.floor((Math.random() * 2)-1);
     let randDepth = 1;
 
-    if(this.state.cubeDimension>3) 
+    if(this.state.cubeDimension>2) 
       randDepth = Math.floor((Math.random() * maxDepth)) + 1;
 
     this.rotateCubeFace(randFace, randTurn,randDepth);
@@ -621,22 +621,64 @@ class App extends Component {
       if((this.state.cubes[i].position.x === 0 || this.state.cubes[i].position.x === this.state.cubeDimension-1) ||
             (this.state.cubes[i].position.y === 0 || this.state.cubes[i].position.y === this.state.cubeDimension-1)||
             (this.state.cubes[i].position.z === 0 || this.state.cubes[i].position.z === this.state.cubeDimension-1)){
-      cube.material[0].color = new THREE.Color(this.state.rubiksObject[i][2]);
-      cube.material[1].color = new THREE.Color(this.state.rubiksObject[i][4]);
-      cube.material[2].color = new THREE.Color(this.state.rubiksObject[i][3]);
-      cube.material[3].color = new THREE.Color(this.state.rubiksObject[i][0]);
-      cube.material[4].color = new THREE.Color(this.state.rubiksObject[i][1]);
-      cube.material[5].color = new THREE.Color(this.state.rubiksObject[i][5]);
-      cube.rotation.x = 0; cube.rotation.y = 0; cube.rotation.z = 0;
-      cubes[i] = cube;
-            }
+        cube.material[0].color = new THREE.Color(this.state.rubiksObject[i][2]);
+        cube.material[1].color = new THREE.Color(this.state.rubiksObject[i][4]);
+        cube.material[2].color = new THREE.Color(this.state.rubiksObject[i][3]);
+        cube.material[3].color = new THREE.Color(this.state.rubiksObject[i][0]);
+        cube.material[4].color = new THREE.Color(this.state.rubiksObject[i][1]);
+        cube.material[5].color = new THREE.Color(this.state.rubiksObject[i][5]);
+        cube.rotation.x = 0; cube.rotation.y = 0; cube.rotation.z = 0;
+        cubes[i] = cube;
+      }
     }
     this.setState({cubes,reload : false});
   }
 
   beginSolve = () => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({currentFunc : "Solving",solveState : 1});
+    this.setState({currentFunc : "Solving",solveState : 0});
+  }
+
+  solveMiddles = () => {
+    let dim = this.state.cubeDimension;
+    if(dim%2===0) {
+      console.log(dim)
+      this.setState({solveState : 1});
+      return;
+    }
+
+    let moveString = "";
+    let cube = this.state.rubiksObject;
+    console.log()
+    if(cube[4][7] === 0 && cube[10][8] === 2){
+    }
+    else{
+      if(cube[4][8]===2){ //U
+        cube[12][6]===0 ? moveString+="02R'" : moveString+="02U'";
+        console.log("1")
+      }
+      else if(cube[4][6]===0){//L
+        cube[10][8]===2 ? moveString+="02U'" : moveString+="02R'";
+        console.log("2")
+      }
+      else if(cube[4][6]===2){//R
+        cube[10][8]===2 ? moveString+="02U" : moveString+="02R'";
+        console.log("3")
+      }
+      else if(cube[4][8]===0){//D
+        cube[12][6]===0 ? moveString+="02R" : moveString+="02U'";
+        console.log("4")
+      }
+      else if(cube[4][7]===2){//B
+        cube[10][8]===2 ? moveString+="02U2" : moveString+="02F'";
+        console.log("5")
+      }
+      else moveString+="02B'"
+    }
+    const moveArray = this.moveStringToArray(moveString);
+    console.log(moveArray);
+
+    moveString.length ? this.setState({moveSet : moveArray}) : this.setState({solveState:1});
   }
 
   // Solves white (front) cross for 3x3 and greater.
@@ -1195,7 +1237,7 @@ class App extends Component {
         if(cube[pieceOne][6]===0 && cube[pieceOne][8]===dim-1) {
           if(cube[pieceTwo][6]===dim-1 && cube[pieceTwo][8]===dim-1){
             if(cube[pieceThree][6]===0 && cube[pieceThree][8]===0){
-              this.setState({moveLog : "",currentFunc: "None",moveSet:[],solveState:0});
+              this.setState({moveLog : "",currentFunc: "None",moveSet:[],solveState:-1});
               if(this.state.solveMoves.length){
                 let temp = this.state.solveMoves.split(" ");
                 console.log("Number of moves: "+ temp.length);
@@ -1217,7 +1259,7 @@ class App extends Component {
         }
       }
       else {
-        this.setState({moveLog : "",currentFunc: "None",moveSet:[],solveState:0});
+        this.setState({moveLog : "",currentFunc: "None",moveSet:[],solveState:-1});
         if(this.state.solveMoves.length){
           let temp = this.state.solveMoves.split(" ");
           console.log("Number of moves: "+ temp.length);
@@ -1453,6 +1495,7 @@ class App extends Component {
 
           else if (this.state.currentFunc==="Solving"){
             if(!this.state.moveSet.length) {
+              if(this.state.solveState === 0) this.solveMiddles();
               if(this.state.solveState === 1) this.solveWhiteCross();
               if(this.state.solveState === 2) this.solveWhiteCorners();
               if(this.state.solveState === 3) this.solveMiddleEdges();

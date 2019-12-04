@@ -124,7 +124,6 @@
             let buttonType = e.target.value;
             if (requestMethod) { // Native full screen.
                 !isFull ? (e.target.textContent = "Exit",requestMethod.call(element)) : (e.target.textContent = "Fullscreen",exitMethod.call(document));
-                //!isFull ?  : e.target.textContent = "Fullscreen"
                 isFull=!isFull;
             } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
                 let wscript = new ActiveXObject("WScript.Shell");
@@ -132,7 +131,14 @@
                     wscript.SendKeys("{F11}");
                 }
             }
-          })
+          });
+
+          $(document).keydown((e) => {
+            if(e.key==="Escape") 
+              while($("#fullscreenBtn").text()!=="Fullscreen")
+                console.log($("#fullscreenBtn").text());
+                $("#fullscreenBtn").text("Fullscreen");
+          });
         });
     </script>
   </body>
