@@ -642,38 +642,31 @@ class App extends Component {
   solveMiddles = () => {
     let dim = this.state.cubeDimension;
     if(dim%2===0) {
-      console.log(dim)
       this.setState({solveState : 1});
       return;
     }
 
     let moveString = "";
     let cube = this.state.rubiksObject;
-    console.log()
     if(cube[4][7] === 0 && cube[10][8] === 2){
     }
     else{
       if(cube[4][8]===2){ //U
         cube[12][6]===0 ? moveString+="02R'" : moveString+="02U'";
-        console.log("1")
       }
       else if(cube[4][6]===0){//L
         cube[10][8]===2 ? moveString+="02U'" : moveString+="02R'";
-        console.log("2")
       }
       else if(cube[4][6]===2){//R
         cube[10][8]===2 ? moveString+="02U" : moveString+="02R'";
-        console.log("3")
       }
       else if(cube[4][8]===0){//D
         cube[12][6]===0 ? moveString+="02R" : moveString+="02U'";
-        console.log("4")
       }
       else if(cube[4][7]===2){//B
         cube[10][8]===2 ? moveString+="02U2" : moveString+="02F'";
-        console.log("5")
       }
-      else moveString+="02B'"
+      else moveString+="02B'"//F
     }
     const moveArray = this.moveStringToArray(moveString);
     console.log(moveArray);
@@ -1419,7 +1412,6 @@ class App extends Component {
 
     // Function runs continuously to animate cube
     var animate = () => {
-      //this.state.anisotropy ? loader.anisotropy = renderer.getMaxAnisotropy() : loader.anisotropy = null;
       // Mouse stuff here
       if(this.state.currentFunc === "None") {
         
