@@ -22,7 +22,7 @@ class App extends Component {
     moveLog : "",         // Keeps a log of all moves
     moveSet : [],         // Algorithms queue moves through this variable
     angle : 3.9,          // Camera angle
-    cubeDimension : 10,   // Cube dimensions. Ex: 3 => 3x3x3 cube
+    cubeDimension : 3,    // Cube dimensions. Ex: 3 => 3x3x3 cube
     cubeDepth : 1,        // Used to determine rotation depth on cubes greater than 3
     currentSpeed:"Medium",// Displays which speed is selected
     moves : 0,            // Used by scramble functions
@@ -459,7 +459,7 @@ class App extends Component {
 
     const moveArray = this.moveStringToArray(moveString);
 
-    console.log(undoIndex);
+    this.setState({blockMoveLog : true});
 
     if(moveArray.length-1-undoIndex >= 0)
       this.setState({currentFunc : "Undo",
@@ -482,8 +482,7 @@ class App extends Component {
       return;
     }
 
-    if(undoIndex - 1 === 0)
-      this.setState({blockMoveLog : true});
+    this.setState({blockMoveLog : true});
 
     if(undoIndex > 0)
       this.setState({currentFunc : "Redo",
@@ -501,8 +500,7 @@ class App extends Component {
 
   // Changes values in state to trigger face rotation
   rotateCubeFace = (face,direction,cubeDepth) => {
-    let index = this.state.undoIndex;
-    if(this.state.currentFunc !== "Reverse Moves" && parseInt(index) === 0 && !this.state.blockMoveLog){
+    if(this.state.currentFunc !== "Reverse Moves" && !this.state.blockMoveLog){
       let tempMove = "";
       cubeDepth<10 ? tempMove+="0"+cubeDepth : tempMove += cubeDepth;
       if(face === 0) tempMove += "F";
@@ -651,7 +649,9 @@ class App extends Component {
   // Rewinds all moves that have been done to the cube since unsolved state
   /*
    *
-   *      Function needs fixing to work with undo/redo buttons
+   *      1. Function needs fixing to work with undo/redo buttons
+   * 
+   *      2. Fix added. Needs testing
    * 
    */
   reverseMoves = () => {
@@ -663,7 +663,7 @@ class App extends Component {
     const tempArray = this.moveStringToArray(moveString);
     const moveArray = [];
 
-    for(let i = tempArray.length-1; i >= 0; i--)
+    for(let i = tempArray.length-1-this.state.undoIndex; i >= 0; i--)
       moveArray.push(tempArray[i]);
 
     this.setState({moveSet : moveArray});
@@ -675,6 +675,11 @@ class App extends Component {
   }
 
   // Incase of rendering conflicts, reload cube color positions
+  /*
+   *
+   *      Optimize so only turned faces get reloaded
+   * 
+   */
   reloadCubes = () => {
     let cubes = [...this.state.cubes];
     
@@ -1553,19 +1558,26 @@ class App extends Component {
         if(this.state.reload) this.reloadCubes();
         if(this.state.currentFunc !== "None"){
 
+          // Doesn't work with !==
           if(this.state.currentFunc === "Undo" || this.state.currentFunc === "Redo"){
-            console.log(this.state.currentFunc)
           }
+
+          // Keeps undo/redo updated with other moves
           else {
+            let moveLog = this.state.moveLog;
+            let index = this.state.undoIndex;
 
-            /* 
-             *
-             *    CODE HERE TO FIX movelog. Everything after undo index should
-             *    be cleared.
-             * 
-             */
+            if(index > 0){
+              let moveArray = this.moveStringToArray(moveLog);
+              let tempVal = moveArray[moveArray.length-1];
+              for(let i = 0; i <= index; i++){
 
-            this.setState({undoIndex:0});
+                moveArray.pop();
+              }
+              moveArray.push(tempVal);
+              moveLog = moveArray.join(" ");
+              this.setState({undoIndex:0,moveLog});
+            };
           }
 
           // Moves based on active function
@@ -1611,7 +1623,7 @@ class App extends Component {
 
         <p style={{position:"fixed", top: "75px", left: "10px",color: "white"}}>Speed: {this.state.currentSpeed}</p>
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white"}}>Current Function: {this.state.currentFunc}</p>
-        <div hidden style={{position:"fixed", top: "75px", left: "50%", marginLeft: "-45px",color: "white"}}>
+        <div style={{position:"fixed", top: "75px", left: "50%", marginLeft: "-45px",color: "white"}}>
           <button className="redoUndo" onClick={() => this.undo()}>Undo</button>
           <button className="redoUndo" onClick={() => this.redo()}>Redo</button>
         </div>
