@@ -1569,12 +1569,21 @@ class App extends Component {
 
             if(index > 0){
               let moveArray = this.moveStringToArray(moveLog);
-              let tempVal = moveArray[moveArray.length-1];
-              for(let i = 0; i <= index; i++){
 
-                moveArray.pop();
+              if(this.state.currentFunc.length < 3){
+                let tempVal = moveArray[moveArray.length-1];
+                for(let i = 0; i <= index; i++){
+                  moveArray.pop();
+                }
+                moveArray.push(tempVal);
               }
-              moveArray.push(tempVal);
+
+              else{
+                for(let i = 0; i < index; i++){
+                  moveArray.pop();
+                }
+              }
+
               moveLog = moveArray.join(" ");
               this.setState({undoIndex:0,moveLog});
             };
