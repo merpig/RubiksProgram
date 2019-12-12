@@ -35,7 +35,8 @@ class App extends Component {
     mouseFace : null,
     mouseDown : false,
     undoIndex : 0,
-    blockMoveLog : false
+    blockMoveLog : false,
+    previousPiece : null,
     //anisotropy : false
   };
 
@@ -668,24 +669,12 @@ class App extends Component {
   }
 
   // Incase of rendering conflicts, reload cube color positions
-  /***************************************************************************
-   *                                                                         *
-   *      Optimize so only turned faces get reloaded.                        *
-   *                                                                         * 
-   *      Consider looking at rotation to reload a piece.                    *
-   *                                                                         * 
-   *      Consider sending down piece to reload when mousing over cube to    *
-   *      keep from overloading.                                             *
-   *                                                                         * 
-   ***************************************************************************/
-  reloadCubes = (piece) => {
-
+  reloadCubes = (pos) => {
     let cubes = [...this.state.cubes];
     
     for(let i = 0; i<this.state.rubiksObject.length;i++){
       let cube = {...cubes[i]};
-      if(cube.rotation.x !== 0 || cube.rotation.y !== 0 || cube.rotation.z !== 0){
-        
+      if((cube.rotation.x !== 0 || cube.rotation.y !== 0 || cube.rotation.z !== 0) || pos === cube.position){
         cube.material[0].color = new THREE.Color(this.state.rubiksObject[i][2]);
         cube.material[1].color = new THREE.Color(this.state.rubiksObject[i][4]);
         cube.material[2].color = new THREE.Color(this.state.rubiksObject[i][3]);
@@ -1355,27 +1344,35 @@ class App extends Component {
   // Initialization and animation functions
   componentDidMount() {
     
-    //const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnD4iY40esr6P1gsyrpJMwUQQ26s-ok2UiW21TjysH-gzeR6r8&s');
+    // Start URL parsing
     let url = this.getUrlVars();
+
+    // Cube Dimensions
     let cD;
 
+    // localhost
     if(url.length < "https://rubiksprogram.herokuapp.com/id=".length)
       cD = parseInt(url.substring(25));
 
+    // heroku
     else 
       cD = parseInt(url
                       .substring("https://rubiksprogram.herokuapp.com/id="
                       .length));
 
-    if(cD <= 50 && cD >= 2);
+    // Limits size of cube
+    if(cD <= 100 && cD >= 2);
 
     else cD = 3;
+    // End URL Parsing
 
+    // Adjust camera based on cube dimensions
     this.setState({cubeDimension : cD,
                    cameraZ : 2+cD,
                    cameraX : 2+cD,
                    cameraY : 2+cD});
     
+    // Generate and store the solved state of the memory cube
     let rubiksObject = this.generateSolved(cD,cD,cD);
     this.setState({rubiksObject : rubiksObject});
 
@@ -1385,6 +1382,7 @@ class App extends Component {
       mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
       mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;   
     }
+
     let scope = this;
     function onMouseDown( event ) {
       scope.setState({mouseDown : true});  
@@ -1394,6 +1392,7 @@ class App extends Component {
       scope.setState({mouseDown : false});  
     }
 
+    // Bind event listeners to window
     window.addEventListener("keydown", this.keyHandling);
     window.addEventListener("mousemove", onMouseMove, false );
     window.addEventListener("mousedown", onMouseDown, false );
@@ -1408,42 +1407,49 @@ class App extends Component {
     var mouse = new THREE.Vector2();
 
     
-
+    // Sets background color
     renderer.setClearColor(new THREE.Color("black"),1);
+
+    // Sets renderer size
     renderer.setSize( window.innerWidth, window.innerHeight-10);
+
+    // Adds rendered to document body
     document.body.appendChild( renderer.domElement );
     
+    // On initialization holds the visual cubes
     let tempCubes = [];
 
     //Texture to pretty up the cube's faces
     const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
     loader.anisotropy = renderer.getMaxAnisotropy();
 
-    // generate cubes with face colors based off rubiksObject
+    // generate cubes with face colors based off memory cube
     for(let i = 0; i < rubiksObject.length; i++){
 
+      // Store x,y,z of memory cube in easier to read variables
       let cubeX = rubiksObject[i][6];
       let cubeY = rubiksObject[i][7];
       let cubeZ = rubiksObject[i][8];
 
+      // Create the cube object with dimensions of 1 for width,height, and depth
       var geometry = new THREE.BoxGeometry( 1, 1, 1 );
 
-      var cubeMaterials = [ 
-        //new THREE.MeshLambertMaterial({color:rubiksObject[i][2], opacity:0.8, side: THREE.DoubleSide}),
+      // Map textures to each face to look nice and then color over
+      var cubeMaterials = [
         new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][2], side: THREE.FrontSide}),
         new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][4], side: THREE.FrontSide}), 
         new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][3], side: THREE.FrontSide}),
         new THREE.MeshBasicMaterial({ map: loader}), 
         new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][1], side: THREE.FrontSide}), 
         new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][5], side: THREE.FrontSide}), 
-      ]; 
-      //var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
+      ];
     
+      // Add the new cube to temp cubes
       tempCubes[i] = new THREE.Mesh(geometry, cubeMaterials);
-      //let originalGeometry = new THREE.BoxGeometry(1, 1, 1);
       
+      // position piece based off memory cube
       tempCubes[i].translateX(cubeX);
-      tempCubes[i].translateY(cubeY /*+ offSetY*/);
+      tempCubes[i].translateY(cubeY);
       tempCubes[i].translateZ(cubeZ); 
     }
 
@@ -1455,6 +1461,7 @@ class App extends Component {
     // add cubes to state and then render
     this.setState({cubes : tempCubes}, () => {
       for(let i = 0; i < rubiksObject.length; i++){
+        // Logic to render outer pieces since inside pieces aren't ever used
         if((this.state.cubes[i].position.x === 0 || this.state.cubes[i].position.x === this.state.cubeDimension-1) ||
             (this.state.cubes[i].position.y === 0 || this.state.cubes[i].position.y === this.state.cubeDimension-1)||
             (this.state.cubes[i].position.z === 0 || this.state.cubes[i].position.z === this.state.cubeDimension-1)){
@@ -1462,7 +1469,7 @@ class App extends Component {
         } 
       }
       
-          // remember these initial values
+      // Resizes the canvas and adjust camera on window resize
       var tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
       var windowHeight = window.innerHeight;
       window.addEventListener( 'resize', onWindowResize, false );
@@ -1481,6 +1488,9 @@ class App extends Component {
           renderer.render( scene, camera );
           
       }
+      // End resize
+
+      // Render the scene and begin animate loop
       renderer.render( scene, camera );
       animate();
     });
@@ -1490,14 +1500,17 @@ class App extends Component {
     // Function runs continuously to animate cube
     var animate = () => {
       // Mouse stuff here
-      if(this.state.currentFunc === "None1") {
-        
+      if(this.state.currentFunc === "None") {
+        let previousPiece = this.state.previousPiece;
+        // Projects mouse onto scene to find intersected objects
         raycaster.setFromCamera( mouse, camera );
 
         // calculate objects intersecting the picking ray
         var intersects = raycaster.intersectObjects( scene.children );
         if (intersects[0] && intersects[0].object.material.length && !this.state.mouseDown){
-          //this.reloadCubes();
+          
+          
+          
           // Get faces to line up properly
           let faceInteresected = intersects[0].faceIndex;
           let tempIndex = -1;
@@ -1509,18 +1522,28 @@ class App extends Component {
               this.setState({mouseFace : i});
             }
           }
+
+          // Recolors last hovered piece
+          if(parseFloat(intersects[0].object.material[tempIndex].color.r) !== 0.6784313725490196 &&
+             parseFloat(intersects[0].object.material[tempIndex].color.g) !== 0.8470588235294118 &&
+             parseFloat(intersects[0].object.material[tempIndex].color.b) !== 0.9019607843137255){
+            if(previousPiece!==null) {
+              this.reloadCubes(previousPiece);
+              this.setState({previousPiece:null});
+            }
+          }
           
-          // Recolor
+          // Recolor face that mouse is over
           if(intersects[0].object.material[tempIndex] && tempIndex > -1)
             if(intersects[0].object.material[tempIndex].color){
-
+              // store the hovered face for use later
               this.setState({facePosX : intersects[0].object.position.x,
-                             facePosY : intersects[0].object.position.y,
-                             facePosZ : intersects[0].object.position.z });
+                            facePosY : intersects[0].object.position.y,
+                            facePosZ : intersects[0].object.position.z });
               intersects[0].object.material[tempIndex].color.set("lightblue");
-              //intersects[0].object.rotation.z = .001;
-              //this.reloadCubes();
-              
+              // store the hovered coordinates so that if a different
+              // piece is hovered, the previous gets colored back.
+              this.setState({previousPiece : intersects[0].object.position});
             }
         }
 
@@ -1541,9 +1564,13 @@ class App extends Component {
           }
         }
 
+        // 
         else if(this.state.mouseFace !== null){
-          
-          this.setState({mouseFace : null});
+          if(previousPiece!==null) {
+            this.reloadCubes(previousPiece);
+            this.setState({previousPiece:null});
+          }
+          if(this.state.mouseFace!==null) this.setState({mouseFace : null});
         }
       }
       
