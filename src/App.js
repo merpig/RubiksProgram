@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Navbar from "./components/Navbar/Navbar";
 import * as THREE from "three";
+import Stats from "stats.js";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
@@ -553,11 +554,13 @@ class App extends Component {
   }
 
   // Converts move string to move array
+  // handle move short hand characters. ex: fx => 01Fx 02Fx; x = "" or "'" or "2"
   moveStringToArray = str => {
     let tempArray = str.split(" ");
     let moveArray = [];
 
     // Run through split string and create duplicates where needed
+    // Handle other short hands
     for(let i = 0; i < tempArray.length;i++){
       if(tempArray[i].length === 4 && tempArray[i].slice(3,4)==="2") {
         let tempMove = tempArray[i].slice(0,3);
@@ -590,7 +593,12 @@ class App extends Component {
   // Algorithm for Cube in a cube in a cube
   cubeInACube = () => {
     if(this.state.currentFunc !== "None") return;
-    let moveString = "01U' 01L' 01U' 01F' 01R2 01B' 01R 01F 01U 01B2 01U 01B' 01L 01U' 01F 01U 01R 01F'"
+    let moveString = "";
+    if(this.state.cubeDimension < 4)
+      moveString = "01U' 01L' 01U' 01F' 01R2 01B' 01R 01F 01U 01B2 01U 01B' 01L 01U' 01F 01U 01R 01F'";
+    if(this.state.cubeDimension === 4)
+      moveString = "01B' 02R2 02L2 01U2 02R2 02L2 01B 01F2 01R 01U' 01R 01U 01R2 01U 01R2 01F' 01U 01F' 01U 02U 01L 02L 01U' 02U' 01F2 02F2 01D 02D 01R' 02R' 01U 02U 01F 02F 01D2 02D2 01R2 02R2";
+
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : "Cube x3", moveSet : moveArray});
   }
@@ -696,36 +704,46 @@ class App extends Component {
 
   solveMiddles = () => {
     let dim = this.state.cubeDimension;
-    if(dim%2===0) {
+    if(dim===2) {
       this.setState({solveState : 1});
       return;
     }
 
     let moveString = "";
     let cube = this.state.rubiksObject;
-    if(cube[4][7] === 0 && cube[10][8] === 2){
+    if(dim===3){
+      if(cube[4][7] === 0 && cube[10][8] === 2){
+      }
+      else{
+        if(cube[4][8]===2){ //U
+          cube[12][6]===0 ? moveString+="02R'" : moveString+="02U'";
+        }
+        else if(cube[4][6]===0){//L
+          cube[10][8]===2 ? moveString+="02U'" : moveString+="02R'";
+        }
+        else if(cube[4][6]===2){//R
+          cube[10][8]===2 ? moveString+="02U" : moveString+="02R'";
+        }
+        else if(cube[4][8]===0){//D
+          cube[12][6]===0 ? moveString+="02R" : moveString+="02U'";
+        }
+        else if(cube[4][7]===2){//B
+          cube[10][8]===2 ? moveString+="02U2" : moveString+="02F'";
+        }
+        else moveString+="02B'"//F
+      }
     }
-    else{
-      if(cube[4][8]===2){ //U
-        cube[12][6]===0 ? moveString+="02R'" : moveString+="02U'";
-      }
-      else if(cube[4][6]===0){//L
-        cube[10][8]===2 ? moveString+="02U'" : moveString+="02R'";
-      }
-      else if(cube[4][6]===2){//R
-        cube[10][8]===2 ? moveString+="02U" : moveString+="02R'";
-      }
-      else if(cube[4][8]===0){//D
-        cube[12][6]===0 ? moveString+="02R" : moveString+="02U'";
-      }
-      else if(cube[4][7]===2){//B
-        cube[10][8]===2 ? moveString+="02U2" : moveString+="02F'";
-      }
-      else moveString+="02B'"//F
+    else if(dim===4){
+      // code here to solve middles
     }
     const moveArray = this.moveStringToArray(moveString);
 
     moveString.length ? this.setState({moveSet : moveArray}) : this.setState({solveState:1});
+  }
+
+  // function to solves edges on cubes greater than 3x3x3
+  solveMultipleEdges = () =>{
+    // code here
   }
 
   // Solves white (front) cross for 3x3 and greater.
@@ -1361,7 +1379,7 @@ class App extends Component {
                       .length));
 
     // Limits size of cube
-    if(cD <= 100 && cD >= 2);
+    if(cD <= 20 && cD >= 2);
 
     else cD = 3;
     // End URL Parsing
@@ -1496,9 +1514,14 @@ class App extends Component {
     });
 
     let rotate = this.rotatePoint;
+    let stats0 = new Stats();
+    stats0.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild( stats0.dom);
 
     // Function runs continuously to animate cube
     var animate = () => {
+      stats0.begin();
+
       // Mouse stuff here
       if(this.state.currentFunc === "None") {
         let previousPiece = this.state.previousPiece;
@@ -1645,6 +1668,7 @@ class App extends Component {
         }
       }
       
+      stats0.end();
       renderer.render( scene, camera );     
     };
   }

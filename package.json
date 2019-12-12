@@ -18,6 +18,7 @@
     "react-metismenu": "^1.4.0",
     "react-scripts": "3.0.1",
     "reactjs-popup": "^1.5.0",
+    "stats.js": "^0.17.0",
     "three": "^0.109.0"
   },
   "scripts": {
