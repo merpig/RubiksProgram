@@ -382,18 +382,18 @@ class App extends Component {
     //let z = this.state.cameraZ;
 
     if(key === 37){ // left
-      this.setState({angle: this.state.angle+.2}); 
+      this.setState({angle: this.state.angle+.075}); 
     }
     if(key === 38){ // up
       // fix so that cube stays at same distance from camera
-      if(y < 7.5) this.setState({cameraY: y + 2});//, cameraX : x + Math.cos(10)*5, cameraZ : z + Math.cos(10)*5});
+      if(y < 7.5) this.setState({cameraY: y + .75});//, cameraX : x + Math.cos(10)*5, cameraZ : z + Math.cos(10)*5});
     }
     if(key === 39){ // right
-      this.setState({angle: this.state.angle-.2});
+      this.setState({angle: this.state.angle-.075});
     }
     if(key === 40){ // down
       // fix so that cube stays at same distance from camera
-      if(y > -7.5) this.setState({cameraY: y - 2});//, cameraX : x - Math.cos(10)*5, cameraZ : z - Math.cos(10)*5});
+      if(y > -7.5) this.setState({cameraY: y - .75});//, cameraX : x - Math.cos(10)*5, cameraZ : z - Math.cos(10)*5});
     }
   }
 
@@ -647,13 +647,6 @@ class App extends Component {
   }
 
   // Rewinds all moves that have been done to the cube since unsolved state
-  /*
-   *
-   *      1. Function needs fixing to work with undo/redo buttons
-   * 
-   *      2. Fix added. Needs testing
-   * 
-   */
   reverseMoves = () => {
     if(this.state.currentFunc !== "None") return;
     if(!this.state.moveLog.length) return;
@@ -675,19 +668,24 @@ class App extends Component {
   }
 
   // Incase of rendering conflicts, reload cube color positions
-  /*
-   *
-   *      Optimize so only turned faces get reloaded
-   * 
-   */
-  reloadCubes = () => {
+  /***************************************************************************
+   *                                                                         *
+   *      Optimize so only turned faces get reloaded.                        *
+   *                                                                         * 
+   *      Consider looking at rotation to reload a piece.                    *
+   *                                                                         * 
+   *      Consider sending down piece to reload when mousing over cube to    *
+   *      keep from overloading.                                             *
+   *                                                                         * 
+   ***************************************************************************/
+  reloadCubes = (piece) => {
+
     let cubes = [...this.state.cubes];
     
     for(let i = 0; i<this.state.rubiksObject.length;i++){
       let cube = {...cubes[i]};
-      if((this.state.cubes[i].position.x === 0 || this.state.cubes[i].position.x === this.state.cubeDimension-1) ||
-            (this.state.cubes[i].position.y === 0 || this.state.cubes[i].position.y === this.state.cubeDimension-1)||
-            (this.state.cubes[i].position.z === 0 || this.state.cubes[i].position.z === this.state.cubeDimension-1)){
+      if(cube.rotation.x !== 0 || cube.rotation.y !== 0 || cube.rotation.z !== 0){
+        
         cube.material[0].color = new THREE.Color(this.state.rubiksObject[i][2]);
         cube.material[1].color = new THREE.Color(this.state.rubiksObject[i][4]);
         cube.material[2].color = new THREE.Color(this.state.rubiksObject[i][3]);
@@ -696,6 +694,7 @@ class App extends Component {
         cube.material[5].color = new THREE.Color(this.state.rubiksObject[i][5]);
         cube.rotation.x = 0; cube.rotation.y = 0; cube.rotation.z = 0;
         cubes[i] = cube;
+        
       }
     }
     this.setState({cubes,reload : false});
@@ -1431,12 +1430,12 @@ class App extends Component {
 
       var cubeMaterials = [ 
         //new THREE.MeshLambertMaterial({color:rubiksObject[i][2], opacity:0.8, side: THREE.DoubleSide}),
-        new THREE.MeshBasicMaterial({ map: loader }),
-        new THREE.MeshBasicMaterial({ map: loader }), 
-        new THREE.MeshBasicMaterial({ map: loader }),
-        new THREE.MeshBasicMaterial({ map: loader }), 
-        new THREE.MeshBasicMaterial({ map: loader }), 
-        new THREE.MeshBasicMaterial({ map: loader }), 
+        new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][2], side: THREE.FrontSide}),
+        new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][4], side: THREE.FrontSide}), 
+        new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][3], side: THREE.FrontSide}),
+        new THREE.MeshBasicMaterial({ map: loader}), 
+        new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][1], side: THREE.FrontSide}), 
+        new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][5], side: THREE.FrontSide}), 
       ]; 
       //var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
     
@@ -1491,14 +1490,14 @@ class App extends Component {
     // Function runs continuously to animate cube
     var animate = () => {
       // Mouse stuff here
-      if(this.state.currentFunc === "None") {
+      if(this.state.currentFunc === "None1") {
         
         raycaster.setFromCamera( mouse, camera );
 
         // calculate objects intersecting the picking ray
         var intersects = raycaster.intersectObjects( scene.children );
         if (intersects[0] && intersects[0].object.material.length && !this.state.mouseDown){
-          this.reloadCubes();
+          //this.reloadCubes();
           // Get faces to line up properly
           let faceInteresected = intersects[0].faceIndex;
           let tempIndex = -1;
@@ -1514,10 +1513,13 @@ class App extends Component {
           // Recolor
           if(intersects[0].object.material[tempIndex] && tempIndex > -1)
             if(intersects[0].object.material[tempIndex].color){
+
               this.setState({facePosX : intersects[0].object.position.x,
                              facePosY : intersects[0].object.position.y,
                              facePosZ : intersects[0].object.position.z });
               intersects[0].object.material[tempIndex].color.set("lightblue");
+              //intersects[0].object.rotation.z = .001;
+              //this.reloadCubes();
               
             }
         }
@@ -1540,7 +1542,7 @@ class App extends Component {
         }
 
         else if(this.state.mouseFace !== null){
-          this.reloadCubes();
+          
           this.setState({mouseFace : null});
         }
       }
@@ -1555,12 +1557,12 @@ class App extends Component {
         this.rotatePieces(rotate,tempCubes);
       }
       else {
-        if(this.state.reload) this.reloadCubes();
+        if(this.state.reload) this.reloadCubes(this.state.face);
         if(this.state.currentFunc !== "None"){
 
           // Doesn't work with !==
-          if(this.state.currentFunc === "Undo" || this.state.currentFunc === "Redo"){
-          }
+          if(this.state.currentFunc === "Undo" ||
+             this.state.currentFunc === "Redo"){}
 
           // Keeps undo/redo updated with other moves
           else {
@@ -1592,7 +1594,8 @@ class App extends Component {
           // Moves based on active function
           if (this.state.currentFunc==="Scrambling")
             this.state.moves < 25 ?
-              this.timingScramble() : this.setState({currentFunc : "None",moves : 0});
+              this.timingScramble() :
+              this.setState({currentFunc : "None",moves : 0});
 
           else if (this.state.currentFunc==="Solving"){
             if(!this.state.moveSet.length) {
@@ -1610,7 +1613,8 @@ class App extends Component {
           
           else 
             this.state.moveSet.length ?
-              this.moveSetTimed(this.state.moveSet,0,0,0) : this.setState({currentFunc:"None"}); 
+              this.moveSetTimed(this.state.moveSet,0,0,0) :
+              this.setState({currentFunc:"None"}); 
         }
       }
       
