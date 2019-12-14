@@ -5,6 +5,7 @@ import Stats from "stats.js";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
+import solveMiddleLogic from './solvers/solveMiddleLogic'
 
 class App extends Component {
   state = {
@@ -38,12 +39,23 @@ class App extends Component {
     undoIndex : 0,
     blockMoveLog : false,
     previousPiece : null,
+    rubiksIndex : 0,
+    middles : []
     //anisotropy : false
   };
 
   // Generates the inital solved state of rubiksObject
   generateSolved = (_x,_y,_z) =>{
     let tempArr = [];
+    let tempMiddles = [
+      [], // white
+      [], // yellow
+      [], // blue
+      [], // green
+      [], // orange
+      []  // red
+    ];
+
     for(let j = 0; j < _y; j++){      // Move back along the y-axis
       for(let k = _z-1; k >= 0; k--){ // Move down through the z-axis
         for(let i = 0; i < _x; i++){  // Traverse across the x-axis
@@ -59,10 +71,35 @@ class App extends Component {
           else if (j===0) side0 ="white";
           if(k===_z-1) side1 = "blue";
           else if (k===0) side5 ="green";
-          tempArr.push([side0,side1,side2,side3,side4,side5,i,j,k]);
+          let tempCount = 0;
+          if(j===0 || j === _y-1) tempCount++;
+          if(k===0 || k === _z-1) tempCount++;
+          if(i===0 || i === _x-1) tempCount ++;
+          let tempType = "none";
+          if(tempCount===1) {
+            tempType = "middle";
+            if(j===0) tempMiddles[0].push(tempArr.length);
+            if(j===_y-1) tempMiddles[1].push(tempArr.length);
+            if(k===_z-1) tempMiddles[2].push(tempArr.length);
+            if(k===0) tempMiddles[3].push(tempArr.length);
+            if(i===0) tempMiddles[4].push(tempArr.length);
+            if(i===_x-1) tempMiddles[5].push(tempArr.length);
+          }
+          else if(tempCount===2) tempType = "edge";
+          else if(tempCount===3) tempType = "corner";
+          tempArr.push([side0,side1,side2,side3,side4,side5,i,j,k,i,j,k,tempType]);//Twice for solved state
         }
       }
     }
+    console.log(tempMiddles);
+    let middles=[];
+    for(let i = 0; i < 6; i++){
+      for(let j = 0; j < (_x-2)*(_x-2); j++){
+        middles.push(tempMiddles[i][j]);
+      }
+    }
+    //console.log(middles);
+    this.setState({middles});
     return tempArr;
   }
 
@@ -382,20 +419,24 @@ class App extends Component {
     let y = this.state.cameraY;
     //let x = this.state.cameraX;
     //let z = this.state.cameraZ;
-
+    //let formula = this.state.cubeDimension+2+(y+1)/20;
     if(key === 37){ // left
       this.setState({angle: this.state.angle+.075}); 
     }
     if(key === 38){ // up
       // fix so that cube stays at same distance from camera
-      if(y < 7.5) this.setState({cameraY: y + .75});//, cameraX : x + Math.cos(10)*5, cameraZ : z + Math.cos(10)*5});
+      
+      if(y < this.state.cubeDimension+2) this.setState({cameraY: y + .5});//, cameraX : formula, cameraZ : -formula});
+      console.log(`UP - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
     }
     if(key === 39){ // right
       this.setState({angle: this.state.angle-.075});
     }
     if(key === 40){ // down
       // fix so that cube stays at same distance from camera
-      if(y > -7.5) this.setState({cameraY: y - .75});//, cameraX : x - Math.cos(10)*5, cameraZ : z - Math.cos(10)*5});
+      
+      if(y > -(this.state.cubeDimension+2)) this.setState({cameraY: y - .5});//, cameraX : formula, cameraZ : -formula});
+      console.log(`DOWN - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
     }
   }
 
@@ -704,6 +745,7 @@ class App extends Component {
 
   solveMiddles = () => {
     let dim = this.state.cubeDimension;
+    let index = this.state.rubiksIndex;
     if(dim===2) {
       this.setState({solveState : 1});
       return;
@@ -711,6 +753,7 @@ class App extends Component {
 
     let moveString = "";
     let cube = this.state.rubiksObject;
+
     if(dim===3){
       if(cube[4][7] === 0 && cube[10][8] === 2){
       }
@@ -733,12 +776,51 @@ class App extends Component {
         else moveString+="02B'"//F
       }
     }
-    else if(dim===4){
-      // code here to solve middles
+    else if(dim>3){
+      let middles=this.state.middles;
+      index = this.state.rubiksIndex;
+      let whiteMiddleError = false;
+
+      //Check for misplacement errors in white middle solve
+      for(let i = 0; i<index&&i<(dim-2)*(dim-2)-1;i++){
+        if(cube[middles[i]][6]!==cube[i][9]&&
+           cube[middles[i]][7]!==cube[i][10]&&
+           cube[middles[i]][8]!==cube[i][11]){
+            whiteMiddleError=true;
+           }
+      }
+      if(!whiteMiddleError && index<(dim-2)*(dim-2)){
+        console.log(`Index: ${index}, Piece: ${middles[index]}`);
+        moveString = solveMiddleLogic(dim,cube[middles[index]],index);
+        console.log(moveString)
+      }
+      else if(whiteMiddleError){
+        console.log("Exiting early due to an earlier solved piece being displaced on face 0");
+        index=((dim-2)*(dim-2)-1)*1;
+      }
     }
     const moveArray = this.moveStringToArray(moveString);
 
-    moveString.length ? this.setState({moveSet : moveArray}) : this.setState({solveState:1});
+    if(dim<4){
+      moveString.length ? 
+        this.setState({moveSet : moveArray}) :
+        this.setState({solveState:1});
+    }
+    else{
+      if(index<((dim-2)*(dim-2))*1){
+        if(moveString.length) this.setState({moveSet : moveArray});
+        else {
+          this.setState({rubiksIndex: index+1});
+          console.log("keep solving\n");
+        }
+      }
+
+      else{
+        console.log(index);
+        console.log("move on");
+        this.setState({solveState:-1,currentFunc:"None",rubiksIndex:0});
+      }
+    }
   }
 
   // function to solves edges on cubes greater than 3x3x3
@@ -1386,9 +1468,9 @@ class App extends Component {
 
     // Adjust camera based on cube dimensions
     this.setState({cubeDimension : cD,
-                   cameraZ : 2+cD,
-                   cameraX : 2+cD,
-                   cameraY : 2+cD});
+                   cameraZ : -(2+cD),
+                   cameraX : (2+cD),
+                   cameraY : -(2+cD)});
     
     // Generate and store the solved state of the memory cube
     let rubiksObject = this.generateSolved(cD,cD,cD);
@@ -1675,7 +1757,7 @@ class App extends Component {
 
   // Renders html to the index.html page
   render() {
-    let solveBtn = (this.state.cubeDimension < 4) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>SOLVE</button> : "";
+    let solveBtn = (this.state.cubeDimension < 21) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>SOLVE</button> : "";
     return (
       <div className="App" >
         
@@ -1703,6 +1785,7 @@ class App extends Component {
         <button onClick={() => this.changeSpeed(1.5,1050,"Slowest")} style={{position:"fixed", top: "310px", left: "10px",backgroundColor: "navy",width: "90px",color:"white"}}>SLOWEST</button>
         
         {/* Bottom Left */}
+        
         <button onClick={this.cross} style={{position:"fixed", bottom: "150px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>CROSS</button>
         <button onClick={this.checkerBoard} style={{position:"fixed", bottom: "120px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>CHECKERBOARD</button>
         <button onClick={this.checkerBoard1} style={{position:"fixed", bottom: "90px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>CHECKERBOARD1</button>
