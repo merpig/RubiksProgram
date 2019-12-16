@@ -7,6 +7,7 @@
 
 import whiteSolver from "./middles/white"
 import yellowSolver from "./middles/yellow"
+import blueSolver from "./middles/blue"
 
 function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
     
@@ -40,6 +41,8 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
                 moveString = yellowSolver(current,solved,dim,index);
                 break;
             case 2:
+                // Next one to solve
+                moveString = yellowSolver(current,solved,dim,index);
                 break;
             case 3:
                 break;

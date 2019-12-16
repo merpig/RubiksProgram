@@ -780,23 +780,37 @@ class App extends Component {
       let middles=this.state.middles;
       index = this.state.rubiksIndex;
       let whiteMiddleError = false;
+      let yellowMiddleError = false;
 
       //Check for misplacement errors in white middle solve
       for(let i = 0; i<index&&i<(dim-2)*(dim-2)-1;i++){
-        if(cube[middles[i]][6]!==cube[i][9]&&
-           cube[middles[i]][7]!==cube[i][10]&&
-           cube[middles[i]][8]!==cube[i][11]){
+        if(cube[middles[i]][6]!==cube[middles[i]][9]&&
+           cube[middles[i]][7]!==cube[middles[i]][10]&&
+           cube[middles[i]][8]!==cube[middles[i]][11]){
             whiteMiddleError=true;
            }
       }
-      if(!whiteMiddleError && index<(dim-2)*(dim-2)){
+      for(let i = (dim-2)*(dim-2); i<index&&((dim-2)*(dim-2))*2-1;i++){
+        console.log("checking "+ i)
+        if(cube[middles[i]][6]!==cube[middles[i]][9]&&
+           cube[middles[i]][7]!==cube[middles[i]][10]&&
+           cube[middles[i]][8]!==cube[middles[i]][11]){
+             console.log(cube[middles[i]]);
+            yellowMiddleError=true;
+           }
+      }
+      if(!whiteMiddleError && !yellowMiddleError && index<((dim-2)*(dim-2))*2){
         console.log(`Index: ${index}, Piece: ${middles[index]}`);
         moveString = solveMiddleLogic(dim,cube[middles[index]],index);
         console.log(moveString)
       }
       else if(whiteMiddleError){
         console.log("Exiting early due to an earlier solved piece being displaced on face 0");
-        index=((dim-2)*(dim-2)-1)*1;
+        index=1000000000;
+      }
+      else if(yellowMiddleError){
+        console.log("Exiting early due to an earlier solved piece being displaced on face 3");
+        index=1000000000;
       }
     }
     const moveArray = this.moveStringToArray(moveString);
@@ -807,7 +821,7 @@ class App extends Component {
         this.setState({solveState:1});
     }
     else{
-      if(index<((dim-2)*(dim-2))*1){
+      if(index<((dim-2)*(dim-2))*2){
         if(moveString.length) this.setState({moveSet : moveArray});
         else {
           this.setState({rubiksIndex: index+1});
