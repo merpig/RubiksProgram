@@ -42,7 +42,7 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
                 break;
             case 2:
                 // Next one to solve
-                moveString = yellowSolver(current,solved,dim,index);
+                moveString = blueSolver(current,solved,dim,index);
                 break;
             case 3:
                 break;

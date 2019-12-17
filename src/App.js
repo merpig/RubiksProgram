@@ -427,7 +427,7 @@ class App extends Component {
       // fix so that cube stays at same distance from camera
       
       if(y < this.state.cubeDimension+2) this.setState({cameraY: y + .5});//, cameraX : formula, cameraZ : -formula});
-      console.log(`UP - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
+      //console.log(`UP - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
     }
     if(key === 39){ // right
       this.setState({angle: this.state.angle-.075});
@@ -436,7 +436,7 @@ class App extends Component {
       // fix so that cube stays at same distance from camera
       
       if(y > -(this.state.cubeDimension+2)) this.setState({cameraY: y - .5});//, cameraX : formula, cameraZ : -formula});
-      console.log(`DOWN - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
+      //console.log(`DOWN - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
     }
   }
 
@@ -787,15 +787,16 @@ class App extends Component {
         if(cube[middles[i]][6]!==cube[middles[i]][9]&&
            cube[middles[i]][7]!==cube[middles[i]][10]&&
            cube[middles[i]][8]!==cube[middles[i]][11]){
+            console.log(cube[middles[i]]);
             whiteMiddleError=true;
            }
       }
+      //Check for misplacement errors in yellow middle solve
       for(let i = (dim-2)*(dim-2); i<index&&((dim-2)*(dim-2))*2-1;i++){
-        console.log("checking "+ i)
         if(cube[middles[i]][6]!==cube[middles[i]][9]&&
            cube[middles[i]][7]!==cube[middles[i]][10]&&
            cube[middles[i]][8]!==cube[middles[i]][11]){
-             console.log(cube[middles[i]]);
+            console.log(cube[middles[i]]);
             yellowMiddleError=true;
            }
       }
