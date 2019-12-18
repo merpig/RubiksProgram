@@ -25,48 +25,36 @@ let solveYellowMiddle = (current,solved,dim,index) => {
     let moveString = "";
     let opposite = "01L'";
     if(currentSide==="B"){
-        // Do opposite of if on R to remove piece from back without displacing other pieces
         moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D'";
-        if((current.x>= Math.floor(dim/2)&&current.z>=Math.floor(dim/2)) ||
-            (current.x< Math.floor(dim/2)&&current.z<Math.floor(dim/2)))
-            moveString += " 01L";
-        else{
-            moveString += " 01L'";
-            opposite = "01L";
-        }
-        moveString += " " + ((dim-current.x)<10? "0" : "") + (dim-current.x) + "F";
-        moveString += " " + opposite;
-        moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D";
 
-        // if(current.z!==Math.floor(dim/2)&&current.z!==solved.z &&
-        //   (current.x>Math.floor(dim/2)&&current.y<Math.floor(dim/2))&&
-        //    current.x!==current.z &&current.x!==(dim-current.z+1)){
-        //     moveString= ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U";
-        //     moveString+= " 01R2";
-        //     moveString+= " " + ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U'";
-        // }
-        // else{
-        //     if((dim-current.x===current.z+1&&current.z===Math.ceil(dim/2)-1)||(current.z === solved.z&&current.x!==solved.x)){
-        //         moveString= ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U";
-        //         moveString+= " 01R'";
-        //         moveString+= " " + ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U'";
-        //         moveString+= " 01R'";
-        //         moveString= ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U";
-        //         moveString+= " 01R2";
-        //         moveString+= " " + ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U'";
-        //     }
-        //     else if(dim-current.x===current.z+1||current.x===current.z){
-        //         moveString= ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U";
-        //         moveString+= " 01R'";
-        //         moveString+= " " + ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U'";
-        //     }
-        //     else{
-        //         moveString= ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U";
-        //         moveString+= " 01R";
-        //         moveString+= " " + ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U'";
-        //     }
+        if(current.z!==solved.z){
+            moveString += " 01R2";
+        }
+
+        else {
+        // Do opposite of if on R to remove piece from back without displacing other pieces
+        // All issues arise from here
+            console.log("Piece found on same row but wrong column");
+            if(current.x===current.z){
+                moveString += " 01L'";
+                opposite = "01L";
+            }
+            else if(((current.x>= Math.floor(dim/2) &&current.z>=Math.floor(dim/2)))  ||
+                (current.x< Math.floor(dim/2) &&current.z<Math.floor(dim/2)) ||
+                (current.x> Math.floor(dim/2) &&current.z<Math.floor(dim/2)))
+                moveString += " 01L";
+            else{
+                moveString += " 01L'";
+                opposite = "01L";
+            }
+        // End issue
+
+        
+            moveString += " " + ((dim-current.x)<10? "0" : "") + (dim-current.x) + "F";
+            moveString += " " + opposite;
             
-        // }
+        }
+        moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D";
         console.log("moving piece out of back side");
     }
     else{

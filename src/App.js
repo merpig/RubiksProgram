@@ -803,7 +803,7 @@ class App extends Component {
       if(!whiteMiddleError && !yellowMiddleError && index<((dim-2)*(dim-2))*2){
         console.log(`Index: ${index}, Piece: ${middles[index]}`);
         moveString = solveMiddleLogic(dim,cube[middles[index]],index);
-        console.log(moveString)
+        console.log(moveString + "\n-------------------------------")
       }
       else if(whiteMiddleError){
         console.log("Exiting early due to an earlier solved piece being displaced on face 0");
