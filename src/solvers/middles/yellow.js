@@ -28,7 +28,10 @@ let solveYellowMiddle = (current,solved,dim,index) => {
         moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D'";
 
         if(current.z!==solved.z){
-            moveString += " 01R2";
+            if(current.z === Math.floor(dim/2)){
+                moveString += " 01R1";
+            }
+            else moveString += " 01R2";
         }
 
         else {
