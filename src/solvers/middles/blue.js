@@ -8,6 +8,9 @@
  *      yellow.js
  *      Started: Saturday, December 14, 2019
  *      
+ *      
+ *      Consider starting from scratch. Logic needs reworking on certain cases. System is hard to
+ *      code with. New functions/variables to help clean up/simplify logic.
  */
 
 let solveBlueMiddle = (current,solved,dim,index) => {
@@ -22,62 +25,102 @@ let solveBlueMiddle = (current,solved,dim,index) => {
     console.log(`Solved position: ${JSON.stringify(solved)}`);
     let moveString = "";
 
+
     if(currentSide==="U"){
+        console.log("move out of top side")
+        // F,U2,F',U2
         moveString = ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
-        moveString += " " + ((dim - current.x)<10? "0" : "") + (dim - current.x) + "D2";
+        moveString += " " + ((current.x+1)<10? "0" : "") + (current.x+1) + "U2";
         moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
-        moveString += " " + ((dim - current.x)<10? "0" : "") + (dim - current.x) + "D2";
+        moveString += " " + ((current.x+1)<10? "0" : "") + (current.x+1) + "U2";
     }
 
     else if(currentSide==="R"){
-        if(current.y===solved.y && solved.y === Math.floor(dim/2)&&dim%2!==0){
-            moveString = "01R";
-            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
-            moveString = "01R'";
-            moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";
-            moveString = "01R";
-            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
+        console.log("move piece to side D or solve pattern for side R");
+        // 
+        if(current.y===solved.y){
+            moveString+= "01R";
         }
-        else if(solved.y!==current.y && current.z!==dim-solved.x){
-            moveString = "01R";
-        }
-        else {
-            moveString += ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";
-            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
-            moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";
-            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
+        else{
+            moveString+= ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F'";
+
+            if(current.y!==solved.y && current.z!==solved.x){
+                if((solved.x===1||solved.x===dim-2)&&(solved.y===1||solved.y===dim-2))
+                    moveString+= " 01R";
+                else{
+                    moveString+= " 01R";
+                }
+            }
+            else if(current.z!==solved.x){
+                moveString+= " 01R";
+                console.log("r1")
+            }
+            else if(current.y!==solved.y){
+                moveString+= " 01R";
+                console.log("r2")
+            }
+
+            moveString+= " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "U2";
+
+            moveString+= " " + ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F";
+
+            moveString+= " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "U2";
+
         }
     }
 
     else if(currentSide==="L"){
-        if(current.y===solved.y && solved.y === Math.floor(dim/2)&&dim%2!==0){
-            moveString = "01L";
-            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
-            moveString = "01L'";
-            moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";
-            moveString = "01L";
-            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
+        console.log("move piece to side D or solve pattern for side L");
+        if(current.y===solved.y){
+            moveString+= "01L";
         }
-        else if(solved.y!==current.y && current.z!==solved.x){
-            moveString = "01L";
+        else{
+            moveString+= ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F";
+
+            if(current.y!==solved.y && current.z!==solved.x){
+                if((solved.x===1||solved.x===dim-2)&&(solved.y===1||solved.y===dim-2))
+                    moveString+= " 01L2";
+                else{
+                    moveString+= " 01L";
+                }
+            }
+            else if(current.z!==solved.x){
+                moveString+= " 01L";
+                console.log("l1")
+            }
+            else if(current.y!==solved.y){
+                moveString+= " 01L";
+                console.log("l2")
+            }
+
+            moveString+= " " + ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U2";
+
+            moveString+= " " + ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F'";
+
+            moveString+= " " + ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U2";
+
+            /* Position piece so it can be rotated into place.
+               Account for y = Math.floor(dim/2) on dim%2 === 1
+            */
+
+            // Rotate into place dim-z U2
+
+            // F' to put back on blue face
+
+            // U2 to put yellow/white back in place
         }
-        else {
-            moveString += ((current.z+1)<10? "0" : "") + (current.z) + "D2";
-            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
-            moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";
-            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
-        }
+
     }
 
     else {
-        if((solved.y===current.y && solved.y!==Math.floor(dim/2)) && current.x===solved.x){
-            moveString = "01D";
+        console.log("solve pattern for side D");
+        if(current.y!==solved.y){
+            moveString += "01D";
         }
         else{
-            moveString = ((current.y+1)<10? "0" : "") + (current.y) + "F";
-            moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";
-            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
-            moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";
+            moveString += " " + ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F'";
+            moveString += " 01R";
+            moveString += " " + ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F";
         }
     }
 

@@ -23,6 +23,7 @@ let solveYellowMiddle = (current,solved,dim,index) => {
     console.log(`Current position: ${JSON.stringify(current)}`);
     console.log(`Solved position: ${JSON.stringify(solved)}`);
     let moveString = "";
+    
     let opposite = "01L'";
     if(currentSide==="B"){
         moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D'";
@@ -52,7 +53,6 @@ let solveYellowMiddle = (current,solved,dim,index) => {
             }
         // End issue
 
-        
             moveString += " " + ((dim-current.x)<10? "0" : "") + (dim-current.x) + "F";
             moveString += " " + opposite;
             
@@ -90,32 +90,7 @@ let solveYellowMiddle = (current,solved,dim,index) => {
 
                 moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D";
             }
-
         }
-        // else if(current.y === dim-solved.z-1 && current.z === dim-solved.x-1) {
-        //     moveString = ((solved.x+1)<10? "0" : "") + (solved.x+1) + "L";
-        //     if(solved.x===solved.z){
-        //         moveString += " 01D"
-        //         console.log("1")
-        //     } 
-        //     else {
-        //         solved.z<Math.ceil(dim/2)&&solved.x<Math.ceil(dim/2) ? moveString += " 01D" : moveString += " 01D'"
-        //         console.log("2")
-        //     }
-        //     moveString += " " + (current.y+1<10? "0" : "") + (current.y+1) + "F'";
-        //     if(solved.x===solved.z){
-        //         moveString += " 01D'"
-        //         console.log("3")
-        //     } 
-        //     else 
-        //         solved.z<Math.ceil(dim/2)&&solved.x<Math.ceil(dim/2) ? moveString += " 01D'" : moveString += " 01D"
-        //     moveString += " " + ((solved.x+1)<10? "0" : "") + (solved.x+1) + "L'";
-        // } 
-        // else {
-        //     console.log("correct pos should be y:" + (dim-solved.z) + ", x:" + (dim-solved.x));
-        //     moveString = "01R";
-        //     console.log("Problem here")
-        // }
     }
 
     return moveString

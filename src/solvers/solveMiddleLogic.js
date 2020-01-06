@@ -8,12 +8,16 @@
 import whiteSolver from "./middles/white"
 import yellowSolver from "./middles/yellow"
 import blueSolver from "./middles/blue"
+import greenSolver from "./middles/green"
+import redSolver from "./middles/red"
 
 function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
     
     let dim = cubeDimensions;
     let faceColor = Math.floor((index)/((dim-2)*(dim-2)));
     let moveString = "";
+
+    // Coordinates organized
     let current = {
         x:rubiksObjectAtIndex[6],
         y:rubiksObjectAtIndex[7],
@@ -24,8 +28,6 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
         y:rubiksObjectAtIndex[10],
         z:rubiksObjectAtIndex[11]
     };
-    //console.log(`object: ${rubiksObjectAtIndex}`);
-    //console.log(`face: ${faceColor}`);
 
     //console.log("checking if in place...")
     if(current.x===solved.x && current.y===solved.y && current.z===solved.z){
@@ -35,20 +37,24 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
         //console.log("not in place... generating move...");
         switch(faceColor){
             case 0:
+                // Solved
                 moveString = whiteSolver(current,solved,dim,index);
                 break;
             case 1:
+                // Solved
                 moveString = yellowSolver(current,solved,dim,index);
                 break;
             case 2:
-                // Next one to solve
+                // Inprogress
                 moveString = blueSolver(current,solved,dim,index);
                 break;
             case 3:
+                // Unsolved
+                moveString = greenSolver(current,solved,dim,index);
                 break;
             case 4:
-                break;
-            case 5:
+                // Unsolved
+                moveString = redSolver(current,solved,dim,index);
                 break;
             default:
                 console.log("Should never reach here");

@@ -11,7 +11,12 @@
  *      
  */
 
+const move = (dim, current, option) =>{
+    let moveString = undefined
+    
+    return moveString
 
+}
 let solveWhiteMiddle = (current,solved,dim,index) => {
     let currentSide = "F";
     let row = Math.floor(index/(dim-2));
