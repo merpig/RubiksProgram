@@ -54,7 +54,7 @@ const cube = {
             }
           }
         }
-        console.log(tempMiddles);
+        //console.log(tempMiddles);
         let middles=[];
         for(let i = 0; i < 6; i++){
           for(let j = 0; j < (_x-2)*(_x-2); j++){

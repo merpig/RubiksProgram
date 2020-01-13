@@ -8,13 +8,14 @@ import 'bootstrap';
 import solveMiddleLogic from './solvers/solveMiddleLogic';
 import cube from './cubeFunctions/cube';
 import algorithms from './cubeFunctions/algorithms';
+import solver from './solvers/solver';
 
 // TODO:
 /*
  * 1. Start moving functions to other files
  * 
  * 2. All pattern functions can be condensed into one since only
- *    the move patterns are different for each.
+ *    the move patterns are different for each. FINISHED
  * 
  * 3. Add changes to rotateFace and rotatePiece. Code can be greatly condensed
  *    by using a function with paramters to minimize repetative code.
@@ -22,7 +23,7 @@ import algorithms from './cubeFunctions/algorithms';
  * 4. Continue working on solvers. 
  *    (Work on 1-3 if needing a break from solvers)
  * 
- * 5. 
+ * 5. Known issue with undo/redo. Occassionally last move fails.
  * 
  * 6. 
  */
@@ -65,18 +66,18 @@ class App extends Component {
   };
 
   // rotate colors on face
-  /* 
-   * 
-   * Write a function to handle code at each face for less code
-   * 
-   *
-   *
-   * 
-   */
   rotateFace = (cubeFace,direction,cubeDepth,cD,rotate2) => {
     let centerPoint = this.state.cubeDimension/2-.5;
     let rubiksObject = this.state.rubiksObject;
     let degrees = 90;
+    // const mapped = [
+    //   {side: 7, side1 : 6, side2 : 8, swap : [1,2,5,4]},
+    //   {side: 8, side1 : 6, side2 : 7, swap : [3,2,0,4]},
+    //   {side: 6, side1 : 7, side2 : 8, swap : [3,5,0,1]},
+    //   {side: 7, side1 : 6, side2 : 8, swap : [1,4,5,2]},
+    //   {side: 6, side1 : 7, side2 : 8, swap : [3,1,0,5]},
+    //   {side: 8, side1 : 6, side2 : 7, swap : [3,4,0,2]}
+    // ];
 
     if(direction < 0)  degrees *=-1;
 
@@ -248,14 +249,6 @@ class App extends Component {
   };
 
   // rotate pieces attached to face
-  /* 
-   * 
-   * Write a function to handle code at each face for less code
-   * 
-   *
-   *
-   * 
-   */
   rotatePieces = (rotate,tempCubes) => {
     this.setState({reload : true});
 
@@ -376,6 +369,8 @@ class App extends Component {
     this.setState({currentSpeed: _name,speed: _speed, start: _speed, end: 0, rotationSpeed: _rotationSpeed});
   }
 
+  // Controls camera movements
+  // *** Needs to be reworked ***
   rotateCamera = (key) => {
     let y = this.state.cameraY;
     //let x = this.state.cameraX;
@@ -401,6 +396,7 @@ class App extends Component {
     }
   }
 
+  // Bind keys to functions
   keyBinds = key => {
     switch (key){
 
@@ -450,11 +446,13 @@ class App extends Component {
     }
   }
 
+  // Handles key press event
   keyHandling = e => {
     e.keyCode > 36 && e.keyCode < 41 ?
      this.rotateCamera(e.keyCode) : this.keyBinds(e.key);
   }
 
+  // Allows the user to undo a move
   undo = () => {
     if(this.state.currentFunc !== "None") return;
     let undoIndex = this.state.undoIndex;
@@ -471,6 +469,7 @@ class App extends Component {
                      undoIndex : undoIndex + 1});
   }
 
+  // Allows the user to redo a move
   redo = () => {
     if(this.state.currentFunc !== "None") return;
     let undoIndex = this.state.undoIndex;
@@ -494,7 +493,7 @@ class App extends Component {
                      undoIndex : undoIndex - 1});
   }
 
-  // Control when rotation buttons can be clicked
+  // Control when top right rotation buttons can be clicked
   rotateOneFace = (e,vals) => {
     if(this.state.currentFunc === "None") {
       this.setState({currentFunc: e});
@@ -538,9 +537,8 @@ class App extends Component {
     });
   }
 
-  // Slows the scramble function down to keep from breaking the cube
-  // Consider removing this and using moveSetTimed
-  timingScramble = () => {
+  // Generates a random move
+  scramble = () => {
 
     this.setState({moves:this.state.moves+1});
 
@@ -576,14 +574,15 @@ class App extends Component {
     return moveArray;
   }
 
+  // Takes prebuilt algorithms and converts to moves
   algorithm = (moveString,moveName) => {
     if(this.state.currentFunc !== "None") return;
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : moveName, moveSet : moveArray});
   }
 
-  // Generalized time move function. Takes in move array and creates small delay between moves
-  moveSetTimed = (moveArray,length, start, solving) =>{
+  // Generalized move function. Takes in array of moves and parse the moves
+  parseMoveArray = (moveArray) =>{
     //if(typeof moveArray === 'string') moveArray = [moveArray];
     let shifted = moveArray.shift();
 
@@ -605,25 +604,9 @@ class App extends Component {
 
   }
 
-  // Scrambles the cube
-  scramble = () => {
+  // Changes state active function to begin scrambling
+  beginScramble = () => {
     if(this.state.currentFunc === "None") this.setState({currentFunc : "Scrambling"});
-  }
-
-  // Rewinds all moves that have been done to the cube since unsolved state
-  reverseMoves = () => {
-    if(this.state.currentFunc !== "None") return;
-    if(!this.state.moveLog.length) return;
-    let moveString = this.state.moveLog;
-    this.setState({moveLog : "",currentFunc : "Reverse Moves"});
-
-    const tempArray = this.moveStringToArray(moveString);
-    const moveArray = [];
-
-    for(let i = tempArray.length-1-this.state.undoIndex; i >= 0; i--)
-      moveArray.push(tempArray[i]);
-
-    this.setState({moveSet : moveArray});
   }
 
   // Refreshes page to reset cube
@@ -665,11 +648,13 @@ class App extends Component {
     this.setState({cubes,reload : false});
   }
 
+  // Starts the solve process
   beginSolve = () => {
     if(this.state.currentFunc !== "None") return;
     this.setState({currentFunc : "Solving",solveState : 0});
   }
 
+  // Solves the middle sections of cubes greater than 3x3x3
   solveMiddles = () => {
     let dim = this.state.cubeDimension;
     let index = this.state.rubiksIndex;
@@ -802,595 +787,6 @@ class App extends Component {
   // function to solves edges on cubes greater than 3x3x3
   solveMultipleEdges = () =>{
     // code here
-  }
-
-  // Solves white (front) cross for 3x3 and greater.
-  solveWhiteCross = () => {
-
-    let moveString = "";
-    let cube = this.state.rubiksObject;
-    let space = "";
-    let solvedEdges = 0;
-
-    let dim = this.state.cubeDimension;
-
-    if(dim === 2) solvedEdges = 4;
-
-    let pieceOne = Math.floor(dim/2);
-    let pieceTwo = dim * pieceOne;
-    let pieceThree = pieceTwo + (dim -1);
-    let pieceFour = dim * dim - Math.ceil(dim/2);
-
-    for(let i = 0; i < cube.length; i++){
-      if(moveString.length) space = " ";
-      if(cube[i].includes("white")){
-
-        let emptyCount = 0;
-        let whiteSide = -1;
-        let cubeX = cube[i][6];
-        let cubeY = cube[i][7];
-        let cubeZ = cube[i][8];
-        
-
-        for(let j = 0; j < 6; j++){
-          if (cube[i][j] === "black") emptyCount++;
-          else {
-            if(cube[i][j] === "white") whiteSide = j;
-          }
-        }
-
-        // If edge piece
-        if(emptyCount === 4) {
-          if(i===pieceOne && solvedEdges === 0 ){
-            if(cubeX===1 && cubeY===0 && cubeZ===2)
-              !whiteSide ? solvedEdges++ : moveString+= space + "01U' 01R' 01F'";
-            
-            else if(cubeX===2 && cubeY===0 && cubeZ===1)
-              !whiteSide ? moveString+= space + "01F'" : moveString+= space + "01R 01U";
-            
-            else if(cubeX===1 && cubeY===0 && cubeZ===0)
-              !whiteSide ? moveString+= space + "01F2" : moveString+= space + "01D 01R 01F'";
-
-            else if(cubeX===0 && cubeY===0 && cubeZ===1)
-              !whiteSide ? moveString+= space + "01F" : moveString+= space + "01L' 01U'";
-
-            //If piece one is in y section 1
-            else if(cubeX===0 && cubeY===1 && cubeZ===2)
-              whiteSide===1 ? moveString+= space + "01L 01F" : moveString+= space + "01U'";
-            
-            else if(cubeX===2 && cubeY===1 && cubeZ===2)
-              whiteSide===1 ? moveString+= space + "01R' 01F'" : moveString+= space + "01U";
-            
-            else if(cubeX===2 && cubeY===1 && cubeZ===0)
-              whiteSide===2 ? moveString+= space + "01D' 01F2" : moveString+= space + "01R 01F'";
-            
-            else if(cubeX===0 && cubeY===1 && cubeZ===0)
-              whiteSide===4 ? moveString+= space + "01D 01F2" : moveString+= space + "01L' 01F";
-            
-
-            //If piece one is in y section 2
-            else if(cubeX===1 && cubeY===2 && cubeZ===2)
-              whiteSide===3 ? moveString+= space + "01U2" : moveString+= space + "01B 01L 01U'";
-            
-            else if(cubeX===2 && cubeY===2 && cubeZ===1)
-              whiteSide===3 ? moveString+= space + "01R2 01F'" : moveString+= space + "01R' 01U";
-            
-            else if(cubeX===1 && cubeY===2 && cubeZ===0)
-              whiteSide===3 ? moveString+= space + "01B2 01U2" : moveString+= space + "01B' 01L 01U'";
-            
-            else if(cubeX===0 && cubeY===2 && cubeZ===1)
-              whiteSide===3 ? moveString+= space + "01B' 01U2" : moveString+= space + "01L 01U'";
-            
-          }
-          if(i===pieceTwo && solvedEdges === 1){
-            
-            if(cubeX===0 && cubeY===0 && cubeZ===1)
-              !whiteSide ? solvedEdges++ : moveString+= space + "01L' 01R 01U' 01R'";
-            
-            else if(cubeX===1 && cubeY===0 && cubeZ===0)
-              !whiteSide ? moveString+= space + "01D' 01F' 01D 01F" : moveString+= space + "01D' 01L'";
-            
-            else if(cubeX===2 && cubeY===0 && cubeZ===1)
-              !whiteSide ? moveString+= space + "01R 01F2 01R' 01F2" : moveString+= space + "01R 01F 01U 01F'";
-            
-
-            //If piece two is in y section 1
-            if(cubeX===0 && cubeY===1 && cubeZ===2)
-              whiteSide===1 ? moveString+= space + "01L" : moveString+= space + "01F 01U' 01F'";
-            
-            else if(cubeX===2 && cubeY===1 && cubeZ===2)
-              whiteSide===1 ? moveString+= space + "01F2 01R' 01F2" : moveString+= space + "01U 01F' 01U'";
-            
-            else if(cubeX===2 && cubeY===1 && cubeZ===0)
-              whiteSide===2 ? moveString+= space + "01F' 01D' 01F" : moveString+= space + "01F2 01R 01F2";
-            
-            else if(cubeX===0 && cubeY===1 && cubeZ===0)
-              whiteSide===4 ? moveString+= space + "01F' 01D 01F" : moveString+= space + "01L'";
-            
-
-            //If piece two is in y section 2
-            if(cubeX===1 && cubeY===2 && cubeZ===2)
-              whiteSide===3 ? moveString+= space + "01F 01U2 01F'" : moveString+= space + "01U' 01L 01U";
-            
-            else if(cubeX===2 && cubeY===2 && cubeZ===1)
-              whiteSide===3 ? moveString+= space + "01B2 01L2" : moveString+= space + "01R' 01F 01U 01F'";
-            
-            else if(cubeX===1 && cubeY===2 && cubeZ===0)
-              whiteSide===3 ? moveString+= space + "01F' 01D2 01F" : moveString+= space + "01D 01L'";
-            
-            else if(cubeX===0 && cubeY===2 && cubeZ===1)
-              whiteSide===3 ? moveString+= space + "01L2" : moveString+= space + "01B' 01U' 01L 01U";
-            
-          }
-          if(i===pieceThree && solvedEdges === 2){
-  
-            if(cubeX===1 && cubeY===0 && cubeZ===0)
-              !whiteSide ? moveString+= space + "01D 01F 01D' 01F'" : moveString+= space + "01D 01R";
-            
-            else if(cubeX===2 && cubeY===0 && cubeZ===1)
-              !whiteSide ? solvedEdges++ : moveString+= space + "01R 01F' 01U 01F";
-            
-            
-            //If piece three is in y section 1
-            if(cubeX===0 && cubeY===1 && cubeZ===2)
-              whiteSide===1 ? moveString+= space + "01F2 01L 01F2" : moveString+= space + "01F' 01U' 01F";
-            
-            else if(cubeX===2 && cubeY===1 && cubeZ===2)
-              whiteSide===1 ? moveString+= space + "01R'" : moveString+= space + "01F' 01U 01F";
-            
-            else if(cubeX===2 && cubeY===1 && cubeZ===0)
-              whiteSide===2 ? moveString+= space + "01F 01D' 01F'" : moveString+= space + "01R";
-            
-            else if(cubeX===0 && cubeY===1 && cubeZ===0)
-              whiteSide===4 ? moveString+= space + "01F 01D 01F'" : moveString+= space + "01F2 01L' 01F2";
-            
-
-            //If piece three is in y section 2
-            if(cubeX===1 && cubeY===2 && cubeZ===2)
-              whiteSide===3 ? moveString+= space + "01F' 01U2 01F" : moveString+= space + "01U 01R' 01U'";
-            
-            else if(cubeX===2 && cubeY===2 && cubeZ===1)
-              whiteSide===3 ? moveString+= space + "01R2" : moveString+= space + "01R' 01F' 01U 01F";
-            
-            else if(cubeX===1 && cubeY===2 && cubeZ===0)
-              whiteSide===3 ? moveString+= space + "01F 01D2 01F'" : moveString+= space + "01D' 01L";
-            
-            else if(cubeX===0 && cubeY===2 && cubeZ===1)
-              whiteSide===3 ? moveString+= space + "01B2 01R2" : moveString+= space + "01B' 01U 01R' 01U'";
-            
-          }
-          if(i===pieceFour && solvedEdges === 3){
-  
-            if(cubeX===1 && cubeY===0 && cubeZ===0)
-              !whiteSide ? solvedEdges++ : moveString+= space + "01D 01F' 01R 01F";
-            
-            //If piece four is in y section 1
-            if(cubeX===0 && cubeY===1 && cubeZ===2)
-              whiteSide===1 ? moveString+= space + "01F 01L 01F'" : moveString+= space + "01F2 01U' 01F2";
-            
-            else if(cubeX===2 && cubeY===1 && cubeZ===2)
-              whiteSide===1 ? moveString+= space + "01F' 01R' 01F" : moveString+= space + "01F2 01U 01F2";
-            
-            else if(cubeX===2 && cubeY===1 && cubeZ===0)
-              whiteSide===2 ? moveString+= space + "01D'" : moveString+= space + "01F' 01R 01F";
-            
-            else if(cubeX===0 && cubeY===1 && cubeZ===0)
-              whiteSide===4 ? moveString+= space + "01D" : moveString+= space + "01F 01L' 01F'";
-            
-
-            //If piece four is in y section 2
-            if(cubeX===1 && cubeY===2 && cubeZ===2)
-              whiteSide===3 ? moveString+= space + "01F2 01U2 01F2" : moveString+= space + "01B 01L' 01D 01L";
-            
-            else if(cubeX===2 && cubeY===2 && cubeZ===1)
-              whiteSide===3 ? moveString+= space + "01F' 01R2 01F" : moveString+= space + "01R 01D' 01R'";
-            
-            else if(cubeX===1 && cubeY===2 && cubeZ===0)
-              whiteSide===3 ? moveString+= space + "01D2" : moveString+= space + "01D' 01F' 01R 01F";
-            
-            else if(cubeX===0 && cubeY===2 && cubeZ===1)
-              whiteSide===3 ? moveString+= space + "01F 01L2 01F'" : moveString+= space + "01L' 01D 01L";
-            
-          }
-        }
-      }
-    }
-    
-    const moveArray = this.moveStringToArray(moveString);
-
-    solvedEdges < 4 ? this.setState({moveSet : moveArray}) : this.setState({solveState : 2});  
-  }
-
-  // Solves white (front) corners
-  solveWhiteCorners = () => {
-    let moveString = "";
-    let cube = this.state.rubiksObject;
-    let space = "";
-    let solvedCorners = 0;
-
-    let dim = this.state.cubeDimension;
-
-    let pieceOne = 0;
-    let pieceTwo = dim - 1;
-    let pieceThree = (cube.length/dim) - dim;
-    let pieceFour = (cube.length/dim) - 1;
-
-    for(let i = 0; i < cube.length; i++){
-      if(moveString.length) space = " ";
-      if(cube[i].includes("white")){
-
-        let emptyCount = 0;
-        let whiteSide = -1;
-        let cubeX = cube[i][6];
-        let cubeY = cube[i][7];
-        let cubeZ = cube[i][8];
-
-        for(let j = 0; j < 6; j++){
-          if (cube[i][j] === "black") emptyCount++;
-          else if(cube[i][j] === "white") whiteSide = j;
-        }
-
-        // If edge piece
-        if(emptyCount === 3) {
-
-          if(i===pieceOne && solvedCorners === 0 ){
-            //Front
-            if(cubeX===0 && cubeY===0 && cubeZ===dim-1){
-              if(whiteSide===0){solvedCorners++;}
-              else if(whiteSide===1) moveString+= space + "01L' 01B 01L 01B' 01L' 01B 01L";
-              else moveString+= space + "01L' 01B' 01L 01B2 01U 01B' 01U'";
-            }
-            else if(cubeX===dim-1 && cubeY===0 && cubeZ===dim-1) moveString+= space + "01R 01L' 01B 01L 01R'"
-            else if(cubeX===dim-1 && cubeY===0 && cubeZ===0) moveString+= space + "01R' 01B' 01R 01U 01B' 01U'";
-            else if(cubeX===0 && cubeY===0 && cubeZ===0) moveString+= space + "01D' 01U 01B 01U' 01D"
-            //Back
-            else if(cubeX===0 && cubeY===dim-1 && cubeZ===dim-1) moveString+= space + "01U 01B 01U'"
-            else if(cubeX===dim-1 && cubeY===dim-1 && cubeZ===dim-1) moveString+= space + "01L' 01B 01L"
-            else if(cubeX===dim-1 && cubeY===dim-1 && cubeZ===0) moveString+= space + "01L' 01B2 01L"
-            else if(cubeX===0 && cubeY===dim-1 && cubeZ===0) moveString+= space + "01U 01B' 01U'"
-          }
-
-          if(i===pieceTwo && solvedCorners === 1 ){
-            if(cubeX===dim-1 && cubeY === 0 && cubeZ === dim-1){
-              if(whiteSide === 0){solvedCorners++}
-              else if(whiteSide===1) moveString += space + "01R 01B' 01R' 01B 01R 01B' 01R'";
-              else moveString += space + "01U' 01B 01U 01B' 01U' 01B 01U";
-            }
-            else if(cubeX === dim-1 && cubeY===0 && cubeZ===0) moveString+= space + "01U' 01D 01B 01D' 01U";
-            else if(cubeX===0 && cubeY===0 && cubeZ===0) moveString+= space + "01L 01R 01B2 01R' 01L'";
-            //Back
-            else if(cubeX===0 && cubeY===dim-1 && cubeZ===dim-1) moveString+= space + "01R 01B' 01R'";
-            else if(cubeX===dim-1 && cubeY===dim-1 && cubeZ===dim-1) moveString+= space + "01B 01R 01B' 01R'";
-            else if(cubeX===dim-1 && cubeY===dim-1 && cubeZ===0) moveString+= space + "01B2 01R 01B' 01R'";
-            else if(cubeX===0 && cubeY===dim-1 && cubeZ===0) moveString+= space + "01R 01B2 01R'";
-          }
-
-          if(i===pieceThree && solvedCorners === 2 ){
-            if(cubeX===0 && cubeY===0 && cubeZ===0){
-              if(whiteSide === 0){solvedCorners++}
-              else if(whiteSide === 4) moveString += space + "01D' 01B 01D 01B' 01D' 01B 01D";
-              else moveString += space + "01L 01B' 01L' 01B 01L 01B' 01L'";
-            }
-            else if(cubeX === dim-1 && cubeY===0 && cubeZ===0) moveString+= space + "01R' 01L 01B' 01L' 01R";
-            //Back
-            else if(cubeX===0 && cubeY===dim-1 && cubeZ===dim-1) moveString+= space + "01D' 01B 01D";
-            else if(cubeX===dim-1 && cubeY===dim-1 && cubeZ===dim-1) moveString+= space + "01D' 01B2 01D";
-            else if(cubeX===dim-1 && cubeY===dim-1 && cubeZ===0) moveString+= space + "01B' 01D' 01B' 01D";
-            else if(cubeX===0 && cubeY===dim-1 && cubeZ===0) moveString+= space + "01D' 01B' 01D";
-          }
-
-          if(i===pieceFour && solvedCorners === 3 ){
-            if(cubeX === dim-1 && cubeY===0 && cubeZ===0){
-              if(whiteSide === 0){solvedCorners++}
-              else if(whiteSide === 2) moveString += space + "01D 01B' 01D' 01B 01D 01B' 01D'";
-              else moveString += space + "01R' 01B 01R 01B' 01R' 01B 01R";
-            }
-            //Back
-            else if(cubeX===0 && cubeY===dim-1 && cubeZ===dim-1) moveString+= space + " 01R' 01B2 01R";
-            else if(cubeX===dim-1 && cubeY===dim-1 && cubeZ===dim-1) moveString+= space + "01D 01B' 01D'";
-            else if(cubeX===dim-1 && cubeY===dim-1 && cubeZ===0) moveString+= space + "01B 01D 01B' 01D'";
-            else if(cubeX===0 && cubeY===dim-1 && cubeZ===0) moveString+= space + "01R' 01B 01R";
-          }
-        }
-      }
-    }
-
-    const moveArray = this.moveStringToArray(moveString);
-
-    solvedCorners < 4 ? this.setState({moveSet : moveArray}) :
-      dim < 3 ? this.setState({solveState : 6}) : this.setState({solveState : 3});
-  }
-
-  // Correctly positions the middle edges for 3x3 and greater
-  solveMiddleEdges = () => {
-    let moveString = "";
-    let cube = this.state.rubiksObject;
-    let space = "";
-    let solvedEdges = 0;
-    let moveFromMiddle012 = "01B 01U 01B' 01U' 01B' 01L' 01B 01L";
-    let moveFromMiddle212 = "01B 01R 01B' 01R' 01B' 01U' 01B 01U";
-    let moveFromMiddle210 = "01B 01D 01B' 01D' 01B' 01R' 01B 01R";
-    let moveFromMiddle010 = "01B 01L 01B' 01L' 01B' 01D' 01B 01D";
-
-    for(let i = 0; i < 27; i++){
-      if(moveString.length) space = " ";
-      if(cube[i].includes("green") || cube[i].includes("blue")){
-        let emptyCount = 0;
-        let blueSide = -1;
-        let greenSide = -1;
-        let cubeX = cube[i][6];
-        let cubeY = cube[i][7];
-        let cubeZ = cube[i][8];
-
-        for(let j = 0; j < 6; j++){
-          if (cube[i][j] === "black") emptyCount++;
-          else {
-            if(cube[i][j] === "blue") blueSide = j;
-            else if(cube[i][j] === "green") greenSide = j;
-          }
-        }
-
-        if(emptyCount === 4){
-          if(i===9 && solvedEdges === 0){
-            //Front
-            if(cubeX === 0 && cubeY === 1 && cubeZ === 2)
-              blueSide === 1 ? solvedEdges++ : moveString+= space + moveFromMiddle012;
-            
-            else if(cubeX === 2 && cubeY === 1 && cubeZ === 2) moveString+= space + moveFromMiddle212;
-            else if(cubeX === 0 && cubeY === 1 && cubeZ === 0) moveString+= space + moveFromMiddle010;
-            else if(cubeX === 2 && cubeY === 1 && cubeZ === 0) moveString+= space + moveFromMiddle210;
-            //Back
-            else if(cubeX === 0 && cubeY === 2 && cubeZ === 1) {
-              blueSide === 3 ? moveString+= space + moveFromMiddle012 : moveString+= space + "01B2 01L' 01B' 01L 01B 01U 01B 01U'";
-            }
-            else if(cubeX === 1 && cubeY === 2 && cubeZ === 2) moveString+= space + "01B";
-            else if(cubeX === 2 && cubeY === 2 && cubeZ === 1) moveString+= space + "01B2";
-            else if(cubeX === 1 && cubeY === 2 && cubeZ === 0) moveString+= space + "01B'";
-          }
-          if(i===11 && solvedEdges === 1){
-            //Front
-            if(cubeX === 2 && cubeY === 1 && cubeZ === 2){
-              blueSide === 1 ? solvedEdges++ : moveString+= space + moveFromMiddle212;
-            }
-            else if(cubeX === 0 && cubeY === 1 && cubeZ === 0) moveString+= space + moveFromMiddle010;
-            else if(cubeX === 2 && cubeY === 1 && cubeZ === 0) moveString+= space + moveFromMiddle210;
-            //Back
-            else if(cubeX === 1 && cubeY === 2 && cubeZ === 2) {
-              blueSide === 1 ? moveString+= space + moveFromMiddle212 : moveString+= space + "01B2 01U' 01B' 01U 01B 01R 01B 01R'";
-            }
-            else if(cubeX === 2 && cubeY === 2 && cubeZ === 1) moveString+= space + "01B";
-            else if(cubeX === 1 && cubeY === 2 && cubeZ === 0) moveString+= space + "01B2";
-            else if(cubeX === 0 && cubeY === 2 && cubeZ === 1) moveString+= space + "01B'";
-          }
-          if(i===15 && solvedEdges === 2){
-            //Front
-            if(cubeX === 0 && cubeY === 1 && cubeZ === 0){
-              greenSide === 5 ? solvedEdges++ : moveString+= space + moveFromMiddle010;
-            }
-            else if(cubeX === 2 && cubeY === 1 && cubeZ === 0) moveString+= space + moveFromMiddle210;
-            //Back
-            else if(cubeX === 1 && cubeY === 2 && cubeZ === 0){
-              greenSide === 5 ? moveString+= space + moveFromMiddle010 : moveString+= space + "01B2 01D' 01B' 01D 01B 01L 01B 01L'";
-            }
-            else if(cubeX === 0 && cubeY === 2 && cubeZ === 1) moveString+= space + "01B";
-            else if(cubeX === 1 && cubeY === 2 && cubeZ === 2) moveString+= space + "01B2";
-            else if(cubeX === 2 && cubeY === 2 && cubeZ === 1) moveString+= space + "01B'";
-          }
-          if(i===17 && solvedEdges === 3){
-            //Front
-            if(cubeX === 2 && cubeY === 1 && cubeZ === 0){
-              greenSide === 5 ? solvedEdges++ : moveString+= space + moveFromMiddle210;
-            }
-            //Back
-            else if(cubeX === 2 && cubeY === 2 && cubeZ === 1){
-              greenSide === 3 ? moveString+= space + moveFromMiddle210 : moveString+= space + "01B2 01R' 01B' 01R 01B 01D 01B 01D'";
-            }
-            else if(cubeX === 1 && cubeY === 2 && cubeZ === 0) moveString+= space + "01B";
-            else if(cubeX === 0 && cubeY === 2 && cubeZ === 1) moveString+= space + "01B2";
-            else if(cubeX === 1 && cubeY === 2 && cubeZ === 2) moveString+= space + "01B'"; 
-          }
-        }
-      }
-    }
-
-    const moveArray = this.moveStringToArray(moveString);
-
-    solvedEdges < 4 ? this.setState({moveSet : moveArray}) : this.setState({solveState : 4});
-  }
-
-  // Solves the yellow (back) cross for 3x3 and greater
-  solveYellowCross = () => {
-    let moveString = "";
-    let cube = this.state.rubiksObject;
-    let recipe = "01U 01R 01B 01R' 01B' 01U'";
-    let cubeIndex = [19,21,23,25];
-    let cubeAtIndex = [];
-
-    for(let i = 0; i < 4; i++){
-      if(cube[cubeIndex[i]][6] === 1 && 
-         cube[cubeIndex[i]][7] === 2 &&
-         cube[cubeIndex[i]][8] === 2) cubeAtIndex[0] = cube[cubeIndex[i]][3];
-      else if (cube[cubeIndex[i]][6] === 0 && 
-        cube[cubeIndex[i]][7] === 2 &&
-        cube[cubeIndex[i]][8] === 1) cubeAtIndex[1] = cube[cubeIndex[i]][3];
-      else if (cube[cubeIndex[i]][6] === 2 && 
-        cube[cubeIndex[i]][7] === 2 &&
-        cube[cubeIndex[i]][8] === 1) cubeAtIndex[2] = cube[cubeIndex[i]][3];
-      else if (cube[cubeIndex[i]][6] === 1 && 
-        cube[cubeIndex[i]][7] === 2 &&
-        cube[cubeIndex[i]][8] === 0) cubeAtIndex[3] = cube[cubeIndex[i]][3];
-    }
-
-    if(cube[19][3] === "yellow" &&
-      cube[21][3] === "yellow" &&
-      cube[23][3] === "yellow" &&
-      cube[25][3] === "yellow" 
-      ) ;
-
-    //Line
-    else if (cubeAtIndex[0] === "yellow" && cubeAtIndex[3] === "yellow" ) {moveString = "01B " + recipe;}
-    else if (cubeAtIndex[1] === "yellow" && cubeAtIndex[2] === "yellow" ) {moveString = recipe;}
-
-    //L-Shape
-    else if (cubeAtIndex[0] === "yellow" && cubeAtIndex[2] === "yellow" ) {moveString = "01B2 " + recipe + " " + recipe;}
-    else if (cubeAtIndex[1] === "yellow" && cubeAtIndex[3] === "yellow" ) {moveString = recipe + " " + recipe;}
-    else if (cubeAtIndex[0] === "yellow" && cubeAtIndex[1] === "yellow" ) {moveString = "01B " + recipe + " " + recipe;}
-    else if (cubeAtIndex[2] === "yellow" && cubeAtIndex[3] ) {moveString = "01B' " + recipe + " " + recipe;}
-
-    else moveString = recipe;
-    
-    const moveArray = this.moveStringToArray(moveString);
-
-    moveString.length ? this.setState({moveSet : moveArray}) : this.setState({solveState:5});
-  }
-
-  // Aligns the yellow (back) cross
-  alignYellowCross = () =>{
-    let moveString = "";
-    let cube = this.state.rubiksObject;
-
-    if(cube[19][6] === 1 && cube[19][7] === 2 && cube[19][8] === 2){
-      //Check if other pieces are in place
-      if(cube[21][6] === 0 && cube[21][8] === 1 &&
-         cube[23][6] === 2 && cube[23][8] === 1);
-
-      else if(cube[21][6] === 2 && cube[23][8] === 1 &&
-              cube[25][6] === 1 && cube[25][8] === 0) moveString = "01D 01B 01D' 01B 01D 01B2 01D' 01B2 01L 01B 01L' 01B 01L 01B2 01L' 01B";
-
-      else if(cube[25][6] === 2 && cube[25][8] === 1) moveString = "01R 01B 01R' 01B 01R 01B2 01R' 01B";
-
-      else if(cube[25][6] === 0 && cube[25][8] === 1) moveString = "01R 01B 01R' 01B 01R 01B2 01R' 01B";
-
-
-      //Make moves
-    }
-    else if(cube[19][6] === 2 && cube[19][7] === 2 && cube[19][8] === 1){
-      moveString = "01B";
-    }
-    else moveString = "01B'"
-
-    const moveArray = this.moveStringToArray(moveString);
-
-    moveString.length ? this.setState({moveSet : moveArray}) : this.setState({solveState:6});
-  }
-
-  // Aligns the yellow (back) corners
-  alignYellowCorners = () =>{
-    let moveString = "";
-    let cube = this.state.rubiksObject;
-
-    let dim = this.state.cubeDimension;
-
-    let pieceOne = cube.length - (dim*dim);
-    let pieceTwo = pieceOne + (dim-1);
-    let pieceThree = cube.length - dim;
-    let pieceFour = cube.length - 1;
-
-
-    if(cube[pieceOne][6] === 0 && cube[pieceOne][8] === dim-1 &&
-       cube[pieceTwo][6] === dim-1 && cube[pieceTwo][8] === dim-1);
-
-    else if(cube[pieceOne][6] === 0 && cube[pieceOne][8] === dim-1) moveString = "01B 01U 01B' 01D' 01B 01U' 01B' 01D";
-    else if(cube[pieceTwo][6] === dim-1 && cube[pieceTwo][8] === dim-1) moveString = "01B 01R 01B' 01L' 01B 01R' 01B' 01L";
-    else if(cube[pieceThree][6] === 0 && cube[pieceThree][8] === 0) moveString = "01B 01L 01B' 01R' 01B 01L' 01B' 01R";
-    else if(cube[pieceFour][6] === dim-1 && cube[pieceFour][8] === 0) moveString = "01B 01D 01B' 01U' 01B 01D' 01B' 01U";
-
-    else moveString = "01B 01U 01B' 01D' 01B 01U' 01B' 01D";
-
-    const moveArray = this.moveStringToArray(moveString);
-
-    moveString.length ? this.setState({moveSet : moveArray}) : this.setState({solveState:7});
-  }
-
-  // Solves the yellow (back) corners
-  solveYellowCorners(){
-    let moveString = "";
-    let cube = this.state.rubiksObject;
-    let solveAlgo = "01U' 01F' 01U 01F 01U' 01F' 01U 01F";
-    let dim = this.state.cubeDimension;
-
-    let pieceOne = cube.length - (dim*dim);
-    let pieceTwo = pieceOne + (dim-1);
-    let pieceThree = cube.length - dim;
-    let pieceFour = cube.length - 1;
-
-    if(cube[pieceOne][3] === "yellow" &&
-       cube[pieceTwo][3] === "yellow" &&
-       cube[pieceThree][3] === "yellow" &&
-       cube[pieceFour][3] === "yellow"){
-      if(cube[pieceOne][6] === 0 && cube[pieceOne][8] === dim-1);
-      else moveString = "01B";
-    }
-    else if(cube[pieceOne][3]!== "yellow"){
-      moveString = solveAlgo;
-    }
-    else if(cube[pieceTwo][3]!== "yellow"){
-      if(cube[pieceTwo][6] === 0 && cube[pieceTwo][8] === dim-1) {
-        moveString = solveAlgo;
-      }
-      else {
-        moveString = "01B";
-      }
-    }
-    else if(cube[pieceFour][3]!== "yellow"){
-      if(cube[pieceFour][6] === 0 && cube[pieceFour][8] === dim-1) {
-        moveString = solveAlgo;
-      }
-      else{
-        moveString = "01B";
-      }
-    }
-    else if(cube[pieceThree][3]!== "yellow"){
-      if(cube[pieceThree][6] === 0 && cube[pieceThree][8] === dim-1) {
-        moveString = solveAlgo;
-      }
-      else {
-        moveString = "01B";
-      }
-    }
-
-    let moveArray = this.moveStringToArray(moveString);
-
-    if(moveString.length){
-      this.setState({moveSet:moveArray});
-    }
-    else{
-      //check for anomoly
-      if(dim === 2) {
-        if(cube[pieceOne][6]===0 && cube[pieceOne][8]===dim-1) {
-          if(cube[pieceTwo][6]===dim-1 && cube[pieceTwo][8]===dim-1){
-            if(cube[pieceThree][6]===0 && cube[pieceThree][8]===0){
-              this.setState({moveLog : "",currentFunc: "None",moveSet:[],solveState:-1});
-              if(this.state.solveMoves.length){
-                let temp = this.state.solveMoves.split(" ");
-                console.log("Number of moves: "+ temp.length);
-                console.log("Moves set: " + this.state.solveMoves);
-                this.setState({solveMoves : ""});
-              }
-            }
-            else {
-              moveString = "01R 01D' 01R' 01F' 01R' 01F 01D";
-              moveArray = this.moveStringToArray(moveString);
-              this.setState({moveSet:moveArray});
-            }
-          }
-        }
-        else {
-          moveString = "01B";
-          moveArray = this.moveStringToArray(moveString);
-          this.setState({moveSet:moveArray});
-        }
-      }
-      else {
-        this.setState({moveLog : "",currentFunc: "None",moveSet:[],solveState:-1});
-        if(this.state.solveMoves.length){
-          let temp = this.state.solveMoves.split(" ");
-          console.log("Number of moves: "+ temp.length);
-          console.log("Moves set: " + this.state.solveMoves);
-          this.setState({solveMoves : ""});
-        }
-      }
-    }
   }
 
   // Changes the settings by passing setting to change and new val for the setting
@@ -1582,6 +978,8 @@ class App extends Component {
       stats0.begin();
 
       // Mouse stuff here
+      // Consider moving into another function to unclutter animate
+      // Very expensive opperation
       if(this.state.currentFunc === "None") {
         let previousPiece = this.state.previousPiece;
         // Projects mouse onto scene to find intersected objects
@@ -1703,26 +1101,28 @@ class App extends Component {
           // Moves based on active function
           if (this.state.currentFunc==="Scrambling")
             this.state.moves < 25 ?
-              this.timingScramble() :
+              this.scramble() :
               this.setState({currentFunc : "None",moves : 0});
 
+          // Continue moving files so only 1 call to solver
           else if (this.state.currentFunc==="Solving"){
             if(!this.state.moveSet.length) {
               if(this.state.solveState === 0) this.solveMiddles();
-              if(this.state.solveState === 1) this.solveWhiteCross();
-              if(this.state.solveState === 2) this.solveWhiteCorners();
-              if(this.state.solveState === 3) this.solveMiddleEdges();
-              if(this.state.solveState === 4) this.solveYellowCross();
-              if(this.state.solveState === 5) this.alignYellowCross();
-              if(this.state.solveState === 6) this.alignYellowCorners();
-              if(this.state.solveState === 7) this.solveYellowCorners();
+              else {
+                this.setState(solver(
+                  this.state.solveState,
+                  this.state.rubiksObject,
+                  this.state.cubeDimension,
+                  this.moveStringToArray,
+                  this.state.solveMoves));
+              }
             }
-            else this.moveSetTimed(this.state.moveSet,0,0,0);
+            else this.parseMoveArray(this.state.moveSet);
           }
           
           else 
             this.state.moveSet.length ?
-              this.moveSetTimed(this.state.moveSet,0,0,0) :
+              this.parseMoveArray(this.state.moveSet) :
               this.setState({currentFunc:"None"}); 
         }
       }
@@ -1734,7 +1134,7 @@ class App extends Component {
 
   // Renders html to the index.html page
   render() {
-    let solveBtn = (this.state.cubeDimension < 21) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>SOLVE</button> : "";
+    let solveBtn = (this.state.cubeDimension < 21) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "60px", right: "10px",backgroundColor: "black", border: "none",color:"lightgray"}}>SOLVE</button> : "";
     return (
       <div className="App" >
         
@@ -1746,12 +1146,14 @@ class App extends Component {
 
         <p style={{position:"fixed", top: "75px", left: "10px",color: "white"}}>Speed: {this.state.currentSpeed}</p>
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white"}}>Current Function: {this.state.currentFunc}</p>
-        <div style={{position:"fixed", top: "75px", left: "50%", marginLeft: "-45px",color: "white"}}>
+        <div style={{position:"fixed", top: "75px", left: "50%", marginLeft: "-50px",color: "white"}}>
           <button className="redoUndo" onClick={() => this.undo()}>Undo</button>
           <button className="redoUndo" onClick={() => this.redo()}>Redo</button>
         </div>
 
-        {/* Top Left */}
+        {/* Top Left 
+            Build a component for these
+          */}
         <button onClick={() => this.changeSpeed(90,20,"Zoomin")} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "black",width: "90px",color:"white"}}>ZOOMIN</button>
         <button onClick={() => this.changeSpeed(30,100,"Fastest")} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "red",width: "90px",color:"white"}}>FASTEST</button>
         <button onClick={() => this.changeSpeed(15,175,"Faster")} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "orange",width: "90px"}}>FASTER</button>
@@ -1761,7 +1163,9 @@ class App extends Component {
         <button onClick={() => this.changeSpeed(3,750,"Slower")} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "blue",width: "90px",color:"white"}}>SLOWER</button>
         <button onClick={() => this.changeSpeed(1.5,1050,"Slowest")} style={{position:"fixed", top: "310px", left: "10px",backgroundColor: "navy",width: "90px",color:"white"}}>SLOWEST</button>
         
-        {/* Bottom Left */}
+        {/* Bottom Left 
+            Build a component to generate working algorithms for each cube size
+        */}
         
         <button onClick={() => this.algorithm(algorithms.cross.moves,algorithms.cross.name)} style={{position:"fixed", bottom: "150px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>CROSS</button>
         <button onClick={() => this.algorithm(algorithms.checkerBoard.moves,algorithms.checkerBoard.name)} style={{position:"fixed", bottom: "120px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>CHECKERBOARD</button>
@@ -1770,7 +1174,12 @@ class App extends Component {
         <button onClick={() => this.algorithm(algorithms.cube3.moves,algorithms.cube3.name)} style={{position:"fixed", bottom: "30px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>CUBE X3</button>
         <button onClick={() => this.algorithm(algorithms.sixSpots.moves,algorithms.sixSpots.name)} style={{position:"fixed", bottom: "0px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SIX SPOTS</button>
         
-        {/* Top Right */}
+        {/* Top Right 
+            Build a component to generate these buttons depending on the size
+            01F', 02F', ..., NF' single
+            01f', 02f', ..., Nf' multi
+
+        */}
         <button className="moveBtn" onClick={() => this.rotateOneFace("F'",[0,0,1])} style={{position:"fixed", top: "100px", right: "50px",backgroundColor: "white",width:"30px"}}>F'</button>
         <button className="moveBtn" onClick={() => this.rotateOneFace("F",[0,-1,1])} style={{position:"fixed", top: "100px", right: "10px",backgroundColor: "white",width:"30px"}}>F</button>
         <button className="moveBtn" onClick={() => this.rotateOneFace("U'",[1,0,1])} style={{position:"fixed", top: "140px", right: "50px",backgroundColor: "blue",color: "white",width:"30px"}}>U'</button>
@@ -1786,8 +1195,7 @@ class App extends Component {
 
         {/* Bottom Right */} 
         {solveBtn}
-        <button onClick={this.scramble} style={{position:"fixed", bottom: "60px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SCRAMBLE</button>
-        <button onClick={this.reverseMoves} style={{position:"fixed", bottom: "30px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>REVERSE MOVES</button>
+        <button onClick={this.beginScramble} style={{position:"fixed", bottom: "30px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SCRAMBLE</button>
         <button onClick={this.reset} style={{position:"fixed", bottom: "0px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>RESET</button>
       </div>
     );
