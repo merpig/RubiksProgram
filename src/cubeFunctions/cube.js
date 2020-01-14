@@ -3,8 +3,9 @@
 const cube = {
     // Generates the inital solved state of rubiksObject
     generateSolved : function (_x,_y,_z){
-        let tempArr = [];
-        let tempMiddles = [
+        const tempArr = [];
+        const middles = [];
+        const tempMiddles = [
           [], // white
           [], // yellow
           [], // blue
@@ -54,15 +55,12 @@ const cube = {
             }
           }
         }
-        //console.log(tempMiddles);
-        let middles=[];
+        
         for(let i = 0; i < 6; i++){
           for(let j = 0; j < (_x-2)*(_x-2); j++){
             middles.push(tempMiddles[i][j]);
           }
         }
-        //console.log(middles);
-        //this.setState({middles});
         return {tempArr,middles};
     },
 

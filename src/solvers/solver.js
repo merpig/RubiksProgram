@@ -5,11 +5,12 @@ import solveYellowCross from "./edges/solveYellowCross"
 import alignYellowCross from "./edges/alignYellowCross"
 import solveYellowCorners from "./corners/solveYellowCorners"
 import alignYellowCorners from "./corners/alignYellowCorners"
+import solveMiddles from "./solveMiddles"
 
-function solver(solveState,rubiksObject,cubeDimension,moveStringToArray,solveMoves){
+function solver(solveState,rubiksObject,cubeDimension,moveStringToArray,solveMoves,rubiksIndex,middles){
     switch(solveState){
         case 0:
-            break;
+            return solveMiddles(rubiksObject,cubeDimension,moveStringToArray,rubiksIndex,middles);
         case 1:
             return solveWhiteCross(rubiksObject,cubeDimension,moveStringToArray);
         case 2:

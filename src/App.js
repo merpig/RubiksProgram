@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import Navbar from "./components/Navbar/Navbar";
+import Patterns from "./components/Patterns"
+import Speeds from "./components/Speeds"
 import * as THREE from "three";
 import Stats from "stats.js";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
-import solveMiddleLogic from './solvers/solveMiddleLogic';
 import cube from './cubeFunctions/cube';
-import algorithms from './cubeFunctions/algorithms';
 import solver from './solvers/solver';
 
 // TODO:
@@ -25,7 +25,7 @@ import solver from './solvers/solver';
  * 
  * 5. Known issue with undo/redo. Occassionally last move fails.
  * 
- * 6. 
+ * 6. Consolidate setStates, seems fairly expensive to use many
  */
 
 class App extends Component {
@@ -45,7 +45,7 @@ class App extends Component {
     moveLog : "",         // Keeps a log of all moves
     moveSet : [],         // Algorithms queue moves through this variable
     angle : 3.9,          // Camera angle
-    cubeDimension : 3,    // Cube dimensions. Ex: 3 => 3x3x3 cube
+    cubeDimension : null,    // Cube dimensions. Ex: 3 => 3x3x3 cube
     cubeDepth : 1,        // Used to determine rotation depth on cubes greater than 3
     currentSpeed:"Medium",// Displays which speed is selected
     moves : 0,            // Used by scramble functions
@@ -61,7 +61,8 @@ class App extends Component {
     blockMoveLog : false,
     previousPiece : null,
     rubiksIndex : 0,
-    middles : []
+    middles : [],
+    value : 40
     //anisotropy : false
   };
 
@@ -363,39 +364,6 @@ class App extends Component {
     } 
   }
 
-  // Functions to change speed
-  changeSpeed = (_speed,_rotationSpeed,_name) => {
-    if(this.state.currentFunc !== "None") return;
-    this.setState({currentSpeed: _name,speed: _speed, start: _speed, end: 0, rotationSpeed: _rotationSpeed});
-  }
-
-  // Controls camera movements
-  // *** Needs to be reworked ***
-  rotateCamera = (key) => {
-    let y = this.state.cameraY;
-    //let x = this.state.cameraX;
-    //let z = this.state.cameraZ;
-    //let formula = this.state.cubeDimension+2+(y+1)/20;
-    if(key === 37){ // left
-      this.setState({angle: this.state.angle+.075}); 
-    }
-    if(key === 38){ // up
-      // fix so that cube stays at same distance from camera
-      
-      if(y < this.state.cubeDimension+2) this.setState({cameraY: y + .5});//, cameraX : formula, cameraZ : -formula});
-      //console.log(`UP - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
-    }
-    if(key === 39){ // right
-      this.setState({angle: this.state.angle-.075});
-    }
-    if(key === 40){ // down
-      // fix so that cube stays at same distance from camera
-      
-      if(y > -(this.state.cubeDimension+2)) this.setState({cameraY: y - .5});//, cameraX : formula, cameraZ : -formula});
-      //console.log(`DOWN - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
-    }
-  }
-
   // Bind keys to functions
   keyBinds = key => {
     switch (key){
@@ -452,6 +420,51 @@ class App extends Component {
      this.rotateCamera(e.keyCode) : this.keyBinds(e.key);
   }
 
+  onMouseDown( event ) {
+    this.setState({mouseDown : true});  
+  }
+
+  onMouseUp( event ) {
+    this.setState({mouseDown : false});  
+  }
+
+  onSliderChange = (value) => {
+    switch(value){
+      case 0:
+        this.changeSpeed(1.5,1050,"Slowest");
+        break;
+      case 10:
+        this.changeSpeed(3,750,"Slower")
+        break;
+      case 20:
+        this.changeSpeed(5,500,"Slow")
+        break;
+      case 30:
+        this.changeSpeed(7.5,350,"Medium")
+        break;
+      case 40:
+        this.changeSpeed(10,250,"Fast")
+        break;
+      case 50:
+        this.changeSpeed(15,175,"Faster")
+        break;
+      case 60:
+        this.changeSpeed(30,100,"Fastest")
+        break;
+      case 70:
+        this.changeSpeed(90,20,"Zoomin")
+        break;
+      default:
+        console.log("unexpected behavior");
+    }
+  }
+
+  // Functions to change speed
+  changeSpeed = (_speed,_rotationSpeed,_name) => {
+    if(this.state.currentFunc !== "None") return;
+    this.setState({currentSpeed: _name,speed: _speed, start: _speed, end: 0, rotationSpeed: _rotationSpeed});
+  }
+
   // Allows the user to undo a move
   undo = () => {
     if(this.state.currentFunc !== "None") return;
@@ -501,9 +514,36 @@ class App extends Component {
     }
   }
 
+  // Controls camera movements
+  // *** Needs to be reworked ***
+  rotateCamera = (key) => {
+    let y = this.state.cameraY;
+    //let x = this.state.cameraX;
+    //let z = this.state.cameraZ;
+    //let formula = this.state.cubeDimension+2+(y+1)/20;
+    if(key === 37){ // left
+      this.setState({angle: this.state.angle+.075}); 
+    }
+    if(key === 38){ // up
+      // fix so that cube stays at same distance from camera
+      
+      if(y < this.state.cubeDimension+2) this.setState({cameraY: y + .5});//, cameraX : formula, cameraZ : -formula});
+      //console.log(`UP - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
+    }
+    if(key === 39){ // right
+      this.setState({angle: this.state.angle-.075});
+    }
+    if(key === 40){ // down
+      // fix so that cube stays at same distance from camera
+      
+      if(y > -(this.state.cubeDimension+2)) this.setState({cameraY: y - .5});//, cameraX : formula, cameraZ : -formula});
+      //console.log(`DOWN - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
+    }
+  }
+
   // Changes values in state to trigger face rotation
   rotateCubeFace = (face,direction,cubeDepth) => {
-    if(this.state.currentFunc !== "Reverse Moves" && !this.state.blockMoveLog){
+    if(!this.state.blockMoveLog){
       let tempMove = "";
       cubeDepth<10 ? tempMove+="0"+cubeDepth : tempMove += cubeDepth;
       if(face === 0) tempMove += "F";
@@ -516,6 +556,8 @@ class App extends Component {
       this.state.moveLog.length > 0 ?
         this.setState({moveLog : this.state.moveLog + " " + tempMove}) :
         this.setState({moveLog : this.state.moveLog + tempMove});
+      
+      // Keeps tracks of solver's moves
       if(this.state.solveState > -1) 
         this.setState({solveMoves : this.state.solveMoves.length ? this.state.solveMoves + " " + tempMove : this.state.solveMoves + tempMove});
     }
@@ -537,6 +579,17 @@ class App extends Component {
     });
   }
 
+  // Takes prebuilt algorithms and converts to moves
+  algorithm = (moveString,moveName) => {
+    if(this.state.currentFunc !== "None") return;
+    const moveArray = this.moveStringToArray(moveString);
+    this.setState({currentFunc : moveName, moveSet : moveArray});
+  }
+
+  // Refreshes page to reset cube
+  reset = () =>
+    window.location.reload();
+
   // Generates a random move
   scramble = () => {
 
@@ -551,6 +604,17 @@ class App extends Component {
       randDepth = Math.floor((Math.random() * maxDepth)) + 1;
 
     this.rotateCubeFace(randFace, randTurn,randDepth);
+  }
+
+  // Changes state active function to begin scrambling
+  beginScramble = () => {
+    if(this.state.currentFunc === "None") this.setState({currentFunc : "Scrambling"});
+  }
+
+  // Starts the solve process
+  beginSolve = () => {
+    if(this.state.currentFunc !== "None") return;
+    this.setState({currentFunc : "Solving",solveState : 0});
   }
 
   // Converts move string to move array
@@ -572,13 +636,6 @@ class App extends Component {
       }
     }
     return moveArray;
-  }
-
-  // Takes prebuilt algorithms and converts to moves
-  algorithm = (moveString,moveName) => {
-    if(this.state.currentFunc !== "None") return;
-    const moveArray = this.moveStringToArray(moveString);
-    this.setState({currentFunc : moveName, moveSet : moveArray});
   }
 
   // Generalized move function. Takes in array of moves and parse the moves
@@ -604,16 +661,6 @@ class App extends Component {
 
   }
 
-  // Changes state active function to begin scrambling
-  beginScramble = () => {
-    if(this.state.currentFunc === "None") this.setState({currentFunc : "Scrambling"});
-  }
-
-  // Refreshes page to reset cube
-  reset = () => {
-    window.location.reload();
-  }
-
   /* Each piece that's rotated has it's rotation disrupted on other planes.
    *
    * This function solves that issue by setting all piece rotation back to zero
@@ -623,7 +670,7 @@ class App extends Component {
    * appear white instead of black but does not disrupt the rest of the cube.
    * Likely won't be changed since that optimization greatly improves run time.
    */
-  reloadCubes = (pos) => {
+  reloadTurnedPieces = (pos) => {
     let cubes = [...this.state.cubes];
     
     for(let i = 0; i<this.state.rubiksObject.length;i++){
@@ -633,6 +680,7 @@ class App extends Component {
 
       if((rotation.x !== 0 || rotation.y !== 0 ||rotation.z !== 0) || 
           pos === tempCube.position){
+
         tempCube.material[0].color = new THREE.Color(this.state.rubiksObject[i][2]);
         tempCube.material[1].color = new THREE.Color(this.state.rubiksObject[i][4]);
         tempCube.material[2].color = new THREE.Color(this.state.rubiksObject[i][3]);
@@ -648,143 +696,8 @@ class App extends Component {
     this.setState({cubes,reload : false});
   }
 
-  // Starts the solve process
-  beginSolve = () => {
-    if(this.state.currentFunc !== "None") return;
-    this.setState({currentFunc : "Solving",solveState : 0});
-  }
-
-  // Solves the middle sections of cubes greater than 3x3x3
-  solveMiddles = () => {
-    let dim = this.state.cubeDimension;
-    let index = this.state.rubiksIndex;
-    if(dim===2) {
-      this.setState({solveState : 1});
-      return;
-    }
-
-    let moveString = "";
-    let cube = this.state.rubiksObject;
-
-    if(dim===3){
-      if(cube[4][7] === 0 && cube[10][8] === 2){
-      }
-      else{
-        if(cube[4][8]===2){ //U
-          cube[12][6]===0 ? moveString+="02R'" : moveString+="02U'";
-        }
-        else if(cube[4][6]===0){//L
-          cube[10][8]===2 ? moveString+="02U'" : moveString+="02R'";
-        }
-        else if(cube[4][6]===2){//R
-          cube[10][8]===2 ? moveString+="02U" : moveString+="02R'";
-        }
-        else if(cube[4][8]===0){//D
-          cube[12][6]===0 ? moveString+="02R" : moveString+="02U'";
-        }
-        else if(cube[4][7]===2){//B
-          cube[10][8]===2 ? moveString+="02U2" : moveString+="02F'";
-        }
-        else moveString+="02B'"//F
-      }
-    }
-    else if(dim>3){
-      let middles=this.state.middles;
-      index = this.state.rubiksIndex;
-      let whiteMiddleError = false;
-      let yellowMiddleError = false;
-
-      //Check for misplacement errors in white middle solve
-      for(let i = 0; i<index&&i<(dim-2)*(dim-2)-1;i++){
-        if(cube[middles[i]][6]!==cube[middles[i]][9]&&
-           cube[middles[i]][7]!==cube[middles[i]][10]&&
-           cube[middles[i]][8]!==cube[middles[i]][11]){
-            console.log(cube[middles[i]]);
-            whiteMiddleError=true;
-           }
-      }
-      //Check for misplacement errors in yellow middle solve
-      for(let i = (dim-2)*(dim-2); i<index&&i<((dim-2)*(dim-2))*2-1;i++){
-        if(cube[middles[i]][6]!==cube[middles[i]][9]&&
-           cube[middles[i]][7]!==cube[middles[i]][10]&&
-           cube[middles[i]][8]!==cube[middles[i]][11]){
-            console.log(cube[middles[i]]);
-            yellowMiddleError=true;
-           }
-      }
-      // if(dim%2 && !whiteMiddleError && !yellowMiddleError && index===((dim-2)*(dim-2))*2){
-      //   console.log(cube[middles[index+Math.ceil(((dim-2)*(dim-2)))/2]]);
-      //   /* Send Index of center blue piece
-      //   console.log(`Index: ${index}, Piece: ${middles[index]}`);
-      //   moveString = solveMiddleLogic(dim,cube[middles[index]],index);
-      //   console.log(moveString + "\n-------------------------------")*/
-      // }
-      
-      if(!whiteMiddleError && !yellowMiddleError && index<((dim-2)*(dim-2))*3){
-        if(dim%2 && index === ((((dim-2)*(dim-2))*2))){
-          
-          let oddTopMiddleIndex = ((((dim-2)*(dim-2))*2)+Math.floor((dim-2)*(dim-2)/2));
-
-          console.log("Odd cube top middle index: " + cube[middles[oddTopMiddleIndex]]);
-          if(cube[middles[oddTopMiddleIndex]][6]===cube[middles[oddTopMiddleIndex]][9] &&
-             cube[middles[oddTopMiddleIndex]][7]===cube[middles[oddTopMiddleIndex]][10] &&
-             cube[middles[oddTopMiddleIndex]][8]===cube[middles[oddTopMiddleIndex]][11]){
-               console.log("Odd cube top middle in position, moving on with solver");
-             }
-          else{
-            if(cube[middles[oddTopMiddleIndex]][6]===dim-1){
-              console.log("1")
-              moveString += ((Math.ceil(dim/2))<10? "0" : "") + (Math.ceil(dim/2)) + "F'";
-            }
-            else if(cube[middles[oddTopMiddleIndex]][8]===0){
-              console.log("2")
-              moveString += ((Math.ceil(dim/2))<10? "0" : "") + (Math.ceil(dim/2)) + "F2";
-            }
-            else if(cube[middles[oddTopMiddleIndex]][6]===0){
-              console.log("3")
-              moveString += ((Math.ceil(dim/2))<10? "0" : "") + (Math.ceil(dim/2)) + "F";
-            }
-            console.log(moveString);
-          }
-        }
-        console.log(`Index: ${index}, Piece: ${middles[index]}`);
-        moveString += ((moveString.length) ? " ":"") + solveMiddleLogic(dim,cube[middles[index]],index);
-        console.log(moveString + "\n-------------------------------");
-      }
-      else if(whiteMiddleError){
-        console.log("Exiting early due to an earlier solved piece being displaced on face 0");
-        index=1000000000;
-      }
-      else if(yellowMiddleError){
-        console.log("Exiting early due to an earlier solved piece being displaced on face 3");
-        index=1000000000;
-      }
-    }
-    const moveArray = this.moveStringToArray(moveString);
-
-    if(dim<4){
-      moveString.length ? 
-        this.setState({moveSet : moveArray}) :
-        this.setState({solveState:1});
-    }
-    else{
-      if(index<((dim-2)*(dim-2))*3){
-        if(moveString.length) this.setState({moveSet : moveArray});
-        else {
-          this.setState({rubiksIndex: index+1});
-          console.log("keep solving\n");
-        }
-      }
-
-      else{
-        console.log(index);
-        console.log("move on");
-        this.setState({solveState:-1,currentFunc:"None",rubiksIndex:0});
-      }
-    }
-  }
-
   // function to solves edges on cubes greater than 3x3x3
+  // move to other file
   solveMultipleEdges = () =>{
     // code here
   }
@@ -805,50 +718,46 @@ class App extends Component {
   }
 
   // Gets the url to be parsed
-  getUrlVars() {
-    var vars = {};
-    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+  getSizeFromUrl() {
+    let limit = 7;
+    let cD;
+    let vars = {};
+    let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
         vars[key] = value;
     });
-    return parts;
+    //return parts;
+    if(parts.length < "https://rubiksprogram.herokuapp.com/id=".length)
+      cD = parseInt(parts.substring(25));
+    else 
+      cD = parseInt(
+        parts
+          .substring("https://rubiksprogram.herokuapp.com/id=".length));
+    if(cD <= limit && cD >= 2);
+
+    else cD = 3;
+
+    return cD;
   }
 
   // Initialization and animation functions
   componentDidMount() {
-    
-    // Start URL parsing
-    let url = this.getUrlVars();
 
-    // Cube Dimensions
-    let cD;
-
-    // localhost
-    if(url.length < "https://rubiksprogram.herokuapp.com/id=".length)
-      cD = parseInt(url.substring(25));
-
-    // heroku
-    else 
-      cD = parseInt(url
-                      .substring("https://rubiksprogram.herokuapp.com/id="
-                      .length));
-
-    // Limits size of cube
-    if(cD <= 50 && cD >= 2);
-
-    else cD = 3;
-    // End URL Parsing
-
-    // Adjust camera based on cube dimensions
-    this.setState({cubeDimension : cD,
-                   cameraZ : -(2+cD),
-                   cameraX : (2+cD),
-                   cameraY : -(2+cD)});
-    
-    // Generate and store the solved state of the memory cube
-    
+    let cD = this.getSizeFromUrl();
     let generated = cube.generateSolved(cD,cD,cD);
     let rubiksObject = generated.tempArr;
-    this.setState({rubiksObject: rubiksObject, middles: generated.middles});
+    let tempCubes = [];
+    let stats = new Stats();
+
+    // === THREE.JS VARIABLES ===
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, .1, 1000 );
+    let renderer = new THREE.WebGLRenderer();
+    let raycaster = new THREE.Raycaster();
+    let mouse = new THREE.Vector2();
+    const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
+
+    let tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
+    let windowHeight = window.innerHeight;
 
     function onMouseMove( event ) {
       // calculate mouse position in normalized device coordinates
@@ -857,44 +766,35 @@ class App extends Component {
       mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;   
     }
 
-    let scope = this;
-    function onMouseDown( event ) {
-      scope.setState({mouseDown : true});  
-    }
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      
+      // adjust the FOV
+      camera.fov = ( 360 / Math.PI ) * Math.atan( tanFOV * ( window.innerHeight / windowHeight ) );
+      
+      camera.updateProjectionMatrix();
+      camera.lookAt( scene.position );
 
-    function onMouseUp( event ) {
-      scope.setState({mouseDown : false});  
+      renderer.setSize( window.innerWidth, window.innerHeight-10 );
+      renderer.render( scene, camera );
     }
 
     // Bind event listeners to window
     window.addEventListener("keydown", this.keyHandling);
     window.addEventListener("mousemove", onMouseMove, false );
-    window.addEventListener("mousedown", onMouseDown, false );
-    window.addEventListener("mouseup", onMouseUp, false );
+    window.addEventListener("mousedown", this.onMouseDown.bind(this), false );
+    window.addEventListener("mouseup", this.onMouseUp.bind(this), false );
+    window.addEventListener("resize", onWindowResize, false );
     
-    // === THREE.JS CODE START ===
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, .1, 1000 );
-    var renderer = new THREE.WebGLRenderer();
-    
-    var raycaster = new THREE.Raycaster();
-    var mouse = new THREE.Vector2();
-
-    
-    // Sets background color
+    // Set background color and size
     renderer.setClearColor(new THREE.Color("black"),1);
-
-    // Sets renderer size
     renderer.setSize( window.innerWidth, window.innerHeight-10);
-
-    // Adds rendered to document body
     document.body.appendChild( renderer.domElement );
-    
-    // On initialization holds the visual cubes
-    let tempCubes = [];
 
-    //Texture to pretty up the cube's faces
-    const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
+    stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild( stats.dom);
+
+    // Prevents bluring
     loader.anisotropy = renderer.getMaxAnisotropy();
 
     // generate cubes with face colors based off memory cube
@@ -906,10 +806,10 @@ class App extends Component {
       let cubeZ = rubiksObject[i][8];
 
       // Create the cube object with dimensions of 1 for width,height, and depth
-      var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+      let geometry = new THREE.BoxGeometry( 1, 1, 1 );
 
       // Map textures to each face to look nice and then color over
-      var cubeMaterials = [
+      const cubeMaterials = [
         new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][2], side: THREE.FrontSide}),
         new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][4], side: THREE.FrontSide}), 
         new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][3], side: THREE.FrontSide}),
@@ -933,53 +833,44 @@ class App extends Component {
     scene.translateZ(.5-cD/2);
 
     // add cubes to state and then render
-    this.setState({cubes : tempCubes}, () => {
+    this.setState({
+      cubes : tempCubes,
+      cubeDimension : cD,
+      cameraZ : -(2+cD),
+      cameraX : (2+cD),
+      cameraY : -(2+cD),
+      rubiksObject,
+      middles: generated.middles
+    }, () => {
+      // Callback required to wait for setState to finish
       for(let i = 0; i < rubiksObject.length; i++){
-        // Logic to render outer pieces since inside pieces aren't ever used
+        // Logic to only render outer pieces since inside pieces aren't ever used
         if((this.state.cubes[i].position.x === 0 || this.state.cubes[i].position.x === this.state.cubeDimension-1) ||
             (this.state.cubes[i].position.y === 0 || this.state.cubes[i].position.y === this.state.cubeDimension-1)||
             (this.state.cubes[i].position.z === 0 || this.state.cubes[i].position.z === this.state.cubeDimension-1)){
           scene.add( this.state.cubes[i] );
         } 
       }
-      
-      // Resizes the canvas and adjust camera on window resize
-      var tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
-      var windowHeight = window.innerHeight;
-      window.addEventListener( 'resize', onWindowResize, false );
 
-      function onWindowResize() {
-
-          camera.aspect = window.innerWidth / window.innerHeight;
-          
-          // adjust the FOV
-          camera.fov = ( 360 / Math.PI ) * Math.atan( tanFOV * ( window.innerHeight / windowHeight ) );
-          
-          camera.updateProjectionMatrix();
-          camera.lookAt( scene.position );
-
-          renderer.setSize( window.innerWidth, window.innerHeight-10 );
-          renderer.render( scene, camera );
-          
-      }
-      // End resize
-
-      // Render the scene and begin animate loop
       renderer.render( scene, camera );
       animate();
     });
 
-    let stats0 = new Stats();
-    stats0.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-    document.body.appendChild( stats0.dom);
-
     // Function runs continuously to animate cube
     var animate = () => {
-      stats0.begin();
+      stats.begin();
+
+      // Fixing this is necessary for better camera functions
+      camera.position.z = this.state.cameraZ * Math.sin( this.state.angle );
+      camera.position.y = this.state.cameraY;
+      camera.position.x = this.state.cameraX * Math.cos( this.state.angle );
+      camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
+
+      requestAnimationFrame( animate );
 
       // Mouse stuff here
       // Consider moving into another function to unclutter animate
-      // Very expensive opperation
+      // Very expensive operation
       if(this.state.currentFunc === "None") {
         let previousPiece = this.state.previousPiece;
         // Projects mouse onto scene to find intersected objects
@@ -988,8 +879,6 @@ class App extends Component {
         // calculate objects intersecting the picking ray
         var intersects = raycaster.intersectObjects( scene.children );
         if (intersects[0] && intersects[0].object.material.length && !this.state.mouseDown){
-          
-          
           
           // Get faces to line up properly
           let faceInteresected = intersects[0].faceIndex;
@@ -1008,7 +897,7 @@ class App extends Component {
              parseFloat(intersects[0].object.material[tempIndex].color.g) !== 0.8470588235294118 &&
              parseFloat(intersects[0].object.material[tempIndex].color.b) !== 0.9019607843137255){
             if(previousPiece!==null) {
-              this.reloadCubes(previousPiece);
+              this.reloadTurnedPieces(previousPiece);
               this.setState({previousPiece:null});
             }
           }
@@ -1047,24 +936,19 @@ class App extends Component {
         // 
         else if(this.state.mouseFace !== null){
           if(previousPiece!==null) {
-            this.reloadCubes(previousPiece);
+            this.reloadTurnedPieces(previousPiece);
             this.setState({previousPiece:null});
           }
           if(this.state.mouseFace!==null) this.setState({mouseFace : null});
         }
       }
       
-      camera.position.z = this.state.cameraZ * Math.sin( this.state.angle );
-      camera.position.y = this.state.cameraY;
-      camera.position.x = this.state.cameraX * Math.cos( this.state.angle );
-      camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
-      requestAnimationFrame( animate );
-      
       if(this.state.start<=this.state.end){
         this.rotatePieces(cube.rotatePoint,tempCubes);
       }
+
       else {
-        if(this.state.reload) this.reloadCubes(this.state.face);
+        if(this.state.reload) this.reloadTurnedPieces(this.state.face);
         if(this.state.currentFunc !== "None"){
 
           // Doesn't work with !==
@@ -1104,18 +988,16 @@ class App extends Component {
               this.scramble() :
               this.setState({currentFunc : "None",moves : 0});
 
-          // Continue moving files so only 1 call to solver
           else if (this.state.currentFunc==="Solving"){
             if(!this.state.moveSet.length) {
-              if(this.state.solveState === 0) this.solveMiddles();
-              else {
-                this.setState(solver(
-                  this.state.solveState,
-                  this.state.rubiksObject,
-                  this.state.cubeDimension,
-                  this.moveStringToArray,
-                  this.state.solveMoves));
-              }
+              this.setState(solver(
+                this.state.solveState,
+                this.state.rubiksObject,
+                this.state.cubeDimension,
+                this.moveStringToArray,
+                this.state.solveMoves,
+                this.state.rubiksIndex,
+                this.state.middles));
             }
             else this.parseMoveArray(this.state.moveSet);
           }
@@ -1127,8 +1009,9 @@ class App extends Component {
         }
       }
       
-      stats0.end();
-      renderer.render( scene, camera );     
+      
+      renderer.render( scene, camera );
+      stats.end();     
     };
   }
 
@@ -1154,25 +1037,16 @@ class App extends Component {
         {/* Top Left 
             Build a component for these
           */}
-        <button onClick={() => this.changeSpeed(90,20,"Zoomin")} style={{position:"fixed", top: "100px", left: "10px",backgroundColor: "black",width: "90px",color:"white"}}>ZOOMIN</button>
-        <button onClick={() => this.changeSpeed(30,100,"Fastest")} style={{position:"fixed", top: "130px", left: "10px",backgroundColor: "red",width: "90px",color:"white"}}>FASTEST</button>
-        <button onClick={() => this.changeSpeed(15,175,"Faster")} style={{position:"fixed", top: "160px", left: "10px",backgroundColor: "orange",width: "90px"}}>FASTER</button>
-        <button onClick={() => this.changeSpeed(10,250,"Fast")} style={{position:"fixed", top: "190px", left: "10px",backgroundColor: "yellow",width: "90px"}}>FAST</button>
-        <button onClick={() => this.changeSpeed(7.5,350,"Medium")} style={{position:"fixed", top: "220px", left: "10px",backgroundColor: "green",width: "90px",color:"white"}}>MEDIUM</button>
-        <button onClick={() => this.changeSpeed(5,500,"Slow")} style={{position:"fixed", top: "250px", left: "10px",backgroundColor: "lightblue",width: "90px"}}>SLOW</button>
-        <button onClick={() => this.changeSpeed(3,750,"Slower")} style={{position:"fixed", top: "280px", left: "10px",backgroundColor: "blue",width: "90px",color:"white"}}>SLOWER</button>
-        <button onClick={() => this.changeSpeed(1.5,1050,"Slowest")} style={{position:"fixed", top: "310px", left: "10px",backgroundColor: "navy",width: "90px",color:"white"}}>SLOWEST</button>
-        
-        {/* Bottom Left 
-            Build a component to generate working algorithms for each cube size
-        */}
-        
-        <button onClick={() => this.algorithm(algorithms.cross.moves,algorithms.cross.name)} style={{position:"fixed", bottom: "150px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>CROSS</button>
-        <button onClick={() => this.algorithm(algorithms.checkerBoard.moves,algorithms.checkerBoard.name)} style={{position:"fixed", bottom: "120px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>CHECKERBOARD</button>
-        <button onClick={() => this.algorithm(algorithms.checkerBoard1.moves,algorithms.checkerBoard1.name)} style={{position:"fixed", bottom: "90px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>CHECKERBOARD1</button>
-        <button onClick={() => this.algorithm(algorithms.cube2.moves,algorithms.cube2.name)} style={{position:"fixed", bottom: "60px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>CUBE X2</button>
-        <button onClick={() => this.algorithm(algorithms.cube3.moves,algorithms.cube3.name)} style={{position:"fixed", bottom: "30px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>CUBE X3</button>
-        <button onClick={() => this.algorithm(algorithms.sixSpots.moves,algorithms.sixSpots.name)} style={{position:"fixed", bottom: "0px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SIX SPOTS</button>
+        <Speeds
+          onSliderChange={this.onSliderChange}
+          isDisabled={this.state.currentFunc==="None" ? false:true}
+        />
+      
+        <Patterns
+          algorithm={this.algorithm}
+          size={this.getSizeFromUrl()}
+          value={this.state.value}
+        />
         
         {/* Top Right 
             Build a component to generate these buttons depending on the size
