@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Navbar from "./components/Navbar/Navbar";
 import Patterns from "./components/Patterns"
 import Speeds from "./components/Speeds"
+import Controls from "./components/Controls"
 import * as THREE from "three";
 import Stats from "stats.js";
 import './App.css';
@@ -708,7 +709,12 @@ class App extends Component {
       /*case 'anisotropy':
         this.setState({anisotropy : !this.state.anisotropy});
         break;*/
+      case 'displayStats':
+        this.state.showStats ? document.body.children[9].style.display = "none" : document.body.children[9].style.display = "";
+        this.setState({showStats : !this.state.showStats});
+        break;
       default:
+        console.log("Invalid Setting");
     }
   }
   
@@ -1054,6 +1060,10 @@ class App extends Component {
             01f', 02f', ..., Nf' multi
 
         */}
+
+        <Controls
+        
+        />
         <button className="moveBtn" onClick={() => this.rotateOneFace("F'",[0,0,1])} style={{position:"fixed", top: "100px", right: "50px",backgroundColor: "white",width:"30px"}}>F'</button>
         <button className="moveBtn" onClick={() => this.rotateOneFace("F",[0,-1,1])} style={{position:"fixed", top: "100px", right: "10px",backgroundColor: "white",width:"30px"}}>F</button>
         <button className="moveBtn" onClick={() => this.rotateOneFace("U'",[1,0,1])} style={{position:"fixed", top: "140px", right: "50px",backgroundColor: "blue",color: "white",width:"30px"}}>U'</button>

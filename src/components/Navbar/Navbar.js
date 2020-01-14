@@ -59,14 +59,16 @@ const Navbar = props => (
       </Popup> {" "}
       <button id="fullscreenBtn" value="true">Fullscreen</button>
       {/*Open model here. Show bunch of settings. Pass changeSettings down to component to apply changes*/}
-      <DropdownButton title={<i className='fa fa-cog'></i>} hidden>
+      <DropdownButton title={<i className='fa fa-cog'></i>}>
         <ul>
           <li>
             
-            Anisotropy {props.state.anisotropy ? "ON" : "OFF"}
+            Display Stats <br></br>
             <label className="checkbox-inline">
-              <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('anisotropy')}></input>
+              <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayStats')}></input>
+              {props.state.showStats ? "ON " : "OFF "}
             </label>
+            
             
           </li>
           
