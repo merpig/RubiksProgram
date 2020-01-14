@@ -10,6 +10,7 @@
     "jquery": "^3.4.1",
     "mdbreact": "^4.22.0",
     "popper.js": "^1.16.0",
+    "rc-slider": "^8.7.1",
     "react": "^16.11.0",
     "react-bootstrap": "^1.0.0-beta.14",
     "react-bootstrap-sidebar": "0.0.1",
