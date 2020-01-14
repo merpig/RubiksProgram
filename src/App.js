@@ -62,8 +62,8 @@ class App extends Component {
     previousPiece : null,
     rubiksIndex : 0,
     middles : [],
-    value : 40
-    //anisotropy : false
+    value : 40,
+    showStats: true
   };
 
   // rotate colors on face
