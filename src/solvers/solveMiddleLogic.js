@@ -45,8 +45,8 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
                 moveString = yellowSolver(current,solved,dim,index);
                 break;
             case 2:
-                // Inprogress
-                moveString = blueSolver(current,solved,dim,index);
+                // Inprogress, commented out for production
+                //moveString = blueSolver(current,solved,dim,index);
                 break;
             case 3:
                 // Unsolved
