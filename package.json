@@ -15,6 +15,7 @@
     "react-bootstrap": "^1.0.0-beta.14",
     "react-bootstrap-sidebar": "0.0.1",
     "react-dom": "^16.11.0",
+    "react-draggable": "^4.2.0",
     "react-dropdown": "^1.6.4",
     "react-metismenu": "^1.4.0",
     "react-scripts": "3.0.1",

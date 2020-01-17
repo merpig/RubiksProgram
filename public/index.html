@@ -31,7 +31,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
-  <body style="background-color: black;">
+  <body style="background-color: black; overflow: hidden;">
       <style>
         button:hover,.dropdown-item:hover{
           background-color: gray!important;
@@ -43,7 +43,11 @@
           color: lightgray;
         }
 
-        #triggerBtn, #fullscreenBtn, .redoUndo{
+        .dropdown{
+          margin-right: 5px;
+        }
+
+        #triggerBtn, #fullscreenBtn, .redoUndo, #moveSubmit{
           background-color: #343a40;
           color: lightgray;
           border-radius: .25rem;
@@ -97,6 +101,32 @@
           #fullscreenBtn {
             display: none;
           }
+        }
+
+        #controlsDiv{
+          position: fixed;
+          top: 150px;
+          width:max-content;
+          height:max-content;
+          background-color: teal;
+        }
+
+        #centerMoves{
+          display: inline-block;
+          width:min-content;
+          height:max-content;
+        }
+        .singleLayerMoves{
+          display: inline-block;
+        }
+        .singleLayerColumns,.multiLayerColumns{
+          display: inline-block;
+          width:min-content;
+          height:max-content;
+        }
+        .multiLayerMoves{
+          display: block;
+          float: right;
         }
   
       </style>

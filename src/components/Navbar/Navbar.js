@@ -9,6 +9,46 @@ const Navbar = props => (
     <ul className="nav nav-justified mr-auto">
       <li className="nav-item">
         <p className="navbar-brand" style={{color:"lightgray"}}><b>{props.title}</b></p>
+
+          {/*Open model here. Show bunch of settings. Pass changeSettings down to component to apply changes*/}
+          <DropdownButton title={<i className='fa fa-cog'></i>}>
+          <ul>
+            <li>
+              
+              Stats <br></br>
+              <label className="checkbox-inline">
+                <input type="checkbox" data-toggle="toggle" onClick={() => props.changeSettings('displayStats')}></input>
+                {props.state.showStats ? "ON " : "OFF "}
+              </label>
+              
+              
+            </li>
+
+            <li>
+              
+              Move Input <br></br>
+              <label className="checkbox-inline">
+                <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
+                {props.state.showMoveInput ? "ON " : "OFF "}
+              </label>
+              
+              
+            </li>
+
+            <li>
+              
+              Move Controls <br></br>
+              <label className="checkbox-inline">
+                <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayControls')}></input>
+                {props.state.showControls ? "ON " : "OFF "}
+              </label>
+              
+              
+            </li>
+            
+          </ul>
+
+        </DropdownButton>
         <DropdownButton title="Cubes">
 
           
@@ -26,9 +66,9 @@ const Navbar = props => (
     <div style={{float:"right"}} >
     <Popup trigger={<button id="triggerBtn">Info</button>}>
         {close => (
-          <div>
-            <div className="shadeBackground" onClick={close}></div>
-            <div className="popupDiv">
+          <div style={{zIndex:"100"}}>
+            <div style={{zIndex:"101"}} className="shadeBackground" onClick={close}></div>
+            <div style={{zIndex:"102"}} className="popupDiv">
               <b style={{fontSize: "2rem"}}>Instructions</b>
               <button className="close" id="closeBtn" onClick={close}>
                 &times;
@@ -58,23 +98,7 @@ const Navbar = props => (
         )}
       </Popup> {" "}
       <button id="fullscreenBtn" value="true">Fullscreen</button>
-      {/*Open model here. Show bunch of settings. Pass changeSettings down to component to apply changes*/}
-      <DropdownButton title={<i className='fa fa-cog'></i>}>
-        <ul>
-          <li>
-            
-            Display Stats <br></br>
-            <label className="checkbox-inline">
-              <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayStats')}></input>
-              {props.state.showStats ? "ON " : "OFF "}
-            </label>
-            
-            
-          </li>
-          
-        </ul>
-
-      </DropdownButton>
+      
       {/*<button className="btn btn-primary btn-circle btn-circle-sm m-1" onClick={() => props.changeSettings([1],["Hello"])}><i className="fa fa-cog"></i></button> */}
     </div>
   </nav>

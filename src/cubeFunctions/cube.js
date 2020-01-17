@@ -64,6 +64,47 @@ const cube = {
         return {tempArr,middles};
     },
 
+    generateButtonData : function(size){
+        let numLayers = Math.floor(size/2);
+        let centerLayer = Math.ceil(size/2);
+        const faces = ['F','U','R','B','L','D'];
+        const buttons = {
+          center : [], // Center rotations
+          single : [], // Single layer
+          multi : []  // Multi layer. Needs implementation
+        };
+
+        if(size%2)
+          buttons.center.push(
+            {clockwise: {name:"C1",data:[0,-1,centerLayer,false]},
+             counter: {name:"C1'",data:[0,0,centerLayer,false]}},
+            {clockwise: {name:"C2",data:[1,-1,centerLayer,false]},
+            counter: {name:"C2'",data:[1,0,centerLayer,false]}},
+            {clockwise: {name:"C3",data:[2,-1,centerLayer,false]},
+            counter: {name:"C3'",data:[2,0,centerLayer,false]}}
+          )
+
+        for (let i = 0; i < numLayers; i++){
+          for(let j = 0; j < faces.length; j++){
+            let baseNameSingle = ((i<10? "0" : "") + (i+1) + faces[j]);
+            let baseNameMulti = ((i<10? "0" : "") + (i+1) + faces[j].toLowerCase());
+
+            buttons.single.push({
+              clockwise: {face:faces[j], name:baseNameSingle, data:[j,-1,i+1,false]},
+              counter: {face:faces[j], name:baseNameSingle+"'",data:[j,0,i+1,false]}
+            });
+            if(i>0){
+              buttons.multi.push({
+                clockwise: {face:faces[j],name:baseNameMulti, data:[j,-1,i+1,true]},
+                counter: {face:faces[j],name:baseNameMulti+"'",data:[j,0,i+1,true]}
+              });
+            }
+          }
+        }
+
+        return buttons;
+    },
+
     // For visual cube
     rotatePoint : function (c1,c2,direction,p1,p2,rotation){
         let theta = rotation*Math.PI/180;
