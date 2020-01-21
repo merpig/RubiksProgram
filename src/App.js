@@ -11,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import cube from './cubeFunctions/cube';
 import solver from './solvers/solver';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
 // TODO:
 /*
@@ -22,12 +23,17 @@ import solver from './solvers/solver';
  * 3. Add changes to rotateFace and rotatePiece. Code can be greatly condensed
  *    by using a function with paramters to minimize repetative code.
  * 
- * 4. Continue working on solvers. 
- *    (Work on 1-3 if needing a break from solvers)
+ * 4. Continue working on solvers.
  * 
- * 5. Known issue with undo/redo. Occassionally last move fails.
+ * 5. Known issue with undo/redo. Occassionally last move fails. FIXED
  * 
  * 6. Consolidate setStates, seems fairly expensive to use many
+ * 
+ * 7. Fix Camera rotations.
+ * 
+ * 8. Highlight turns when hovering over move buttons.
+ * 
+ * 9. Implement rotating pieces by dragging.
  */
 
 
@@ -48,35 +54,34 @@ class App extends Component {
     moveLog : "",         // Keeps a log of all moves
     moveSet : [],         // Algorithms queue moves through this variable
     angle : 3.9,          // Camera angle
-    cubeDimension : null,    // Cube dimensions. Ex: 3 => 3x3x3 cube
+    cubeDimension : null, // Cube dimensions. Ex: 3 => 3x3x3 cube
     cubeDepth : 1,        // Used to determine rotation depth on cubes greater than 3
     currentSpeed:"Medium",// Displays which speed is selected
     moves : 0,            // Used by scramble functions
     reload : false,       // Lets animate know when to reload the cube (after every move)
     solveState : -1,      // Dictates progression of solve function
-    solveMoves : "",
+    solveMoves : "",      // Keeps track of moves used during solve
     facePosX : null,
     facePosY : null,
     facePosZ : null,
     mouseFace : null,
     mouseDown : false,
-    undoIndex : 0,
-    blockMoveLog : false,
-    previousPiece : null,
-    rubiksIndex : 0,
-    middles : [],
-    value : 40,
-    showStats: false,
-    showMoveInput: true,
-    showControls: true,
-    activeDragsInput: 0,
+    undoIndex : 0,        // Index to keep track of where undo/redo is
+    blockMoveLog : false, // Blocks adding move when undoing/redoing a move
+    previousPiece : null, // Keeps track of hovered face to not redraw
+    rubiksIndex : 0,      // Index to keep track of middles while solving
+    middles : [],         // Contains all middle segments         
+    showStats: false,     // Setting for stats
+    showMoveInput: true,  // Setting for custom move input
+    showControls: true,   // Setting for move controls
+    activeDragsInput: 0,  // Keeps track of draggable input
     deltaPositionInput: {
       x: 100, y: 100
     },
     controlledPositionInput: {
       x: 0, y: 0
     },
-    activeDragsControls: 0,
+    activeDragsControls: 0,// Keeps track of draggable input
     deltaPositionControls: {
       x: 100, y: 100
     },
@@ -84,7 +89,6 @@ class App extends Component {
       x: 0, y: 0
     },
     isMulti: false,
-    generatedButtonData : false
   };
 
   // rotate colors on face (memory cube)
@@ -441,8 +445,7 @@ class App extends Component {
 
   // Handles key press event
   keyHandling = e => {
-    e.keyCode > 36 && e.keyCode < 41 ?
-     this.rotateCamera(e.keyCode) : this.keyBinds(e.key);
+    if(e.keyCode <= 36 || e.keyCode >= 41) this.keyBinds(e.key);
   }
 
   onMouseDown( event ) {
@@ -492,7 +495,6 @@ class App extends Component {
 
   // Allows the user to undo a move
   undo = () => {
-    console.log(this.state.moveLog)
     let undoIndex = this.state.undoIndex;
     let moveString = this.state.moveLog;
     const moveArray = this.moveStringToArray(moveString);
@@ -509,7 +511,6 @@ class App extends Component {
 
   // Allows the user to redo a move
   redo = () => {
-    console.log(this.state.moveLog)
     if(this.state.currentFunc !== "None") return;
     let undoIndex = this.state.undoIndex;
     let moveString = this.state.moveLog;
@@ -581,10 +582,9 @@ class App extends Component {
       else if(face === 5) !isMulti ? tempMove += "D" : tempMove += "d";
       if(direction === -1) tempMove += "'";
 
-      console.log("Adding {" + tempMove + "} to movelog["+this.state.moveLog+"]");
       this.state.moveLog.length > 0 ?
-        this.setState({moveLog : this.state.moveLog + " " + tempMove},()=> console.log(this.state.moveLog)) :
-        this.setState({moveLog : this.state.moveLog + tempMove},()=> console.log(this.state.moveLog));
+        this.setState({moveLog : this.state.moveLog + " " + tempMove}) :
+        this.setState({moveLog : this.state.moveLog + tempMove});
       
       // Keeps tracks of solver's moves
       if(this.state.solveState > -1) 
@@ -836,6 +836,7 @@ class App extends Component {
     let renderer = new THREE.WebGLRenderer();
     let raycaster = new THREE.Raycaster();
     let mouse = new THREE.Vector2();
+    let group = new THREE.Group();
     //https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp2vqlj5dzmGwQfEBy7yNWfDvDVm6mgsA4768bcpsJDmdp9t0g7w&s
     const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
 
@@ -904,7 +905,7 @@ class App extends Component {
     
       // Add the new cube to temp cubes
       tempCubes[i] = new THREE.Mesh(geometry, cubeMaterials);
-      
+      group.add( tempCubes[i] );
       // position piece based off memory cube
       tempCubes[i].translateX(cubeX);
       tempCubes[i].translateY(cubeY);
@@ -915,6 +916,23 @@ class App extends Component {
     scene.translateX(.5-cD/2);
     scene.translateY(.5-cD/2);
     scene.translateZ(.5-cD/2);
+
+    
+    const controls = new OrbitControls( camera , renderer.domElement);
+    controls.enableDamping = true;   //damping 
+    controls.dampingFactor = 0.25;   //damping inertia
+    controls.enableZoom = true;      //Zooming
+    controls.autoRotate = false;       // enable rotation
+    controls.keys = {
+      LEFT: null, //left arrow
+      UP: null, // up arrow
+      RIGHT: null, // right arrow
+      BOTTOM: null // down arrow
+    };
+
+    controls.addEventListener("change", () => {
+      if (renderer) renderer.render(scene, camera);
+    });
 
     // add cubes to state and then render
     this.setState({
@@ -941,16 +959,15 @@ class App extends Component {
       animate();
     });
 
+
+    camera.position.z = this.state.cameraZ;// * Math.sin( this.state.angle );
+    camera.position.y = this.state.cameraY;
+    camera.position.x = this.state.cameraX;// * Math.cos( this.state.angle );
+
     // Function runs continuously to animate cube
     var animate = () => {
+      controls.enabled = true;
       stats.begin();
-
-      // Fixing this is necessary for better camera functions
-      camera.position.z = this.state.cameraZ * Math.sin( this.state.angle );
-      camera.position.y = this.state.cameraY;
-      camera.position.x = this.state.cameraX * Math.cos( this.state.angle );
-      camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
-
       requestAnimationFrame( animate );
 
       // Mouse stuff here
@@ -964,7 +981,7 @@ class App extends Component {
         // calculate objects intersecting the picking ray
         var intersects = raycaster.intersectObjects( scene.children );
         if (intersects[0] && intersects[0].object.material.length && !this.state.mouseDown){
-          
+          controls.enabled = false;
           // Get faces to line up properly
           let faceInteresected = intersects[0].faceIndex;
           let tempIndex = -1;
@@ -1049,8 +1066,6 @@ class App extends Component {
             if(index > 0){
               let moveArray = this.moveStringToArray(moveLog);
 
-              console.log("move array before trimming: \n", moveArray)
-
               if(this.state.currentFunc[0]==='0' || this.state.currentFunc[0]==='1' ||
                  this.state.currentFunc[1]==='1' || this.state.currentFunc[1]==='2' || this.state.currentFunc[1]==='3'){
                 let tempVal = moveArray[moveArray.length-1];
@@ -1065,8 +1080,6 @@ class App extends Component {
                   moveArray.pop();
                 }
               }
-
-              console.log("move array after trimming: \n", moveArray)
 
               moveLog = moveArray.join(" ");
               this.setState({undoIndex:0,moveLog});
@@ -1100,7 +1113,7 @@ class App extends Component {
         }
       }
       
-      
+      controls.update();
       renderer.render( scene, camera );
       stats.end();     
     };
@@ -1142,7 +1155,6 @@ class App extends Component {
         <Patterns
           algorithm={this.algorithm}
           size={this.getSizeFromUrl()}
-          value={this.state.value}
         />
 
         { this.state.generatedButtons && this.state.showControls? 

@@ -75,9 +75,9 @@ const Navbar = props => (
               </button>
               <hr style={{backgroundColor:"#007bff",marginBottom:"0"}}></hr>
               <div style={{backgroundColor:"black",marginTop:"0",color:"#00C000"}}>
-                <p style={{paddingTop: "1rem"}}>> Use arrow keys to turn the cube.</p>
+                <p style={{paddingTop: "1rem"}}>> Click and hold and drag anywhere on or around cube to rotate.</p>
                 <hr style={{backgroundColor:"lightgray"}}></hr>
-                <p>> Use buttons on the right or keyboard: <br></br>
+                <p>> Use buttons or keyboard to make turns: <br></br>
                   > 
                   <b style={{color: "white",backgroundColor:"black"}}> F, </b><b style={{color: "white",backgroundColor:"black"}}>f,</b>
                   <b style={{color: "blue",backgroundColor:"black"}}> U, </b><b style={{color: "blue",backgroundColor:"black"}}>u,</b>
@@ -87,7 +87,7 @@ const Navbar = props => (
                   <b style={{color: "green",backgroundColor:"black"}}> D, </b><b style={{color: "green",backgroundColor:"black"}}>d </b> 
                 </p>
                 <hr style={{backgroundColor:"lightgray"}}></hr>
-                <p>> Top Left buttons control the speed</p>
+                <p>> Top Left slider controls the speed</p>
                 <hr style={{backgroundColor:"lightgray"}}></hr>
                 <p>> Bottom left buttons are built in pattern functions</p>
                 <hr style={{backgroundColor:"lightgray"}}></hr>
