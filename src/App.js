@@ -492,17 +492,16 @@ class App extends Component {
 
   // Allows the user to undo a move
   undo = () => {
-    if(this.state.currentFunc !== "None") return;
     let undoIndex = this.state.undoIndex;
     let moveString = this.state.moveLog;
+    const moveArray = this.moveStringToArray(moveString);
     if(moveString === "") return;
 
-    const moveArray = this.moveStringToArray(moveString);
+    else if(this.state.currentFunc !== "None") return;
 
-    this.setState({blockMoveLog : true});
-
-    if(moveArray.length-1-undoIndex >= 0)
-      this.setState({currentFunc : "Undo",
+    else if(moveArray.length-1-undoIndex >= 0)
+      this.setState({blockMoveLog : true,
+                     currentFunc : "Undo",
                      moveSet : [moveArray[moveArray.length-1-undoIndex]],
                      undoIndex : undoIndex + 1});
   }
@@ -523,15 +522,14 @@ class App extends Component {
       return;
     }
 
-    this.setState({blockMoveLog : true});
-
     if(undoIndex > 0)
-      this.setState({currentFunc : "Redo",
+      this.setState({blockMoveLog : true,
+                     currentFunc : "Redo",
                      moveSet : [backwardsMove],
                      undoIndex : undoIndex - 1});
   }
 
-  // Control when top right rotation buttons can be clicked
+  // Control when single buttons can be clicked
   rotateOneFace = (e,vals) => {
     if (vals.length < 4) vals.push(false);
     if(this.state.currentFunc === "None") {
@@ -570,6 +568,7 @@ class App extends Component {
   // Changes values in state to trigger face rotation
   rotateCubeFace = (face,direction,cubeDepth,isMulti) => {
     if(!this.state.blockMoveLog){
+      
       let tempMove = "";
       cubeDepth<10 ? tempMove+="0"+cubeDepth : tempMove += cubeDepth;
       if(face === 0) !isMulti ? tempMove += "F" : tempMove += "f";
@@ -579,6 +578,7 @@ class App extends Component {
       else if(face === 4) !isMulti ? tempMove += "L" : tempMove += "l";
       else if(face === 5) !isMulti ? tempMove += "D" : tempMove += "d";
       if(direction === -1) tempMove += "'";
+
       this.state.moveLog.length > 0 ?
         this.setState({moveLog : this.state.moveLog + " " + tempMove}) :
         this.setState({moveLog : this.state.moveLog + tempMove});
@@ -588,15 +588,14 @@ class App extends Component {
         this.setState({solveMoves : this.state.solveMoves.length ? this.state.solveMoves + " " + tempMove : this.state.solveMoves + tempMove});
     }
 
-    this.setState({blockMoveLog:false});
-
     // Faces on opposite side of cube rotate backwards
     if(face>2 && direction === -1) direction = 0;
 
     else if (face>2 && direction === 0) direction = -1;
 
     // change state so animate function kicks in
-    this.setState({face : face,
+    this.setState({blockMoveLog:false,
+                   face : face,
                    turnDirection : direction,
                    end : this.state.end + 90,
                    cubeDepth : cubeDepth,
@@ -799,7 +798,7 @@ class App extends Component {
 
   // Gets the url to be parsed
   getSizeFromUrl() {
-    let limit = 7;
+    let limit = 20;
     let cD;
     let vars = {};
     let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
@@ -834,6 +833,7 @@ class App extends Component {
     let renderer = new THREE.WebGLRenderer();
     let raycaster = new THREE.Raycaster();
     let mouse = new THREE.Vector2();
+    //https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp2vqlj5dzmGwQfEBy7yNWfDvDVm6mgsA4768bcpsJDmdp9t0g7w&s
     const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
 
     let tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
@@ -1038,6 +1038,7 @@ class App extends Component {
              this.state.currentFunc === "Redo"){}
 
           // Keeps undo/redo updated with other moves
+          // find the error in this logic
           else {
             let moveLog = this.state.moveLog;
             let index = this.state.undoIndex;
@@ -1045,7 +1046,7 @@ class App extends Component {
             if(index > 0){
               let moveArray = this.moveStringToArray(moveLog);
 
-              if(this.state.currentFunc.length < 3){
+              if(this.state.currentFunc[0]==='0' || this.state.currentFunc[0]==='1'){
                 let tempVal = moveArray[moveArray.length-1];
                 for(let i = 0; i <= index; i++){
                   moveArray.pop();
@@ -1061,7 +1062,7 @@ class App extends Component {
 
               moveLog = moveArray.join(" ");
               this.setState({undoIndex:0,moveLog});
-            };
+            }
           }
 
           // Moves based on active function
