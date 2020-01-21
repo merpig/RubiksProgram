@@ -492,6 +492,7 @@ class App extends Component {
 
   // Allows the user to undo a move
   undo = () => {
+    console.log(this.state.moveLog)
     let undoIndex = this.state.undoIndex;
     let moveString = this.state.moveLog;
     const moveArray = this.moveStringToArray(moveString);
@@ -508,6 +509,7 @@ class App extends Component {
 
   // Allows the user to redo a move
   redo = () => {
+    console.log(this.state.moveLog)
     if(this.state.currentFunc !== "None") return;
     let undoIndex = this.state.undoIndex;
     let moveString = this.state.moveLog;
@@ -579,9 +581,10 @@ class App extends Component {
       else if(face === 5) !isMulti ? tempMove += "D" : tempMove += "d";
       if(direction === -1) tempMove += "'";
 
+      console.log("Adding {" + tempMove + "} to movelog["+this.state.moveLog+"]");
       this.state.moveLog.length > 0 ?
-        this.setState({moveLog : this.state.moveLog + " " + tempMove}) :
-        this.setState({moveLog : this.state.moveLog + tempMove});
+        this.setState({moveLog : this.state.moveLog + " " + tempMove},()=> console.log(this.state.moveLog)) :
+        this.setState({moveLog : this.state.moveLog + tempMove},()=> console.log(this.state.moveLog));
       
       // Keeps tracks of solver's moves
       if(this.state.solveState > -1) 
@@ -1046,7 +1049,10 @@ class App extends Component {
             if(index > 0){
               let moveArray = this.moveStringToArray(moveLog);
 
-              if(this.state.currentFunc[0]==='0' || this.state.currentFunc[0]==='1'){
+              console.log("move array before trimming: \n", moveArray)
+
+              if(this.state.currentFunc[0]==='0' || this.state.currentFunc[0]==='1' ||
+                 this.state.currentFunc[1]==='1' || this.state.currentFunc[1]==='2' || this.state.currentFunc[1]==='3'){
                 let tempVal = moveArray[moveArray.length-1];
                 for(let i = 0; i <= index; i++){
                   moveArray.pop();
@@ -1059,6 +1065,8 @@ class App extends Component {
                   moveArray.pop();
                 }
               }
+
+              console.log("move array after trimming: \n", moveArray)
 
               moveLog = moveArray.join(" ");
               this.setState({undoIndex:0,moveLog});
