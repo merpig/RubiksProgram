@@ -69,7 +69,7 @@ const Controls = props => {
         <div className="handle">Drag from here</div>
             {
                 props.size%2 ? 
-                <div id="centerMoves">
+                <div id="centerMoves" style={{marginRight: "5px"}}>
                     {
                         props.generatedButtons.center.forEach(element => {
                             centerButtons.push(
@@ -102,7 +102,7 @@ const Controls = props => {
                     {centerButtons}
                 </div> : ""
             }
-            <div className="singleLayerMoves">
+            <div className="singleLayerMoves" style={{marginRight: "5px"}}>
                 {
                     props.generatedButtons.single.forEach(element => {
                         let colors = namesToColors(element.counter.face);

@@ -21,7 +21,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
  *    the move patterns are different for each. FINISHED
  * 
  * 3. Add changes to rotateFace and rotatePiece. Code can be greatly condensed
- *    by using a function with paramters to minimize repetative code.
+ *    by using a function with paramters to minimize repetative code. ATTEMPTED
  * 
  * 4. Continue working on solvers. STARTED
  * 
@@ -33,7 +33,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
  * 
  * 8. Highlight turns when hovering over move buttons. FINISHED
  * 
- * 9. Implement rotating pieces by dragging.
+ * 9. Implement rotating pieces by dragging. NOT STARTED
  */
 
 
@@ -1203,9 +1203,6 @@ class App extends Component {
       animate();
     });
 
-
-    
-
     // Function runs continuously to animate cube
     var animate = () => {
 
@@ -1238,18 +1235,13 @@ class App extends Component {
                 }
             }
             else {
-              try{
-                if(!hMulti){
-                  groups[hFace+3][hDepth-1].visible=true;
-                }
-                else
-                for(let i = 0; i <= hDepth-1; i++){
-                  groups[hFace+3][i].visible=true;
-                }
-              }catch{
-                console.log(this.state.hoverData);
+              if(!hMulti){
+                groups[hFace+3][hDepth-1].visible=true;
               }
-              
+              else
+              for(let i = 0; i <= hDepth-1; i++){
+                groups[hFace+3][i].visible=true;
+              }
             }
           }
           else{
@@ -1278,10 +1270,8 @@ class App extends Component {
           }
         }
 
-
-
-
         let previousPiece = this.state.previousPiece;
+
         // Projects mouse onto scene to find intersected objects
         raycaster.setFromCamera( mouse, camera );
 
@@ -1348,7 +1338,7 @@ class App extends Component {
             this.reloadTurnedPieces(previousPiece);
             this.setState({previousPiece:null});
           }
-          if(this.state.mouseFace!==null) this.setState({mouseFace : null});
+          this.setState({mouseFace : null});
         }
       }
       
