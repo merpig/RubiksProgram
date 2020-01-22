@@ -58,7 +58,7 @@ const Controls = props => {
         <div id="divInfo" style={{position: "absolute", zIndex: "98"}}>
         <Draggable
                 handle=".handle"
-                defaultPosition={{x:125, y: window.innerHeight-350}}
+                defaultPosition={{x:130, y: window.innerHeight-355}}
                 position={null}
                 grid={[50, 50]}
                 scale={1}
@@ -66,7 +66,7 @@ const Controls = props => {
                 onDrag={props.handleDrag}
                 onStop={props.handleStop}>
         <div id="controlsDiv">
-        <div className="handle">Drag from here</div>
+        <div className="handle" style={{color:"grey"}}>Drag from here</div>
             {
                 props.size%2 ? 
                 <div id="centerMoves" style={{marginRight: "5px"}}>

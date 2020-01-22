@@ -941,7 +941,7 @@ class App extends Component {
     // Allows for drag to rotate camera
     const controls = new OrbitControls( camera , renderer.domElement);
     controls.enableDamping = true;   //damping 
-    controls.dampingFactor = 0.25;   //damping inertia
+    controls.dampingFactor = 0.15;   //damping inertia
     controls.enableZoom = true;      //Zooming
     controls.autoRotate = false;       // enable rotation
     controls.minDistance = (2+cD);
