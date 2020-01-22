@@ -15,7 +15,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
 // TODO:
 /*
- * 1. Start moving functions to other files
+ * 1. Start moving functions to other files STARTED
  * 
  * 2. All pattern functions can be condensed into one since only
  *    the move patterns are different for each. FINISHED
@@ -23,15 +23,15 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
  * 3. Add changes to rotateFace and rotatePiece. Code can be greatly condensed
  *    by using a function with paramters to minimize repetative code.
  * 
- * 4. Continue working on solvers.
+ * 4. Continue working on solvers. STARTED
  * 
  * 5. Known issue with undo/redo. Occassionally last move fails. FIXED
  * 
- * 6. Consolidate setStates, seems fairly expensive to use many
+ * 6. Consolidate setStates, seems fairly expensive to use many STARTED
  * 
- * 7. Fix Camera rotations.
+ * 7. Fix Camera rotations. FIXED for now
  * 
- * 8. Highlight turns when hovering over move buttons.
+ * 8. Highlight turns when hovering over move buttons. FINISHED
  * 
  * 9. Implement rotating pieces by dragging.
  */
@@ -89,6 +89,8 @@ class App extends Component {
       x: 0, y: 0
     },
     isMulti: false,
+    isVisible: false,
+    hoverData : []
   };
 
   // rotate colors on face (memory cube)
@@ -609,9 +611,11 @@ class App extends Component {
   }
 
   // Takes prebuilt algorithms and converts to moves
+  // allow for C,c
   algorithm = (moveString,moveName) => {
     if(this.state.currentFunc !== "None") return;
     const moveArray = this.moveStringToArray(moveString);
+    console.log(moveArray);
     this.setState({currentFunc : moveName, moveSet : moveArray});
   }
 
@@ -685,6 +689,20 @@ class App extends Component {
   onStopControls = () => {
     this.setState({activeDragsControls: this.state.activeDragsControls-1});
   };
+
+  mouseOver = (name,data) => {
+    this.setState({
+      isVisible: true,
+      hoverData: data
+    });
+  }
+
+  mouseLeave = () => {
+    this.setState({
+      isVisible: false,
+      hoverData: []
+    });
+  }
 
   // Converts move string to move array
   // handle move short hand characters. ex: fx => 01Fx 02Fx; x = "" or "'" or "2"
@@ -829,6 +847,9 @@ class App extends Component {
     let rubiksObject = generated.tempArr;
     let tempCubes = [];
     let stats = new Stats();
+    const groups = [
+      [],[],[],[],[],[]
+    ];
 
     // === THREE.JS VARIABLES ===
     let scene = new THREE.Scene();
@@ -836,11 +857,14 @@ class App extends Component {
     let renderer = new THREE.WebGLRenderer();
     let raycaster = new THREE.Raycaster();
     let mouse = new THREE.Vector2();
-    let group = new THREE.Group();
+    let cubeGeometry = new THREE.BoxGeometry( 1, 1, 1 );
+    var geometry = new THREE.PlaneGeometry(1,1);
     //https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp2vqlj5dzmGwQfEBy7yNWfDvDVm6mgsA4768bcpsJDmdp9t0g7w&s
     const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
-
+    const loader1 = new THREE.TextureLoader().load('https://cdn0.iconfinder.com/data/icons/arrows-11/100/arrow-1-512.png');
+    var material = new THREE.MeshBasicMaterial( {map:loader1,transparent: true,color: 'white', side: THREE.DoubleSide} );
     let tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
+
     let windowHeight = window.innerHeight;
 
     function onMouseMove( event ) {
@@ -890,9 +914,6 @@ class App extends Component {
       let cubeY = rubiksObject[i][7];
       let cubeZ = rubiksObject[i][8];
 
-      // Create the cube object with dimensions of 1 for width,height, and depth
-      let geometry = new THREE.BoxGeometry( 1, 1, 1 );
-
       // Map textures to each face to look nice and then color over
       const cubeMaterials = [
         new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][2], side: THREE.FrontSide}),
@@ -904,8 +925,8 @@ class App extends Component {
       ];
     
       // Add the new cube to temp cubes
-      tempCubes[i] = new THREE.Mesh(geometry, cubeMaterials);
-      group.add( tempCubes[i] );
+      tempCubes[i] = new THREE.Mesh(cubeGeometry, cubeMaterials);
+      //group.add( tempCubes[i] );
       // position piece based off memory cube
       tempCubes[i].translateX(cubeX);
       tempCubes[i].translateY(cubeY);
@@ -917,12 +938,14 @@ class App extends Component {
     scene.translateY(.5-cD/2);
     scene.translateZ(.5-cD/2);
 
-    
+    // Allows for drag to rotate camera
     const controls = new OrbitControls( camera , renderer.domElement);
     controls.enableDamping = true;   //damping 
     controls.dampingFactor = 0.25;   //damping inertia
     controls.enableZoom = true;      //Zooming
     controls.autoRotate = false;       // enable rotation
+    controls.minDistance = (2+cD);
+    controls.maxDistance = (2+cD)+20;
     controls.keys = {
       LEFT: null, //left arrow
       UP: null, // up arrow
@@ -933,6 +956,224 @@ class App extends Component {
     controls.addEventListener("change", () => {
       if (renderer) renderer.render(scene, camera);
     });
+
+    // **************************** Implement direction of turns ****************************
+    // generate side 4 and 2 move hints
+    for(let k = 0; k < cD; k++){
+      let tempGroup = new THREE.Group();
+      let tempGroupOther = new THREE.Group();
+      for(let i = 0; i < 4; i++){
+        for(let j = 0; j<cD;j++){
+          let tempPlane = new THREE.Mesh( geometry, material );
+          let tempPlaneOther = new THREE.Mesh( geometry, material );
+          if(i===0){
+            tempPlane.translateX(cD-1-k);
+            tempPlane.translateZ((cD-1)+.51);
+            tempPlane.translateY((cD-1)-j);
+
+            tempPlaneOther.translateX(cD-1-k);
+            tempPlaneOther.translateZ((cD-1)+.51);
+            tempPlaneOther.translateY((cD-1)-j);
+            tempPlaneOther.rotateZ(Math.PI);
+          }
+          else if(i===1){
+            tempPlane.translateX(cD-1-k);
+            tempPlane.translateZ((cD-1)-j);
+            tempPlane.translateY((cD-1)+.51);
+            tempPlane.rotateX(Math.PI/2);
+            tempPlane.rotateZ(Math.PI);
+
+            tempPlaneOther.translateX(cD-1-k);
+            tempPlaneOther.translateZ((cD-1)-j);
+            tempPlaneOther.translateY((cD-1)+.51);
+            tempPlaneOther.rotateX(Math.PI/2);
+          }
+          else if(i===2){
+            tempPlane.translateX(cD-1-k);
+            tempPlane.translateZ(-.51);
+            tempPlane.translateY((cD-1)-j);
+            tempPlane.rotateX(Math.PI);
+
+            tempPlaneOther.translateX(cD-1-k);
+            tempPlaneOther.translateZ(-.51);
+            tempPlaneOther.translateY((cD-1)-j);
+          }
+          else if(i===3){
+            tempPlane.translateX(cD-1-k);
+            tempPlane.translateZ((cD-1)-j);
+            tempPlane.translateY(-.51);
+            tempPlane.rotateX(-Math.PI/2);
+            tempPlane.rotateZ(Math.PI);
+
+            tempPlaneOther.translateX(cD-1-k);
+            tempPlaneOther.translateZ((cD-1)-j);
+            tempPlaneOther.translateY(-.51);
+            tempPlaneOther.rotateX(-Math.PI/2);
+            //tempPlaneOther.rotateZ(Math.PI);
+          }
+          tempGroup.add(tempPlane)
+          tempGroupOther.add(tempPlaneOther)
+        }
+      }
+      tempGroup.visible = false;
+      tempGroupOther.visible = false;
+      
+      groups[2].push(tempGroup);     //Clockwise for red, counter for orange
+      groups[5].push(tempGroupOther);//Counter for red, clockwise for orange
+    }
+
+    // generate side 0 and 3 move hints
+    for(let k = 0; k < cD; k++){
+      let tempGroup = new THREE.Group();
+      let tempGroupOther = new THREE.Group();
+      for(let i = 0; i < 4; i++){
+        for(let j = 0; j<cD;j++){
+          let tempPlane = new THREE.Mesh( geometry, material );
+          let tempPlaneOther = new THREE.Mesh( geometry, material );
+          if(i===0){
+            tempPlane.translateX((cD-1)-j);
+            tempPlane.translateZ((cD-1)+.51);
+            tempPlane.translateY(k);
+            tempPlane.rotateZ(-Math.PI/2);
+            
+
+            tempPlaneOther.translateX((cD-1)-j);
+            tempPlaneOther.translateZ((cD-1)+.51);
+            tempPlaneOther.translateY(k);
+            tempPlaneOther.rotateX(Math.PI);
+            tempPlaneOther.rotateZ(Math.PI/2);
+          }
+          else if(i===1){
+            tempPlane.translateX((cD-1)+.51);
+            tempPlane.translateZ((cD-1)-j);
+            tempPlane.translateY(k);
+            tempPlane.rotateX(Math.PI/2);
+            tempPlane.rotateZ(Math.PI);
+            tempPlane.rotateY(Math.PI/2);
+
+            tempPlaneOther.translateX((cD-1)+.51);
+            tempPlaneOther.translateZ((cD-1)-j);
+            tempPlaneOther.translateY(k);
+            tempPlaneOther.rotateX(Math.PI/2);
+            tempPlaneOther.rotateY(Math.PI/2);
+          }
+          else if(i===2){
+            tempPlane.translateX((cD-1)-j);
+            tempPlane.translateZ(-.51);
+            tempPlane.translateY(k);
+            tempPlane.rotateX(Math.PI);
+            tempPlane.rotateZ(Math.PI/2);
+
+            tempPlaneOther.translateX((cD-1)-j);
+            tempPlaneOther.translateZ(-.51);
+            tempPlaneOther.translateY(k);
+            tempPlaneOther.rotateZ(-Math.PI/2);
+          }
+          else if(i===3){
+            tempPlane.translateX(-.51);
+            tempPlane.translateZ((cD-1)-j);
+            tempPlane.translateY(k);
+            tempPlane.rotateX(-Math.PI/2);
+            tempPlane.rotateZ(Math.PI);
+            tempPlane.rotateY(-Math.PI/2);
+
+            tempPlaneOther.translateX(-.51);
+            tempPlaneOther.translateZ((cD-1)-j);
+            tempPlaneOther.translateY(k);
+            tempPlaneOther.rotateX(-Math.PI/2);
+            tempPlaneOther.rotateY(Math.PI/2);
+            //tempPlaneOther.rotateZ(Math.PI);
+          }
+          tempGroup.add(tempPlane)
+          tempGroupOther.add(tempPlaneOther)
+        }
+      }
+      tempGroup.visible = false;
+      tempGroupOther.visible = false;
+      
+      groups[0].push(tempGroup);     //Clockwise for white, counter for yellow
+      groups[3].push(tempGroupOther);//Counter for white, clockwise for yellow
+    }
+
+    // generate side 1 and 5 move hints
+    for(let k = 0; k < cD; k++){
+      let tempGroup = new THREE.Group();
+      let tempGroupOther = new THREE.Group();
+      for(let i = 0; i < 4; i++){
+        for(let j = 0; j<cD;j++){
+          let tempPlane = new THREE.Mesh( geometry, material );
+          let tempPlaneOther = new THREE.Mesh( geometry, material );
+          if(i===0){
+            tempPlane.translateX((cD-1)-j);
+            tempPlane.translateZ((cD-1)-k);
+            tempPlane.translateY((cD-1)+.51);
+            tempPlane.rotateZ(-Math.PI/2);
+            tempPlane.rotateY(Math.PI/2);
+            
+
+            tempPlaneOther.translateX((cD-1)-j);
+            tempPlaneOther.translateZ((cD-1)-k);
+            tempPlaneOther.translateY((cD-1)+.51);
+            tempPlaneOther.rotateX(Math.PI);
+            tempPlaneOther.rotateZ(Math.PI/2);
+            tempPlaneOther.rotateY(Math.PI/2);
+          }
+          else if(i===1){
+            tempPlane.translateX((cD-1)+.51);
+            tempPlane.translateZ((cD-1)-k);
+            tempPlane.translateY((cD-1)-j);
+            //tempPlane.rotateX(Math.PI/2);
+            tempPlane.rotateZ(Math.PI);
+            tempPlane.rotateY(Math.PI/2);
+
+            tempPlaneOther.translateX((cD-1)+.51);
+            tempPlaneOther.translateZ((cD-1)-k);
+            tempPlaneOther.translateY((cD-1)-j);
+            //tempPlaneOther.rotateX(Math.PI);
+            tempPlaneOther.rotateY(Math.PI/2);
+          }
+          else if(i===2){
+            tempPlane.translateX((cD-1)-j);
+            tempPlane.translateZ((cD-1)-k);
+            tempPlane.translateY(-.51);
+            tempPlane.rotateX(Math.PI/2);
+            tempPlane.rotateZ(Math.PI/2);
+
+            tempPlaneOther.translateX((cD-1)-j);
+            tempPlaneOther.translateZ((cD-1)-k);
+            tempPlaneOther.translateY(-.51);
+            tempPlaneOther.rotateX(Math.PI/2);
+            tempPlaneOther.rotateZ(-Math.PI/2);
+          }
+          else if(i===3){
+            tempPlane.translateX(-.51);
+            tempPlane.translateZ((cD-1)-k);
+            tempPlane.translateY((cD-1)-j);
+            tempPlane.rotateX(Math.PI);
+            tempPlane.rotateZ(Math.PI);
+            tempPlane.rotateY(-Math.PI/2);
+
+            tempPlaneOther.translateX(-.51);
+            tempPlaneOther.translateZ((cD-1)-k);
+            tempPlaneOther.translateY((cD-1)-j);
+            tempPlaneOther.rotateX(-Math.PI);
+            tempPlaneOther.rotateY(Math.PI/2);
+            //tempPlaneOther.rotateZ(Math.PI);
+          }
+          tempGroup.add(tempPlane)
+          tempGroupOther.add(tempPlaneOther)
+        }
+      }
+      tempGroup.visible = false;
+      tempGroupOther.visible = false;
+      
+      groups[1].push(tempGroup);     //Clockwise for white, counter for yellow
+      groups[4].push(tempGroupOther);//Counter for white, clockwise for yellow
+    }
+
+    scene.add( ...groups[0], ...groups[1], ...groups[2], ...groups[3], ...groups[4], ...groups[5] );
+    // **************************** End scrap code ****************************
+
 
     // add cubes to state and then render
     this.setState({
@@ -954,18 +1195,24 @@ class App extends Component {
           scene.add( this.state.cubes[i] );
         } 
       }
+      camera.position.z = this.state.cameraZ;// * Math.sin( this.state.angle );
+      camera.position.y = this.state.cameraY;
+      camera.position.x = this.state.cameraX;// * Math.cos( this.state.angle );
 
       renderer.render( scene, camera );
       animate();
     });
 
 
-    camera.position.z = this.state.cameraZ;// * Math.sin( this.state.angle );
-    camera.position.y = this.state.cameraY;
-    camera.position.x = this.state.cameraX;// * Math.cos( this.state.angle );
+    
 
     // Function runs continuously to animate cube
     var animate = () => {
+
+      // clear visible move hints
+      for(let i = 0; i < groups.length;i++)
+        groups[i].forEach(group => group.visible = false)
+
       controls.enabled = true;
       stats.begin();
       requestAnimationFrame( animate );
@@ -974,6 +1221,66 @@ class App extends Component {
       // Consider moving into another function to unclutter animate
       // Very expensive operation
       if(this.state.currentFunc === "None") {
+
+        //check here that data isn't the same as previous so not running this every time
+        // Data on move button triggers visual move hints
+        if(this.state.isVisible){ 
+          //console.log("make turn visible"); 
+          let [hFace,hDir,hDepth,hMulti] = this.state.hoverData;
+          if(hFace<=(Math.floor(cD/2))){
+            if(hDir === -1){
+              if(!hMulti){
+                groups[hFace][hDepth-1].visible=true;
+              }
+              else
+                for(let i = 0; i <= hDepth-1; i++){
+                  groups[hFace][i].visible=true;
+                }
+            }
+            else {
+              try{
+                if(!hMulti){
+                  groups[hFace+3][hDepth-1].visible=true;
+                }
+                else
+                for(let i = 0; i <= hDepth-1; i++){
+                  groups[hFace+3][i].visible=true;
+                }
+              }catch{
+                console.log(this.state.hoverData);
+              }
+              
+            }
+          }
+          else{
+            if(hFace===3) hFace=0;
+            if(hFace===4) hFace=2;
+            if(hFace===5) hFace=1;
+
+            if(hDir === -1){
+              if(!hMulti){
+                groups[hFace+3][(groups[hFace+3].length-1)-(hDepth-1)].visible=true;
+              }
+              else
+                for(let i = groups[hFace+3].length-1; i >= (groups[hFace+3].length-1)-(hDepth-1); i--){
+                  groups[hFace+3][i].visible=true;
+                }
+            }
+            else {
+              if(!hMulti){
+                groups[hFace][(groups[hFace].length-1)-(hDepth-1)].visible=true;
+              }
+              else
+                for(let i = groups[hFace].length-1; i >= (groups[hFace+3].length-1)-(hDepth-1); i--){
+                  groups[hFace][i].visible=true;
+                }
+            }
+          }
+        }
+
+
+
+
         let previousPiece = this.state.previousPiece;
         // Projects mouse onto scene to find intersected objects
         raycaster.setFromCamera( mouse, camera );
@@ -1165,6 +1472,8 @@ class App extends Component {
           handleDrag = {this.handleDragControls}
           onStart = {this.onStartControls}
           onStop = {this.onStopControls}
+          mouseEnter= {this.mouseOver}
+          mouseLeave= {this.mouseLeave}
         /> : ""}
   
         {/* Bottom Right */} 

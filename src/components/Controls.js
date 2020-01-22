@@ -48,7 +48,7 @@ function namesToColors(face){
 
 //generate data for buttons and pass down to props. Easier than trying to do in here
 const Controls = props => {
-    centerButtons = [];
+    centerButtons=[];
     singleButtons=[];
     multiButtons=[];
     singleCols=[];
@@ -76,7 +76,11 @@ const Controls = props => {
                                 <button className="moveBtn" 
                                         key={key} 
                                         onClick={() => props.rotateOneFace(element.clockwise.name,element.clockwise.data)} 
-                                        style={{position:"relative", left: "0px",backgroundColor: "magenta",width:"45px"}}>
+                                        style={{position:"relative", left: "0px",backgroundColor: "magenta",width:"45px"}}
+                                        onMouseEnter={()=>props.mouseEnter(element.clockwise.name,element.clockwise.data)}
+                                        onMouseLeave={()=>props.mouseLeave()}
+                                        >
+                                        
                                     {element.clockwise.name}
                                 </button>
                             );
@@ -85,7 +89,10 @@ const Controls = props => {
                                 <button className="moveBtn" 
                                         key={key} 
                                         onClick={() => props.rotateOneFace(element.counter.name,element.counter.data)} 
-                                        style={{position:"relative", left: "0px",backgroundColor: "magenta",width:"45px"}}>
+                                        style={{position:"relative", left: "0px",backgroundColor: "magenta",width:"45px"}}
+                                        onMouseEnter={()=>props.mouseEnter(element.counter.name,element.counter.data)}
+                                        onMouseLeave={()=>props.mouseLeave()}
+                                        >
                                     {element.counter.name}
                                 </button>
                             );
@@ -106,7 +113,10 @@ const Controls = props => {
                             <button className="moveBtn" 
                                     key={key} 
                                     onClick={() => props.rotateOneFace(element.counter.name,element.counter.data)} 
-                                    style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}>
+                                    style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}
+                                    onMouseEnter={()=>props.mouseEnter(element.counter.name,element.counter.data)}
+                                    onMouseLeave={()=>props.mouseLeave()}
+                                    >
                                 {element.counter.name}
                             </button>
                         )
@@ -115,7 +125,10 @@ const Controls = props => {
                             <button className="moveBtn" 
                                     key={key} 
                                     onClick={() => props.rotateOneFace(element.clockwise.name,element.clockwise.data)} 
-                                    style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}>
+                                    style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}
+                                    onMouseEnter={()=>props.mouseEnter(element.clockwise.name,element.clockwise.data)}
+                                    onMouseLeave={()=>props.mouseLeave()}
+                                    >
                                 {element.clockwise.name}
                             </button>
                         )
@@ -148,7 +161,10 @@ const Controls = props => {
                             <button className="moveBtn" 
                                     key={key} 
                                     onClick={() => props.rotateOneFace(element.counter.name,element.counter.data)} 
-                                    style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}>
+                                    style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}
+                                    onMouseEnter={()=>props.mouseEnter(element.counter.name,element.counter.data)}
+                                    onMouseLeave={()=>props.mouseLeave()}
+                                    >
                                 {element.counter.name}
                             </button>
                         )
@@ -157,7 +173,10 @@ const Controls = props => {
                             <button className="moveBtn" 
                                     key={key} 
                                     onClick={() => props.rotateOneFace(element.clockwise.name,element.clockwise.data)} 
-                                    style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}>
+                                    style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}
+                                    onMouseEnter={()=>props.mouseEnter(element.clockwise.name,element.clockwise.data)}
+                                    onMouseLeave={()=>props.mouseLeave()}
+                                    >
                                 {element.clockwise.name}
                             </button>
                         )
