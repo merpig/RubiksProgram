@@ -1227,7 +1227,7 @@ class App extends Component {
         if(this.state.isVisible){ 
           //console.log("make turn visible"); 
           let [hFace,hDir,hDepth,hMulti] = this.state.hoverData;
-          if(hFace<=(Math.floor(cD/2))){
+          if(hFace<3){
             if(hDir === -1){
               if(!hMulti){
                 groups[hFace][hDepth-1].visible=true;
