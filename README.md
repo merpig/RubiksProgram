@@ -1,8 +1,16 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).  
-[Live Link](https://mighty-fortress-00882.herokuapp.com/). May take a minute to load initially
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/icon.png" width="100" height="100">  
+</p>
+    
+[Click Here for Live site](https://rubiksprogram.herokuapp.com/) *May take a minute to load initially*
 
 ## Resources
-[threejs](https://www.npmjs.com/package/three).
+
+- [Threejs](https://www.npmjs.com/package/three) - Library for displaying 3D graphics in the browser
+- [OrbitControls](https://www.npmjs.com/package/three-orbitcontrols) - "Orbit controls allow the camera to orbit around a target."
+- [Stats](https://www.npmjs.com/package/stats-js) - "This class provides a simple info box that will help you monitor your code performance."
 
 ## Available Scripts
 
