@@ -34,6 +34,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
  * 8. Highlight turns when hovering over move buttons. FINISHED
  * 
  * 9. Implement rotating pieces by dragging. NOT STARTED
+ * 
+ * 10. The program needs a good readme. NOT STARTED
  */
 
 
@@ -74,6 +76,7 @@ class App extends Component {
     showStats: false,     // Setting for stats
     showMoveInput: true,  // Setting for custom move input
     showControls: true,   // Setting for move controls
+    showGuideArrows: true,
     activeDragsInput: 0,  // Keeps track of draggable input
     deltaPositionInput: {
       x: 100, y: 100
@@ -943,7 +946,7 @@ class App extends Component {
     controls.enableDamping = true;   //damping 
     controls.dampingFactor = 0.15;   //damping inertia
     controls.enableZoom = true;      //Zooming
-    controls.autoRotate = false;       // enable rotation
+    controls.autoRotate = false;     //Enable auto rotation
     controls.minDistance = (2+cD);
     controls.maxDistance = (2+cD)+20;
     controls.keys = {
@@ -1456,6 +1459,7 @@ class App extends Component {
 
         { this.state.generatedButtons && this.state.showControls? 
           <Controls
+          disableHover={this.state.showGuideArrows}
           generatedButtons={this.state.generatedButtons}
           size={this.getSizeFromUrl()}
           rotateOneFace={this.rotateOneFace}

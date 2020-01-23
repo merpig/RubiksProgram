@@ -67,7 +67,7 @@ const Navbar = props => (
     <Popup trigger={<button id="triggerBtn">Info</button>}>
         {close => (
           <div style={{zIndex:"100"}}>
-            <div style={{zIndex:"101"}} className="shadeBackground" onClick={close}></div>
+            <div style={{zIndex:"101"}} className="shadeBackground" style={{backgroundColor:"black"}} onClick={close}></div>
             <div style={{zIndex:"102"}} className="popupDiv">
               <b style={{fontSize: "2rem"}}>Instructions</b>
               <button className="close" id="closeBtn" onClick={close}>
