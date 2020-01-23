@@ -6,6 +6,30 @@
   
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).  
 
+## Using the app
+
+### Control the turn speed of moves. Adjust speed with slider
+<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/speed.png" width="200"> 
+
+
+### Builtin pattern functions. Click button to initiate pattern
+<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/patterns.png" width="200"> 
+
+### Move buttons. Click a button to initiate turn. Hover over button to see what it will turn
+  - key:
+    - Upper case letters  (F,U,R,B,L,D) signify single layer turns
+    - Lower case letters turn multiple layers at a time.
+    - 01...NN before the letter signify the depth of the turn
+    - ' signifies counter clockwise turn
+    - 04f' is equivalent to 01F' 02F' 03F' 04F'
+<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/movebuttons.png" width="200"> 
+
+### Input field to enter moves
+<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/input.png" width="200"> 
+
+### Basic cube functions
+<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/core.png" width="200"> 
+
 ## Resources
 
 - [Threejs](https://www.npmjs.com/package/three) - Library for displaying 3D graphics in the browser
