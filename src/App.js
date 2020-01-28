@@ -863,10 +863,10 @@ class App extends Component {
     let calculated = null;
     let depth = null;
 
-    console.log("difference: ", dif)
+    //console.log("difference: ", dif)
 
     if(current.x===previous.x && current.y === previous.y && current.z===previous.z){
-      console.log("Nothing to be done. Mouse hasn't moved");
+      //console.log("Nothing to be done. Mouse hasn't moved");
       return null;
     }
 
@@ -935,7 +935,7 @@ class App extends Component {
       default:
     }
 
-    console.log("{ turn: " + calculated + " } , { depth: " + depth + " }");
+    //console.log("{ turn: " + calculated + " } , { depth: " + depth + " }");
 
     return ((depth<10? "0" : "") + depth+calculated);
   }
@@ -1443,7 +1443,7 @@ class App extends Component {
               else{
                   let calculated = this.calculateTurn(intersects[0].point,previousMousePos,piecePos,toFace[intersected],cD);
                   if(calculated!==null&&!calculated.includes("null")){
-                    console.log(calculated)
+                    //console.log(calculated)
                     this.setState({mouseDown: false},()=>{
                       this.algorithm(calculated,"Custom");
                     });
@@ -1451,7 +1451,7 @@ class App extends Component {
                 
               }
             }catch(e){
-              console.error(e)
+              console.error("Error prevented");
             }
             // ** account for mouse not being over the cube after selected piece **
             //
