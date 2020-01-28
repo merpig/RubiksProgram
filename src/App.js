@@ -68,6 +68,7 @@ class App extends Component {
     facePosZ : null,
     mouseFace : null,
     mouseDown : false,
+    mousePos : null,
     undoIndex : 0,        // Index to keep track of where undo/redo is
     blockMoveLog : false, // Blocks adding move when undoing/redoing a move
     previousPiece : null, // Keeps track of hovered face to not redraw
@@ -76,6 +77,7 @@ class App extends Component {
     showStats: false,     // Setting for stats
     showMoveInput: true,  // Setting for custom move input
     showControls: true,   // Setting for move controls
+    showHints: true,
     showGuideArrows: true,
     activeDragsInput: 0,  // Keeps track of draggable input
     deltaPositionInput: {
@@ -694,10 +696,11 @@ class App extends Component {
   };
 
   mouseOver = (name,data) => {
-    this.setState({
-      isVisible: true,
-      hoverData: data
-    });
+    if(this.state.showHints)
+      this.setState({
+        isVisible: true,
+        hoverData: data
+      });
   }
 
   mouseLeave = () => {
@@ -810,6 +813,9 @@ class App extends Component {
       case 'displayControls':
         this.setState({showControls:!this.state.showControls});
         break;
+      case 'displayHints':
+        this.setState({showHints:!this.state.showHints});
+        break;
       default:
         console.log("Invalid Setting");
     }
@@ -842,6 +848,98 @@ class App extends Component {
     return cD;
   }
 
+  // needs more params
+  calculateTurn(current,previous,piece,pieceFace,cD){
+    // console.log("Current x,y,z: ",current.x,current.y,current.z);
+    // console.log("Previous x,y,z: ",previous.x,previous.y,previous.z);
+    // console.log("Piece x,y,z: ",piece.x,piece.y,piece.z);
+    // console.log("Face: ",pieceFace);
+
+    const dif = { 
+      x: (previous.x-current.x), 
+      y: (previous.y-current.y), 
+      z: (previous.z-current.z)
+    }
+    let calculated = null;
+    let depth = null;
+
+    console.log("difference: ", dif)
+
+    if(current.x===previous.x && current.y === previous.y && current.z===previous.z){
+      console.log("Nothing to be done. Mouse hasn't moved");
+      return null;
+    }
+
+    //determines the move based on mouse difference from click to new position
+    switch(pieceFace){
+      case 0:
+        if(Math.abs(dif.z)>=Math.abs(dif.x)&&(Math.abs(dif.z)>.1 || dif.y.toFixed(5)!==0)) {
+          calculated = dif.z<0?"R":"R'";
+          depth=cD-piece.x;
+        }
+        if(Math.abs(dif.x)>Math.abs(dif.z)&&(Math.abs(dif.x)>.1 || dif.y.toFixed(5)!==0)) {
+          calculated = dif.x<0?"U'":"U";
+          depth=cD-piece.z;
+        }
+        break;
+      case 1:
+        if(Math.abs(dif.x)>=Math.abs(dif.y)&&Math.abs(dif.x)>.1) {
+          calculated = dif.x>0?"F'":"F";
+          depth=piece.y+1;
+        }
+        if(Math.abs(dif.y)>Math.abs(dif.x)&&Math.abs(dif.y)>.1) {
+          calculated = dif.y<0?"R":"R'";
+          depth=cD-piece.x;
+        }
+        break;
+      case 2:
+        if(Math.abs(dif.z)>=Math.abs(dif.y)&&Math.abs(dif.z)>.1) {
+          calculated = dif.z>0?"F":"F'";
+          depth=piece.y+1;
+        }
+        if(Math.abs(dif.y)>Math.abs(dif.z)&&Math.abs(dif.y)>.1) {
+          calculated = dif.y>0?"U":"U'";
+          depth=cD-piece.z;
+        }
+        break;
+      case 3:
+        if(Math.abs(dif.z)>=Math.abs(dif.x)&&Math.abs(dif.z)>.1) {
+          calculated = dif.z>0?"R":"R'";
+          depth=cD-piece.x;
+        }
+        if(Math.abs(dif.x)>Math.abs(dif.z)&&Math.abs(dif.x)>.1) {
+          calculated = dif.x>0?"U'":"U";
+          depth=cD-piece.z;
+        }
+        break;
+      case 4:
+        if(Math.abs(dif.z)>=Math.abs(dif.y)&&Math.abs(dif.z)>.1) {
+          calculated = dif.z<0?"F":"F'";
+          depth=piece.y+1;
+        }
+        if(Math.abs(dif.y)>Math.abs(dif.z)&&Math.abs(dif.y)>.1) {
+          calculated = dif.y<0?"U":"U'";
+          depth=cD-piece.z;
+        }
+        break;
+      case 5:
+        if(Math.abs(dif.x)>=Math.abs(dif.y)&&Math.abs(dif.x)>.1) {
+          calculated = dif.x<0?"F'":"F";
+          depth=piece.y+1;
+        }
+        if(Math.abs(dif.y)>Math.abs(dif.x)&&Math.abs(dif.y)>.1) {
+          calculated = dif.y>0?"R":"R'";
+          depth=cD-piece.x;
+        }
+        break;
+      default:
+    }
+
+    console.log("{ turn: " + calculated + " } , { depth: " + depth + " }");
+
+    return ((depth<10? "0" : "") + depth+calculated);
+  }
+
   // Initialization and animation functions
   componentDidMount() {
 
@@ -853,6 +951,9 @@ class App extends Component {
     const groups = [
       [],[],[],[],[],[]
     ];
+    let previousMousePos = null;
+    let piecePos = null;
+    let intersected = null;
 
     // === THREE.JS VARIABLES ===
     let scene = new THREE.Scene();
@@ -862,10 +963,11 @@ class App extends Component {
     let mouse = new THREE.Vector2();
     let cubeGeometry = new THREE.BoxGeometry( 1, 1, 1 );
     var geometry = new THREE.PlaneGeometry(1,1);
-    //https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp2vqlj5dzmGwQfEBy7yNWfDvDVm6mgsA4768bcpsJDmdp9t0g7w&s
+    //const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp2vqlj5dzmGwQfEBy7yNWfDvDVm6mgsA4768bcpsJDmdp9t0g7w&s');
     const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
-    const loader1 = new THREE.TextureLoader().load('https://cdn0.iconfinder.com/data/icons/arrows-11/100/arrow-1-512.png');
-    var material = new THREE.MeshBasicMaterial( {map:loader1,transparent: true,color: 'white', side: THREE.DoubleSide} );
+    //const loader1 = new THREE.TextureLoader().load('https://cdn0.iconfinder.com/data/icons/arrows-11/100/arrow-1-512.png');
+    const loader1 = new THREE.TextureLoader().load('https://cdn2.iconfinder.com/data/icons/communication-language/100/Up_Arrow-01-512.png');
+    var material = new THREE.MeshBasicMaterial( {map:loader1,transparent: true,color: 'black', opacity:'.8',side: THREE.DoubleSide} );
     let tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
 
     let windowHeight = window.innerHeight;
@@ -908,6 +1010,7 @@ class App extends Component {
 
     // Prevents bluring
     loader.anisotropy = renderer.getMaxAnisotropy();
+    loader1.anisotropy = renderer.getMaxAnisotropy();
 
     // generate cubes with face colors based off memory cube
     for(let i = 0; i < rubiksObject.length; i++){
@@ -1012,7 +1115,6 @@ class App extends Component {
             tempPlaneOther.translateZ((cD-1)-j);
             tempPlaneOther.translateY(-.51);
             tempPlaneOther.rotateX(-Math.PI/2);
-            //tempPlaneOther.rotateZ(Math.PI);
           }
           tempGroup.add(tempPlane)
           tempGroupOther.add(tempPlaneOther)
@@ -1020,9 +1122,8 @@ class App extends Component {
       }
       tempGroup.visible = false;
       tempGroupOther.visible = false;
-      
-      groups[2].push(tempGroup);     //Clockwise for red, counter for orange
-      groups[5].push(tempGroupOther);//Counter for red, clockwise for orange
+      groups[2].push(tempGroup);
+      groups[5].push(tempGroupOther);
     }
 
     // generate side 0 and 3 move hints
@@ -1174,7 +1275,7 @@ class App extends Component {
       groups[4].push(tempGroupOther);//Counter for white, clockwise for yellow
     }
 
-    scene.add( ...groups[0], ...groups[1], ...groups[2], ...groups[3], ...groups[4], ...groups[5] );
+    scene.add(...groups.flat(2));
     // **************************** End scrap code ****************************
 
 
@@ -1281,6 +1382,9 @@ class App extends Component {
         // calculate objects intersecting the picking ray
         var intersects = raycaster.intersectObjects( scene.children );
         if (intersects[0] && intersects[0].object.material.length && !this.state.mouseDown){
+          previousMousePos = null;
+          piecePos = null;
+          intersected = null;
           controls.enabled = false;
           // Get faces to line up properly
           let faceInteresected = intersects[0].faceIndex;
@@ -1328,6 +1432,27 @@ class App extends Component {
           } 
 
           else{
+            try{
+              let toFace = [2,4,3,0,1,5];
+              
+              if(previousMousePos === null) {
+                previousMousePos = intersects[0].point;
+                piecePos = intersects[0].object.position;
+                intersected = Math.floor(intersects[0].faceIndex/2);
+              }
+              else{
+                  let calculated = this.calculateTurn(intersects[0].point,previousMousePos,piecePos,toFace[intersected],cD);
+                  if(calculated!==null&&!calculated.includes("null")){
+                    console.log(calculated)
+                    this.setState({mouseDown: false},()=>{
+                      this.algorithm(calculated,"Custom");
+                    });
+                  }
+                
+              }
+            }catch(e){
+              console.error(e)
+            }
             // ** account for mouse not being over the cube after selected piece **
             //
             // Code here to figure out which faces can be turned from selected face
@@ -1341,6 +1466,10 @@ class App extends Component {
             this.reloadTurnedPieces(previousPiece);
             this.setState({previousPiece:null});
           }
+
+          previousMousePos = null;
+          piecePos = null;
+          intersected = null;
           this.setState({mouseFace : null});
         }
       }

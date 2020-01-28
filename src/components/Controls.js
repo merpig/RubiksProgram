@@ -58,7 +58,7 @@ const Controls = props => {
         <div id="divInfo" style={{position: "absolute", zIndex: "98"}}>
         <Draggable
                 handle=".handle"
-                defaultPosition={{x:130, y: window.innerHeight-355}}
+                defaultPosition={{x:130, y: window.innerHeight-370}}
                 position={null}
                 grid={[50, 50]}
                 scale={1}

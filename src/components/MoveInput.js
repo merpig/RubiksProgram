@@ -23,7 +23,7 @@ const MoveInput = (props) => {
                 <div>
                     <div className="handle" style={{color:"grey"}}>Drag from here</div>
                     <div>
-                        <input placeholder="type moves here" id="moveInput" onKeyDown={instructTurn}></input>
+                        <input placeholder="type moves here" id="moveInput" onKeyDown={instructTurn} style={{borderRadius: "4px", margin: "1px",border: "1.5px solid #007bff"}}></input>
                         <button id="moveSubmit" onClick={() => props.algorithm(document.getElementById('moveInput').value,'Custom')}>Enter</button>
                     </div>
                 </div>

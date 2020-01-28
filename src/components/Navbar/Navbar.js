@@ -45,6 +45,17 @@ const Navbar = props => (
               
               
             </li>
+
+            <li>
+              
+              Move Hints <br></br>
+              <label className="checkbox-inline">
+                <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayHints')}></input>
+                {props.state.showHints? "ON " : "OFF "}
+              </label>
+              
+              
+            </li>
             
           </ul>
 
@@ -67,7 +78,7 @@ const Navbar = props => (
     <Popup trigger={<button id="triggerBtn">Info</button>}>
         {close => (
           <div style={{zIndex:"100"}}>
-            <div style={{zIndex:"101"}} className="shadeBackground" style={{backgroundColor:"black"}} onClick={close}></div>
+            <div className="shadeBackground" style={{backgroundColor:"black",zIndex:"101"}} onClick={close}></div>
             <div style={{zIndex:"102"}} className="popupDiv">
               <b style={{fontSize: "2rem"}}>Instructions</b>
               <button className="close" id="closeBtn" onClick={close}>
