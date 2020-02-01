@@ -86,7 +86,7 @@ class App extends Component {
     controlledPositionInput: {
       x: 0, y: 0
     },
-    activeDragsControls: 0,// Keeps track of draggable input
+    activeDragsControls: 0,// Keeps track of draggable buttons
     deltaPositionControls: {
       x: 100, y: 100
     },
@@ -283,8 +283,26 @@ class App extends Component {
   };
 
   // rotate pieces attached to face (visual cube)
+  /**
+   * 
+   * Possible Optimization!
+   * 
+   * Instead of turning each piece individually,
+   * group the pieces to be turned and then turn the group.
+   * - Pros
+   *    - Less Code
+   *    - Easier on the renderer
+   * 
+   * - Cons
+   *    - Not sure where to attempt implementation
+   * 
+   * Development Stage: T
+   */
   rotatePieces = (rotate,tempCubes) => {
     this.setState({reload : true});
+
+    // Trial variable
+    // let tempGroup = new THREE.Group();
 
     // state variables asigned for shorter names
     let centerPoint = this.state.cubeDimension/2-.5;
@@ -620,13 +638,20 @@ class App extends Component {
   algorithm = (moveString,moveName) => {
     if(this.state.currentFunc !== "None") return;
     const moveArray = this.moveStringToArray(moveString);
-    console.log(moveArray);
+    //console.log(moveArray);
     this.setState({currentFunc : moveName, moveSet : moveArray});
   }
 
   // Refreshes page to reset cube
-  reset = () =>
-    window.location.reload();
+  reset = () => {
+    let cD = this.state.cubeDimension;
+    let generated = cube.generateSolved(cD,cD,cD);
+    let rubiksObject = generated.tempArr;
+    this.setState({rubiksObject,moveSet: []},()=>{
+      this.reloadTurnedPieces('all');
+    });
+    //window.location.reload();
+  }
 
   // Generates a random move
   scramble = () => {
@@ -657,6 +682,10 @@ class App extends Component {
   beginSolve = () => {
     if(this.state.currentFunc !== "None") return;
     this.setState({currentFunc : "Solving",solveState : 0});
+  }
+
+  stopSolve = () => {
+    this.setState({currentFunc : "None",solveState : -1,moveSet:[]});
   }
 
   handleDragInput = (e, ui) => {
@@ -777,14 +806,20 @@ class App extends Component {
       let rotation = tempCube.rotation;
 
       if((rotation.x !== 0 || rotation.y !== 0 ||rotation.z !== 0) || 
-          pos === tempCube.position){
+           (pos === tempCube.position || pos==='all')){
 
+        if(pos==='all') {
+          tempCube.position.x=this.state.rubiksObject[i][9];
+          tempCube.position.y=this.state.rubiksObject[i][10];
+          tempCube.position.z=this.state.rubiksObject[i][11];
+        }
         tempCube.material[0].color = new THREE.Color(this.state.rubiksObject[i][2]);
         tempCube.material[1].color = new THREE.Color(this.state.rubiksObject[i][4]);
         tempCube.material[2].color = new THREE.Color(this.state.rubiksObject[i][3]);
         tempCube.material[3].color = new THREE.Color(this.state.rubiksObject[i][0]);
         tempCube.material[4].color = new THREE.Color(this.state.rubiksObject[i][1]);
         tempCube.material[5].color = new THREE.Color(this.state.rubiksObject[i][5]);
+        
         tempCube.rotation.x = 0; tempCube.rotation.y = 0; tempCube.rotation.z = 0;
         cubes[i] = tempCube;
         
@@ -828,7 +863,7 @@ class App extends Component {
 
   // Gets the url to be parsed
   getSizeFromUrl() {
-    let limit = 20;
+    let limit = 50;
     let cD;
     let vars = {};
     let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
@@ -940,6 +975,11 @@ class App extends Component {
     return ((depth<10? "0" : "") + depth+calculated);
   }
 
+  // Proto function for feature to be built later
+  calculateTheta(){
+
+  }
+
   // Initialization and animation functions
   componentDidMount() {
 
@@ -958,7 +998,10 @@ class App extends Component {
     // === THREE.JS VARIABLES ===
     let scene = new THREE.Scene();
     let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, .1, 1000 );
-    let renderer = new THREE.WebGLRenderer();
+    let renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true
+    });
     let raycaster = new THREE.Raycaster();
     let mouse = new THREE.Vector2();
     let cubeGeometry = new THREE.BoxGeometry( 1, 1, 1 );
@@ -1000,17 +1043,18 @@ class App extends Component {
     window.addEventListener("resize", onWindowResize, false );
     
     // Set background color and size
-    renderer.setClearColor(new THREE.Color("black"),1);
-    renderer.setSize( window.innerWidth, window.innerHeight-10);
-    document.body.appendChild( renderer.domElement );
+    renderer.setClearColor(new THREE.Color("black"),0);
+    renderer.domElement.className = "canvas";
+    renderer.setSize( window.innerWidth, window.innerHeight);
+    document.body.children[5].appendChild( renderer.domElement );
 
     stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
     document.body.appendChild( stats.dom);
     document.body.children[9].style.display = "none"
 
     // Prevents bluring
-    loader.anisotropy = renderer.getMaxAnisotropy();
-    loader1.anisotropy = renderer.getMaxAnisotropy();
+    loader.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    loader1.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
     // generate cubes with face colors based off memory cube
     for(let i = 0; i < rubiksObject.length; i++){
@@ -1043,6 +1087,8 @@ class App extends Component {
     scene.translateX(.5-cD/2);
     scene.translateY(.5-cD/2);
     scene.translateZ(.5-cD/2);
+
+    
 
     // Allows for drag to rotate camera
     const controls = new OrbitControls( camera , renderer.domElement);
@@ -1551,6 +1597,7 @@ class App extends Component {
   // Renders html to the index.html page
   render() {
     let solveBtn = (this.state.cubeDimension < 21) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "60px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SOLVE</button> : "";
+    let stopSolveBtn = <button onClick={this.stopSolve} style={{position:"fixed", bottom: "60px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>;
     return (
       <div className="App" >
         
@@ -1600,7 +1647,7 @@ class App extends Component {
         /> : ""}
   
         {/* Bottom Right */} 
-        {solveBtn}
+        {this.state.solveState < 0 ? solveBtn : stopSolveBtn}
         <button onClick={this.beginScramble} style={{position:"fixed", bottom: "30px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SCRAMBLE</button>
         <button onClick={this.reset} style={{position:"fixed", bottom: "0px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>RESET</button>
       </div>

@@ -35,6 +35,21 @@ let algorithms = [
         worksFor: [3]
     },
     {
+        name: "Checkerboard2",
+        moves : "01B 01D 01F' 01B' 01D 01L2 01U 01L 01U' 01B 01D' 01R 01B 01R 01D' 01R 01L' 01F 01U2 01D",
+        worksFor: [3]
+    },
+    {
+        name: "Anaconda",
+        moves : "01L 01U 01B' 01U' 01R 01L' 01B 01R' 01F 01B' 01D 01R 01D' 01F'",
+        worksFor: [3]
+    },
+    {
+        name: "Python",
+        moves : "01F2 01R' 01B' 01U 01R' 01L 01F' 01L 01F' 01B 01D' 01R 01B 01L2",
+        worksFor: [3]
+    },
+    {
         name: "Test f depth:2 multi turn",
         moves: "02f 02f'",
         worksFor: []

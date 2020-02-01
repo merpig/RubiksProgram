@@ -31,7 +31,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
-  <body style="background-color: black; overflow: hidden;">
+  <body style="overflow: hidden; background-color: black;">
       <style>
         button:hover,.dropdown-item:hover{
           background-color: gray!important;
@@ -101,6 +101,15 @@
           #fullscreenBtn {
             display: none;
           }
+          #triggerBtn{
+            display: none;
+          }
+          #divInfo{
+            display: none;
+          }
+          #settings{
+            display: none;
+          }
         }
 
         #controlsDiv{
@@ -132,6 +141,9 @@
           border-radius: 4px;
           margin: 1px;
           border: 1.5px solid #007bff;
+        }
+        .canvas{
+          overflow: hidden;
         }
   
       </style>
@@ -184,5 +196,7 @@
           });
         });
     </script>
+    <div class="canvas" style="background-size: cover; background-position: center; background:url(https://k38gwjynpb-flywheel.netdna-ssl.com/wp-content/uploads/2015/10/black-background.jpeg)no-repeat;">
+    </div>
   </body>
 </html>

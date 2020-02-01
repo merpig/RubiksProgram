@@ -11,7 +11,7 @@ const Navbar = props => (
         <p className="navbar-brand" style={{color:"lightgray"}}><b>{props.title}</b></p>
 
           {/*Open model here. Show bunch of settings. Pass changeSettings down to component to apply changes*/}
-          <DropdownButton title={<i className='fa fa-cog'></i>}>
+          <DropdownButton className="settings" title={<i className='fa fa-cog'></i>}>
           <ul>
             <li>
               
