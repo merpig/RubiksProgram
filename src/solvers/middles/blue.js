@@ -27,93 +27,53 @@ let solveBlueMiddle = (current,solved,dim,index) => {
 
 
     if(currentSide==="U"){
-        console.log("move out of top side")
+        console.log("move out of top side to right side")
         // F,U2,F',U2
-        moveString = ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
-        moveString += " " + ((current.x+1)<10? "0" : "") + (current.x+1) + "U2";
-        moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
-        moveString += " " + ((current.x+1)<10? "0" : "") + (current.x+1) + "U2";
+        moveString = ((current.y+1)<10? "0" : "") + (current.y+1) + "F";        //1
+        moveString += " " + ((current.x+1)<10? "0" : "") + (current.x+1) + "U2";//2
+        if( dim%2 && current.y+1===Math.ceil(dim/2)) moveString+= " 01L'";      //2.1
+        moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";//3
+        if( dim%2 && current.y+1===Math.ceil(dim/2)) moveString+= " 01L";       //3.1
+        moveString += " " + ((current.x+1)<10? "0" : "") + (current.x+1) + "U2";//4
     }
 
     else if(currentSide==="R"){
-        console.log("move piece to side D or solve pattern for side R");
-        // 
-        if(current.y===solved.y){
-            moveString+= "01R";
-        }
-        else{
-            moveString+= ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F'";
-
-            if(current.y!==solved.y && current.z!==solved.x){
-                if((solved.x===1||solved.x===dim-2)&&(solved.y===1||solved.y===dim-2))
-                    moveString+= " 01R";
-                else{
-                    moveString+= " 01R";
-                }
-            }
-            else if(current.z!==solved.x){
-                moveString+= " 01R";
-                console.log("r1")
-            }
-            else if(current.y!==solved.y){
-                moveString+= " 01R";
-                console.log("r2")
-            }
-
-            moveString+= " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "U2";
-
-            moveString+= " " + ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F";
-
-            moveString+= " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "U2";
-
+        console.log("solve from right side to top side");
+        // 5-9
+        if((dim-current.z)===(solved.x+1) && current.y===solved.y){
+            console.log("in place for step 6-9");
+            moveString = ((solved.x+1)<10? "0" : "") + (solved.x+1) + "U2";//6
+            if(dim%2 && solved.y===Math.floor(dim/2)) moveString += " 01L'";//6.1
+            moveString += " " + ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F"//7
+            if(dim%2 && solved.y===Math.floor(dim/2)) moveString += " 01L";//7.1
+            moveString += " " + ((solved.x+1)<10? "0" : "") + (solved.x+1) + "U2";//8
+            moveString += " " + ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F'"//9
+            
+        } else {
+            console.log("rotating right side");
+            moveString = "01R'"//5
         }
     }
 
     else if(currentSide==="L"){
-        console.log("move piece to side D or solve pattern for side L");
-        if(current.y===solved.y){
-            moveString+= "01L";
+        console.log("solve from left side to top side");
+        if(current.z===solved.x && current.y===solved.y){
+            console.log("in place for step 6-9");
+            moveString = ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";//6
+            if(dim%2 && solved.y===Math.floor(dim/2)) moveString += " 01R";//6.1
+            moveString += " " + ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F'"//7
+            if(dim%2 && solved.y===Math.floor(dim/2)) moveString += " 01R'";//7.1
+            moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";//8
+            moveString += " " + ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F"//9
+            
+        } else {
+            console.log("rotating left side");
+            moveString = "01L"//5
         }
-        else{
-            moveString+= ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F";
-
-            if(current.y!==solved.y && current.z!==solved.x){
-                if((solved.x===1||solved.x===dim-2)&&(solved.y===1||solved.y===dim-2))
-                    moveString+= " 01L2";
-                else{
-                    moveString+= " 01L";
-                }
-            }
-            else if(current.z!==solved.x){
-                moveString+= " 01L";
-                console.log("l1")
-            }
-            else if(current.y!==solved.y){
-                moveString+= " 01L";
-                console.log("l2")
-            }
-
-            moveString+= " " + ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U2";
-
-            moveString+= " " + ((solved.y+1)<10? "0" : "") + (solved.y+1) + "F'";
-
-            moveString+= " " + ((dim-current.z)<10? "0" : "") + (dim-current.z) + "U2";
-
-            /* Position piece so it can be rotated into place.
-               Account for y = Math.floor(dim/2) on dim%2 === 1
-            */
-
-            // Rotate into place dim-z U2
-
-            // F' to put back on blue face
-
-            // U2 to put yellow/white back in place
-        }
-
     }
 
     else {
-        console.log("solve pattern for side D");
+        console.log("move from back side to right side");
         if(current.y!==solved.y){
             moveString += "01D";
         }

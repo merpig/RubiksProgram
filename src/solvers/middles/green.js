@@ -20,7 +20,21 @@ let solveGreenMiddle = (current,solved,dim,index,fixMiddle) => {
     console.log(`Currently on side: ${currentSide}`);
     console.log(`Current position: ${JSON.stringify(current)}`);
     console.log(`Solved position: ${JSON.stringify(solved)}`);
+    let moveString = "";
 
+    if(currentSide==="D"){
+        
+    }
+
+    else if (currentSide==="R"){
+
+    }
+
+    else if (currentSide==="L"){
+        
+    }
+
+    return moveString;
 }
 
 module.exports = solveGreenMiddle;

@@ -11,6 +11,7 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
     let moveString = "";
     let whiteMiddleError = false;
     let yellowMiddleError = false;
+    let blueMiddleError = false;
 
     const obj = {};
 
@@ -59,6 +60,15 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
             yellowMiddleError=true;
            }
       }
+
+      for(let i = ((dim-2)*(dim-2))*2; i<index&&i<((dim-2)*(dim-2))*3-1;i++){
+        if(cube[middles[i]][6]!==cube[middles[i]][9]&&
+           cube[middles[i]][7]!==cube[middles[i]][10]&&
+           cube[middles[i]][8]!==cube[middles[i]][11]){
+            console.log(cube[middles[i]]);
+            blueMiddleError=true;
+           }
+      }
       // if(dim%2 && !whiteMiddleError && !yellowMiddleError && index===((dim-2)*(dim-2))*2){
       //   console.log(cube[middles[index+Math.ceil(((dim-2)*(dim-2)))/2]]);
       //   /* Send Index of center blue piece
@@ -67,7 +77,7 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
       //   console.log(moveString + "\n-------------------------------")*/
       // }
       
-      if(!whiteMiddleError && !yellowMiddleError && index<((dim-2)*(dim-2))*3){
+      if(!whiteMiddleError && !yellowMiddleError && !blueMiddleError && index<((dim-2)*(dim-2))*4){ //change this each middle solver
         if(dim%2 && index === ((((dim-2)*(dim-2))*2))){
           
           let oddTopMiddleIndex = ((((dim-2)*(dim-2))*2)+Math.floor((dim-2)*(dim-2)/2));
@@ -99,11 +109,15 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
         console.log(moveString + "\n-------------------------------");
       }
       else if(whiteMiddleError){
-        console.log("Exiting early due to an earlier solved piece being displaced on face 0");
+        console.log("Exiting early due to an earlier solved piece being displaced on white");
         index=1000000000;
       }
       else if(yellowMiddleError){
-        console.log("Exiting early due to an earlier solved piece being displaced on face 3");
+        console.log("Exiting early due to an earlier solved piece being displaced on yellow");
+        index=1000000000;
+      }
+      else if(blueMiddleError){
+        console.log("Exiting early due to an earlier solved piece being displaced on blue");
         index=1000000000;
       }
     }
@@ -113,7 +127,7 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
       moveString.length ? obj.moveSet = moveArray : obj.solveState=1;
     }
     else{
-      if(index<((dim-2)*(dim-2))*3){
+      if(index<((dim-2)*(dim-2))*4){ // change this each middle solver
         moveString.length ? obj.moveSet = moveArray : obj.rubiksIndex = index+1;
       }
 

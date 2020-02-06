@@ -296,7 +296,11 @@ class App extends Component {
    * - Cons
    *    - Not sure where to attempt implementation
    * 
-   * Development Stage: T
+   * Development Stage: Trial
+   * 
+   * - Resources
+   *    - https://jsfiddle.net/of1vfhzz/1/
+   *    - https://stackoverflow.com/questions/37779104/how-can-i-rotate-around-the-center-of-a-group-in-three-js
    */
   rotatePieces = (rotate,tempCubes) => {
     this.setState({reload : true});
@@ -577,19 +581,14 @@ class App extends Component {
       this.setState({angle: this.state.angle+.075}); 
     }
     if(key === 38){ // up
-      // fix so that cube stays at same distance from camera
-      
-      if(y < this.state.cubeDimension+2) this.setState({cameraY: y + .5});//, cameraX : formula, cameraZ : -formula});
-      //console.log(`UP - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
+      if(y < this.state.cubeDimension+2) this.setState({cameraY: y + .5});
     }
     if(key === 39){ // right
       this.setState({angle: this.state.angle-.075});
     }
     if(key === 40){ // down
-      // fix so that cube stays at same distance from camera
       
-      if(y > -(this.state.cubeDimension+2)) this.setState({cameraY: y - .5});//, cameraX : formula, cameraZ : -formula});
-      //console.log(`DOWN - CameraX: ${this.state.cameraX}, CameraY: ${this.state.cameraY}, CameraZ: ${this.state.cameraZ}`);
+      if(y > -(this.state.cubeDimension+2)) this.setState({cameraY: y - .5});
     }
   }
 
@@ -883,6 +882,15 @@ class App extends Component {
     return cD;
   }
 
+  calculateTurnAtFace(coord1,coord2,piece1,piece2,dir1,dir2,cD){
+    if(Math.abs(coord1)>=Math.abs(coord2)&&(Math.abs(coord1)>.1)) 
+      return {calculated : coord1<0?dir1:(dir1+"'"),depth : (cD-piece2)}
+      
+    if(Math.abs(coord2)>Math.abs(coord1)&&(Math.abs(coord2)>.1)) {
+      return {calculated : coord2<0?dir2:(dir2+"'"),depth : (cD-piece1)}
+    }
+    return null;
+  }
   // needs more params
   calculateTurn(current,previous,piece,pieceFace,cD){
     // console.log("Current x,y,z: ",current.x,current.y,current.z);
@@ -897,6 +905,7 @@ class App extends Component {
     }
     let calculated = null;
     let depth = null;
+    let turn = null;
 
     //console.log("difference: ", dif)
 
@@ -908,16 +917,20 @@ class App extends Component {
     //determines the move based on mouse difference from click to new position
     switch(pieceFace){
       case 0:
-        if(Math.abs(dif.z)>=Math.abs(dif.x)&&(Math.abs(dif.z)>.1 || dif.y.toFixed(5)!==0)) {
-          calculated = dif.z<0?"R":"R'";
-          depth=cD-piece.x;
-        }
-        if(Math.abs(dif.x)>Math.abs(dif.z)&&(Math.abs(dif.x)>.1 || dif.y.toFixed(5)!==0)) {
-          calculated = dif.x<0?"U'":"U";
-          depth=cD-piece.z;
-        }
+        turn = this.calculateTurnAtFace(dif.z,dif.x,piece.z,piece.x,"R","U",cD);
+        calculated = turn.calculated;
+        depth = turn.depth;
+        // if(Math.abs(dif.z)>=Math.abs(dif.x)&&(Math.abs(dif.z)>.1)) {
+        //   calculated = dif.z<0?"R":"R'";
+        //   depth=cD-piece.x;
+        // }
+        // if(Math.abs(dif.x)>Math.abs(dif.z)&&(Math.abs(dif.x)>.1)) {
+        //   calculated = dif.x<0?"U'":"U";
+        //   depth=cD-piece.z;
+        // }
         break;
       case 1:
+        //turn = this.calculateTurnAtFace(dif.x,dif.y,piece.z,piece.y,"F","R",cD);
         if(Math.abs(dif.x)>=Math.abs(dif.y)&&Math.abs(dif.x)>.1) {
           calculated = dif.x>0?"F'":"F";
           depth=piece.y+1;
@@ -928,6 +941,7 @@ class App extends Component {
         }
         break;
       case 2:
+        //turn = this.calculateTurnAtFace(dif.z,dif.y,piece.z,piece.y,"F","U",cD);
         if(Math.abs(dif.z)>=Math.abs(dif.y)&&Math.abs(dif.z)>.1) {
           calculated = dif.z>0?"F":"F'";
           depth=piece.y+1;
@@ -971,7 +985,6 @@ class App extends Component {
     }
 
     //console.log("{ turn: " + calculated + " } , { depth: " + depth + " }");
-
     return ((depth<10? "0" : "") + depth+calculated);
   }
 
@@ -1066,12 +1079,12 @@ class App extends Component {
 
       // Map textures to each face to look nice and then color over
       const cubeMaterials = [
-        new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][2], side: THREE.FrontSide}),
-        new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][4], side: THREE.FrontSide}), 
-        new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][3], side: THREE.FrontSide}),
-        new THREE.MeshBasicMaterial({ map: loader}), 
-        new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][1], side: THREE.FrontSide}), 
-        new THREE.MeshBasicMaterial({ map: loader , color:rubiksObject[i][5], side: THREE.FrontSide}), 
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true, color:rubiksObject[i][2], side: THREE.FrontSide}),
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true, color:rubiksObject[i][4], side: THREE.FrontSide}), 
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true, color:rubiksObject[i][3], side: THREE.FrontSide}),
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true,}), 
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true, color:rubiksObject[i][1], side: THREE.FrontSide}), 
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true, color:rubiksObject[i][5], side: THREE.FrontSide}), 
       ];
     
       // Add the new cube to temp cubes
