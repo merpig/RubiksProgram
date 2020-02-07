@@ -887,7 +887,7 @@ class App extends Component {
       return {calculated : coord1<0?dir1:(dir1+"'"),depth : (cD-piece2)}
       
     if(Math.abs(coord2)>Math.abs(coord1)&&(Math.abs(coord2)>.1)) {
-      return {calculated : coord2<0?dir2:(dir2+"'"),depth : (cD-piece1)}
+      return {calculated : !(coord2<0)?dir2:(dir2+"'"),depth : (cD-piece1)}
     }
     return null;
   }
@@ -1454,6 +1454,7 @@ class App extends Component {
             if(faceInteresected===i*2 || faceInteresected=== i*2+1) {
               tempIndex = i;
               this.setState({mouseFace : i});
+              break;
             }
           }
 
@@ -1504,7 +1505,7 @@ class App extends Component {
                   if(calculated!==null&&!calculated.includes("null")){
                     //console.log(calculated)
                     this.setState({mouseDown: false},()=>{
-                      this.algorithm(calculated,"Custom");
+                      this.algorithm(calculated,"Drag Turn");
                     });
                   }
                 
