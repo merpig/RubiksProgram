@@ -23,15 +23,85 @@ let solveGreenMiddle = (current,solved,dim,index,fixMiddle) => {
     let moveString = "";
 
     if(currentSide==="D"){
-        
+        moveString = ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
+
+        if(dim-(current.x+1)<Math.floor(dim/2)) {
+            if(current.y<Math.floor(dim/2)) moveString += " 01R";
+            else moveString += " 01R'";
+        }
+        else {
+            if(current.y<Math.floor(dim/2)) moveString += " 01R'";
+            else moveString += " 01R";
+        }
+
+        moveString += " " + (((current.x+1))<10? "0" : "") + ((current.x+1)) + "U2"
+
+        if(dim-(current.x+1)<Math.floor(dim/2)) {
+            if(current.y<Math.floor(dim/2)) moveString += " 01R1";
+            else moveString += " 01R";
+        }
+        else {
+            if(current.y<Math.floor(dim/2)) moveString += " 01R";
+            else moveString += " 01R'";
+        }
+
+        moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
+
+        moveString += " " + (((current.x+1))<10? "0" : "") + (current.x+1) + "U2"
     }
 
     else if (currentSide==="R"){
+        if(current.y===solved.y&&current.z===solved.x){
+            moveString = ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
 
+            if(solved.y===Math.floor(dim/2)&&dim%2) moveString += " 01L'"; //a
+            else moveString += " 01L2";
+
+            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
+
+            if(solved.y===Math.floor(dim/2)&&dim%2) moveString += " 01L'"; //a1
+
+            moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";
+
+            if(solved.y===Math.floor(dim/2)&&dim%2) moveString += " 01L";  //a1'
+
+            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
+
+            if(solved.y===Math.floor(dim/2)&&dim%2) moveString += " 01L";  //a'
+            else moveString += " 01L2";
+
+            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
+
+            moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";
+        }
+        else moveString = "01R'"
     }
 
     else if (currentSide==="L"){
-        
+        if(current.y===solved.y&&current.z===(dim-(solved.x+1))){
+            moveString = ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
+
+            if(solved.y===Math.floor(dim/2)&&dim%2) moveString += " 01R"; //a
+            else moveString += " 01R2";
+
+            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
+
+            if(solved.y===Math.floor(dim/2)&&dim%2) moveString += " 01R"; //a1
+
+            moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";
+
+            if(solved.y===Math.floor(dim/2)&&dim%2) moveString += " 01R'";  //a1'
+
+            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
+
+            if(solved.y===Math.floor(dim/2)&&dim%2) moveString += " 01R'";  //a'
+            else moveString += " 01R2";
+
+            moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
+
+            moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D2";
+        }
+        else moveString = "01L"
     }
 
     return moveString;

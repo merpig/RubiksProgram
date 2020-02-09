@@ -77,7 +77,7 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
       //   console.log(moveString + "\n-------------------------------")*/
       // }
       
-      if(!whiteMiddleError && !yellowMiddleError && !blueMiddleError && index<((dim-2)*(dim-2))*4){ //change this each middle solver
+      if(!whiteMiddleError && !yellowMiddleError && !blueMiddleError && index<((dim-2)*(dim-2))*5){ //change this each middle solver
         if(dim%2 && index === ((((dim-2)*(dim-2))*2))){
           
           let oddTopMiddleIndex = ((((dim-2)*(dim-2))*2)+Math.floor((dim-2)*(dim-2)/2));
@@ -127,7 +127,7 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
       moveString.length ? obj.moveSet = moveArray : obj.solveState=1;
     }
     else{
-      if(index<((dim-2)*(dim-2))*4){ // change this each middle solver
+      if(index<((dim-2)*(dim-2))*5){ // change this each middle solver
         moveString.length ? obj.moveSet = moveArray : obj.rubiksIndex = index+1;
       }
 

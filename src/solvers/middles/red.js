@@ -10,7 +10,7 @@
  *      
  */
 
-let solveRedMiddle = (current,solved,dim,index,fixMiddle) => {
+let solveOrangeMiddle = (current,solved,dim,index,fixMiddle) => {
     let currentSide = "F";
     if(current.x === 0) currentSide = "L";
     else if(current.x === dim-1) currentSide = "R";
@@ -20,7 +20,12 @@ let solveRedMiddle = (current,solved,dim,index,fixMiddle) => {
     console.log(`Currently on side: ${currentSide}`);
     console.log(`Current position: ${JSON.stringify(current)}`);
     console.log(`Solved position: ${JSON.stringify(solved)}`);
+    let moveString = "";
+
+
+
+    return moveString;
 
 }
 
-module.exports = solveRedMiddle;
+module.exports = solveOrangeMiddle;

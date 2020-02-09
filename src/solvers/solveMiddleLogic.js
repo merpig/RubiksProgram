@@ -9,7 +9,7 @@ import whiteSolver from "./middles/white"
 import yellowSolver from "./middles/yellow"
 import blueSolver from "./middles/blue"
 import greenSolver from "./middles/green"
-import redSolver from "./middles/red"
+import orangeSolver from "./middles/red"
 
 function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
     
@@ -54,7 +54,7 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
                 break;
             case 4:
                 // Unsolved
-                moveString = redSolver(current,solved,dim,index);
+                moveString = orangeSolver(current,solved,dim,index);
                 break;
             default:
                 console.log("Should never reach here");
