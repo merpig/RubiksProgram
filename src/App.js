@@ -887,7 +887,6 @@ class App extends Component {
     return null;
   }
 
-  
   calculateTurn(current,previous,piece,pieceFace,cD){
 
     let calculated = null;
@@ -918,36 +917,16 @@ class App extends Component {
         calculated = turn.calculated; depth = turn.depth;
         break;
       case 3:
-        // turn = this.calculateTurnAtFace(dif.z,dif.z>0,dif.x,dif.x<=0,cD-piece.z,cD-piece.x,"R","U");
-        // calculated = turn.calculated; depth = turn.depth;
-        if(Math.abs(dif.z)>=Math.abs(dif.x)&&Math.abs(dif.z)>.1) {
-          calculated = dif.z>0?"R":"R'";
-          depth=cD-piece.x;
-        }
-        if(Math.abs(dif.x)>Math.abs(dif.z)&&Math.abs(dif.x)>.1) {
-          calculated = dif.x>0?"U'":"U";
-          depth=cD-piece.z;
-        }
+        turn = this.calculateTurnAtFace(dif.z,dif.z>0,dif.x,dif.x<=0,cD-piece.z,cD-piece.x,"R","U");
+        calculated = turn.calculated; depth = turn.depth;
         break;
       case 4:
-        if(Math.abs(dif.z)>=Math.abs(dif.y)&&Math.abs(dif.z)>.1) {
-          calculated = dif.z<0?"F":"F'";
-          depth=piece.y+1;
-        }
-        if(Math.abs(dif.y)>Math.abs(dif.z)&&Math.abs(dif.y)>.1) {
-          calculated = dif.y<0?"U":"U'";
-          depth=cD-piece.z;
-        }
+        turn = this.calculateTurnAtFace(dif.z,dif.z<0,dif.y,dif.y<0,cD-piece.z,piece.y+1,"F","U");
+        calculated = turn.calculated; depth = turn.depth;
         break;
       case 5:
-        if(Math.abs(dif.x)>=Math.abs(dif.y)&&Math.abs(dif.x)>.1) {
-          calculated = dif.x<0?"F'":"F";
-          depth=piece.y+1;
-        }
-        if(Math.abs(dif.y)>Math.abs(dif.x)&&Math.abs(dif.y)>.1) {
-          calculated = dif.y>0?"R":"R'";
-          depth=cD-piece.x;
-        }
+        turn = this.calculateTurnAtFace(dif.x,dif.x>=0,dif.y,dif.y>0,cD-piece.x,piece.y+1,"F","R");
+        calculated = turn.calculated; depth = turn.depth;
         break;
       default:
     }
@@ -969,9 +948,7 @@ class App extends Component {
     let rubiksObject = generated.tempArr;
     let tempCubes = [];
     let stats = new Stats();
-    const groups = [
-      [],[],[],[],[],[]
-    ];
+    const groups = [[],[],[],[],[],[]];
     let previousMousePos = null;
     let piecePos = null;
     let intersected = null;
@@ -1069,8 +1046,6 @@ class App extends Component {
     scene.translateY(.5-cD/2);
     scene.translateZ(.5-cD/2);
 
-    
-
     // Allows for drag to rotate camera
     const controls = new OrbitControls( camera , renderer.domElement);
     controls.enableDamping = true;   //damping 
@@ -1090,7 +1065,6 @@ class App extends Component {
       if (renderer) renderer.render(scene, camera);
     });
 
-    // **************************** Implement direction of turns ****************************
     // generate side 4 and 2 move hints
     for(let k = 0; k < cD; k++){
       let tempGroup = new THREE.Group();
@@ -1303,8 +1277,6 @@ class App extends Component {
     }
 
     scene.add(...groups.flat(2));
-    // **************************** End scrap code ****************************
-
 
     // add cubes to state and then render
     this.setState({

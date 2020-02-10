@@ -8,7 +8,7 @@
  *      white.js
  *      Started: Friday, December 13, 2019
  *      Finished: Saturday, December 14, 2019
- * 
+ *      Note: Redo this function so it works similarly to other solvers (no row or columns)
  */
 
 function move(space,depth,side){
@@ -142,19 +142,19 @@ let solveWhiteMiddle = (current,solved,dim,index) => {
                 else moveString = "01B";
             }
             else{
-                if(current.z!==(dim-1)){
+                if(currentSide!=="U"){
+                    console.log("Moving to top")
                     moveString += move(" ",current.y+1,"F");
                 }
                 else{
-                    if(current.x!==solved.z){
+                    if(current.x!==solved.x || current.y!==solved.z){
                         moveString = "01U";
                     }
-                    else if(current.y!==(dim-(solved.x+1))){
-                    }
                     else{
-                        moveString = move("",dim-solved.z,"U");
-                        moveString += move(" ",current.y+1,"F'");
+                        moveString = "01U'";
                         moveString += move(" ",dim-solved.z,"U'");
+                        moveString += move(" ",current.x+1,"F");
+                        moveString += move(" ",dim-solved.z,"U");
                     }
                 }
             }
