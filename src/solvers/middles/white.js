@@ -9,7 +9,6 @@
  *      Started: Friday, December 13, 2019
  *      Finished: Saturday, December 14, 2019
  * 
- *      
  */
 
 function move(space,depth,side){

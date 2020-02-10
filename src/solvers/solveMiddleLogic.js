@@ -29,12 +29,11 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
         z:rubiksObjectAtIndex[11]
     };
 
-    //console.log("checking if in place...")
     if(current.x===solved.x && current.y===solved.y && current.z===solved.z){
-        console.log("in place");
+        console.log("SOLVED");
     }
+
     else{
-        //console.log("not in place... generating move...");
         switch(faceColor){
             case 0:
                 // Solved
@@ -49,11 +48,11 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
                 moveString = blueSolver(current,solved,dim);
                 break;
             case 3:
-                // In Progress
+                // Solved
                 moveString = greenSolver(current,solved,dim);
                 break;
             case 4:
-                // Unsolved
+                // In Progress
                 moveString = orangeSolver(current,solved,dim);
                 break;
             default:

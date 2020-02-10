@@ -8,8 +8,7 @@
  *      red.js
  *      Started: 
  * 
- * 
- *      
+ *    
  */
 
 function move(space,depth,side){

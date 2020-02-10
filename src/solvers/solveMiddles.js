@@ -12,6 +12,7 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
     let whiteMiddleError = false;
     let yellowMiddleError = false;
     let blueMiddleError = false;
+    let greenMiddleError = false;
 
     const obj = {};
 
@@ -61,6 +62,7 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
            }
       }
 
+      //Check for misplacement errors in blue middle solve
       for(let i = ((dim-2)*(dim-2))*2; i<index&&i<((dim-2)*(dim-2))*3-1;i++){
         if(cube[middles[i]][6]!==cube[middles[i]][9]&&
            cube[middles[i]][7]!==cube[middles[i]][10]&&
@@ -69,15 +71,18 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
             blueMiddleError=true;
            }
       }
-      // if(dim%2 && !whiteMiddleError && !yellowMiddleError && index===((dim-2)*(dim-2))*2){
-      //   console.log(cube[middles[index+Math.ceil(((dim-2)*(dim-2)))/2]]);
-      //   /* Send Index of center blue piece
-      //   console.log(`Index: ${index}, Piece: ${middles[index]}`);
-      //   moveString = solveMiddleLogic(dim,cube[middles[index]],index);
-      //   console.log(moveString + "\n-------------------------------")*/
-      // }
+
+      //Check for misplacement errors in green middle solve
+      for(let i = ((dim-2)*(dim-2))*3; i<index&&i<((dim-2)*(dim-2))*4-1;i++){
+        if(cube[middles[i]][6]!==cube[middles[i]][9]&&
+           cube[middles[i]][7]!==cube[middles[i]][10]&&
+           cube[middles[i]][8]!==cube[middles[i]][11]){
+            console.log(cube[middles[i]]);
+            greenMiddleError=true;
+           }
+      }
       
-      if(!whiteMiddleError && !yellowMiddleError && !blueMiddleError && index<((dim-2)*(dim-2))*5){ //change this each middle solver
+      if(!whiteMiddleError && !yellowMiddleError && !blueMiddleError && !greenMiddleError && index<((dim-2)*(dim-2))*5){ 
         if(dim%2 && index === ((((dim-2)*(dim-2))*2))){
           
           let oddTopMiddleIndex = ((((dim-2)*(dim-2))*2)+Math.floor((dim-2)*(dim-2)/2));
@@ -90,15 +95,12 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
           }
           else{
             if(cube[middles[oddTopMiddleIndex]][6]===dim-1){
-              console.log("1")
               moveString += ((Math.ceil(dim/2))<10? "0" : "") + (Math.ceil(dim/2)) + "F'";
             }
             else if(cube[middles[oddTopMiddleIndex]][8]===0){
-              console.log("2")
               moveString += ((Math.ceil(dim/2))<10? "0" : "") + (Math.ceil(dim/2)) + "F2";
             }
             else if(cube[middles[oddTopMiddleIndex]][6]===0){
-              console.log("3")
               moveString += ((Math.ceil(dim/2))<10? "0" : "") + (Math.ceil(dim/2)) + "F";
             }
             console.log(moveString);
@@ -120,21 +122,29 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
         console.log("Exiting early due to an earlier solved piece being displaced on blue");
         index=1000000000;
       }
+      else if(greenMiddleError){
+        console.log("Exiting early due to an earlier solved piece being displaced on green");
+        index=1000000000;
+      }
     }
+
     const moveArray = moveStringToArray(moveString);
 
     if(dim<4){
       moveString.length ? obj.moveSet = moveArray : obj.solveState=1;
     }
     else{
-      if(index<((dim-2)*(dim-2))*5){ // change this each middle solver
+      if(index<((dim-2)*(dim-2))*5){
         moveString.length ? obj.moveSet = moveArray : obj.rubiksIndex = index+1;
       }
 
       else{
-        console.log(index);
-        console.log("move on");
+        console.log("Ready for edge solver {solveState:0.1}");
+        
         obj.solveState = -1; obj.currentFunc = "None"; obj.rubiksIndex = 0;
+
+        // When middle solver is finished
+        // obj.solveState = 0.1; obj.rubiksIndex = 0;
       }
     }
     return obj;

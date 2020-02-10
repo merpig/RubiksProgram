@@ -6,11 +6,14 @@ import alignYellowCross from "./edges/alignYellowCross"
 import solveYellowCorners from "./corners/solveYellowCorners"
 import alignYellowCorners from "./corners/alignYellowCorners"
 import solveMiddles from "./solveMiddles"
+import solveEdges from "./solveEdges"
 
 function solver(solveState,rubiksObject,cubeDimension,moveStringToArray,solveMoves,rubiksIndex,middles){
     switch(solveState){
         case 0:
             return solveMiddles(rubiksObject,cubeDimension,moveStringToArray,rubiksIndex,middles);
+        case 0.1:
+            return solveEdges(rubiksObject,cubeDimension,moveStringToArray);
         case 1:
             return solveWhiteCross(rubiksObject,cubeDimension,moveStringToArray);
         case 2:
