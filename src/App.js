@@ -99,7 +99,6 @@ class App extends Component {
   };
 
   // rotate colors on face (memory cube)
-  // implement isMulti (should be in place everywhere)
   rotateFace = (cubeFace,direction,cubeDepth,isMulti) => {
     let centerPoint = this.state.cubeDimension/2-.5;
     let rubiksObject = this.state.rubiksObject;
@@ -868,90 +867,59 @@ class App extends Component {
     let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
         vars[key] = value;
     });
-    //return parts;
-    if(parts.length < "https://rubiksprogram.herokuapp.com/id=".length)
-      cD = parseInt(parts.substring(25));
-    else 
+
+    parts.length < "https://rubiksprogram.herokuapp.com/id=".length ?
+      cD = parseInt(parts.substring(25)) :
       cD = parseInt(
         parts
           .substring("https://rubiksprogram.herokuapp.com/id=".length));
-    if(cD <= limit && cD >= 2);
 
-    else cD = 3;
-
-    return cD;
+    if (cD <= limit && cD >= 2) return cD; else return 3;
   }
 
-  calculateTurnAtFace(coord1,coord2,piece1,piece2,dir1,dir2,cD){
+  calculateTurnAtFace(coord1,compare1,coord2,compare2,piece1,piece2,dir1,dir2){
     if(Math.abs(coord1)>=Math.abs(coord2)&&(Math.abs(coord1)>.1)) 
-      return {calculated : coord1<0?dir1:(dir1+"'"),depth : (cD-piece2)}
+      return {calculated : compare1?dir1:(dir1+"'"),depth : piece2}
       
     if(Math.abs(coord2)>Math.abs(coord1)&&(Math.abs(coord2)>.1)) {
-      return {calculated : !(coord2<0)?dir2:(dir2+"'"),depth : (cD-piece1)}
+      return {calculated : compare2?dir2:(dir2+"'"),depth : piece1}
     }
     return null;
   }
-  // needs more params
-  calculateTurn(current,previous,piece,pieceFace,cD){
-    // console.log("Current x,y,z: ",current.x,current.y,current.z);
-    // console.log("Previous x,y,z: ",previous.x,previous.y,previous.z);
-    // console.log("Piece x,y,z: ",piece.x,piece.y,piece.z);
-    // console.log("Face: ",pieceFace);
 
+  
+  calculateTurn(current,previous,piece,pieceFace,cD){
+
+    let calculated = null;
+    let depth = null;
+    let turn = null;
     const dif = { 
       x: (previous.x-current.x), 
       y: (previous.y-current.y), 
       z: (previous.z-current.z)
     }
-    let calculated = null;
-    let depth = null;
-    let turn = null;
-
-    //console.log("difference: ", dif)
 
     if(current.x===previous.x && current.y === previous.y && current.z===previous.z){
-      //console.log("Nothing to be done. Mouse hasn't moved");
       return null;
     }
 
     //determines the move based on mouse difference from click to new position
     switch(pieceFace){
       case 0:
-        turn = this.calculateTurnAtFace(dif.z,dif.x,piece.z,piece.x,"R","U",cD);
-        calculated = turn.calculated;
-        depth = turn.depth;
-        // if(Math.abs(dif.z)>=Math.abs(dif.x)&&(Math.abs(dif.z)>.1)) {
-        //   calculated = dif.z<0?"R":"R'";
-        //   depth=cD-piece.x;
-        // }
-        // if(Math.abs(dif.x)>Math.abs(dif.z)&&(Math.abs(dif.x)>.1)) {
-        //   calculated = dif.x<0?"U'":"U";
-        //   depth=cD-piece.z;
-        // }
+        turn = this.calculateTurnAtFace(dif.z,dif.z<0,dif.x,dif.x>=0,cD-piece.z,cD-piece.x,"R","U");
+        calculated = turn.calculated; depth = turn.depth;
         break;
       case 1:
-        //turn = this.calculateTurnAtFace(dif.x,dif.y,piece.z,piece.y,"F","R",cD);
-        if(Math.abs(dif.x)>=Math.abs(dif.y)&&Math.abs(dif.x)>.1) {
-          calculated = dif.x>0?"F'":"F";
-          depth=piece.y+1;
-        }
-        if(Math.abs(dif.y)>Math.abs(dif.x)&&Math.abs(dif.y)>.1) {
-          calculated = dif.y<0?"R":"R'";
-          depth=cD-piece.x;
-        }
+        turn = this.calculateTurnAtFace(dif.x,dif.x<=0,dif.y,dif.y<0,cD-piece.x,piece.y+1,"F","R");
+        calculated = turn.calculated; depth = turn.depth;
         break;
       case 2:
-        //turn = this.calculateTurnAtFace(dif.z,dif.y,piece.z,piece.y,"F","U",cD);
-        if(Math.abs(dif.z)>=Math.abs(dif.y)&&Math.abs(dif.z)>.1) {
-          calculated = dif.z>0?"F":"F'";
-          depth=piece.y+1;
-        }
-        if(Math.abs(dif.y)>Math.abs(dif.z)&&Math.abs(dif.y)>.1) {
-          calculated = dif.y>0?"U":"U'";
-          depth=cD-piece.z;
-        }
+        turn = this.calculateTurnAtFace(dif.z,dif.z>0,dif.y,dif.y>0,cD-piece.z,piece.y+1,"F","U");
+        calculated = turn.calculated; depth = turn.depth;
         break;
       case 3:
+        // turn = this.calculateTurnAtFace(dif.z,dif.z>0,dif.x,dif.x<=0,cD-piece.z,cD-piece.x,"R","U");
+        // calculated = turn.calculated; depth = turn.depth;
         if(Math.abs(dif.z)>=Math.abs(dif.x)&&Math.abs(dif.z)>.1) {
           calculated = dif.z>0?"R":"R'";
           depth=cD-piece.x;
