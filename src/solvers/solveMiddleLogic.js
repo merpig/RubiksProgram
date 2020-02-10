@@ -46,15 +46,15 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
                 break;
             case 2:
                 // Solved
-                moveString = blueSolver(current,solved,dim,index);
+                moveString = blueSolver(current,solved,dim);
                 break;
             case 3:
                 // In Progress
-                moveString = greenSolver(current,solved,dim,index);
+                moveString = greenSolver(current,solved,dim);
                 break;
             case 4:
                 // Unsolved
-                moveString = orangeSolver(current,solved,dim,index);
+                moveString = orangeSolver(current,solved,dim);
                 break;
             default:
                 console.log("Should never reach here");

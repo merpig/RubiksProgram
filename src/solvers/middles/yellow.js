@@ -7,13 +7,21 @@
  *      Sasha Peters
  *      yellow.js
  *      Started: Saturday, December 14, 2019
- *      
+ *      Finished: Saturday, December 21, 2019
+ * 
  *      
  */
 
+function move(space,depth,side){
+    return (space+(depth<10? "0":"") + depth + side);
+}
 
 let solveYellowMiddle = (current,solved,dim,index) => {
+
     let currentSide = "F";
+    let middle = Math.floor(dim/2);
+    let moveString = "";
+
     if(current.x === 0) currentSide = "L";
     else if(current.x === dim-1) currentSide = "R";
     else if(current.y === dim-1) currentSide = "B";
@@ -22,73 +30,65 @@ let solveYellowMiddle = (current,solved,dim,index) => {
     console.log(`Currently on side: ${currentSide}`);
     console.log(`Current position: ${JSON.stringify(current)}`);
     console.log(`Solved position: ${JSON.stringify(solved)}`);
-    let moveString = "";
+    
     
     let opposite = "01L'";
     if(currentSide==="B"){
-        moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D'";
+        moveString += move(" ",current.z+1,"D'");
 
         if(current.z!==solved.z){
-            if(current.z === Math.floor(dim/2)){
+            if(current.z === middle){
                 moveString += " 01R1";
             }
             else moveString += " 01R2";
         }
 
         else {
-        // Do opposite of if on R to remove piece from back without displacing other pieces
-        // All issues arise from here
-            console.log("Piece found on same row but wrong column");
             if(current.x===current.z){
                 moveString += " 01L'";
                 opposite = "01L";
             }
-            else if(((current.x>= Math.floor(dim/2) &&current.z>=Math.floor(dim/2)))  ||
-                (current.x< Math.floor(dim/2) &&current.z<Math.floor(dim/2)) ||
-                (current.x> Math.floor(dim/2) &&current.z<Math.floor(dim/2)))
+            else if(((current.x>= middle &&current.z>=middle))  ||
+                (current.x< middle &&current.z<middle) ||
+                (current.x> middle &&current.z<middle))
                 moveString += " 01L";
             else{
                 moveString += " 01L'";
                 opposite = "01L";
             }
-        // End issue
 
-            moveString += " " + ((dim-current.x)<10? "0" : "") + (dim-current.x) + "F";
+            moveString += move(" ",dim-current.x,"F");
             moveString += " " + opposite;
             
         }
-        moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D";
-        console.log("moving piece out of back side");
+        moveString += move(" ",current.z+1,"D");
     }
     else{
         if(currentSide!=="R"){
-            moveString= ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
-            console.log("moving piece to right side");
+            moveString= move("",current.y+1,"F");
         }
         else {
-            // move piece from R to U, turn back strip so it's on R. Rotate L so white doesn't get displaced. Rotate piece
-            // on U to R. Rotate L back into place and then move yellow/white sections back onto B/F
             if(current.y!==dim-(solved.x+1)||current.z!==solved.z){
                 moveString = "01R";
             }
             else {
-                moveString = ((current.y+1)<10? "0" : "") + (current.y+1) + "F'";
-                moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D'";
-                if((current.y>= Math.floor(dim/2)&&current.z>=Math.floor(dim/2)) ||
-                   (current.y< Math.floor(dim/2)&&current.z<Math.floor(dim/2)))
+                moveString = move("",current.y+1,"F'");
+                moveString += move(" ",current.z+1,"D'");
+                if((current.y>= middle&&current.z>=middle) ||
+                   (current.y< middle&&current.z<middle))
                     moveString += " 01L"
                 else
                     moveString += " 01L'"
 
-                moveString += " " + ((current.y+1)<10? "0" : "") + (current.y+1) + "F";
+                moveString += move(" ",current.y+1,"F");
                 
-                if((current.y>= Math.floor(dim/2)&&current.z>=Math.floor(dim/2)) ||
-                   (current.y< Math.floor(dim/2)&&current.z<Math.floor(dim/2)))
+                if((current.y>= middle&&current.z>=middle) ||
+                   (current.y< middle&&current.z<middle))
                     moveString += " 01L'"
                 else
                     moveString += " 01L"
 
-                moveString += " " + ((current.z+1)<10? "0" : "") + (current.z+1) + "D";
+                moveString += move(" ",current.z+1,"D");
             }
         }
     }
