@@ -2,6 +2,10 @@ import solveMiddleLogic from './solveMiddleLogic';
 
 // Lots of console logs while this section is still in development.
 // Might leave logs commented for future debugging if necessary.
+function move(space,depth,side){
+  return (space+(depth<10? "0":"") + depth + side);
+}
+
 function solveMiddles(cube,dim,moveStringToArray,index,middles){
 
     if(dim===2) {
@@ -12,7 +16,9 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
     let whiteMiddleError = false;
     let yellowMiddleError = false;
     let blueMiddleError = false;
-    let greenMiddleError = false;
+    let orangeMiddleError = false;
+
+    let solved = true;
 
     const obj = {};
 
@@ -42,47 +48,18 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
 
     // Solve logic for 4x4 and greater
     else if(dim>3){
-      
-      //Check for misplacement errors in white middle solve
-      for(let i = 0; i<index&&i<(dim-2)*(dim-2)-1;i++){
-        if(cube[middles[i]][6]!==cube[middles[i]][9]&&
-           cube[middles[i]][7]!==cube[middles[i]][10]&&
-           cube[middles[i]][8]!==cube[middles[i]][11]){
-            console.log(cube[middles[i]]);
-            whiteMiddleError=true;
-           }
-      }
-      //Check for misplacement errors in yellow middle solve
-      for(let i = (dim-2)*(dim-2); i<index&&i<((dim-2)*(dim-2))*2-1;i++){
-        if(cube[middles[i]][6]!==cube[middles[i]][9]&&
-           cube[middles[i]][7]!==cube[middles[i]][10]&&
-           cube[middles[i]][8]!==cube[middles[i]][11]){
-            console.log(cube[middles[i]]);
-            yellowMiddleError=true;
-           }
-      }
 
-      //Check for misplacement errors in blue middle solve
-      for(let i = ((dim-2)*(dim-2))*2; i<index&&i<((dim-2)*(dim-2))*3-1;i++){
-        if(cube[middles[i]][6]!==cube[middles[i]][9]&&
-           cube[middles[i]][7]!==cube[middles[i]][10]&&
-           cube[middles[i]][8]!==cube[middles[i]][11]){
-            console.log(cube[middles[i]]);
-            blueMiddleError=true;
-           }
-      }
-
-      //Check for misplacement errors in green middle solve
-      for(let i = ((dim-2)*(dim-2))*3; i<index&&i<((dim-2)*(dim-2))*4-1;i++){
-        if(cube[middles[i]][6]!==cube[middles[i]][9]&&
-           cube[middles[i]][7]!==cube[middles[i]][10]&&
-           cube[middles[i]][8]!==cube[middles[i]][11]){
-            console.log(cube[middles[i]]);
-            greenMiddleError=true;
-           }
+      // Check if all middles are in place
+      for(let i = 0; i<=index&&i<((dim-2)*(dim-2))*5;i++){
+          if(cube[middles[i]][6]===cube[middles[i]][9]&&
+             cube[middles[i]][7]===cube[middles[i]][10]&&
+             cube[middles[i]][8]===cube[middles[i]][11]){
+             }else {
+              solved=false;
+             }
       }
       
-      if(!whiteMiddleError && !yellowMiddleError && !blueMiddleError && !greenMiddleError && index<((dim-2)*(dim-2))*5){ 
+      if(!solved && index<((dim-2)*(dim-2))*5){ 
         if(dim%2 && index === ((((dim-2)*(dim-2))*2))){
           
           let oddTopMiddleIndex = ((((dim-2)*(dim-2))*2)+Math.floor((dim-2)*(dim-2)/2));
@@ -107,46 +84,104 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
           }
         }
         console.log(`Index: ${index}, Piece: ${middles[index]}`);
+        
         moveString += ((moveString.length) ? " ":"") + solveMiddleLogic(dim,cube[middles[index]],index);
+        // if(index === ((dim-2)*(dim-2))*4-1 && moveString === "" && fixOrange){
+
+        //   // do a check here to see if this even needs to be run
+        //   // This will be deprecated later. Here because I got lazy and tired of middle solvers
+
+        //   obj.fixOrange = false;
+          
+        //   if(dim%2){
+        //     for(let i = dim-1; i> Math.floor(dim/2)+1; i--){
+        //       moveString += move(" ",i,"F");
+        //     }
+
+        //     moveString+= " 01L2";
+
+        //     for(let i = dim-1; i> Math.floor(dim/2)+1; i--){
+        //       moveString += move(" ",i,"F'");
+        //     }
+
+        //     for(let i = 2; i < Math.floor(dim/2)+1; i++){
+        //       moveString += move(" ",i,"F");
+        //     }
+
+        //     moveString+= " 01L2";
+
+        //     for(let i = 2; i < Math.floor(dim/2)+1; i++){
+        //       moveString += move(" ",i,"F'");
+        //     }
+
+        //     moveString += " 01L2";
+        //     moveString += " 01D";
+        //     moveString += move(" ",Math.floor(dim/2)+1,"F'")
+        //     moveString += " 01D'";
+        //     moveString += move(" ",Math.floor(dim/2)+1,"F")
+
+        //     obj.rubiksIndex = index+1;
+        //   }
+        //   else {
+        //     for(let i = dim-1; i> Math.floor(dim/2); i--){
+        //       moveString += move(" ",i,"F");
+        //     }
+
+        //     moveString+= " 01L2";
+
+        //     for(let i = dim-1; i> Math.floor(dim/2); i--){
+        //       moveString += move(" ",i,"F'");
+        //     }
+
+        //     for(let i = 1; i <= Math.floor(dim/2); i++){
+        //       moveString += move(" ",i,"F");
+        //     }
+
+        //     moveString+= " 01L2";
+
+        //     for(let i = 1; i <= Math.floor(dim/2); i++){
+        //       moveString += move(" ",i,"F'");
+        //     }
+
+        //     moveString += " 01L2";
+        //     obj.rubiksIndex = index+1;
+        //   }
+        // }else if(index === ((dim-2)*(dim-2))*4){
+        //   obj.fixOrange = true;
+        // }
         console.log(moveString + "\n-------------------------------");
-      }
-      else if(whiteMiddleError){
-        console.log("Exiting early due to an earlier solved piece being displaced on white");
-        index=1000000000;
-      }
-      else if(yellowMiddleError){
-        console.log("Exiting early due to an earlier solved piece being displaced on yellow");
-        index=1000000000;
-      }
-      else if(blueMiddleError){
-        console.log("Exiting early due to an earlier solved piece being displaced on blue");
-        index=1000000000;
-      }
-      else if(greenMiddleError){
-        console.log("Exiting early due to an earlier solved piece being displaced on green");
-        index=1000000000;
       }
     }
 
-    const moveArray = moveStringToArray(moveString);
+    
 
     if(dim<4){
-      moveString.length ? obj.moveSet = moveArray : obj.solveState=1;
+      const moveArray = moveStringToArray(moveString);
+      moveString.trim().length ? obj.moveSet = moveArray : obj.solveState = 1;
     }
     else{
       if(index<((dim-2)*(dim-2))*5){
-        moveString.length ? obj.moveSet = moveArray : obj.rubiksIndex = index+1;
+
+        const moveArray = moveStringToArray(moveString);
+        moveString.trim().length ? obj.moveSet = moveArray : obj.rubiksIndex = index+1;
+
       }
 
       else{
         console.log("Ready for edge solver {solveState:0.1}");
+        console.log(moveString + "\n-------------------------------\n");
         
-        obj.solveState = -1; obj.currentFunc = "None"; obj.rubiksIndex = 0;
-
-        // When middle solver is finished
-        // obj.solveState = 0.1; obj.rubiksIndex = 0;
+        if(dim===4){
+          obj.solveState = .1; obj.rubiksIndex = 0; obj.currentFunc = "Solving";
+        } else {
+          obj.solveState = -1; obj.rubiksIndex = 0; obj.currentFunc = "None";
+        }
       }
     }
+    //return obj;
+    // obj.moveSet = [];
+    // obj.solveState = 0.1; 
+    // obj.rubiksIndex = 0;
     return obj;
 }
 

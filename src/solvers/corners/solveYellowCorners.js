@@ -82,11 +82,13 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
         let obj = {moveLog : "",currentFunc: "None",moveSet:[],solveState:-1};
         if(solveMoves.length){
           let temp = solveMoves.split(" ");
+          
           console.log("Number of moves: "+ temp.length);
           console.log("Moves set: " + solveMoves);
           obj.solveMoves = "";
           return obj;
         }
+        
         return obj;
       }
     }

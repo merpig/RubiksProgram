@@ -75,8 +75,8 @@ class App extends Component {
     rubiksIndex : 0,      // Index to keep track of middles while solving
     middles : [],         // Contains all middle segments         
     showStats: false,     // Setting for stats
-    showMoveInput: true,  // Setting for custom move input
-    showControls: true,   // Setting for move controls
+    showMoveInput: false,  // Setting for custom move input
+    showControls: false,   // Setting for move controls
     showHints: true,
     showGuideArrows: true,
     activeDragsInput: 0,  // Keeps track of draggable input
@@ -95,7 +95,10 @@ class App extends Component {
     },
     isMulti: false,
     isVisible: false,
-    hoverData : []
+    hoverData : [],
+    showSolveController : false,
+    autoPlay : false,
+    playOne : false
   };
 
   // rotate colors on face (memory cube)
@@ -645,7 +648,7 @@ class App extends Component {
     let cD = this.state.cubeDimension;
     let generated = cube.generateSolved(cD,cD,cD);
     let rubiksObject = generated.tempArr;
-    this.setState({rubiksObject,moveSet: []},()=>{
+    this.setState({rubiksObject,moveSet: [],currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : []},()=>{
       this.reloadTurnedPieces('all');
     });
     //window.location.reload();
@@ -679,11 +682,11 @@ class App extends Component {
   // Starts the solve process
   beginSolve = () => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({currentFunc : "Solving",solveState : 0});
+    this.setState({currentFunc : "Solving",solveState : 0,autoPlay : false, playOne : false});
   }
 
   stopSolve = () => {
-    this.setState({currentFunc : "None",solveState : -1,moveSet:[]});
+    this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : []});
   }
 
   handleDragInput = (e, ui) => {
@@ -721,6 +724,21 @@ class App extends Component {
   onStopControls = () => {
     this.setState({activeDragsControls: this.state.activeDragsControls-1});
   };
+
+  convertMoveToData = (move) => {
+    if(move.length < 2) return false;
+    let data = [];
+    let face = ['F','U','R','B','L','D']
+    data.push(face.indexOf(move[2].toUpperCase()));
+    move.length < 4 ? data.push(-1) : data.push(0);
+    move[0]==='0' ? data.push(parseInt(move[1])) : data.push(parseInt(move.substring(0, 2)))
+    move[2].toUpperCase() === move[2] ? data.push(false) : data.push(true);
+    return data;
+  }
+
+  convertDataToMove = (data) => {
+    
+  }
 
   mouseOver = (name,data) => {
     if(this.state.showHints)
@@ -1287,6 +1305,7 @@ class App extends Component {
       cameraY : -(2+cD),
       rubiksObject,
       middles: generated.middles,
+      edges: generated.edges,
       generatedButtons: cube.generateButtonData(this.getSizeFromUrl())
     }, () => {
       // Callback required to wait for setState to finish
@@ -1320,12 +1339,11 @@ class App extends Component {
       // Mouse stuff here
       // Consider moving into another function to unclutter animate
       // Very expensive operation
-      if(this.state.currentFunc === "None") {
+      if(this.state.currentFunc === "None" || this.state.currentFunc ==="Solving") {
 
         //check here that data isn't the same as previous so not running this every time
         // Data on move button triggers visual move hints
-        if(this.state.isVisible){ 
-          //console.log("make turn visible"); 
+        if(this.state.isVisible){
           let [hFace,hDir,hDepth,hMulti] = this.state.hoverData;
           if(hFace<3){
             if(hDir === -1){
@@ -1451,7 +1469,7 @@ class App extends Component {
                 
               }
             }catch(e){
-              console.error("Error prevented");
+              //console.error("Error prevented");
             }
             // ** account for mouse not being over the cube after selected piece **
             //
@@ -1530,9 +1548,20 @@ class App extends Component {
                 this.moveStringToArray,
                 this.state.solveMoves,
                 this.state.rubiksIndex,
-                this.state.middles));
+                this.state.middles,
+                this.state.edges));
             }
-            else this.parseMoveArray(this.state.moveSet);
+            else if(this.state.playOne||this.state.autoPlay){
+              this.mouseLeave();
+              this.setState({playOne:false});
+              this.parseMoveArray(this.state.moveSet);
+            }
+            else{
+              let data = this.convertMoveToData(this.state.moveSet[0]);
+              if(data){
+                this.mouseOver(this.state.moveSet[0],data);
+              }
+            }
           }
           
           else 
@@ -1570,7 +1599,7 @@ class App extends Component {
 
         <Speeds //Top left with slider
           onSliderChange={this.onSliderChange}
-          isDisabled={this.state.currentFunc==="None" ? false:true}
+          isDisabled={this.state.currentFunc==="None" || (this.state.currentFunc==="Solving" && !this.state.autoPlay && !this.state.playOne)? false:true}
         />
 
         { this.state.showMoveInput? 
@@ -1601,6 +1630,9 @@ class App extends Component {
         /> : ""}
   
         {/* Bottom Right */} 
+        {this.state.currentFunc==="Solving"&&!this.state.autoPlay? <button onClick={() => this.setState({autoPlay:true})} style={{position:"fixed", bottom: "120px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Auto Play</button> : ""}
+        {this.state.currentFunc==="Solving"&&this.state.autoPlay? <button onClick={() => this.setState({autoPlay:false})} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Pause</button> : ""}
+        {this.state.currentFunc==="Solving"&&!this.state.autoPlay? <button onClick={() => this.setState({playOne:true})} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Play "{this.state.moveSet[0]}"</button> : ""}
         {this.state.solveState < 0 ? solveBtn : stopSolveBtn}
         <button onClick={this.beginScramble} style={{position:"fixed", bottom: "30px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SCRAMBLE</button>
         <button onClick={this.reset} style={{position:"fixed", bottom: "0px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>RESET</button>

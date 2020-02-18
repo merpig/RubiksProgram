@@ -8,25 +8,37 @@ import alignYellowCorners from "./corners/alignYellowCorners"
 import solveMiddles from "./solveMiddles"
 import solveEdges from "./solveEdges"
 
-function solver(solveState,rubiksObject,cubeDimension,moveStringToArray,solveMoves,rubiksIndex,middles){
+const CONSTANTS = {
+    SOLVE_MIDDLES: 0,
+    SOLVE_EDGES: 0.1,
+    SOLVE_WHITE_CROSS: 1,
+    SOLVE_WHITE_CORNERS: 2,
+    SOLVE_MIDDLE_EDGES: 3,
+    SOLVE_YELLOW_CROSS: 4,
+    ALIGN_YELLOW_CROSS: 5,
+    ALIGN_YELLOW_CORNERS: 6,
+    SOLVE_YELLOW_CORNERS: 7
+}
+
+function solver(solveState,rubiksObject,cubeDimension,moveStringToArray,solveMoves,rubiksIndex,middles,edges){
     switch(solveState){
-        case 0:
+        case CONSTANTS.SOLVE_MIDDLES:
             return solveMiddles(rubiksObject,cubeDimension,moveStringToArray,rubiksIndex,middles);
-        case 0.1:
-            return solveEdges(rubiksObject,cubeDimension,moveStringToArray);
-        case 1:
+        case CONSTANTS.SOLVE_EDGES:
+            return solveEdges(rubiksObject,cubeDimension,moveStringToArray,edges,rubiksIndex);
+        case CONSTANTS.SOLVE_WHITE_CROSS:
             return solveWhiteCross(rubiksObject,cubeDimension,moveStringToArray);
-        case 2:
+        case CONSTANTS.SOLVE_WHITE_CORNERS:
             return solveWhiteCorners(rubiksObject,cubeDimension,moveStringToArray);
-        case 3:
+        case CONSTANTS.SOLVE_MIDDLE_EDGES:
             return solveMiddleEdges(rubiksObject,moveStringToArray);
-        case 4:
+        case CONSTANTS.SOLVE_YELLOW_CROSS:
             return solveYellowCross(rubiksObject,moveStringToArray);
-        case 5:
+        case CONSTANTS.ALIGN_YELLOW_CROSS:
             return alignYellowCross(rubiksObject,moveStringToArray);
-        case 6:
+        case CONSTANTS.ALIGN_YELLOW_CORNERS:
             return alignYellowCorners(rubiksObject,cubeDimension,moveStringToArray);
-        case 7:
+        case CONSTANTS.SOLVE_YELLOW_CORNERS:
             return solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMoves);
         default:
             console.log("invalid solve state");
