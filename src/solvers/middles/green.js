@@ -51,9 +51,10 @@ let solveGreenMiddle = (current,solved,dim,index) => {
                 }
             }
             else if(index===18){
-                moveString = move("",dim-2,"F'");
+                console.log("DID THIS SOLVE IT")
+                moveString = move("",dim-1,"F'");
                 moveString += " 01R'"
-                moveString += move(" ",dim-2,"F");
+                moveString += move(" ",dim-1,"F");
             }
         }
 

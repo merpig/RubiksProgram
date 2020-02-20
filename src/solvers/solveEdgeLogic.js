@@ -1,4 +1,5 @@
 import frontEdges from "./edges/solveFrontEdgeSegments";
+import backEdges from "./edges/solveBackEdgeSegments";
 
 function side(rubiksObject){
     return rubiksObject.indexOf('white');
@@ -34,9 +35,11 @@ function solveEdgeLogic(cubeDimensions,rubiksObjectAtIndex,index,cube,edges){
     else {
         switch(section){
             case 0: 
+                // Finished for now
                 moveString = frontEdges(current,solved,dim,whiteSide);
                 break;
             case 1:
+                // moveString = backEdges(current,solved,dim,whiteSide);
                 break;
             case 2:
                 break;

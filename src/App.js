@@ -1398,7 +1398,7 @@ class App extends Component {
 
         // calculate objects intersecting the picking ray
         var intersects = raycaster.intersectObjects( scene.children );
-        if (intersects[0] && intersects[0].object.material.length && !this.state.mouseDown){
+        if (intersects[0] && intersects[0].object.material.length && !this.state.mouseDown && this.state.currentFunc==="None"){
           previousMousePos = null;
           piecePos = null;
           intersected = null;
