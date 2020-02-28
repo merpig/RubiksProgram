@@ -2,20 +2,19 @@ function move(space,depth,side){
     return (space+(depth<10? "0":"") + depth + side);
 }
 
-function extractFromFrontTop(x){
-    return `${move("",x+1,"L'")} 01B' 01R 01B ${move("",x+1,"L")} 01R'`
-}
-
-function extractFromFrontRight(z){
-    return `${move("",z+1,"D")} 01B' 01D 01B ${move("",z+1,"D'")} 01D'`
-}
-
-function extractFromFrontBottom(x){
-    return `${move("",x+1,"L")} 01B' 01L 01B ${move("",x+1,"L'")} 01L'`
-}
-
-function extractFromFrontLeft(z){
-    return `${move("",z+1,"D'")} 01B' 01U 01B ${move("",z+1,"D")} 01U'`
+function extractFromFront(current,maxCoord,minCoord){
+    if(current.z===maxCoord){
+        return `${move("",current.x+1,"L'")} 01B' 01R 01B ${move("",current.x+1,"L")} 01R'`
+    }
+    else if(current.x===maxCoord){
+        return `${move("",current.z+1,"D")} 01B' 01D 01B ${move("",current.z+1,"D'")} 01D'`
+    }
+    else if(current.z===minCoord){
+        return `${move("",current.x+1,"L")} 01B' 01L 01B ${move("",current.x+1,"L'")} 01L'`
+    }
+    else if(current.x===minCoord){
+        return `${move("",current.z+1,"D'")} 01B' 01U 01B ${move("",current.z+1,"D")} 01U'`
+    }
 }
 
 function moveFromMiddleToBack(current,maxCoord,minCoord,whiteSide){
@@ -92,25 +91,13 @@ let solveFrontEdgeSegments = (current,solved,dim,whiteSide) => {
     const minCoord = 0;
     let moveString = "";
     let solvedPosition = "top";
-    console.log("solve magic here");
 
     if(solved.x===maxCoord) {solvedPosition = "right";}
     else if(solved.z===minCoord) {solvedPosition = "bottom";}
     else if(solved.x===minCoord) {solvedPosition = "left";}
     
     if(current.y===minCoord){
-        if(current.z===maxCoord){
-            moveString = extractFromFrontTop(current.x);
-        }
-        else if(current.x===maxCoord){
-            moveString = extractFromFrontRight(current.z);
-        }
-        else if(current.z===minCoord){
-            moveString = extractFromFrontBottom(current.x);
-        }
-        else if(current.x===minCoord){
-            moveString = extractFromFrontLeft(current.z);
-        }
+        moveString = extractFromFront(current,maxCoord,minCoord);
     }
     else if(current.y>minCoord&&current.y<maxCoord){
         moveString = moveFromMiddleToBack(current,maxCoord,minCoord,whiteSide);
@@ -118,16 +105,14 @@ let solveFrontEdgeSegments = (current,solved,dim,whiteSide) => {
     else if(current.y===maxCoord && whiteSide===BACK){
         moveString = flipPieceOnBack(current,maxCoord,minCoord);
     }
-    else{
-        if(current.z===solved.z&&current.x===solved.x){
-            console.log("ready to solve piece");
-            moveString = solveFromBackToFront(current,solved,maxCoord,minCoord);
-        }
-        else {
-            moveString = `01B`;
-        }
-        
+    else if(current.z===solved.z&&current.x===solved.x){
+        moveString = solveFromBackToFront(current,solved,maxCoord,minCoord);
     }
+    else {
+        moveString = `01B`;
+    }
+        
+    
 
     return moveString;
 }

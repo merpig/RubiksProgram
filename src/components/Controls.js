@@ -46,7 +46,7 @@ function namesToColors(face){
 
 }
 
-//generate data for buttons and pass down to props. Easier than trying to do in here
+//generate data for buttons and pass down to props. Better than trying to do in here
 const Controls = props => {
     centerButtons=[];
     singleButtons=[];

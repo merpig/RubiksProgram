@@ -1,8 +1,8 @@
 import frontEdges from "./edges/solveFrontEdgeSegments";
 import backEdges from "./edges/solveBackEdgeSegments";
 
-function side(rubiksObject){
-    return rubiksObject.indexOf('white');
+function side(rubiksObject,color){
+    return rubiksObject.indexOf(color);
 }
 
 function solveEdgeLogic(cubeDimensions,rubiksObjectAtIndex,index,cube,edges){
@@ -11,7 +11,8 @@ function solveEdgeLogic(cubeDimensions,rubiksObjectAtIndex,index,cube,edges){
     const edgesPerSection = 4;
     const edgeLength = dim-2
     const section = Math.floor(index/(edgeLength*edgesPerSection));
-    let whiteSide = null;
+    const whiteSide = side(rubiksObjectAtIndex,'white');
+    const yellowSide = side(rubiksObjectAtIndex,'yellow');
 
     let moveString = "";
 
@@ -27,8 +28,6 @@ function solveEdgeLogic(cubeDimensions,rubiksObjectAtIndex,index,cube,edges){
         z:rubiksObjectAtIndex[11]
     };
 
-    whiteSide = side(rubiksObjectAtIndex);
-
     if(current.x===solved.x && current.y===solved.y && current.z===solved.z){
         console.log("SOLVED");
     }
@@ -39,15 +38,18 @@ function solveEdgeLogic(cubeDimensions,rubiksObjectAtIndex,index,cube,edges){
                 moveString = frontEdges(current,solved,dim,whiteSide);
                 break;
             case 1:
-                // moveString = backEdges(current,solved,dim,whiteSide);
+                // Started
+                moveString = backEdges(current,solved,dim,yellowSide);
                 break;
             case 2:
+                // Not started
                 break;
             default:
                 console.log("Should never reach here");
         }
         console.log("Section: ", section);
-        section === 0 ? console.log("White side: ",whiteSide) : console.log("White side: N/A");
+        if(section === 0) console.log("White side: ",whiteSide);
+        if(section === 1) console.log("Yellow side: ",yellowSide);
         console.log("Current: ",current,"\nSolved: ",solved);
     }
 

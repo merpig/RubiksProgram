@@ -4,6 +4,7 @@ import Patterns from "./components/Patterns"
 import Speeds from "./components/Speeds"
 import Controls from "./components/Controls"
 import MoveInput from "./components/MoveInput"
+import Core from "./components/Core";
 import * as THREE from "three";
 import Stats from "stats.js";
 import './App.css';
@@ -98,7 +99,8 @@ class App extends Component {
     hoverData : [],
     showSolveController : false,
     autoPlay : false,
-    playOne : false
+    playOne : false,
+    generateAllMoves: false
   };
 
   // rotate colors on face (memory cube)
@@ -958,6 +960,10 @@ class App extends Component {
 
   }
 
+  generateAllSolveMoves(){
+    
+  }
+
   // Initialization and animation functions
   componentDidMount() {
 
@@ -1321,6 +1327,7 @@ class App extends Component {
       camera.position.y = this.state.cameraY;
       camera.position.x = this.state.cameraX;// * Math.cos( this.state.angle );
 
+      //this.reset();
       renderer.render( scene, camera );
       animate();
     });
@@ -1540,7 +1547,13 @@ class App extends Component {
               this.setState({currentFunc : "None",moves : 0});
 
           else if (this.state.currentFunc==="Solving"){
+            if(this.state.generateAllMoves===true){
+
+              this.setState({generateAllMoves:false});
+            }
             if(!this.state.moveSet.length) {
+              //console.log(this.state.solveState);
+              //console.log(this.state.rubiksObject);
               this.setState(solver(
                 this.state.solveState,
                 this.state.rubiksObject,
@@ -1563,6 +1576,10 @@ class App extends Component {
               }
             }
           }
+
+          else if(this.state.currentFunc==="Color Picker"){
+            // Code here for color picker interface
+          }
           
           else 
             this.state.moveSet.length ?
@@ -1580,7 +1597,13 @@ class App extends Component {
   // Renders html to the index.html page
   render() {
     let solveBtn = (this.state.cubeDimension < 21) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "60px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SOLVE</button> : "";
-    let stopSolveBtn = <button onClick={this.stopSolve} style={{position:"fixed", bottom: "60px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>;
+    let solveInterface = <div style={{position:"fixed", borderRadius: ".25rem",bottom: "60px", right: "10px",backgroundColor: "#343a40", border: "1px solid #007bff",color:"lightgray"}}>
+        {!this.state.autoPlay? <button onClick={() => this.setState({autoPlay:true})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Auto Play</button> : 
+        <button onClick={() => this.setState({autoPlay:false})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Pause</button>} <br></br>
+        {!this.state.autoPlay? <button onClick={() => this.setState({playOne:true})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Play "{this.state.moveSet[0]}"</button > : <button disabled style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Play "{this.state.moveSet[0]}"</button> }<br></br>
+        <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>
+    </div>;
+    let stopSolveBtn = <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>;
     return (
       <div className="App" >
         
@@ -1629,11 +1652,10 @@ class App extends Component {
           mouseLeave= {this.mouseLeave}
         /> : ""}
   
+        {/* Create a component for these that works similarly to patterns to auto populate functions */}
         {/* Bottom Right */} 
-        {this.state.currentFunc==="Solving"&&!this.state.autoPlay? <button onClick={() => this.setState({autoPlay:true})} style={{position:"fixed", bottom: "120px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Auto Play</button> : ""}
-        {this.state.currentFunc==="Solving"&&this.state.autoPlay? <button onClick={() => this.setState({autoPlay:false})} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Pause</button> : ""}
-        {this.state.currentFunc==="Solving"&&!this.state.autoPlay? <button onClick={() => this.setState({playOne:true})} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Play "{this.state.moveSet[0]}"</button> : ""}
-        {this.state.solveState < 0 ? solveBtn : stopSolveBtn}
+        
+        {this.state.solveState < 0 ? solveBtn : solveInterface}
         <button onClick={this.beginScramble} style={{position:"fixed", bottom: "30px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SCRAMBLE</button>
         <button onClick={this.reset} style={{position:"fixed", bottom: "0px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>RESET</button>
       </div>
