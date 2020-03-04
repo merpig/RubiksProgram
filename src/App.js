@@ -1300,7 +1300,7 @@ class App extends Component {
       groups[4].push(tempGroupOther);//Counter for white, clockwise for yellow
     }
 
-    scene.add(...groups.flat(2));
+    groups.forEach(group => scene.add(...group));
 
     // add cubes to state and then render
     this.setState({

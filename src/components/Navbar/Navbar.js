@@ -28,7 +28,7 @@ const Navbar = props => (
               
               Move Input <br></br>
               <label className="checkbox-inline">
-                <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
+                <input type="checkbox" data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
                 {props.state.showMoveInput ? "ON " : "OFF "}
               </label>
               
@@ -39,7 +39,7 @@ const Navbar = props => (
               
               Move Controls <br></br>
               <label className="checkbox-inline">
-                <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayControls')}></input>
+                <input type="checkbox" data-toggle="toggle" onClick={() => props.changeSettings('displayControls')}></input>
                 {props.state.showControls ? "ON " : "OFF "}
               </label>
               
