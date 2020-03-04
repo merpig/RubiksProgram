@@ -1,17 +1,25 @@
 {
   "files": {
     "main.css": "/RubiksProgram/static/css/main.de3dd180.chunk.css",
-    "main.js": "/RubiksProgram/static/js/main.fe7f8ce2.chunk.js",
-    "main.js.map": "/RubiksProgram/static/js/main.fe7f8ce2.chunk.js.map",
-    "runtime~main.js": "/RubiksProgram/static/js/runtime~main.eab163a7.js",
-    "runtime~main.js.map": "/RubiksProgram/static/js/runtime~main.eab163a7.js.map",
-    "static/css/2.c363f3f0.chunk.css": "/RubiksProgram/static/css/2.c363f3f0.chunk.css",
-    "static/js/2.2b005767.chunk.js": "/RubiksProgram/static/js/2.2b005767.chunk.js",
-    "static/js/2.2b005767.chunk.js.map": "/RubiksProgram/static/js/2.2b005767.chunk.js.map",
+    "main.js": "/RubiksProgram/static/js/main.697e4576.chunk.js",
+    "main.js.map": "/RubiksProgram/static/js/main.697e4576.chunk.js.map",
+    "runtime-main.js": "/RubiksProgram/static/js/runtime-main.1af83675.js",
+    "runtime-main.js.map": "/RubiksProgram/static/js/runtime-main.1af83675.js.map",
+    "static/css/2.dfee1050.chunk.css": "/RubiksProgram/static/css/2.dfee1050.chunk.css",
+    "static/js/2.4912b1bb.chunk.js": "/RubiksProgram/static/js/2.4912b1bb.chunk.js",
+    "static/js/2.4912b1bb.chunk.js.map": "/RubiksProgram/static/js/2.4912b1bb.chunk.js.map",
     "index.html": "/RubiksProgram/index.html",
-    "precache-manifest.ba7a8aa0a74edde6e6e384858b877728.js": "/RubiksProgram/precache-manifest.ba7a8aa0a74edde6e6e384858b877728.js",
+    "precache-manifest.f4e7e93a12ba42e49b8415c858f109f3.js": "/RubiksProgram/precache-manifest.f4e7e93a12ba42e49b8415c858f109f3.js",
     "service-worker.js": "/RubiksProgram/service-worker.js",
-    "static/css/2.c363f3f0.chunk.css.map": "/RubiksProgram/static/css/2.c363f3f0.chunk.css.map",
-    "static/css/main.de3dd180.chunk.css.map": "/RubiksProgram/static/css/main.de3dd180.chunk.css.map"
-  }
+    "static/css/2.dfee1050.chunk.css.map": "/RubiksProgram/static/css/2.dfee1050.chunk.css.map",
+    "static/css/main.de3dd180.chunk.css.map": "/RubiksProgram/static/css/main.de3dd180.chunk.css.map",
+    "static/js/2.4912b1bb.chunk.js.LICENSE.txt": "/RubiksProgram/static/js/2.4912b1bb.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.1af83675.js",
+    "static/css/2.dfee1050.chunk.css",
+    "static/js/2.4912b1bb.chunk.js",
+    "static/css/main.de3dd180.chunk.css",
+    "static/js/main.697e4576.chunk.js"
+  ]
 }
