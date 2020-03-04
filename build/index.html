@@ -1,0 +1,34 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="shortcut icon" href="/RubiksProgram/icon.png"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><link rel="manifest" href="/RubiksProgram/manifest.json"/><title>React App</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><link href="/RubiksProgram/static/css/2.c363f3f0.chunk.css" rel="stylesheet"><link href="/RubiksProgram/static/css/main.de3dd180.chunk.css" rel="stylesheet"></head><body style="overflow:hidden;background-color:#000"><style>.dropdown-item:hover,button:hover{background-color:gray!important;color:#fff!important}.btn-primary{background-color:#343a40;color:#d3d3d3}.dropdown{margin-right:5px}#fullscreenBtn,#moveSubmit,#triggerBtn,.redoUndo{background-color:#343a40;color:#d3d3d3;border-radius:.25rem;border:1px solid #007bff}#closeBtn{color:#d3d3d3}.popup-content{border:none!important;background:0 0!important;box-shadow:none!important}.popup-arrow{display:none!important}.popupDiv{position:fixed;top:10%;left:50%;width:75%;min-height:50%;margin-left:-37.5%;background-color:#343a40;border-radius:.25rem;border:1.5px solid #007bff;color:#d3d3d3}.popupDiv p{text-align:left;padding-right:5px;padding-left:5px}.shadeBackground{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#ddd;opacity:.5}@media (max-width:420px){#fullscreenBtn{display:none}#triggerBtn{display:none}#divInfo{display:none}#settings{display:none}}#controlsDiv{position:fixed;top:150px;width:max-content;height:max-content;background-color:transparent}#centerMoves{display:inline-block;width:min-content;height:max-content}.singleLayerMoves{display:inline-block}.multiLayerColumns,.singleLayerColumns{display:inline-block;width:min-content;height:max-content}.multiLayerMoves{display:block;float:right}.moveBtn{border-radius:4px;margin:1px;border:1.5px solid #007bff}.canvas{overflow:hidden}</style><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script><script>$(document).ready(function() {
+          let isFull = false;
+          let element = document.body;
+          $("#fullscreenBtn").on("click" , (e) =>{
+            let requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
+            let exitMethod = document.exitFullScreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+            let buttonType = e.target.value;
+            if (requestMethod) { // Native full screen.
+                !isFull ? (e.target.textContent = "Exit",requestMethod.call(element)) : (e.target.textContent = "Fullscreen",exitMethod.call(document));
+                isFull=!isFull;
+            } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
+                let wscript = new ActiveXObject("WScript.Shell");
+                if (wscript !== null) {
+                    wscript.SendKeys("{F11}");
+                }
+            }
+          });
+
+          document.addEventListener('mousedown', function (event) {
+            if (event.detail > 1) {
+              event.preventDefault();
+              // of course, you still do not know what you prevent here...
+              // You could also check event.ctrlKey/event.shiftKey/event.altKey
+              // to not prevent something useful.
+            }
+          }, false);
+
+          $(document).keydown((e) => {
+            if(e.key==="Escape") 
+              while($("#fullscreenBtn").text()!=="Fullscreen")
+                console.log($("#fullscreenBtn").text());
+                $("#fullscreenBtn").text("Fullscreen");
+          });
+        });</script><div class="canvas" style="background-size:cover;background-position:center;background:url(https://k38gwjynpb-flywheel.netdna-ssl.com/wp-content/uploads/2015/10/black-background.jpeg) no-repeat"></div><script>!function(l){function e(e){for(var r,t,n=e[0],o=e[1],u=e[2],i=0,f=[];i<n.length;i++)t=n[i],p[t]&&f.push(p[t][0]),p[t]=0;for(r in o)Object.prototype.hasOwnProperty.call(o,r)&&(l[r]=o[r]);for(s&&s(e);f.length;)f.shift()();return c.push.apply(c,u||[]),a()}function a(){for(var e,r=0;r<c.length;r++){for(var t=c[r],n=!0,o=1;o<t.length;o++){var u=t[o];0!==p[u]&&(n=!1)}n&&(c.splice(r--,1),e=i(i.s=t[0]))}return e}var t={},p={1:0},c=[];function i(e){if(t[e])return t[e].exports;var r=t[e]={i:e,l:!1,exports:{}};return l[e].call(r.exports,r,r.exports,i),r.l=!0,r.exports}i.m=l,i.c=t,i.d=function(e,r,t){i.o(e,r)||Object.defineProperty(e,r,{enumerable:!0,get:t})},i.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},i.t=function(r,e){if(1&e&&(r=i(r)),8&e)return r;if(4&e&&"object"==typeof r&&r&&r.__esModule)return r;var t=Object.create(null);if(i.r(t),Object.defineProperty(t,"default",{enumerable:!0,value:r}),2&e&&"string"!=typeof r)for(var n in r)i.d(t,n,function(e){return r[e]}.bind(null,n));return t},i.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return i.d(r,"a",r),r},i.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},i.p="/RubiksProgram/";var r=window.webpackJsonp=window.webpackJsonp||[],n=r.push.bind(r);r.push=e,r=r.slice();for(var o=0;o<r.length;o++)e(r[o]);var s=n;a()}([])</script><script src="/RubiksProgram/static/js/2.2b005767.chunk.js"></script><script src="/RubiksProgram/static/js/main.fe7f8ce2.chunk.js"></script></body></html>
