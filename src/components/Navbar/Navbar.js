@@ -6,7 +6,7 @@ import Popup from "reactjs-popup";
 
 const Navbar = props => (
   <nav className="navbar navbar-dark fixed-top bg-dark">
-    <ul className="nav nav-justified mr-auto">
+    <ul className="nav nav-justified mr-auto" style={{"width":"max-content"}}>
       <li className="nav-item">
         <p className="navbar-brand" style={{color:"lightgray"}}><b>{props.title}</b></p>
 

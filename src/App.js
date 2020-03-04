@@ -1301,6 +1301,7 @@ class App extends Component {
     }
 
     groups.forEach(group => scene.add(...group));
+    // scene.add(...groups.flat(2)); //issues with new edge
 
     // add cubes to state and then render
     this.setState({

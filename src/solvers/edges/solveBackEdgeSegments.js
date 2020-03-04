@@ -50,34 +50,9 @@ let solveBackEdgeSegments = (current,solved,dim,yellowSide) => {
                 moveString = `01R' 01B 01R 01B'`
             }
         }
-        // moves in parenthesis are the flex moves (flex axis included)
-        // if piece in middle between blue and red. Yellow face must also be on red
-        // 01L' 01B 01L (02F' c.y+1) 01L' 01B 01L 01B2 (02F c.y+1)
-        //
-        // else if current.z===solved.z and current.y===solved.y extract piece
-        // (could probably just use the solve to put a different piece there. c.x+1 instead of c.y+1)
-        // 01L' 01B 01L (02F' c.x+1) 01L' 01B 01L 01B2 (02F c.x+1)
-        //
-        // else reposition piece to satisfy solve conditions
-    //          if on back 
-    //              then move to top or right depending on which side yellow is on
-    //              then insert into top right middle
-    //              readjust back so that top back edge is back where it was
-    //          else
-    //              move to top without displacing top back edge
     }
     // Solves right back edge
     else if(solved.x===maxCoord){
-        // Step one, try first algorithm and note placements
-        // Might be able to tweak just a little for this one to work
-        // 01L' 01B 01L (02F' c.y+1) 01L' 01B 01L 01B2 (02F c.y+1) // original
-        // 01U' 01B 01U (02F' c.y+1) 01U' 01B 01U 01B2 (02F c.y+1) // converted
-        // Algorithm can be used, does not disrupt the placement of pieces on first edge
-        // Further notes, original algo will also work for the 3rd edge as it preserves two other edges
-
-        // a // change coords
-        // a.1 // small mods to algo to keep from displacing first edge
-        // a.2 // not tested
         if(current.y<maxCoord && current.z===minCoord && current.x===maxCoord){ //a
             // if yellow side is on the down face (green center)
             if(yellowSide===DOWN){//a.1
@@ -152,37 +127,61 @@ let solveBackEdgeSegments = (current,solved,dim,yellowSide) => {
         // permutations of the original algo should work
     }
     else if(solved.x===minCoord){
-        console.log("we aint here yet");
+        const displace = `01R 01B' 01R' 01B 01U 01B 01U' 01B'`;
+        const solve = `01D' 01B 01D ${move("",current.y+1,"F'")} 01D' 01B 01D 01B2 ${move("",current.y+1,"F")} 01L 01R' 01B2 01R 01L'`;
+        const replace = `01B 01U 01B' 01U' 01B' 01R 01B 01R'`
+        const flip = `01R 01B 01R' 01B' 01U' 01B 01U2 01B' 01U' 01B' 01L' 01B' 01L 01B2`
 
-        if(current.y<maxCoord && current.z===maxCoord && current.x===minCoord){ //a
+        if(current.y<maxCoord && current.z===maxCoord && current.x===maxCoord){ //a
             // if yellow side is on the left face (orange center)
-            if(yellowSide===LEFT){//a.1
+            if(yellowSide===RIGHT){//a.1
                 console.log("solve it");
-                moveString = `01D' 01B 01D ${move("",current.y+1,"F'")} 01D' 01B 01D 01B2 ${move("",current.y+1,"F")} 01L 01R' 01B2 01L' 01R 01L 01D 01R 01B 01R' 01D' 01L'`;
+                moveString = `${displace} ${solve} ${replace}`;
             }
             // if yellow side is on the down face (green center)
             else {//a.2
                 console.log("flip it");
-                moveString = `01U 01B 01U' 01B' 01L' 01B 01L2 01B' 01L' 01B' 01D' 01B' 01D 01B2`;
+                moveString = `${flip}`;
+            }
+        }
+
+        else if(current.y<maxCoord && current.z===maxCoord && current.x===minCoord){ //a
+            if(yellowSide===UP){//a.1
+                console.log("solve it");
+                moveString = `${move("",dim-1,"f")} ${displace} ${solve} ${replace} ${move("",dim-1,"f'")}`;
+            }
+            else {//a.2
+                console.log("flip it");
+                moveString = `${move("",dim-1,"f")} ${flip} ${move("",dim-1,"f'")}`;
+            }
+        }
+
+        else if(current.y<maxCoord && current.z===minCoord && current.x===minCoord){ //a
+            if(yellowSide===LEFT){//a.1
+                console.log("solve it");
+                moveString = `${move("",dim-1,"f2")} ${displace} ${solve} ${replace} ${move("",dim-1,"f2")}`;
+            }
+            else {//a.2
+                console.log("flip it");
+                moveString = `${move("",dim-1,"f2")} ${flip} ${move("",dim-1,"f2")}`;
+            }
+        }
+
+        else if(current.y<maxCoord && current.z===minCoord && current.x===maxCoord){ //a
+            if(yellowSide===DOWN){//a.1
+                console.log("solve it");
+                moveString = `${move("",dim-1,"f'")} ${displace} ${solve} ${replace} ${move("",dim-1,"f")}`;
+            }
+            else {//a.2
+                console.log("flip it");
+                moveString = `${move("",dim-1,"f'")} ${flip} ${move("",dim-1,"f")}`;
             }
         }
 
         else if(current.x===solved.x && current.y===solved.y){ // b
             console.log("remove it");
-            moveString = `01D' 01B 01D ${move("",dim-current.z,"F'")} 01D' 01B 01D 01B2 ${move("",dim-current.z,"F")} 01L 01R' 01B2 01L' 01R 01L 01D 01R 01B 01R' 01D' 01L'`;
+            moveString = `${displace} 01D' 01B 01D ${move("",dim-current.z,"F'")} 01D' 01B 01D 01B2 ${move("",dim-current.z,"F")} 01L 01R' 01B2 01L' 01R 01L 01D 01R 01B 01R' 01D' 01L'`;
         }
-
-        
-        // 01D' 01B 01D ${move("",current.y+1,"F'")} 01D' 01B 01D 01B2 ${move("",current.y+1,"F")} 01L 01R' 01B2 01L' 01R 01L 01D 01R 01B 01R' 01D' 01L'
-        // further analysis needs on displacements to determine if original algos are an option here
-        // 01U 01B 01U' 01B' 01L' 01B 01L2 01B' 01L' 01B' 01D' 01B' 01D 01B2
-
-        // 01D' 01B 01D ${move("",dim-current.z,"F'")} 01D' 01B 01D 01B2 ${move("",dim-current.z,"F")} 01L 01R' 01B2 01L' 01R 01L 01D 01R 01B 01R' 01D' 01L'
-
-        //else if(current.y<maxCoord){
-            //moveString = `01D 01R 01U 01B 01U' 01R' 01D'`;
-            //if(current.x===maxCoord and current.z===maxCoord) checkfaces to determine which of first two should be used
-        //}
     }
 
 
