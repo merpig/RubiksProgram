@@ -7,7 +7,7 @@ import Popup from "reactjs-popup";
 const Navbar = props => (
   <nav className="navbar navbar-dark fixed-top bg-dark">
     <ul className="nav nav-justified mr-auto">
-      <li className="nav-item" style={{display:"flex"}}>
+      <li className="nav-item nav-fix-for-edge">
         <p className="navbar-brand" style={{color:"lightgray"}}><b>{props.title}</b></p>
 
           {/*Open model here. Show bunch of settings. Pass changeSettings down to component to apply changes*/}
