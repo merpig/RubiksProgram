@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/icon.png" width="100" height="100">  
 </p>
     
-[Click Here for Live site](https://rubiksprogram.herokuapp.com/) *May take a minute to load initially*
+[Click Here for Live site](https://merpig.github.io/RubiksProgram)
   
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).  
 
