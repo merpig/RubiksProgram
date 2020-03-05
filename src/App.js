@@ -100,7 +100,8 @@ class App extends Component {
     showSolveController : false,
     autoPlay : false,
     playOne : false,
-    generateAllMoves: false
+    generateAllMoves: false,
+    isLocal : null
   };
 
   // rotate colors on face (memory cube)
@@ -883,16 +884,22 @@ class App extends Component {
   getSizeFromUrl() {
     let limit = 50;
     let cD;
-    let vars = {};
-    let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-        vars[key] = value;
-    });
+    
+    let parts = window.location.href.split('/');
+    let checkID = parts[parts.length-1][0]+parts[parts.length-1][1]+parts[parts.length-1][2];
 
-    parts.length < "https://rubiksprogram.herokuapp.com/id=".length ?
-      cD = parseInt(parts.substring(25)) :
-      cD = parseInt(
-        parts
-          .substring("https://rubiksprogram.herokuapp.com/id=".length));
+    if(this.state.isLocal===null){
+      if(parts[2].substr(0,9)==='localhost'){
+        this.setState({isLocal:true});
+      }
+      else {
+        this.setState({isLocal:false});
+      }
+    }
+
+    if(checkID === 'id='){
+      cD = parseInt(parts[parts.length-1].substr(3));
+    }
 
     if (cD <= limit && cD >= 2) return cD; else return 3;
   }
@@ -1611,6 +1618,7 @@ class App extends Component {
         <Navbar
           title="Rubik's Cube"
           changeSettings={this.changeSettings.bind(this)}
+          isLocal={this.state.isLocal}
           state={this.state}
         />
 
