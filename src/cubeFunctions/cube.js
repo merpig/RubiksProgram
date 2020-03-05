@@ -117,10 +117,10 @@ const cube = {
             edges.push(...tempEdges[i][j]);
           }
         }
-        console.log(tempArr[0]);
-        console.log(tempEdges);
-        console.log(edges);
-        console.log(tempArr);
+        // console.log(tempArr[0]);
+        // console.log(tempEdges);
+        // console.log(edges);
+        // console.log(tempArr);
         return {tempArr,middles,edges};
     },
 

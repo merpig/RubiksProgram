@@ -8,10 +8,10 @@ function solveEdges(cube,dim,moveStringToArray,edges,index){
     const obj = {};
 
     if (index < numEdges){
-        console.log(`Index: ${index}, Piece: ${edges[index]}`);
+        //console.log(`Index: ${index}, Piece: ${edges[index]}`);
         moveString += ((moveString.length) ? " ":"") + solveEdgeLogic(dim,cube[edges[index]],index,cube,edges,);
         moveString.trim().length ? obj.moveSet = moveStringToArray(moveString) : obj.rubiksIndex = index+1;
-        console.log(moveString + "\n-------------------------------");
+        //console.log(moveString + "\n-------------------------------");
     }
 
     else {

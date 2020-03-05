@@ -28,9 +28,9 @@ let solveBlueMiddle = (current,solved,dim) => {
     else if(current.z === 0) currentSide = "D";
     else if(current.z === dim-1) currentSide = "U";
     
-    console.log(`Currently on side: ${currentSide}`);
-    console.log(`Current position: ${JSON.stringify(current)}`);
-    console.log(`Solved position: ${JSON.stringify(solved)}`);
+    //console.log(`Currently on side: ${currentSide}`);
+    //console.log(`Current position: ${JSON.stringify(current)}`);
+    //console.log(`Solved position: ${JSON.stringify(solved)}`);
 
     if(currentSide==="U"){
 
@@ -69,10 +69,10 @@ let solveBlueMiddle = (current,solved,dim) => {
     }
 
     else if(currentSide==="L"){
-        console.log("solve from left side to top side");
+        //console.log("solve from left side to top side");
 
         if(current.z===solved.x && current.y===solved.y){
-            console.log("in place for step 6-9");
+            //console.log("in place for step 6-9");
 
             moveString = move("",current.z+1,"D2");//6
             if(isOddCube && solved.y===middle) moveString += " 01R";//6.1
@@ -82,14 +82,14 @@ let solveBlueMiddle = (current,solved,dim) => {
             moveString += move(" ",solved.y+1,"F");//9
             
         } else {
-            console.log("rotating left side");
+            //console.log("rotating left side");
 
             moveString = "01L"//5
         }
     }
 
     else {
-        console.log("move from back side to right side");
+        //console.log("move from back side to right side");
 
         if(current.y!==solved.y){
             moveString = "01D";

@@ -32,7 +32,7 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
     
 
     if(current.x===solved.x && current.y===solved.y && current.z===solved.z){
-        console.log("SOLVED");
+        //console.log("SOLVED");
     }
 
     else{

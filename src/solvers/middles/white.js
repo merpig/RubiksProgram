@@ -27,9 +27,9 @@ let solveWhiteMiddle = (current,solved,dim,index) => {
     else if(current.y === dim-1) currentSide = "B";
     else if(current.z === 0) currentSide = "D";
     else if(current.z === dim-1) currentSide = "U";
-    console.log(`Currently on side: ${currentSide}`);
-    console.log(`Current position: ${JSON.stringify(current)}`);
-    console.log(`Solved position: ${JSON.stringify(solved)}`);
+    // console.log(`Currently on side: ${currentSide}`);
+    // console.log(`Current position: ${JSON.stringify(current)}`);
+    // console.log(`Solved position: ${JSON.stringify(solved)}`);
     
     if(solved.x===1){
         if(dim-solved.z === 2){
@@ -143,7 +143,7 @@ let solveWhiteMiddle = (current,solved,dim,index) => {
             }
             else{
                 if(currentSide!=="U"){
-                    console.log("Moving to top")
+                    //console.log("Moving to top")
                     moveString += move(" ",current.y+1,"F");
                 }
                 else{

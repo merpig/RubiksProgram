@@ -18,8 +18,8 @@ function move(space,depth,side){
 let solveOrangeMiddle = (current,solved,dim) => {
 
     let currentSide = "F";
-    let middle = Math.floor(dim/2);
-    let isOddCube = dim%2;
+    // let middle = Math.floor(dim/2);
+    // let isOddCube = dim%2;
     let moveString = "";
 
     if(current.x === 0) currentSide = "L";
@@ -28,12 +28,12 @@ let solveOrangeMiddle = (current,solved,dim) => {
     else if(current.z === 0) currentSide = "D";
     else if(current.z === dim-1) currentSide = "U";
     
-    console.log(`Currently on side: ${currentSide}`);
-    console.log(`Current position: ${JSON.stringify(current)}`);
-    console.log(`Solved position: ${JSON.stringify(solved)}`);
+    // console.log(`Currently on side: ${currentSide}`);
+    // console.log(`Current position: ${JSON.stringify(current)}`);
+    // console.log(`Solved position: ${JSON.stringify(solved)}`);
 
     if(dim===4){
-        console.log("4x4 orange middle solver here");
+        //console.log("4x4 orange middle solver here");
         switch(currentSide){
             case 'L':
                 if(solved.x === 0 && solved.y === 1 && solved.z === 2){
@@ -109,10 +109,10 @@ let solveOrangeMiddle = (current,solved,dim) => {
         }
     }
     else if(dim===5){
-        console.log("5x5 orange middle solver here");
+        //console.log("5x5 orange middle solver here");
     }
     else {
-        console.log("6x6 and greater orange middle solver here");
+        //console.log("6x6 and greater orange middle solver here");
     }
 
     // if((current.x===0 && current.y===middle && current.z===middle && isOddCube)|| 

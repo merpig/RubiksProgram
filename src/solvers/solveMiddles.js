@@ -2,9 +2,9 @@ import solveMiddleLogic from './solveMiddleLogic';
 
 // Lots of console logs while this section is still in development.
 // Might leave logs commented for future debugging if necessary.
-function move(space,depth,side){
-  return (space+(depth<10? "0":"") + depth + side);
-}
+// function move(space,depth,side){
+//   return (space+(depth<10? "0":"") + depth + side);
+// }
 
 function solveMiddles(cube,dim,moveStringToArray,index,middles){
 
@@ -13,10 +13,10 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
     }
 
     let moveString = "";
-    let whiteMiddleError = false;
-    let yellowMiddleError = false;
-    let blueMiddleError = false;
-    let orangeMiddleError = false;
+    // let whiteMiddleError = false;
+    // let yellowMiddleError = false;
+    // let blueMiddleError = false;
+    // let orangeMiddleError = false;
 
     let solved = true;
 
@@ -64,11 +64,11 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
           
           let oddTopMiddleIndex = ((((dim-2)*(dim-2))*2)+Math.floor((dim-2)*(dim-2)/2));
 
-          console.log("Odd cube top middle index: " + cube[middles[oddTopMiddleIndex]]);
+          //console.log("Odd cube top middle index: " + cube[middles[oddTopMiddleIndex]]);
           if(cube[middles[oddTopMiddleIndex]][6]===cube[middles[oddTopMiddleIndex]][9] &&
              cube[middles[oddTopMiddleIndex]][7]===cube[middles[oddTopMiddleIndex]][10] &&
              cube[middles[oddTopMiddleIndex]][8]===cube[middles[oddTopMiddleIndex]][11]){
-            console.log("Odd cube top middle in position, moving on with solver");
+            //console.log("Odd cube top middle in position, moving on with solver");
           }
           else{
             if(cube[middles[oddTopMiddleIndex]][6]===dim-1){
@@ -80,76 +80,13 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
             else if(cube[middles[oddTopMiddleIndex]][6]===0){
               moveString += ((Math.ceil(dim/2))<10? "0" : "") + (Math.ceil(dim/2)) + "F";
             }
-            console.log(moveString);
+            //console.log(moveString);
           }
         }
-        console.log(`Index: ${index}, Piece: ${middles[index]}`);
+        //console.log(`Index: ${index}, Piece: ${middles[index]}`);
         
         moveString += ((moveString.length) ? " ":"") + solveMiddleLogic(dim,cube[middles[index]],index);
-        // if(index === ((dim-2)*(dim-2))*4-1 && moveString === "" && fixOrange){
-
-        //   // do a check here to see if this even needs to be run
-        //   // This will be deprecated later. Here because I got lazy and tired of middle solvers
-
-        //   obj.fixOrange = false;
-          
-        //   if(dim%2){
-        //     for(let i = dim-1; i> Math.floor(dim/2)+1; i--){
-        //       moveString += move(" ",i,"F");
-        //     }
-
-        //     moveString+= " 01L2";
-
-        //     for(let i = dim-1; i> Math.floor(dim/2)+1; i--){
-        //       moveString += move(" ",i,"F'");
-        //     }
-
-        //     for(let i = 2; i < Math.floor(dim/2)+1; i++){
-        //       moveString += move(" ",i,"F");
-        //     }
-
-        //     moveString+= " 01L2";
-
-        //     for(let i = 2; i < Math.floor(dim/2)+1; i++){
-        //       moveString += move(" ",i,"F'");
-        //     }
-
-        //     moveString += " 01L2";
-        //     moveString += " 01D";
-        //     moveString += move(" ",Math.floor(dim/2)+1,"F'")
-        //     moveString += " 01D'";
-        //     moveString += move(" ",Math.floor(dim/2)+1,"F")
-
-        //     obj.rubiksIndex = index+1;
-        //   }
-        //   else {
-        //     for(let i = dim-1; i> Math.floor(dim/2); i--){
-        //       moveString += move(" ",i,"F");
-        //     }
-
-        //     moveString+= " 01L2";
-
-        //     for(let i = dim-1; i> Math.floor(dim/2); i--){
-        //       moveString += move(" ",i,"F'");
-        //     }
-
-        //     for(let i = 1; i <= Math.floor(dim/2); i++){
-        //       moveString += move(" ",i,"F");
-        //     }
-
-        //     moveString+= " 01L2";
-
-        //     for(let i = 1; i <= Math.floor(dim/2); i++){
-        //       moveString += move(" ",i,"F'");
-        //     }
-
-        //     moveString += " 01L2";
-        //     obj.rubiksIndex = index+1;
-        //   }
-        // }else if(index === ((dim-2)*(dim-2))*4){
-        //   obj.fixOrange = true;
-        // }
-        console.log(moveString + "\n-------------------------------");
+        //console.log(moveString + "\n-------------------------------");
       }
     }
 
@@ -168,8 +105,8 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
       }
 
       else{
-        console.log("Ready for edge solver {solveState:0.1}");
-        console.log(moveString + "\n-------------------------------\n");
+        //console.log("Ready for edge solver {solveState:0.1}");
+        //console.log(moveString + "\n-------------------------------\n");
         
         if(dim===4){
           obj.solveState = .1; obj.rubiksIndex = 0; obj.currentFunc = "Solving";
@@ -178,10 +115,6 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
         }
       }
     }
-    //return obj;
-    // obj.moveSet = [];
-    // obj.solveState = 0.1; 
-    // obj.rubiksIndex = 0;
     return obj;
 }
 

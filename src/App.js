@@ -105,9 +105,10 @@ class App extends Component {
   };
 
   // rotate colors on face (memory cube)
-  rotateFace = (cubeFace,direction,cubeDepth,isMulti) => {
-    let centerPoint = this.state.cubeDimension/2-.5;
-    let rubiksObject = this.state.rubiksObject;
+  rotateFace = (cubeFace,direction,cubeDepth,isMulti,cD,object) => {
+    let cubeDimension = cD;
+    let centerPoint = cD/2-.5;
+    let rubiksObject = [...object];
     let degrees = 90;
     // const mapped = [
     //   {side: 7, side1 : 6, side2 : 8, swap : [1,2,5,4]},
@@ -159,8 +160,8 @@ class App extends Component {
     // Side 1 (blue center piece)
     if (cubeFace === 1){
         for(let i = 0; i < rubiksObject.length; i++){
-            if ((isMulti || rubiksObject[i][8] < this.state.cubeDimension+1-cubeDepth) &&
-                rubiksObject[i][8]>this.state.cubeDimension-1-cubeDepth){
+            if ((isMulti || rubiksObject[i][8] < cubeDimension+1-cubeDepth) &&
+                rubiksObject[i][8]>cubeDimension-1-cubeDepth){
                 let newPoint = cube.rotatePoint2(centerPoint,
                                                  centerPoint,
                                                  degrees,
@@ -187,8 +188,8 @@ class App extends Component {
     // Side 2 (red center piece)
     if (cubeFace === 2){
         for(let i = 0; i < rubiksObject.length; i++){
-            if ((isMulti || rubiksObject[i][6] < this.state.cubeDimension+1-cubeDepth) &&
-                rubiksObject[i][6]>this.state.cubeDimension-1-cubeDepth){
+            if ((isMulti || rubiksObject[i][6] < cubeDimension+1-cubeDepth) &&
+                rubiksObject[i][6]>cubeDimension-1-cubeDepth){
                 let newPoint = cube.rotatePoint2(centerPoint,
                                                  centerPoint,
                                                  degrees,
@@ -215,7 +216,7 @@ class App extends Component {
     // Side 3 (yellow center piece)
     if (cubeFace === 3){
         for(let i = 0; i < rubiksObject.length; i++){
-            if ((isMulti || rubiksObject[i][7] < this.state.cubeDimension+1-cubeDepth) && rubiksObject[i][7]>this.state.cubeDimension-1-cubeDepth){
+            if ((isMulti || rubiksObject[i][7] < cubeDimension+1-cubeDepth) && rubiksObject[i][7]>cubeDimension-1-cubeDepth){
                 let newPoint = cube.rotatePoint2(centerPoint,centerPoint,degrees,rubiksObject[i][6],rubiksObject[i][8]);
                 rubiksObject[i][6] = newPoint.p1;
                 rubiksObject[i][8] = newPoint.p2;
@@ -283,8 +284,9 @@ class App extends Component {
     }
 
     //add the move updates to state
-    this.setState({rubiksObject : rubiksObject}, () =>{
-    });
+    // this.setState({rubiksObject : rubiksObject}, () =>{
+    // });
+    return rubiksObject;
   };
 
   // rotate pieces attached to face (visual cube)
@@ -569,9 +571,23 @@ class App extends Component {
   // Control when single buttons can be clicked
   rotateOneFace = (e,vals) => {
     if (vals.length < 4) vals.push(false);
+
     if(this.state.currentFunc === "None") {
-      this.setState({currentFunc: e});
-      this.rotateCubeFace(vals[0],vals[1],vals[2],vals[3]);
+
+      let cD = this.state.cubeDimension;
+      let rubiksObject = this.state.rubiksObject;
+      //,blockMoveLog,moveLog,solveMoves
+      let blockMoveLog = this.state.blockMoveLog;
+      let moveLog = this.state.moveLog;
+      let solveMoves = this.state.solveMoves;
+      let solveState = this.state.solveState;
+      let end = this.state.end;
+      let obj = this.rotateCubeFace(vals[0],vals[1],vals[2],vals[3],blockMoveLog,moveLog,solveMoves,end,solveState);
+
+      obj.currentFunc = e;
+      obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
+
+      this.setState(obj);
     }
   }
 
@@ -598,8 +614,9 @@ class App extends Component {
   }
 
   // Changes values in state to trigger face rotation
-  rotateCubeFace = (face,direction,cubeDepth,isMulti) => {
-    if(!this.state.blockMoveLog){
+  rotateCubeFace = (face,direction,cubeDepth,isMulti,blockMoveLog,moveLog,solveMoves,end,solveState) => {
+    let obj = {};
+    if(!blockMoveLog){
       
       let tempMove = "";
       cubeDepth<10 ? tempMove+="0"+cubeDepth : tempMove += cubeDepth;
@@ -611,13 +628,13 @@ class App extends Component {
       else if(face === 5) !isMulti ? tempMove += "D" : tempMove += "d";
       if(direction === -1) tempMove += "'";
 
-      this.state.moveLog.length > 0 ?
-        this.setState({moveLog : this.state.moveLog + " " + tempMove}) :
-        this.setState({moveLog : this.state.moveLog + tempMove});
+      moveLog.length > 0 ?
+        obj.moveLog = (moveLog + " " + tempMove) :
+        obj.moveLog = (moveLog + tempMove);
       
       // Keeps tracks of solver's moves
-      if(this.state.solveState > -1) 
-        this.setState({solveMoves : this.state.solveMoves.length ? this.state.solveMoves + " " + tempMove : this.state.solveMoves + tempMove});
+      if(solveState > -1) 
+        obj.solveMoves = (solveMoves.length ? solveMoves + " " + tempMove : solveMoves + tempMove);
     }
 
     // Faces on opposite side of cube rotate backwards
@@ -625,16 +642,15 @@ class App extends Component {
 
     else if (face>2 && direction === 0) direction = -1;
 
-    // change state so animate function kicks in
-    this.setState({blockMoveLog:false,
-                   face : face,
-                   turnDirection : direction,
-                   end : this.state.end + 90,
-                   cubeDepth : cubeDepth,
-                   isMulti: isMulti},
-                   () =>{
-      this.rotateFace(face,direction,cubeDepth,isMulti);
-    });
+    obj.blockMoveLog = false;
+    obj.face = face; // used
+    obj.turnDirection = direction; // used
+    obj.end = end + 90; 
+    obj.cubeDepth = cubeDepth; // used
+    obj.isMulti = isMulti; // used
+    
+
+    return obj;
   }
 
   // Takes prebuilt algorithms and converts to moves
@@ -659,22 +675,30 @@ class App extends Component {
 
   // Generates a random move
   scramble = () => {
-
-    this.setState({moves:this.state.moves+1});
-
     let maxDepth = Math.ceil((this.state.cubeDimension/2));
     let randFace = Math.floor((Math.random() * 6));
     let randTurn = Math.floor((Math.random() * 2)-1);
     let randIsMulti = Math.floor((Math.random() * 2));
     let randDepth = 1;
+    let cD = this.state.cubeDimension;
+    let rubiksObject = this.state.rubiksObject;
+    let blockMoveLog = this.state.blockMoveLog;
+    let moveLog = this.state.moveLog;
+    let solveMoves = this.state.solveMoves;
+    let solveState = this.state.solveState;
+    let end = this.state.end;
 
-    if(this.state.cubeDimension>2) 
+    if(cD>2) 
       randDepth = Math.floor((Math.random() * maxDepth)) + 1;
 
-    if(randDepth === Math.ceil(this.state.cubeDimension/2) && this.state.cubeDimension%2)
+    if(randDepth === Math.ceil(cD/2) && cD%2)
       randIsMulti=0;
 
-    this.rotateCubeFace(randFace, randTurn,randDepth,randIsMulti);
+    let obj = this.rotateCubeFace(randFace, randTurn,randDepth,randIsMulti,blockMoveLog,moveLog,solveMoves,end,solveState);
+    obj.moves = this.state.moves+1;
+    obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
+
+    this.setState(obj);
   }
 
   // Changes state active function to begin scrambling
@@ -685,7 +709,7 @@ class App extends Component {
   // Starts the solve process
   beginSolve = () => {
     if(this.state.currentFunc !== "None") return;
-    this.setState({currentFunc : "Solving",solveState : 0,autoPlay : false, playOne : false});
+    this.setState({currentFunc : "Solving",solveState : 0,autoPlay : false, playOne : false, solveOnce : true});
   }
 
   stopSolve = () => {
@@ -789,22 +813,23 @@ class App extends Component {
     let tempDepth = 1;
     let tempIsMulti = false;
 
-    if(shifted.length === 4) tempDirection=0;
-    tempDepth = parseInt(shifted.slice(0,2));
+    if(shifted){
+      if(shifted.length === 4) tempDirection=0;
+      tempDepth = parseInt(shifted.slice(0,2));
 
-    if(shifted.slice(2,3) === shifted.slice(2,3).toLowerCase()){
-      tempIsMulti = true;
+      if(shifted.slice(2,3) === shifted.slice(2,3).toLowerCase()){
+        tempIsMulti = true;
+      }
+
+      if(shifted.slice(2,3).toUpperCase() === "U") tempFace = 1;
+      else if(shifted.slice(2,3).toUpperCase() === "F") tempFace = 0;
+      else if(shifted.slice(2,3).toUpperCase() === "B") tempFace = 3;
+      else if(shifted.slice(2,3).toUpperCase() === "R") tempFace = 2;
+      else if(shifted.slice(2,3).toUpperCase() === "L") tempFace = 4;
+      else if(shifted.slice(2,3).toUpperCase() === "D") tempFace = 5;
+
+      return [tempFace,tempDirection,tempDepth,tempIsMulti];
     }
-
-    if(shifted.slice(2,3).toUpperCase() === "U") tempFace = 1;
-    else if(shifted.slice(2,3).toUpperCase() === "F") tempFace = 0;
-    else if(shifted.slice(2,3).toUpperCase() === "B") tempFace = 3;
-    else if(shifted.slice(2,3).toUpperCase() === "R") tempFace = 2;
-    else if(shifted.slice(2,3).toUpperCase() === "L") tempFace = 4;
-    else if(shifted.slice(2,3).toUpperCase() === "D") tempFace = 5;
-
-    this.rotateCubeFace(tempFace,tempDirection,tempDepth,tempIsMulti);
-
   }
 
   /* Each piece that's rotated has it's rotation disrupted on other planes.
@@ -967,8 +992,76 @@ class App extends Component {
 
   }
 
-  generateAllSolveMoves(){
+  generateAllSolveMoves = (state,rubiksObject) =>{
     
+    let beforeObject = [];
+    rubiksObject.forEach(e => {
+      let temp = [...e]
+      beforeObject.push(temp);
+    });
+    //console.log("before the function calls: ", beforeObject);
+    let tempState = {...state};
+    let solvedSet = "";
+    while(tempState.currentFunc==="Solving"){
+      if(!tempState.moveSet || !tempState.moveSet.length) {
+        let moves = solver(
+          tempState.solveState,
+          tempState.rubiksObject,
+          tempState.cubeDimension,
+          this.moveStringToArray,
+          tempState.solveMoves,
+          tempState.rubiksIndex,
+          tempState.middles,
+          tempState.edges);
+        if(moves.moveSet){
+          
+          let temp = [];
+          for(let i = 0; i<moves.moveSet.length; i++){
+            if(moves.moveSet[i]===''||moves.moveSet[i]===' ');
+            else temp.push(moves.moveSet[i]);
+          }
+          moves.moveSet = temp;
+          //console.log(temp);
+          
+        }
+        //console.log(moves);
+        if(moves.currentFunc && moves.currentFunc==="None"){
+          solvedSet = tempState.solveMoves;
+          //console.log("The solved set: ", tempState.solveMoves);
+        }
+        tempState = {...tempState,...moves};
+      }
+      else{
+        //console.log(tempState.moveSet);
+        let cD = tempState.cubeDimension;
+        let blockMoveLog = tempState.blockMoveLog;
+        let moveLog = tempState.moveLog;
+        let solveMoves = tempState.solveMoves;
+        let rubiksObject = tempState.rubiksObject;
+        let end = tempState.end;
+        let solveState = this.state.solveState;
+
+        // generates data for next move
+        let moveData = this.parseMoveArray(tempState.moveSet);
+
+        // takes next move data and queues changes to be made to state
+        let obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
+        
+        // store the new object here
+        obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
+        //console.log(obj);
+        
+        tempState = {...tempState,...obj};
+      }
+    }
+    
+    //console.log("state at end: ",rubiksObject);
+    let splitSet = solvedSet.split(" ");
+    let moveSet = []
+    splitSet.forEach(e => e[e.length-1]==="'"? moveSet.push(e.replace("'","")):moveSet.push(e+"'"));
+    console.log(moveSet);
+    return {moveSet,rubiksObject : beforeObject};
+
   }
 
   // Initialization and animation functions
@@ -1555,29 +1648,79 @@ class App extends Component {
               this.setState({currentFunc : "None",moves : 0});
 
           else if (this.state.currentFunc==="Solving"){
-            if(this.state.generateAllMoves===true){
+            // Place holder for full solve testing
+            if(this.state.solveOnce){
+              this.setState({solveOnce:false},()=>{
+                let a = performance.now();
+                this.setState(this.generateAllSolveMoves(this.state,this.state.rubiksObject));
+                let b = performance.now();
+                console.log('It took ' + (b - a)/1000 + ' seconds to solve.');
+              });
 
-              this.setState({generateAllMoves:false});
             }
-            if(!this.state.moveSet.length) {
-              //console.log(this.state.solveState);
-              //console.log(this.state.rubiksObject);
-              this.setState(solver(
-                this.state.solveState,
-                this.state.rubiksObject,
-                this.state.cubeDimension,
-                this.moveStringToArray,
-                this.state.solveMoves,
-                this.state.rubiksIndex,
-                this.state.middles,
-                this.state.edges));
+            // If there are no moves queued, check to see if more moves can be queued
+            else if(!this.state.moveSet.length){
+              this.stopSolve();
             }
+            // if(!this.state.moveSet.length) {
+            //   //console.log(this.state.solveState);
+            //   //console.log(this.state.rubiksObject);
+            //   let moves = solver(
+            //     this.state.solveState,
+            //     this.state.rubiksObject,
+            //     this.state.cubeDimension,
+            //     this.moveStringToArray,
+            //     this.state.solveMoves,
+            //     this.state.rubiksIndex,
+            //     this.state.middles,
+            //     this.state.edges);
+            //   if(moves.moveSet){
+            //     //console.log(moves);
+            //     let temp = [];
+            //     for(let i = 0; i<moves.moveSet.length; i++){
+            //       if(moves.moveSet[i]===''||moves.moveSet[i]===' ');
+            //       else temp.push(moves.moveSet[i]);
+            //     }
+            //     moves.moveSet = temp;
+            //     //console.log(temp);
+            //   }
+
+            //   this.setState(moves);
+            // }
+            // If playone or autoplay is true, progress accordingly
             else if(this.state.playOne||this.state.autoPlay){
+              let cD = this.state.cubeDimension;
+              let tempRubiks = this.state.rubiksObject;
+              let blockMoveLog = this.state.blockMoveLog;
+              let moveLog = this.state.moveLog;
+              let solveMoves = this.state.solveMoves;
+              let moveSet = this.state.moveSet;
+              let end = this.state.end;
+              let solveState = this.state.solveState;
+
+              // generates data for next move
+              let moveData = this.parseMoveArray(moveSet);
+
+              // takes next move data and queues changes to be made to state
+              let obj = {};
+              if(moveData)
+                 obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
+
+              // Turn off play one so only runs once
+              if(this.state.playOne) obj.playOne = false;
+
+              // hides move the hint during the move
               this.mouseLeave();
-              this.setState({playOne:false});
-              this.parseMoveArray(this.state.moveSet);
+              
+              // store the object here
+              if(moveData)
+                obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,tempRubiks);
+
+              //console.log(obj);
+              this.setState(obj);
             }
-            else{
+            // Show hint over next move
+            else if(this.state.moveSet.length){
               let data = this.convertMoveToData(this.state.moveSet[0]);
               if(data){
                 this.mouseOver(this.state.moveSet[0],data);
@@ -1590,9 +1733,24 @@ class App extends Component {
           }
           
           else 
-            this.state.moveSet.length ?
-              this.parseMoveArray(this.state.moveSet) :
+            if(this.state.moveSet.length){
+              let cD = this.state.cubeDimension;
+              let tempRubiks = this.state.rubiksObject;
+              let blockMoveLog = this.state.blockMoveLog;
+              let moveLog = this.state.moveLog;
+              let solveMoves = this.state.solveMoves;
+              let solveState = this.state.solveState;
+              let end = this.state.end;
+              let moveData = this.parseMoveArray(this.state.moveSet);
+              let obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
+  
+              obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,tempRubiks);
+
+              this.setState(obj);
+
+            } else{
               this.setState({currentFunc:"None"}); 
+            }
         }
       }
       

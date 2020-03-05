@@ -18,8 +18,8 @@ function move(space,depth,side){
 let solveGreenMiddle = (current,solved,dim,index) => {
 
     let currentSide = "F";
-    let middle = Math.floor(dim/2);
-    let isOddCube = dim%2;
+    // let middle = Math.floor(dim/2);
+    // let isOddCube = dim%2;
     let moveString = "";
 
     if(current.x === 0) currentSide = "L";
@@ -28,9 +28,9 @@ let solveGreenMiddle = (current,solved,dim,index) => {
     else if(current.z === 0) currentSide = "D";
     else if(current.z === dim-1) currentSide = "U";
 
-    console.log(`Currently on side: ${currentSide}`);
-    console.log(`Current position: ${JSON.stringify(current)}`);
-    console.log(`Solved position: ${JSON.stringify(solved)}`);
+    // console.log(`Currently on side: ${currentSide}`);
+    // console.log(`Current position: ${JSON.stringify(current)}`);
+    // console.log(`Solved position: ${JSON.stringify(solved)}`);
     
 
     // Temp 4x4 solver
@@ -42,7 +42,7 @@ let solveGreenMiddle = (current,solved,dim,index) => {
             }
 
             else if(index===17){
-                console.log("on side D")
+                //console.log("on side D")
                 if(solved.x===current.x&&solved.y===current.y);
                 else {
                     moveString = move("",current.y+1,"F'");
@@ -51,7 +51,7 @@ let solveGreenMiddle = (current,solved,dim,index) => {
                 }
             }
             else if(index===18){
-                console.log("DID THIS SOLVE IT")
+                // console.log("DID THIS SOLVE IT")
                 moveString = move("",dim-1,"F'");
                 moveString += " 01R'"
                 moveString += move(" ",dim-1,"F");
@@ -66,10 +66,10 @@ let solveGreenMiddle = (current,solved,dim,index) => {
             }
 
             else if(index===17){
-                console.log("solved from red to green");
-                console.log(current);
+                // console.log("solved from red to green");
+                // console.log(current);
                 if(current.y===2 && current.z===2){
-                    console.log("solve it");
+                    // console.log("solve it");
                     moveString = "01D";
                     moveString += move(" ", dim-1, "F");
                     moveString += " 01D'";
@@ -83,7 +83,7 @@ let solveGreenMiddle = (current,solved,dim,index) => {
             
             else if(index===18){
                 if(current.y===2 && current.z===1){
-                    console.log("solve it");
+                    // console.log("solve it");
                     moveString = "01R";
                     moveString += move(" ",dim-1,"F'");
                     moveString += " 01R'";
@@ -94,7 +94,7 @@ let solveGreenMiddle = (current,solved,dim,index) => {
                 }
             }
             else if(index===19){
-                console.log("calculating move");
+                // console.log("calculating move");
                 if(current.y===1 && current.z===2){
                     moveString="03F'";
                     moveString+=" 01R'";
