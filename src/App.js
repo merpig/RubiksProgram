@@ -1020,7 +1020,7 @@ class App extends Component {
         if(moves.moveSet){
           let temp = [];
           for(let i = 0; i<moves.moveSet.length; i++){
-            if(moves.moveSet[i]===''||moves.moveSet[i]===' '||moves.moveSet[i].includes('NaN'));
+            if(moves.moveSet[i]===''||moves.moveSet[i]===' '||moves.moveSet[i].includes('NaN')||moves.moveSet[i]==="'");
             else temp.push(moves.moveSet[i]);
           }
           moves.moveSet = temp;
