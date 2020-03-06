@@ -56,6 +56,7 @@ class App extends Component {
     currentFunc : "None", // Variable used to display current function
     moveLog : "",         // Keeps a log of all moves
     moveSet : [],         // Algorithms queue moves through this variable
+    prevSet : [],
     angle : 3.9,          // Camera angle
     cubeDimension : null, // Cube dimensions. Ex: 3 => 3x3x3 cube
     cubeDepth : 1,        // Used to determine rotation depth on cubes greater than 3
@@ -713,7 +714,24 @@ class App extends Component {
   }
 
   stopSolve = () => {
-    this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : []});
+    this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : []});
+  }
+
+  rewindSolve = () => {
+    if(this.state.playOne) return;
+    let tempPrev = this.state.prevSet;
+    let tempMoveSet = this.state.moveSet;
+    let lastEl = tempPrev[tempPrev.length-1];
+    let popped = tempPrev.pop();
+    console.log(popped);
+    popped[popped.length-1]==="'" ? popped=popped.slice(0,3) : popped+="'";
+    console.log(popped);
+    let newMoveSet = [popped,lastEl,...tempMoveSet];
+    this.setState({
+      playOne:true,
+      prevSet:tempPrev,
+      moveSet:newMoveSet
+    })
   }
 
   handleDragInput = (e, ui) => {
@@ -993,75 +1011,43 @@ class App extends Component {
   }
 
   generateAllSolveMoves = (state,rubiksObject) =>{
-    
-    let beforeObject = [];
-    rubiksObject.forEach(e => {
-      let temp = [...e]
-      beforeObject.push(temp);
-    });
-    //console.log("before the function calls: ", beforeObject);
-    let tempState = {...state};
-    let solvedSet = "";
+    let beforeObject = rubiksObject.map(e=>[...e]);
+    let tempState = {...state}, solvedSet = "";
     while(tempState.currentFunc==="Solving"){
       if(!tempState.moveSet || !tempState.moveSet.length) {
-        let moves = solver(
-          tempState.solveState,
-          tempState.rubiksObject,
-          tempState.cubeDimension,
-          this.moveStringToArray,
-          tempState.solveMoves,
-          tempState.rubiksIndex,
-          tempState.middles,
-          tempState.edges);
+        let moves = solver(tempState.solveState,tempState.rubiksObject,tempState.cubeDimension,this.moveStringToArray,
+          tempState.solveMoves,tempState.rubiksIndex,tempState.middles,tempState.edges);
+        console.log(moves);
         if(moves.moveSet){
-          
           let temp = [];
           for(let i = 0; i<moves.moveSet.length; i++){
             if(moves.moveSet[i]===''||moves.moveSet[i]===' ');
             else temp.push(moves.moveSet[i]);
           }
           moves.moveSet = temp;
-          //console.log(temp);
-          
         }
-        //console.log(moves);
-        if(moves.currentFunc && moves.currentFunc==="None"){
-          solvedSet = tempState.solveMoves;
-          //console.log("The solved set: ", tempState.solveMoves);
-        }
+        if(moves.currentFunc && moves.currentFunc==="None") solvedSet = tempState.solveMoves;
         tempState = {...tempState,...moves};
       }
       else{
-        //console.log(tempState.moveSet);
         let cD = tempState.cubeDimension;
         let blockMoveLog = tempState.blockMoveLog;
         let moveLog = tempState.moveLog;
         let solveMoves = tempState.solveMoves;
         let rubiksObject = tempState.rubiksObject;
         let end = tempState.end;
-        let solveState = this.state.solveState;
-
-        // generates data for next move
-        let moveData = this.parseMoveArray(tempState.moveSet);
-
-        // takes next move data and queues changes to be made to state
+        let solveState = tempState.solveState;
+        let moveData = this.parseMoveArray(tempState.moveSet); // generates data for next move
         let obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
-        
-        // store the new object here
         obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
-        //console.log(obj);
-        
         tempState = {...tempState,...obj};
       }
     }
-    
-    //console.log("state at end: ",rubiksObject);
     let splitSet = solvedSet.split(" ");
     let moveSet = []
     splitSet.forEach(e => e[e.length-1]==="'"? moveSet.push(e.replace("'","")):moveSet.push(e+"'"));
     console.log(moveSet);
     return {moveSet,rubiksObject : beforeObject};
-
   }
 
   // Initialization and animation functions
@@ -1662,31 +1648,6 @@ class App extends Component {
             else if(!this.state.moveSet.length){
               this.stopSolve();
             }
-            // if(!this.state.moveSet.length) {
-            //   //console.log(this.state.solveState);
-            //   //console.log(this.state.rubiksObject);
-            //   let moves = solver(
-            //     this.state.solveState,
-            //     this.state.rubiksObject,
-            //     this.state.cubeDimension,
-            //     this.moveStringToArray,
-            //     this.state.solveMoves,
-            //     this.state.rubiksIndex,
-            //     this.state.middles,
-            //     this.state.edges);
-            //   if(moves.moveSet){
-            //     //console.log(moves);
-            //     let temp = [];
-            //     for(let i = 0; i<moves.moveSet.length; i++){
-            //       if(moves.moveSet[i]===''||moves.moveSet[i]===' ');
-            //       else temp.push(moves.moveSet[i]);
-            //     }
-            //     moves.moveSet = temp;
-            //     //console.log(temp);
-            //   }
-
-            //   this.setState(moves);
-            // }
             // If playone or autoplay is true, progress accordingly
             else if(this.state.playOne||this.state.autoPlay){
               let cD = this.state.cubeDimension;
@@ -1697,14 +1658,21 @@ class App extends Component {
               let moveSet = this.state.moveSet;
               let end = this.state.end;
               let solveState = this.state.solveState;
+              let obj = {};
+              
+              if(this.state.autoPlay) {
+                obj.prevSet = this.state.prevSet;
+                obj.prevSet.push(moveSet[0]);
+              }
 
               // generates data for next move
               let moveData = this.parseMoveArray(moveSet);
 
               // takes next move data and queues changes to be made to state
-              let obj = {};
-              if(moveData)
-                 obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
+              
+              if(moveData){
+                obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
+              }
 
               // Turn off play one so only runs once
               if(this.state.playOne) obj.playOne = false;
@@ -1766,7 +1734,8 @@ class App extends Component {
     let solveInterface = <div style={{position:"fixed", borderRadius: ".25rem",bottom: "60px", right: "10px",backgroundColor: "#343a40", border: "1px solid #007bff",color:"lightgray"}}>
         {!this.state.autoPlay? <button onClick={() => this.setState({autoPlay:true})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Auto Play</button> : 
         <button onClick={() => this.setState({autoPlay:false})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Pause</button>} <br></br>
-        {!this.state.autoPlay? <button onClick={() => this.setState({playOne:true})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Play "{this.state.moveSet[0]}"</button > : <button disabled style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Play "{this.state.moveSet[0]}"</button> }<br></br>
+        {!this.state.autoPlay? <button onClick={() => this.setState({playOne:true,prevSet:[...this.state.prevSet,this.state.moveSet[0]]})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Play "{this.state.moveSet[0]}"</button > : <button disabled style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Play "{this.state.moveSet[0]}"</button> }<br></br>
+        {!this.state.autoPlay && this.state.prevSet.length? <button onClick={() => this.rewindSolve()} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Rewind "{this.state.prevSet[this.state.prevSet.length-1]}"</button > : <button disabled style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Rewind "No move"</button> }<br></br>
         <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>
     </div>;
     let stopSolveBtn = <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>;
