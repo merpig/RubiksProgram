@@ -30,6 +30,6 @@ const MoveInput = (props) => {
             </Draggable>
         </div>
     );
-    };
+};
 
 export default MoveInput;

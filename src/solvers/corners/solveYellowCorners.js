@@ -57,9 +57,6 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
             if(cube[pieceThree][6]===0 && cube[pieceThree][8]===0){
               let obj = {moveLog : "",currentFunc: "None",moveSet:[],solveState:-1};
               if(solveMoves.length){
-                let temp = solveMoves.split(" ");
-                console.log("Number of moves: "+ temp.length);
-                //console.log("Moves set: " + solveMoves);
                 obj.solveMoves = "";
                 return obj;
               }
@@ -81,10 +78,6 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
       else {
         let obj = {moveLog : "",currentFunc: "None",moveSet:[],solveState:-1};
         if(solveMoves.length){
-          let temp = solveMoves.split(" ");
-          
-          console.log("Number of moves: "+ temp.length);
-          //console.log("Moves set: " + solveMoves);
           obj.solveMoves = "";
           return obj;
         }

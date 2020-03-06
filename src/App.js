@@ -4,7 +4,8 @@ import Patterns from "./components/Patterns"
 import Speeds from "./components/Speeds"
 import Controls from "./components/Controls"
 import MoveInput from "./components/MoveInput"
-import Core from "./components/Core";
+//import Core from "./components/Core";
+import ColorPicker from "./components/ColorPicker";
 import * as THREE from "three";
 import Stats from "stats.js";
 import './App.css';
@@ -18,25 +19,14 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 /*
  * 1. Start moving functions to other files STARTED
  * 
- * 2. All pattern functions can be condensed into one since only
- *    the move patterns are different for each. FINISHED
+ * 2. Color picker
  * 
- * 3. Add changes to rotateFace and rotatePiece. Code can be greatly condensed
+ * 3. UI Rework
+ * 
+ * 4. Add changes to rotateFace and rotatePiece. Code can be greatly condensed
  *    by using a function with paramters to minimize repetative code. ATTEMPTED
  * 
- * 4. Continue working on solvers. STARTED
- * 
- * 5. Known issue with undo/redo. Occassionally last move fails. FIXED
- * 
- * 6. Consolidate setStates, seems fairly expensive to use many STARTED
- * 
- * 7. Fix Camera rotations. FIXED for now
- * 
- * 8. Highlight turns when hovering over move buttons. FINISHED
- * 
- * 9. Implement rotating pieces by dragging. NOT STARTED
- * 
- * 10. The program needs a good readme. NOT STARTED
+ * 5. Continue working on solvers. STARTED
  */
 
 
@@ -81,6 +71,7 @@ class App extends Component {
     showControls: false,   // Setting for move controls
     showHints: true,
     showGuideArrows: true,
+    showColorPicker: true,
     activeDragsInput: 0,  // Keeps track of draggable input
     deltaPositionInput: {
       x: 100, y: 100
@@ -577,7 +568,6 @@ class App extends Component {
 
       let cD = this.state.cubeDimension;
       let rubiksObject = this.state.rubiksObject;
-      //,blockMoveLog,moveLog,solveMoves
       let blockMoveLog = this.state.blockMoveLog;
       let moveLog = this.state.moveLog;
       let solveMoves = this.state.solveMoves;
@@ -668,7 +658,7 @@ class App extends Component {
     let cD = this.state.cubeDimension;
     let generated = cube.generateSolved(cD,cD,cD);
     let rubiksObject = generated.tempArr;
-    this.setState({rubiksObject,moveSet: [],currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : []},()=>{
+    this.setState({rubiksObject,moveSet: [],currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : []},()=>{
       this.reloadTurnedPieces('all');
     });
     //window.location.reload();
@@ -714,7 +704,7 @@ class App extends Component {
   }
 
   stopSolve = () => {
-    this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : []});
+    this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : []});
   }
 
   rewindSolve = () => {
@@ -723,9 +713,7 @@ class App extends Component {
     let tempMoveSet = this.state.moveSet;
     let lastEl = tempPrev[tempPrev.length-1];
     let popped = tempPrev.pop();
-    //console.log(popped);
     popped[popped.length-1]==="'" ? popped=popped.slice(0,3) : popped+="'";
-    //console.log(popped);
     let newMoveSet = [popped,lastEl,...tempMoveSet];
     this.setState({
       playOne:true,
@@ -855,9 +843,10 @@ class App extends Component {
    * This function solves that issue by setting all piece rotation back to zero
    * and then placing colors to look as though the piece were still rotated.
    * 
-   * Some optimizations have been added. Undersides and sides of some pieces
-   * appear white instead of black but does not disrupt the rest of the cube.
-   * Likely won't be changed since that optimization greatly improves run time.
+   * Some optimizations have been added. Undersides and insides of some pieces
+   * appear white instead of black initially but does not disrupt the rest of
+   * the cube. Likely won't be changed since that optimization greatly improves
+   * run time.
    */
   reloadTurnedPieces = (pos) => {
     let cubes = [...this.state.cubes];
@@ -1047,6 +1036,8 @@ class App extends Component {
     if(splitSet[0][0]==="N"||splitSet[0][0]==="'") splitSet.shift();
     let moveSet = []
     splitSet.forEach(e => e[e.length-1]==="'"? moveSet.push(e.replace("'","")):moveSet.push(e+"'"));
+    console.log("Number of moves: \n",moveSet.length);
+    console.log(moveSet);
     return {moveSet,rubiksObject : beforeObject};
   }
 
@@ -1586,10 +1577,12 @@ class App extends Component {
         }
       }
       
+      // Animate queued rotation
       if(this.state.start<=this.state.end){
         this.rotatePieces(cube.rotatePoint,tempCubes);
       }
 
+      // Handles move queueing based on function
       else {
         if(this.state.reload) this.reloadTurnedPieces(this.state.face);
         if(this.state.currentFunc !== "None"){
@@ -1700,7 +1693,7 @@ class App extends Component {
             // Code here for color picker interface
           }
           
-          else 
+          else {
             if(this.state.moveSet.length){
               let cD = this.state.cubeDimension;
               let tempRubiks = this.state.rubiksObject;
@@ -1719,6 +1712,7 @@ class App extends Component {
             } else{
               this.setState({currentFunc:"None"}); 
             }
+          }
         }
       }
       
@@ -1730,7 +1724,7 @@ class App extends Component {
 
   // Renders html to the index.html page
   render() {
-    let solveBtn = (this.state.cubeDimension < 21) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "60px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SOLVE</button> : "";
+    let solveBtn = (this.state.cubeDimension < 51) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "60px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SOLVE</button> : "";
     let solveInterface = <div style={{position:"fixed", borderRadius: ".25rem",bottom: "60px", right: "10px",backgroundColor: "#343a40", border: "1px solid #007bff",color:"lightgray"}}>
         {!this.state.autoPlay? <button onClick={() => this.setState({autoPlay:true})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Auto Play</button> : 
         <button onClick={() => this.setState({autoPlay:false})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Pause</button>} <br></br>
@@ -1738,7 +1732,7 @@ class App extends Component {
         {!this.state.autoPlay && this.state.prevSet.length? <button onClick={() => this.rewindSolve()} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Rewind "{this.state.prevSet[this.state.prevSet.length-1]}"</button > : <button disabled style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>Rewind "No move"</button> }<br></br>
         <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>
     </div>;
-    let stopSolveBtn = <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>;
+    // let stopSolveBtn = <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>;
     return (
       <div className="App" >
         
@@ -1758,7 +1752,7 @@ class App extends Component {
 
         <Speeds //Top left with slider
           onSliderChange={this.onSliderChange}
-          isDisabled={this.state.currentFunc==="None" || (this.state.currentFunc==="Solving" && !this.state.autoPlay && !this.state.playOne)? false:true}
+          isDisabled={this.state.currentFunc==="None" ? false:true}
         />
 
         { this.state.showMoveInput? 
@@ -1769,6 +1763,15 @@ class App extends Component {
             onStop = {this.onStopInput}
           /> : ""
         }
+
+        {/* { this.state.showColorPicker? 
+          <ColorPicker
+            algorithm = {this.algorithm}
+            handleDrag = {this.handleDragInput}
+            onStart = {this.onStartInput}
+            onStop = {this.onStopInput}
+          /> : ""
+        } */}
       
         <Patterns
           algorithm={this.algorithm}
