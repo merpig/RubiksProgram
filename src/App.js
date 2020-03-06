@@ -723,9 +723,9 @@ class App extends Component {
     let tempMoveSet = this.state.moveSet;
     let lastEl = tempPrev[tempPrev.length-1];
     let popped = tempPrev.pop();
-    console.log(popped);
+    //console.log(popped);
     popped[popped.length-1]==="'" ? popped=popped.slice(0,3) : popped+="'";
-    console.log(popped);
+    //console.log(popped);
     let newMoveSet = [popped,lastEl,...tempMoveSet];
     this.setState({
       playOne:true,
@@ -1017,7 +1017,7 @@ class App extends Component {
       if(!tempState.moveSet || !tempState.moveSet.length) {
         let moves = solver(tempState.solveState,tempState.rubiksObject,tempState.cubeDimension,this.moveStringToArray,
           tempState.solveMoves,tempState.rubiksIndex,tempState.middles,tempState.edges);
-        console.log(moves);
+        //console.log(moves);
         if(moves.moveSet){
           let temp = [];
           for(let i = 0; i<moves.moveSet.length; i++){
@@ -1659,7 +1659,7 @@ class App extends Component {
               let end = this.state.end;
               let solveState = this.state.solveState;
               let obj = {};
-              
+
               if(this.state.autoPlay) {
                 obj.prevSet = this.state.prevSet;
                 obj.prevSet.push(moveSet[0]);

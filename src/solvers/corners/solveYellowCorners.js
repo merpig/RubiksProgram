@@ -59,7 +59,7 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
               if(solveMoves.length){
                 let temp = solveMoves.split(" ");
                 console.log("Number of moves: "+ temp.length);
-                console.log("Moves set: " + solveMoves);
+                //console.log("Moves set: " + solveMoves);
                 obj.solveMoves = "";
                 return obj;
               }
@@ -84,7 +84,7 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
           let temp = solveMoves.split(" ");
           
           console.log("Number of moves: "+ temp.length);
-          console.log("Moves set: " + solveMoves);
+          //console.log("Moves set: " + solveMoves);
           obj.solveMoves = "";
           return obj;
         }
