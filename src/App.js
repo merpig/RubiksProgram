@@ -1017,11 +1017,10 @@ class App extends Component {
       if(!tempState.moveSet || !tempState.moveSet.length) {
         let moves = solver(tempState.solveState,tempState.rubiksObject,tempState.cubeDimension,this.moveStringToArray,
           tempState.solveMoves,tempState.rubiksIndex,tempState.middles,tempState.edges);
-        //console.log(moves);
         if(moves.moveSet){
           let temp = [];
           for(let i = 0; i<moves.moveSet.length; i++){
-            if(moves.moveSet[i]===''||moves.moveSet[i]===' ');
+            if(moves.moveSet[i]===''||moves.moveSet[i]===' '||moves.moveSet[i].includes('NaN'));
             else temp.push(moves.moveSet[i]);
           }
           moves.moveSet = temp;
