@@ -1020,7 +1020,8 @@ class App extends Component {
         if(moves.moveSet){
           let temp = [];
           for(let i = 0; i<moves.moveSet.length; i++){
-            if(moves.moveSet[i]===''||moves.moveSet[i]===' '||moves.moveSet[i].includes('NaN')||moves.moveSet[i]==="'");
+            
+            if(moves.moveSet[i]===''||moves.moveSet[i]===' '||moves.moveSet[i][0]==="N"||moves.moveSet[i]==="'");
             else temp.push(moves.moveSet[i]);
           }
           moves.moveSet = temp;
@@ -1043,9 +1044,9 @@ class App extends Component {
       }
     }
     let splitSet = solvedSet.split(" ");
+    if(splitSet[0][0]==="N"||splitSet[0][0]==="'") splitSet.shift();
     let moveSet = []
     splitSet.forEach(e => e[e.length-1]==="'"? moveSet.push(e.replace("'","")):moveSet.push(e+"'"));
-    console.log(moveSet);
     return {moveSet,rubiksObject : beforeObject};
   }
 
