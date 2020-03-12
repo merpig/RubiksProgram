@@ -110,6 +110,7 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
         
         if(dim===4){
           obj.solveState = .1; obj.rubiksIndex = 0; obj.currentFunc = "Solving";
+          //obj.solveState = -1; obj.rubiksIndex = 0; obj.currentFunc = "None";
         } else {
           obj.solveState = .1; obj.rubiksIndex = 0; obj.currentFunc = "Solving";
         }
