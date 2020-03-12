@@ -13,7 +13,7 @@ const MoveInput = (props) => {
         <div style={{position: "absolute", zIndex: "99"}}>
             <Draggable
                 handle=".handle"
-                defaultPosition={{x:window.innerWidth-211 , y: 100}}
+                defaultPosition={{x:/*window.innerWidth-220*/0 , y: 150}}
                 position={null}
                 grid={[50, 50]}
                 scale={1}

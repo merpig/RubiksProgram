@@ -1,26 +1,35 @@
-function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMoves){
+function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMoves,corners){
     let moveString = "";
     let cube = rubiksObject;
     let solveAlgo = "01U' 01F' 01U 01F 01U' 01F' 01U 01F";
     let dim = cubeDimension;
 
-    let pieceOne = cube.length - (dim*dim);
-    let pieceTwo = pieceOne + (dim-1);
-    let pieceThree = cube.length - dim;
-    let pieceFour = cube.length - 1;
+    let maxCoord = dim-1;
+    let minCoord = 0;
+
+    let pieceOne = corners[4];
+    let pieceTwo = corners[5];
+    let pieceThree = corners[6];
+    let pieceFour = corners[7];
+
+    let moveArray;
 
     if(cube[pieceOne][3] === "yellow" &&
        cube[pieceTwo][3] === "yellow" &&
        cube[pieceThree][3] === "yellow" &&
        cube[pieceFour][3] === "yellow"){
-      if(cube[pieceOne][6] === 0 && cube[pieceOne][8] === dim-1);
+      if(cube[pieceOne][6] === minCoord && cube[pieceOne][8] === maxCoord);
       else moveString = "01B";
     }
+
     else if(cube[pieceOne][3]!== "yellow"){
+      //console.log(cube[pieceOne]);
       moveString = solveAlgo;
     }
+
     else if(cube[pieceTwo][3]!== "yellow"){
-      if(cube[pieceTwo][6] === 0 && cube[pieceTwo][8] === dim-1) {
+      if(cube[pieceTwo][6] === minCoord && cube[pieceTwo][8] === maxCoord) {
+        //console.log(cube[pieceTwo]);
         moveString = solveAlgo;
       }
       else {
@@ -28,7 +37,8 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
       }
     }
     else if(cube[pieceFour][3]!== "yellow"){
-      if(cube[pieceFour][6] === 0 && cube[pieceFour][8] === dim-1) {
+      if(cube[pieceFour][6] === minCoord && cube[pieceFour][8] === maxCoord) {
+        //console.log(cube[pieceFour]);
         moveString = solveAlgo;
       }
       else{
@@ -36,7 +46,8 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
       }
     }
     else if(cube[pieceThree][3]!== "yellow"){
-      if(cube[pieceThree][6] === 0 && cube[pieceThree][8] === dim-1) {
+      if(cube[pieceThree][6] === minCoord && cube[pieceThree][8] === maxCoord) {
+        //console.log(cube[pieceThree]);
         moveString = solveAlgo;
       }
       else {
@@ -44,7 +55,7 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
       }
     }
 
-    let moveArray = moveStringToArray(moveString);
+    moveArray = moveStringToArray(moveString);
 
     if(moveString.length){
       return {moveSet:moveArray};
@@ -52,9 +63,10 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
     else{
       //check for anomoly
       if(dim === 2) {
-        if(cube[pieceOne][6]===0 && cube[pieceOne][8]===dim-1) {
-          if(cube[pieceTwo][6]===dim-1 && cube[pieceTwo][8]===dim-1){
-            if(cube[pieceThree][6]===0 && cube[pieceThree][8]===0){
+
+        if(cube[pieceOne][6]===minCoord && cube[pieceOne][8]===maxCoord) {
+          if(cube[pieceTwo][6]===maxCoord && cube[pieceTwo][8]===maxCoord){
+            if(cube[pieceThree][6]===minCoord && cube[pieceThree][8]===minCoord){
               let obj = {moveLog : "",currentFunc: "None",moveSet:[],solveState:-1};
               if(solveMoves.length){
                 obj.solveMoves = "";

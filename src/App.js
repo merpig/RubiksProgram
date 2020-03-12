@@ -65,7 +65,8 @@ class App extends Component {
     blockMoveLog : false, // Blocks adding move when undoing/redoing a move
     previousPiece : null, // Keeps track of hovered face to not redraw
     rubiksIndex : 0,      // Index to keep track of middles while solving
-    middles : [],         // Contains all middle segments         
+    middles : [],         // Contains all middle segments
+    corners : [],         // Contains all corner segments         
     showStats: false,     // Setting for stats
     showMoveInput: false,  // Setting for custom move input
     showControls: false,   // Setting for move controls
@@ -93,7 +94,7 @@ class App extends Component {
     autoPlay : false,
     playOne : false,
     generateAllMoves: false,
-    isLocal : null
+    isLocal : null,
   };
 
   // rotate colors on face (memory cube)
@@ -1002,10 +1003,20 @@ class App extends Component {
   generateAllSolveMoves = (state,rubiksObject) =>{
     let beforeObject = rubiksObject.map(e=>[...e]);
     let tempState = {...state}, solvedSet = "";
+    let currentIndex = null;
+    let previousIndex = null;
+    let indexOccurence = 0;
+    let error = false;
+    let counter = 0;
     while(tempState.currentFunc==="Solving"){
+      //counter++;
       if(!tempState.moveSet || !tempState.moveSet.length) {
+        currentIndex=tempState.rubiksIndex;
+        if(currentIndex===previousIndex) indexOccurence = indexOccurence+1;
+        else indexOccurence = 0;
+        
         let moves = solver(tempState.solveState,tempState.rubiksObject,tempState.cubeDimension,this.moveStringToArray,
-          tempState.solveMoves,tempState.rubiksIndex,tempState.middles,tempState.edges);
+          tempState.solveMoves,tempState.rubiksIndex,tempState.middles,tempState.edges,tempState.corners);
         if(moves.moveSet){
           let temp = [];
           for(let i = 0; i<moves.moveSet.length; i++){
@@ -1015,8 +1026,14 @@ class App extends Component {
           }
           moves.moveSet = temp;
         }
+        if((indexOccurence>10 && tempState.solveState<1)||counter>1000) {
+          error = true;
+          //console.log(JSON.stringify({beforeObject}));
+          moves.currentFunc="None";
+        }
         if(moves.currentFunc && moves.currentFunc==="None") solvedSet = tempState.solveMoves;
         tempState = {...tempState,...moves};
+        previousIndex=currentIndex;
       }
       else{
         let cD = tempState.cubeDimension;
@@ -1037,7 +1054,11 @@ class App extends Component {
     let moveSet = []
     splitSet.forEach(e => e[e.length-1]==="'"? moveSet.push(e.replace("'","")):moveSet.push(e+"'"));
     console.log("Number of moves: \n",moveSet.length);
-    console.log(moveSet);
+    //console.log(...moveSet);
+    if(error) {
+      console.log("Stopped due to probable infinite loop");
+      //return {rubiksObject : beforeObject};
+    }
     return {moveSet,rubiksObject : beforeObject};
   }
 
@@ -1064,12 +1085,12 @@ class App extends Component {
     let raycaster = new THREE.Raycaster();
     let mouse = new THREE.Vector2();
     let cubeGeometry = new THREE.BoxGeometry( 1, 1, 1 );
-    var geometry = new THREE.PlaneGeometry(1,1);
+    let geometry = new THREE.PlaneGeometry(1,1);
     //const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp2vqlj5dzmGwQfEBy7yNWfDvDVm6mgsA4768bcpsJDmdp9t0g7w&s');
     const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
     //const loader1 = new THREE.TextureLoader().load('https://cdn0.iconfinder.com/data/icons/arrows-11/100/arrow-1-512.png');
     const loader1 = new THREE.TextureLoader().load('https://cdn2.iconfinder.com/data/icons/communication-language/100/Up_Arrow-01-512.png');
-    var material = new THREE.MeshBasicMaterial( {map:loader1,transparent: true,color: 'black', opacity:'.8',side: THREE.DoubleSide} );
+    let material = new THREE.MeshBasicMaterial( {map:loader1,transparent: true,color: 'black', opacity:'.8',side: THREE.DoubleSide} );
     let tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
 
     let windowHeight = window.innerHeight;
@@ -1390,6 +1411,7 @@ class App extends Component {
       rubiksObject,
       middles: generated.middles,
       edges: generated.edges,
+      corners: generated.corners,
       generatedButtons: cube.generateButtonData(this.getSizeFromUrl())
     }, () => {
       // Callback required to wait for setState to finish
@@ -1411,7 +1433,7 @@ class App extends Component {
     });
 
     // Function runs continuously to animate cube
-    var animate = () => {
+    let animate = () => {
 
       // clear visible move hints
       for(let i = 0; i < groups.length;i++)
@@ -1482,7 +1504,7 @@ class App extends Component {
         raycaster.setFromCamera( mouse, camera );
 
         // calculate objects intersecting the picking ray
-        var intersects = raycaster.intersectObjects( scene.children );
+        let intersects = raycaster.intersectObjects( scene.children );
         if (intersects[0] && intersects[0].object.material.length && !this.state.mouseDown && this.state.currentFunc==="None"){
           previousMousePos = null;
           piecePos = null;
@@ -1633,7 +1655,7 @@ class App extends Component {
                 let a = performance.now();
                 this.setState(this.generateAllSolveMoves(this.state,this.state.rubiksObject));
                 let b = performance.now();
-                console.log('It took ' + (b - a)/1000 + ' seconds to solve.');
+                console.log('It took ' + ((b - a)/1000).toFixed(3) + ' seconds to solve.');
               });
 
             }
@@ -1703,11 +1725,14 @@ class App extends Component {
               let solveState = this.state.solveState;
               let end = this.state.end;
               let moveData = this.parseMoveArray(this.state.moveSet);
-              let obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
-  
-              obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,tempRubiks);
 
-              this.setState(obj);
+              if(moveData){
+                let obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
+    
+                obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,tempRubiks);
+
+                this.setState(obj);
+              }
 
             } else{
               this.setState({currentFunc:"None"}); 
@@ -1793,7 +1818,7 @@ class App extends Component {
   
         {/* Create a component for these that works similarly to patterns to auto populate functions */}
         {/* Bottom Right */} 
-        
+        {this.state.moveSet[0]==="'"?this.stopSolve():""}
         {this.state.solveState < 0 ? solveBtn : solveInterface}
         <button onClick={this.beginScramble} style={{position:"fixed", bottom: "30px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SCRAMBLE</button>
         <button onClick={this.reset} style={{position:"fixed", bottom: "0px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>RESET</button>
@@ -1801,5 +1826,7 @@ class App extends Component {
     );
   }
 }
+
+
 
 export default App;

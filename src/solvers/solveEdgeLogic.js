@@ -1,5 +1,6 @@
 import frontEdges from "./edges/solveFrontEdgeSegments";
 import backEdges from "./edges/solveBackEdgeSegments";
+import middleEdges from "./edges/solveMiddleEdgeSegements";
 
 function side(rubiksObject,color){
     return rubiksObject.indexOf(color);
@@ -13,6 +14,8 @@ function solveEdgeLogic(cubeDimensions,rubiksObjectAtIndex,index,cube,edges){
     const section = Math.floor(index/(edgeLength*edgesPerSection));
     const whiteSide = side(rubiksObjectAtIndex,'white');
     const yellowSide = side(rubiksObjectAtIndex,'yellow');
+    const blueSide = side(rubiksObjectAtIndex,'blue');
+    const greenSide = side(rubiksObjectAtIndex,'green');
 
     let moveString = "";
 
@@ -30,8 +33,9 @@ function solveEdgeLogic(cubeDimensions,rubiksObjectAtIndex,index,cube,edges){
 
     if(current.x===solved.x && current.y===solved.y && current.z===solved.z){
         if( (whiteSide === 0 && section === 0) ||
-            (yellowSide === 3 && section === 1)){
-            //console.log("SOLVED");
+            (yellowSide === 3 && section === 1)||
+            section===2){
+            console.log("SOLVED");
             return "";
         }      
     }
@@ -46,15 +50,17 @@ function solveEdgeLogic(cubeDimensions,rubiksObjectAtIndex,index,cube,edges){
             break;
         case 2:
             // Not started
-            // moveString = middleEdges()
+            moveString = middleEdges(current,solved,dim,blueSide,greenSide);
             break;
         default:
             console.log("Should never reach here");
     }
-    //console.log("Section: ", section);
-    // if(section === 0) console.log("White side: ",whiteSide);
-    // if(section === 1) console.log("Yellow side: ",yellowSide);
-    //console.log("Current: ",current,"\nSolved: ",solved);
+    console.log("Section: ", section);
+    if(section === 0) console.log("White side: ",whiteSide);
+    else if(section === 1) console.log("Yellow side: ",yellowSide);
+    else if(blueSide > -1) console.log("Blue side: ", blueSide);
+    else if(greenSide > -1) console.log("Green side: ", greenSide);
+    console.log("Current: ",current,"\nSolved: ",solved);
 
     return moveString;
 }

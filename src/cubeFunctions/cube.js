@@ -6,6 +6,7 @@ const cube = {
         const tempArr = [];
         const middles = [];
         const edges = [];
+        const corners = [];
         const tempMiddles = [
           [], // white
           [], // yellow
@@ -95,7 +96,10 @@ const cube = {
                   }
                 }
               }
-              else if(tempCount===3) tempType = "corner";
+              else if(tempCount===3) {
+                tempType = "corner";
+                corners.push(tempArr.length);
+              }
     
               tempArr.push([side0,side1,side2,side3,side4,side5, // piece colors
                             i,j,k, // Current position x,y,z
@@ -117,11 +121,8 @@ const cube = {
             edges.push(...tempEdges[i][j]);
           }
         }
-        // console.log(tempArr[0]);
-        // console.log(tempEdges);
-        // console.log(edges);
-        // console.log(tempArr);
-        return {tempArr,middles,edges};
+        
+        return {tempArr,middles,edges,corners};
     },
 
     generateButtonData : function(size){

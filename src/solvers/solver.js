@@ -20,7 +20,7 @@ const CONSTANTS = {
     SOLVE_YELLOW_CORNERS: 7
 }
 
-function solver(solveState,rubiksObject,cubeDimension,moveStringToArray,solveMoves,rubiksIndex,middles,edges){
+function solver(solveState,rubiksObject,cubeDimension,moveStringToArray,solveMoves,rubiksIndex,middles,edges,corners){
     
     switch(solveState){
         case CONSTANTS.SOLVE_MIDDLES:
@@ -28,19 +28,19 @@ function solver(solveState,rubiksObject,cubeDimension,moveStringToArray,solveMov
         case CONSTANTS.SOLVE_EDGES:
             return solveEdges(rubiksObject,cubeDimension,moveStringToArray,edges,rubiksIndex);
         case CONSTANTS.SOLVE_WHITE_CROSS:
-            return solveWhiteCross(rubiksObject,cubeDimension,moveStringToArray);
+            return solveWhiteCross(rubiksObject,cubeDimension,moveStringToArray,edges);
         case CONSTANTS.SOLVE_WHITE_CORNERS:
-            return solveWhiteCorners(rubiksObject,cubeDimension,moveStringToArray);
+            return solveWhiteCorners(rubiksObject,cubeDimension,moveStringToArray,corners);
         case CONSTANTS.SOLVE_MIDDLE_EDGES:
-            return solveMiddleEdges(rubiksObject,moveStringToArray);
+            return solveMiddleEdges(rubiksObject,moveStringToArray,edges,cubeDimension);
         case CONSTANTS.SOLVE_YELLOW_CROSS:
-            return solveYellowCross(rubiksObject,moveStringToArray);
+            return solveYellowCross(rubiksObject,moveStringToArray,edges,cubeDimension);
         case CONSTANTS.ALIGN_YELLOW_CROSS:
-            return alignYellowCross(rubiksObject,moveStringToArray);
+            return alignYellowCross(rubiksObject,moveStringToArray,edges,cubeDimension);
         case CONSTANTS.ALIGN_YELLOW_CORNERS:
-            return alignYellowCorners(rubiksObject,cubeDimension,moveStringToArray);
+            return alignYellowCorners(rubiksObject,cubeDimension,moveStringToArray,corners);
         case CONSTANTS.SOLVE_YELLOW_CORNERS:
-            return solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMoves);
+            return solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMoves,corners);
         default:
             console.log("invalid solve state");
     }
