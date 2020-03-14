@@ -21,6 +21,9 @@ function inMiddle(coord,maxCoord,minCoord){
 }
 
 function alignYellowCross(rubiksObject,moveStringToArray,edges,dim){
+
+    if(dim === 2) {return {solveState : 6};}
+
     let moveString = "";
     let cube = rubiksObject;
 

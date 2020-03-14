@@ -125,6 +125,36 @@ const cube = {
         return {tempArr,middles,edges,corners};
     },
 
+    generateBlank : function (_x,_y,_z){
+      const tempArr = [];
+      
+  
+      for(let j = 0; j < _y; j++){      // Move back along the y-axis
+        for(let k = _z-1; k >= 0; k--){ // Move down through the z-axis
+          for(let i = 0; i < _x; i++){  // Traverse across the x-axis
+            let side0 = "black";
+            let side1 = "black";
+            let side2 = "black";
+            let side3 = "black";
+            let side4 = "black";
+            let side5 = "black";
+            if(i===_x-1) side2 = "white";
+            else if (i===0) side4 ="white";
+            if(j===_y-1) side3 = "white";
+            else if (j===0) side0 ="white";
+            if(k===_z-1) side1 = "white";
+            else if (k===0) side5 ="white";
+  
+            tempArr.push([side0,side1,side2,side3,side4,side5, // piece colors
+                          i,j,k, // Current position x,y,z
+                        ]);
+          }
+        }
+      }
+      
+      return tempArr;
+  },
+
     generateButtonData : function(size){
         let numLayers = Math.floor(size/2);
         let centerLayer = Math.ceil(size/2);

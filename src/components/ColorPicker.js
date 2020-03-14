@@ -6,7 +6,7 @@ const ColorPicker = (props) => {
         <div style={{position: "absolute", zIndex: "99"}}>
             <Draggable
             handle=".handle"
-            defaultPosition={{x:window.innerWidth-211 , y: 50}}
+            defaultPosition={{x:window.innerWidth-211 , y: 150}}
             position={null}
             grid={[50, 50]}
             scale={1}
@@ -17,7 +17,15 @@ const ColorPicker = (props) => {
                     <div className="handle" style={{color:"grey"}}>Drag from here</div>
                     <div>
                         <div className="cp-container" style={{width:"200px",height:"100px"}}>
-
+                            <button>Current color: []</button>
+                            <button>[White]</button>
+                            <button>[Blue]</button>
+                            <button>[Red]</button>
+                            <button>[Yellow]</button>
+                            <button>[Orange]</button>
+                            <button>[Green]</button>
+                            <button>Set [Invalid State]</button>
+                            <button onClick={props.endColorPicker}>Quit</button>
                         </div>
                     </div>
                 </div>

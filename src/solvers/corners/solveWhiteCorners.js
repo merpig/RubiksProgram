@@ -103,7 +103,7 @@
         return {moveSet : moveArray};
     }
     else{
-      if(dim < 3){
+      if(dim === 2){
         return {solveState : 6};
       }
       else{

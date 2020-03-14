@@ -13,6 +13,8 @@ function alignYellowCorners(rubiksObject,cubeDimension,moveStringToArray,corners
     let pieceFour = corners[7];
 
     let solveCount = 0;
+
+    
     if(cube[pieceOne][6]===cube[pieceOne][9] && cube[pieceOne][7]===cube[pieceOne][10] && cube[pieceOne][8]===cube[pieceOne][11]) solveCount++;
     if(cube[pieceTwo][6]===cube[pieceTwo][9] && cube[pieceTwo][7]===cube[pieceTwo][10] && cube[pieceTwo][8]===cube[pieceTwo][11]) solveCount++;
     if(cube[pieceThree][6]===cube[pieceThree][9] && cube[pieceThree][7]===cube[pieceThree][10] && cube[pieceThree][8]===cube[pieceThree][11]) solveCount++;
@@ -22,7 +24,7 @@ function alignYellowCorners(rubiksObject,cubeDimension,moveStringToArray,corners
     if(cube[pieceOne][6] === minCoord && cube[pieceOne][8] === maxCoord &&
        cube[pieceTwo][6] === maxCoord && cube[pieceTwo][8] === maxCoord);
 
-   else if(solveCount === 2) {
+   else if(solveCount === 2 && dim > 3) {
       //console.log("another parity encountered brother");
       moveString = "02D2 01B2 02D2 02b2 02D2 02b2";
       const moveArray = moveStringToArray(moveString);

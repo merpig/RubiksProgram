@@ -21,6 +21,9 @@ function inMiddle(coord,maxCoord,minCoord){
 }
 
 function solveYellowCross(rubiksObject,moveStringToArray,edges,dim){
+
+    if(dim === 2) {return {solveState : 5};}
+
     let moveString = "";
     let cube = rubiksObject;
     let recipe = "01U 01R 01B 01R' 01B' 01U'";

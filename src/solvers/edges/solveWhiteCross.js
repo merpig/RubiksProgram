@@ -31,7 +31,7 @@ function solveWhiteCross(rubiksObject,cubeDimension,moveStringToArray,edges){
     const maxCoord = dim-1;
     const minCoord = 0;
 
-    if(dim === 2) solvedEdges = 4;
+    if(dim === 2) {return {solveState : 2};}
 
     let fourEdgeSections = sectionSpliter(edges);
 

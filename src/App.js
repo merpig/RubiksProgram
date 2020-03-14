@@ -34,6 +34,7 @@ class App extends Component {
   state = {
     cubes : [],           // Contains visual cube
     rubiksObject : [],    // Contains memory cube
+    blackObject: [],
     speed : 7.5,          // Control individual piece rotation speed (don't change)
     rotationSpeed : 350,  // Controls visual rotation speed
     start : 7.5,          // Start value for a rotation or set of rotations
@@ -58,6 +59,7 @@ class App extends Component {
     facePosX : null,
     facePosY : null,
     facePosZ : null,
+    faceSide : null,
     mouseFace : null,
     mouseDown : false,
     mousePos : null,
@@ -72,7 +74,6 @@ class App extends Component {
     showControls: false,   // Setting for move controls
     showHints: true,
     showGuideArrows: true,
-    showColorPicker: true,
     activeDragsInput: 0,  // Keeps track of draggable input
     deltaPositionInput: {
       x: 100, y: 100
@@ -708,6 +709,20 @@ class App extends Component {
     this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : []});
   }
 
+  beginColorPicker = () => {
+    let cD = this.state.cubeDimension;
+    if(this.state.currentFunc !== "None") return;
+    const blank = cube.generateBlank(cD,cD,cD);
+    this.setState({currentFunc : "Color Picker",rubiksObject: blank},()=>{
+      this.reloadTurnedPieces('cp');
+    });
+  }
+
+  endColorPicker = () => {
+    this.reset();
+    this.setState({currentFunc : "None"});
+  }
+
   rewindSolve = () => {
     if(this.state.playOne) return;
     let tempPrev = this.state.prevSet;
@@ -853,13 +868,18 @@ class App extends Component {
     let cubes = [...this.state.cubes];
     
     for(let i = 0; i<this.state.rubiksObject.length;i++){
-
+      
       let tempCube = {...cubes[i]};
       let rotation = tempCube.rotation;
 
-      if((rotation.x !== 0 || rotation.y !== 0 ||rotation.z !== 0) || 
-           (pos === tempCube.position || pos==='all')){
 
+      if(pos === tempCube.position){
+        tempCube.opacity=1;
+        cubes[i] = tempCube;
+      }
+
+      else if((rotation.x !== 0 || rotation.y !== 0 ||rotation.z !== 0) || 
+           (pos==='all'||pos==='cp')){
         if(pos==='all') {
           tempCube.position.x=this.state.rubiksObject[i][9];
           tempCube.position.y=this.state.rubiksObject[i][10];
@@ -1053,11 +1073,39 @@ class App extends Component {
     if(splitSet[0][0]==="N"||splitSet[0][0]==="'") splitSet.shift();
     let moveSet = []
     splitSet.forEach(e => e[e.length-1]==="'"? moveSet.push(e.replace("'","")):moveSet.push(e+"'"));
+    let extraMoves = 0;
+
     console.log("Number of moves: \n",moveSet.length);
-    //console.log(...moveSet);
+    for(let i = 0; i < moveSet.length-2; i++){
+      if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
+        moveSet[i]="";
+        moveSet[i+1]="";
+        extraMoves+=2;
+      }
+    }
+
+    for(let i = 0; i < moveSet.length-3; i++){
+      if(moveSet[i]===moveSet[i+1] && moveSet[i+1]===moveSet[i+2]){
+        if(moveSet[i].length===3){moveSet[i]+="'"}
+        else{moveSet[i]=moveSet[i].substring(0,3)}
+        moveSet[i+1]="";
+        moveSet[i+2]="";
+        extraMoves+=2;
+      }
+    }
+
+    let temp = [];
+    for(let i = 0; i<moveSet.length; i++){
+      
+      if(moveSet[i]===''||moveSet[i]===' '||moveSet[i][0]==="N"||moveSet[i]==="'"){}
+      else {temp.push(moveSet[i]);}
+    }
+    moveSet = temp;
+    
+    console.log("Pruned moves: ",extraMoves);
+    console.log("Number of moves: \n",moveSet.length);
     if(error) {
       console.log("Stopped due to probable infinite loop");
-      //return {rubiksObject : beforeObject};
     }
     return {moveSet,rubiksObject : beforeObject};
   }
@@ -1146,12 +1194,12 @@ class App extends Component {
 
       // Map textures to each face to look nice and then color over
       const cubeMaterials = [
-        new THREE.MeshBasicMaterial({ map: loader ,transparent: true, color:rubiksObject[i][2], side: THREE.FrontSide}),
-        new THREE.MeshBasicMaterial({ map: loader ,transparent: true, color:rubiksObject[i][4], side: THREE.FrontSide}), 
-        new THREE.MeshBasicMaterial({ map: loader ,transparent: true, color:rubiksObject[i][3], side: THREE.FrontSide}),
-        new THREE.MeshBasicMaterial({ map: loader ,transparent: true,}), 
-        new THREE.MeshBasicMaterial({ map: loader ,transparent: true, color:rubiksObject[i][1], side: THREE.FrontSide}), 
-        new THREE.MeshBasicMaterial({ map: loader ,transparent: true, color:rubiksObject[i][5], side: THREE.FrontSide}), 
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true,opacity:1, color:rubiksObject[i][2], side: THREE.FrontSide}),
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true,opacity:1, color:rubiksObject[i][4], side: THREE.FrontSide}), 
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true,opacity:1, color:rubiksObject[i][3], side: THREE.FrontSide}),
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true,opacity:1,}), 
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true,opacity:1, color:rubiksObject[i][1], side: THREE.FrontSide}), 
+        new THREE.MeshBasicMaterial({ map: loader ,transparent: true,opacity:1, color:rubiksObject[i][5], side: THREE.FrontSide}), 
       ];
     
       // Add the new cube to temp cubes
@@ -1412,6 +1460,7 @@ class App extends Component {
       middles: generated.middles,
       edges: generated.edges,
       corners: generated.corners,
+      currentFunc: 'Reset',
       generatedButtons: cube.generateButtonData(this.getSizeFromUrl())
     }, () => {
       // Callback required to wait for setState to finish
@@ -1427,7 +1476,6 @@ class App extends Component {
       camera.position.y = this.state.cameraY;
       camera.position.x = this.state.cameraX;// * Math.cos( this.state.angle );
 
-      //this.reset();
       renderer.render( scene, camera );
       animate();
     });
@@ -1446,7 +1494,7 @@ class App extends Component {
       // Mouse stuff here
       // Consider moving into another function to unclutter animate
       // Very expensive operation
-      if(this.state.currentFunc === "None" || this.state.currentFunc ==="Solving") {
+      if(this.state.currentFunc === "Color Picker" || this.state.currentFunc === "None") {
 
         //check here that data isn't the same as previous so not running this every time
         // Data on move button triggers visual move hints
@@ -1505,7 +1553,7 @@ class App extends Component {
 
         // calculate objects intersecting the picking ray
         let intersects = raycaster.intersectObjects( scene.children );
-        if (intersects[0] && intersects[0].object.material.length && !this.state.mouseDown && this.state.currentFunc==="None"){
+        if (intersects[0] && intersects[0].object.material.length && !this.state.mouseDown){
           previousMousePos = null;
           piecePos = null;
           intersected = null;
@@ -1524,11 +1572,14 @@ class App extends Component {
           }
 
           // Recolors last hovered piece. rgb values of cyan
-          if(parseFloat(intersects[0].object.material[tempIndex].color.r) !== 0.6784313725490196 &&
+          if(intersects[0].object.material[tempIndex].opacity!==.8/*parseFloat(intersects[0].object.material[tempIndex].color.r) !== 0.6784313725490196 &&
              parseFloat(intersects[0].object.material[tempIndex].color.g) !== 0.8470588235294118 &&
-             parseFloat(intersects[0].object.material[tempIndex].color.b) !== 0.9019607843137255){
+             parseFloat(intersects[0].object.material[tempIndex].color.b) !== 0.9019607843137255*/){
+               
             if(previousPiece!==null) {
-              this.reloadTurnedPieces(previousPiece);
+              let previousPiece = this.state.previousPiece;
+              previousPiece.opacity=1;
+              //this.reloadTurnedPieces(previousPiece);
               this.setState({previousPiece:null});
             }
           }
@@ -1539,11 +1590,13 @@ class App extends Component {
               // store the hovered face for use later
               this.setState({facePosX : intersects[0].object.position.x,
                             facePosY : intersects[0].object.position.y,
-                            facePosZ : intersects[0].object.position.z });
-              intersects[0].object.material[tempIndex].color.set("lightblue");
+                            facePosZ : intersects[0].object.position.z,
+                            faceSide : tempIndex });
+              intersects[0].object.material[tempIndex].opacity=.8;
+              //console.log(intersects[0].object.material[tempIndex].opacity);
               // store the hovered coordinates so that if a different
               // piece is hovered, the previous gets colored back.
-              this.setState({previousPiece : intersects[0].object.position});
+              this.setState({previousPiece : intersects[0].object.material[tempIndex]});
             }
         }
 
@@ -1588,7 +1641,8 @@ class App extends Component {
         // 
         else if(this.state.mouseFace !== null){
           if(previousPiece!==null) {
-            this.reloadTurnedPieces(previousPiece);
+            previousPiece.opacity=1;
+            //this.reloadTurnedPieces(previousPiece);
             this.setState({previousPiece:null});
           }
 
@@ -1714,7 +1768,9 @@ class App extends Component {
           else if(this.state.currentFunc==="Color Picker"){
             // Code here for color picker interface
           }
-          
+          else if(this.state.currentFunc==='Reset'){
+            this.reset();
+          }
           else {
             if(this.state.moveSet.length){
               let cD = this.state.cubeDimension;
@@ -1734,7 +1790,8 @@ class App extends Component {
                 this.setState(obj);
               }
 
-            } else{
+            } 
+            else{
               this.setState({currentFunc:"None"}); 
             }
           }
@@ -1789,14 +1846,14 @@ class App extends Component {
           /> : ""
         }
 
-        {/* { this.state.showColorPicker? 
+        { this.state.currentFunc==="Color Picker"? 
           <ColorPicker
-            algorithm = {this.algorithm}
             handleDrag = {this.handleDragInput}
             onStart = {this.onStartInput}
             onStop = {this.onStopInput}
+            endColorPicker={this.endColorPicker}
           /> : ""
-        } */}
+        }
       
         <Patterns
           algorithm={this.algorithm}
@@ -1818,10 +1875,11 @@ class App extends Component {
   
         {/* Create a component for these that works similarly to patterns to auto populate functions */}
         {/* Bottom Right */} 
+        {this.state.solveState < 0 ?<button onClick={this.beginColorPicker} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>COLOR PICKER</button>:""}
         {this.state.moveSet[0]==="'"?this.stopSolve():""}
         {this.state.solveState < 0 ? solveBtn : solveInterface}
         <button onClick={this.beginScramble} style={{position:"fixed", bottom: "30px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SCRAMBLE</button>
-        <button onClick={this.reset} style={{position:"fixed", bottom: "0px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>RESET</button>
+        <button onClick={()=>this.setState({currentFunc:"Reset"})} style={{position:"fixed", bottom: "0px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>RESET</button>
       </div>
     );
   }
