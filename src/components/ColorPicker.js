@@ -17,14 +17,14 @@ const ColorPicker = (props) => {
                     <div className="handle" style={{color:"grey"}}>Drag from here</div>
                     <div>
                         <div className="cp-container" style={{width:"200px",height:"100px"}}>
-                            <button>Current color: []</button>
-                            <button>[White]</button>
-                            <button>[Blue]</button>
-                            <button>[Red]</button>
-                            <button>[Yellow]</button>
-                            <button>[Orange]</button>
-                            <button>[Green]</button>
-                            <button>Set [Invalid State]</button>
+                            <button style={{backgroundColor:props.colorPicked}}>Current color: [{props.colorPicked}]</button>
+                            <button style={{backgroundColor:'white'}} onClick={()=>props.changeColor('white')}>1 : White</button>
+                            <button style={{backgroundColor:'blue'}} onClick={()=>props.changeColor('blue')}>2 : Blue</button>
+                            <button style={{backgroundColor:'red'}} onClick={()=>props.changeColor('red')}>3 : Red</button>
+                            <button style={{backgroundColor:'yellow'}} onClick={()=>props.changeColor('yellow')}>4 : Yellow</button>
+                            <button style={{backgroundColor:'orange'}} onClick={()=>props.changeColor('orange')}>5 : Orange</button>
+                            <button style={{backgroundColor:'green'}} onClick={()=>props.changeColor('green')}>6 : Green</button>
+                            <button >Set [N/A]</button>
                             <button onClick={props.endColorPicker}>Quit</button>
                         </div>
                     </div>

@@ -60,6 +60,7 @@ class App extends Component {
     facePosY : null,
     facePosZ : null,
     faceSide : null,
+    colorPicked: 'blue',
     mouseFace : null,
     mouseDown : false,
     mousePos : null,
@@ -469,6 +470,37 @@ class App extends Component {
         this.rotateOneFace(key.toUpperCase(),[3,-1,1]);
         break;
 
+      case '1':
+        if(this.state.currentFunc==='Color Picker'){
+          this.changeColor('white');
+        }
+        break;
+      case '2':
+        if(this.state.currentFunc==='Color Picker'){
+          this.changeColor('blue');
+        }
+        break;
+      case '3':
+        if(this.state.currentFunc==='Color Picker'){
+          this.changeColor('red');
+        }
+        break;
+      case '4':
+        if(this.state.currentFunc==='Color Picker'){
+          this.changeColor('yellow');
+        }
+        break;
+      case '5':
+        if(this.state.currentFunc==='Color Picker'){
+          this.changeColor('orange');
+        }
+        break;
+      case '6':
+        if(this.state.currentFunc==='Color Picker'){
+          this.changeColor('green');
+        }
+        break;
+
       default:
     }
   }
@@ -479,7 +511,18 @@ class App extends Component {
   }
 
   onMouseDown( event ) {
-    this.setState({mouseDown : true});  
+    if(!this.state.mouseDown){
+      if(this.state.currentFunc==="Color Picker"&&this.state.previousPiece){
+        let toFace = [2,4,3,0,1,5];
+        console.log('\nx:',this.state.facePosX,
+        '\ny:',this.state.facePosY,
+        '\nz:',this.state.facePosZ,
+        '\nfaceSide:', toFace[this.state.faceSide],
+        '\nassignColor: ', this.state.colorPicked);
+        this.changeFaceColor({x:this.state.facePosX,y:this.state.facePosY,z:this.state.facePosZ},toFace[this.state.faceSide],this.state.colorPicked)
+      }
+      this.setState({mouseDown : true});  
+    }
   }
 
   onMouseUp( event ) {
@@ -521,6 +564,24 @@ class App extends Component {
   changeSpeed = (_speed,_rotationSpeed,_name) => {
     if(this.state.currentFunc !== "None") return;
     this.setState({currentSpeed: _name,speed: _speed, start: _speed, end: 0, rotationSpeed: _rotationSpeed});
+  }
+
+  changeColor = (color) => {
+    this.setState({colorPicked:color});
+  }
+
+  changeFaceColor = (pos,side,color) => {
+    let tempObj = [...this.state.rubiksObject]
+    for(let i = 0; i < tempObj.length; i++){
+      let tempCube = [...tempObj[i]];
+      if(tempCube[6]===pos.x && tempCube[7]===pos.y && tempCube[8]===pos.z){
+        tempCube[side]=color;
+      }
+      tempObj[i] = tempCube;
+    }
+    this.setState({rubiksObject:tempObj},()=>{
+      this.reloadTurnedPieces('cp');
+    });
   }
 
   // Allows the user to undo a move
@@ -972,6 +1033,8 @@ class App extends Component {
     let calculated = null;
     let depth = null;
     let turn = null;
+
+    // difference in initial mouse down location and current mouse down
     const dif = { 
       x: (previous.x-current.x), 
       y: (previous.y-current.y), 
@@ -1563,6 +1626,7 @@ class App extends Component {
           let tempIndex = -1;
           
           // Assign the intersected face index to be recolored on hover
+          
           for(let i = 0; i < 6; i++){
             if(faceInteresected===i*2 || faceInteresected=== i*2+1) {
               tempIndex = i;
@@ -1852,6 +1916,8 @@ class App extends Component {
             onStart = {this.onStartInput}
             onStop = {this.onStopInput}
             endColorPicker={this.endColorPicker}
+            colorPicked={this.state.colorPicked}
+            changeColor={this.changeColor}
           /> : ""
         }
       
