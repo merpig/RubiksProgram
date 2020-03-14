@@ -147,6 +147,7 @@ const cube = {
   
             tempArr.push([side0,side1,side2,side3,side4,side5, // piece colors
                           i,j,k, // Current position x,y,z
+                          i,j,k, // solved position x,y,z
                         ]);
           }
         }

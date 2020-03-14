@@ -880,7 +880,7 @@ class App extends Component {
 
       else if((rotation.x !== 0 || rotation.y !== 0 ||rotation.z !== 0) || 
            (pos==='all'||pos==='cp')){
-        if(pos==='all') {
+        if(pos==='all'||pos==='cp') {
           tempCube.position.x=this.state.rubiksObject[i][9];
           tempCube.position.y=this.state.rubiksObject[i][10];
           tempCube.position.z=this.state.rubiksObject[i][11];
