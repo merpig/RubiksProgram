@@ -3,7 +3,6 @@ function inMiddle(coord,maxCoord,minCoord){
 }
 
 function sectionSpliter(edges){
-  //console.log(edges);
   let splitEdges = [];
   let edgeSegments = edges.length/3;
   const edgeSections = 4;
@@ -41,9 +40,11 @@ function solveMiddleEdges(rubiksObject,moveStringToArray,edges,dim){
   let edgeThree = fourEdgeSections[3][0];
   let edgeFour = fourEdgeSections[2][0];
 
+
+  // console.log("\n\n",fourEdgeSections);
   for(let i = 0; i < cube.length; i++){
     if(moveString.length) space = " ";
-    if(cube[i].includes("green") || cube[i].includes("blue")){
+    //if(cube[i].includes("green") || cube[i].includes("blue")){
       let emptyCount = 0;
       let blueSide = -1;
       let greenSide = -1;
@@ -59,7 +60,10 @@ function solveMiddleEdges(rubiksObject,moveStringToArray,edges,dim){
         }
       }
 
-      if(emptyCount === 4){
+      // //if(emptyCount === 4){
+      //   console.log("Cube:",cube[i]);
+      //   console.log("i:",i);
+      //   console.log("Solved Edges:",solvedEdges);
         if(i===edgeOne && solvedEdges === 0){
           //Front
           if(cubeX === minCoord && inMiddle(cubeY,maxCoord,minCoord) && cubeZ === maxCoord)
@@ -118,8 +122,8 @@ function solveMiddleEdges(rubiksObject,moveStringToArray,edges,dim){
           else if(cubeX === minCoord && cubeY === maxCoord && inMiddle(cubeZ,maxCoord,minCoord)) moveString+= space + "01B2";
           else if(inMiddle(cubeX,maxCoord,minCoord) && cubeY === maxCoord && cubeZ === maxCoord) moveString+= space + "01B'"; 
         }
-      }
-    }
+      //}
+    //}
   }
 
   const moveArray = moveStringToArray(moveString);

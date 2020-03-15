@@ -91,6 +91,7 @@ class App extends Component {
     },
     isMulti: false,
     isVisible: false,
+    isValidConfig:false,
     hoverData : [],
     showSolveController : false,
     autoPlay : false,
@@ -514,11 +515,6 @@ class App extends Component {
     if(!this.state.mouseDown){
       if(this.state.currentFunc==="Color Picker"&&this.state.previousPiece){
         let toFace = [2,4,3,0,1,5];
-        console.log('\nx:',this.state.facePosX,
-        '\ny:',this.state.facePosY,
-        '\nz:',this.state.facePosZ,
-        '\nfaceSide:', toFace[this.state.faceSide],
-        '\nassignColor: ', this.state.colorPicked);
         this.changeFaceColor({x:this.state.facePosX,y:this.state.facePosY,z:this.state.facePosZ},toFace[this.state.faceSide],this.state.colorPicked)
       }
       this.setState({mouseDown : true});  
@@ -579,9 +575,161 @@ class App extends Component {
       }
       tempObj[i] = tempCube;
     }
-    this.setState({rubiksObject:tempObj},()=>{
+    this.setState({rubiksObject:tempObj,isValidConfig:false},()=>{
       this.reloadTurnedPieces('cp');
+      let obj = this.checkColors();
+      if(obj.error) this.setState({isValidConfig:false});
+      else if(obj.success) this.setState({isValidConfig:true});
     });
+  }
+
+  setColorPickedCube = () => {
+    let rubiks = [...this.state.rubiksObject];
+    let generated = cube.generateSolved(this.state.cubeDimension,this.state.cubeDimension,this.state.cubeDimension);
+    let newGenerated = [];
+    let checked = [];
+
+    generated.tempArr.forEach(([...piece],pieceIndex) =>{
+      rubiks.forEach(([...rubik],i) => {
+        let validPiece = 0;
+        piece.slice(0,6).sort().forEach((face,index) =>{
+          if(rubik.slice(0,6).sort()[index]===face) {validPiece++;}
+        });
+        if(validPiece===6&&!checked.includes(pieceIndex)){
+          checked.push(pieceIndex);
+          newGenerated.push([
+            ...rubik.slice(0,9),
+            ...piece.slice(9,12)
+          ]);
+        }
+      }) 
+    });
+
+    this.setState({rubiksObject:newGenerated,currentFunc : "None"},()=>{
+      console.log(newGenerated);
+      this.reloadTurnedPieces('check');
+    });
+  }
+
+  checkOccurences = (a1, a2) => {
+    let success = true;
+    let failedColors = [];
+    for(var i = 0; i < a1.length; i++) {
+      var count = 0;
+      for(var z = 0; z < a2.length; z++) {
+        if (a2[z] === a1[i]) count++;
+      }
+      if(count>1) {
+        success = false;
+        if(!failedColors.includes(a1[i])) failedColors.push(a1[i])
+      }
+
+    }
+    return {success,failedColors}
+  }
+
+  checkColors = () => {
+    let rubiksLength = this.state.rubiksObject.length;
+
+    let whiteCount = 0,blueCount = 0,redCount = 0,yellowCount = 0,orangeCount = 0,greenCount = 0;
+    let duplicateFace = false;
+    let duplicateColors = []
+    let matchedCount = 0;
+    let solveable = false;
+    let obj = {};
+    let validAmount = this.state.cubeDimension*this.state.cubeDimension;
+    let rubiks = [...this.state.rubiksObject];
+    let generated = cube.generateSolved(this.state.cubeDimension,this.state.cubeDimension,this.state.cubeDimension);
+    let newGenerated = [];
+
+    for(let i = 0; i < rubiks.length; i++){
+      let rubik = [...rubiks[i]];
+      const colors = ['white','blue','red','yellow','orange','green'];
+      if(rubik.includes('white')) whiteCount++;
+      if(rubik.includes('blue')) blueCount++;
+      if(rubik.includes('red')) redCount++;
+      if(rubik.includes('yellow')) yellowCount++;
+      if(rubik.includes('orange')) orangeCount++;
+      if(rubik.includes('green')) greenCount++;
+
+      let res = this.checkOccurences(colors,rubik);
+      if(!res.success){
+        duplicateFace = true;
+        res.failedColors.forEach(color => {
+          if(!duplicateColors.includes(color)) {
+            duplicateColors.push(color);
+          }
+        })
+      }
+    }
+
+    let checked = [];
+    generated.tempArr.forEach(([...piece],pieceIndex) =>{
+      rubiks.forEach(([...rubik],i) => {
+        let validPiece = 0;
+        piece.slice(0,6).sort().forEach((face,index) =>{
+          if(rubik.slice(0,6).sort()[index]===face) {validPiece++;}
+        });
+        if(validPiece===6&&!checked.includes(pieceIndex)){
+          matchedCount++;
+          checked.push(pieceIndex);
+          newGenerated.push([
+            ...rubik.slice(0,9),
+            ...piece.slice(9,12)
+          ]);
+        }
+      }) 
+    });
+
+    
+
+    if(whiteCount!==validAmount){
+      if(!obj.error) obj.error = [];
+      obj.error.push(`Invalid white count [${whiteCount}] should be [${validAmount}]`);
+    }
+    if(blueCount!==validAmount){
+      if(!obj.error) obj.error = [];
+      obj.error.push(`Invalid blue count [${blueCount}] should be [${validAmount}]`);
+    }
+    if(redCount!==validAmount){
+      if(!obj.error) obj.error = [];
+      obj.error.push(`Invalid red count [${redCount}] should be [${validAmount}]`);
+    }
+    if(yellowCount!==validAmount){
+      if(!obj.error) obj.error = [];
+      obj.error.push(`Invalid yellow count [${yellowCount}] should be [${validAmount}]`);
+    }
+    if(orangeCount!==validAmount){
+      if(!obj.error) obj.error = [];
+      obj.error.push(`Invalid orange count [${orangeCount}] should be [${validAmount}]`);
+    }
+    if(greenCount!==validAmount){
+      if(!obj.error) obj.error = [];
+      obj.error.push(`Invalid green count [${greenCount}] should be [${validAmount}]`);
+    }
+
+    if(duplicateFace){
+      duplicateColors.forEach(color => {
+        obj.error.push(`More than one occurence of [${color}] found on a piece.`);
+      });
+    }
+
+    if(matchedCount!==rubiksLength){
+      if(!obj.error) obj.error = [];
+      obj.error.push(`[${matchedCount}] out of [${rubiksLength-1}] matched. Missing [${(rubiksLength-1)-matchedCount}]`);
+    }
+
+    if(!obj.error){
+      console.log(generated);
+      console.log(newGenerated);
+      let solveData = this.generateAllSolveMoves(this.state,newGenerated);
+      solveable = solveData.solveable;
+      if(!solveable)
+      obj.error=[`This configuration of the cube is not solveable. Check that you've entered all pieces correctly.`];
+    }
+
+    if(!obj.error) {obj.success = true;obj.newGenerated = newGenerated}
+    return obj;
   }
 
   // Allows the user to undo a move
@@ -940,11 +1088,16 @@ class App extends Component {
       }
 
       else if((rotation.x !== 0 || rotation.y !== 0 ||rotation.z !== 0) || 
-           (pos==='all'||pos==='cp')){
+           (pos==='all'||pos==='cp'||pos==='check')){
         if(pos==='all'||pos==='cp') {
           tempCube.position.x=this.state.rubiksObject[i][9];
           tempCube.position.y=this.state.rubiksObject[i][10];
           tempCube.position.z=this.state.rubiksObject[i][11];
+        }
+        if(pos==='check') {
+          tempCube.position.x=this.state.rubiksObject[i][6];
+          tempCube.position.y=this.state.rubiksObject[i][7];
+          tempCube.position.z=this.state.rubiksObject[i][8];
         }
         tempCube.material[0].color = new THREE.Color(this.state.rubiksObject[i][2]);
         tempCube.material[1].color = new THREE.Color(this.state.rubiksObject[i][4]);
@@ -1091,8 +1244,13 @@ class App extends Component {
     let indexOccurence = 0;
     let error = false;
     let counter = 0;
+    if(tempState.currentFunc === 'Color Picker'){
+      tempState.solveState = 0;
+      tempState.currentFunc = "Solving";
+      tempState.rubiksObject = rubiksObject.map(e=>[...e]);
+    }
     while(tempState.currentFunc==="Solving"){
-      //counter++;
+      
       if(!tempState.moveSet || !tempState.moveSet.length) {
         currentIndex=tempState.rubiksIndex;
         if(currentIndex===previousIndex) indexOccurence = indexOccurence+1;
@@ -1115,6 +1273,7 @@ class App extends Component {
           moves.currentFunc="None";
         }
         if(moves.currentFunc && moves.currentFunc==="None") solvedSet = tempState.solveMoves;
+        counter++;
         tempState = {...tempState,...moves};
         previousIndex=currentIndex;
       }
@@ -1138,7 +1297,6 @@ class App extends Component {
     splitSet.forEach(e => e[e.length-1]==="'"? moveSet.push(e.replace("'","")):moveSet.push(e+"'"));
     let extraMoves = 0;
 
-    console.log("Number of moves: \n",moveSet.length);
     for(let i = 0; i < moveSet.length-2; i++){
       if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
         moveSet[i]="";
@@ -1170,7 +1328,7 @@ class App extends Component {
     if(error) {
       console.log("Stopped due to probable infinite loop");
     }
-    return {moveSet,rubiksObject : beforeObject};
+    return {moveSet,rubiksObject : beforeObject,solveable:!error};
   }
 
   // Initialization and animation functions
@@ -1918,6 +2076,8 @@ class App extends Component {
             endColorPicker={this.endColorPicker}
             colorPicked={this.state.colorPicked}
             changeColor={this.changeColor}
+            isValidConfig={this.state.isValidConfig}
+            setColorPickedCube={this.setColorPickedCube}
           /> : ""
         }
       
@@ -1941,7 +2101,7 @@ class App extends Component {
   
         {/* Create a component for these that works similarly to patterns to auto populate functions */}
         {/* Bottom Right */} 
-        {this.state.solveState < 0 ?<button onClick={this.beginColorPicker} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>COLOR PICKER</button>:""}
+        {this.state.solveState < 0 &&this.state.cubeDimension<5?<button onClick={this.beginColorPicker} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>COLOR PICKER</button>:""}
         {this.state.moveSet[0]==="'"?this.stopSolve():""}
         {this.state.solveState < 0 ? solveBtn : solveInterface}
         <button onClick={this.beginScramble} style={{position:"fixed", bottom: "30px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>SCRAMBLE</button>
