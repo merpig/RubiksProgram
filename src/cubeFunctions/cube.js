@@ -410,7 +410,7 @@ const cube = {
                       edgeType="center";
                     }
                     else{
-                        edgeType="secondHalf";
+                      edgeType="secondHalf";
                     }
                     tempEdges[2][1].push(tempArr.length);
                   }
@@ -422,7 +422,7 @@ const cube = {
                       edgeType="center";
                     }
                     else{
-                        edgeType="secondHalf";
+                      edgeType="secondHalf";
                     }
                     tempEdges[2][2].push(tempArr.length);
                   }
@@ -434,7 +434,7 @@ const cube = {
                       edgeType="center";
                     }
                     else{
-                        edgeType="secondHalf";
+                      edgeType="secondHalf";
                     }
                     tempEdges[2][3].push(tempArr.length);
                   }

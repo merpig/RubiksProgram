@@ -678,6 +678,11 @@ class App extends Component {
 
     let checked = [];
     let otherChecked = [];
+    //For each cube piece in the generated solved cube, find the matching
+    //manually inputted piece and overwrite the solved position from the unsolved
+    //piece with the solved piece's solved position to a new generated cube. For 
+    //edge pieces, an extra check was needed to ensure first half segments weren't
+    //getting assigned or assigning to second half segments(becomes unsolvable).
     generated.tempArr.forEach(([...piece],pieceIndex) =>{
       newGenerated.push([]);
       rubiks.forEach(([...rubik],i) => {
@@ -1744,7 +1749,7 @@ class App extends Component {
       // Mouse stuff here
       // Consider moving into another function to unclutter animate
       // Very expensive operation
-      if(this.state.currentFunc === "Color Picker" || this.state.currentFunc === "None") {
+      if(this.state.currentFunc === "Color Picker" || this.state.currentFunc === "None"|| this.state.currentFunc === "Solving") {
 
         //check here that data isn't the same as previous so not running this every time
         // Data on move button triggers visual move hints
