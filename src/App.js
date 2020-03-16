@@ -98,6 +98,7 @@ class App extends Component {
     playOne : false,
     generateAllMoves: false,
     isLocal : null,
+    cpErrors : [],
   };
 
   // rotate colors on face (memory cube)
@@ -578,8 +579,8 @@ class App extends Component {
     this.setState({rubiksObject:tempObj,isValidConfig:false},()=>{
       this.reloadTurnedPieces('cp');
       let obj = this.checkColors();
-      if(obj.error) this.setState({isValidConfig:false});
-      else if(obj.success) this.setState({isValidConfig:true});
+      if(obj.error) this.setState({isValidConfig:false,cpErrors:[...obj.error]});
+      else if(obj.success) this.setState({isValidConfig:true,cpErrors:[]});
     });
   }
 
@@ -603,6 +604,9 @@ class App extends Component {
           if(piece.includes("edge")&&!piece.includes("center")){
             if(piece[13]===rubik[13]) validEdgePlacement = true;
           }
+          else if(piece.includes("middle")){
+            if(piece[14]===rubik[14]) validEdgePlacement = true;
+          }
           else{
             validEdgePlacement = true;
           }
@@ -611,7 +615,7 @@ class App extends Component {
             otherChecked.push(i);
             newGenerated[pieceIndex]=[
               ...rubik.slice(0,9),
-              ...piece.slice(9,14)
+              ...piece.slice(9,15)
             ];
           }
         }
@@ -626,6 +630,7 @@ class App extends Component {
 
   checkOccurences = (a1, a2) => {
     let success = true;
+    let amount = 0;
     let failedColors = [];
     for(var i = 0; i < a1.length; i++) {
       var count = 0;
@@ -638,7 +643,7 @@ class App extends Component {
       }
 
     }
-    return {success,failedColors}
+    return {success,failedColors,amount}
   }
 
   checkColors = () => {
@@ -658,12 +663,12 @@ class App extends Component {
     for(let i = 0; i < rubiks.length; i++){
       let rubik = [...rubiks[i]];
       const colors = ['white','blue','red','yellow','orange','green'];
-      if(rubik.includes('white')) whiteCount++;
-      if(rubik.includes('blue')) blueCount++;
-      if(rubik.includes('red')) redCount++;
-      if(rubik.includes('yellow')) yellowCount++;
-      if(rubik.includes('orange')) orangeCount++;
-      if(rubik.includes('green')) greenCount++;
+      if(rubik.includes('white')) whiteCount+=1;
+      if(rubik.includes('blue')) blueCount+=1;
+      if(rubik.includes('red')) redCount+=1;
+      if(rubik.includes('yellow')) yellowCount+=1;
+      if(rubik.includes('orange')) orangeCount+=1;
+      if(rubik.includes('green')) greenCount+=1;
 
       let res = this.checkOccurences(colors,rubik);
       if(!res.success){
@@ -705,7 +710,7 @@ class App extends Component {
             otherChecked.push(i);
             newGenerated[pieceIndex]=[
               ...rubik.slice(0,9),
-              ...piece.slice(9,14)
+              ...piece.slice(9,15)
             ];
           }
         }
@@ -716,27 +721,27 @@ class App extends Component {
 
     if(whiteCount!==validAmount){
       if(!obj.error) obj.error = [];
-      obj.error.push(`Invalid white count [${whiteCount}] should be [${validAmount}]`);
+      obj.error.push(`Invalid white sticker count.`);
     }
     if(blueCount!==validAmount){
       if(!obj.error) obj.error = [];
-      obj.error.push(`Invalid blue count [${blueCount}] should be [${validAmount}]`);
+      obj.error.push(`Invalid blue sticker count.`);
     }
     if(redCount!==validAmount){
       if(!obj.error) obj.error = [];
-      obj.error.push(`Invalid red count [${redCount}] should be [${validAmount}]`);
+      obj.error.push(`Invalid red sticker count.`);
     }
     if(yellowCount!==validAmount){
       if(!obj.error) obj.error = [];
-      obj.error.push(`Invalid yellow count [${yellowCount}] should be [${validAmount}]`);
+      obj.error.push(`Invalid yellow sticker count.`);
     }
     if(orangeCount!==validAmount){
       if(!obj.error) obj.error = [];
-      obj.error.push(`Invalid orange count [${orangeCount}] should be [${validAmount}]`);
+      obj.error.push(`Invalid orange sticker count.`);
     }
     if(greenCount!==validAmount){
       if(!obj.error) obj.error = [];
-      obj.error.push(`Invalid green count [${greenCount}] should be [${validAmount}]`);
+      obj.error.push(`Invalid green sticker count.`);
     }
 
     if(duplicateFace){
@@ -902,7 +907,7 @@ class App extends Component {
     let cD = this.state.cubeDimension;
     let generated = cube.generateSolved(cD,cD,cD);
     let rubiksObject = generated.tempArr;
-    this.setState({rubiksObject,moveSet: [],currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : []},()=>{
+    this.setState({rubiksObject,moveSet: [],currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [],cpErrors:[]},()=>{
       this.reloadTurnedPieces('all');
     });
     //window.location.reload();
@@ -962,7 +967,7 @@ class App extends Component {
 
   endColorPicker = () => {
     this.reset();
-    this.setState({currentFunc : "None"});
+    this.setState({currentFunc : "None",cpErrors:[]});
   }
 
   rewindSolve = () => {
@@ -2112,13 +2117,12 @@ class App extends Component {
             changeColor={this.changeColor}
             isValidConfig={this.state.isValidConfig}
             setColorPickedCube={this.setColorPickedCube}
-          /> : ""
-        }
-      
-        <Patterns
+            cpErrors={this.state.cpErrors}
+          /> : <Patterns
           algorithm={this.algorithm}
           size={this.getSizeFromUrl()}
         />
+        }
 
         { this.state.generatedButtons && this.state.showControls? 
           <Controls

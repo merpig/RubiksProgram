@@ -2,11 +2,18 @@ import React from "react";
 import Draggable from 'react-draggable';
 
 const ColorPicker = (props) => {
+    let li = [];
+    props.cpErrors.forEach(function(error){
+        console.log(error);
+            li.push(<li style={{color:"red",fontSize:"1rem",textAlign:"left"}}>
+                {error}
+            </li>);
+    });
     return (
         <div style={{position: "absolute", zIndex: "99"}}>
             <Draggable
             handle=".handle"
-            defaultPosition={{x:window.innerWidth-211 , y: 150}}
+            defaultPosition={{x:0 , y: 150}}
             position={null}
             grid={[50, 50]}
             scale={1}
@@ -28,6 +35,11 @@ const ColorPicker = (props) => {
                             <button style={{backgroundColor:'green'}} onClick={()=>props.changeColor('green')}>6 : Green</button>
                             {props.isValidConfig?<button onClick={()=>props.setColorPickedCube()}>Set [<strong style={{color:'green'}}>Valid</strong>]</button>:<button>Set [<strong style={{color:'red'}}>Invalid</strong>]</button>}
                             <button onClick={props.endColorPicker}>Quit</button>
+                            <div style={{width:"max-content"}}>
+                                <ul> 
+                                    {li}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

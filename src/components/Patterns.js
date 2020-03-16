@@ -1,12 +1,13 @@
 import React from "react";
 import algorithms from '../cubeFunctions/algorithms';
 
-let position = 0;
-let buttons=[];
-const Patterns = props => (
-    <div style={{position:"fixed", bottom: "0px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>
+
+const Patterns = props => {
+    let position = 0;
+    let buttons=[];
+    return (<div style={{position:"fixed", bottom: "0px", left: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray"}}>
         {
-            algorithms.forEach(e => {
+            algorithms.forEach((e,i) => {
                 if(e.worksFor.includes(props.size)){
                     buttons.push( 
                         <button 
@@ -27,7 +28,7 @@ const Patterns = props => (
             })
         }
         {buttons}
-    </div>
-);
+    </div>)
+}
 
 export default Patterns;
