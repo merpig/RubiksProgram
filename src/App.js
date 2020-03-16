@@ -591,18 +591,29 @@ class App extends Component {
     let otherChecked = [];
 
     generated.tempArr.forEach(([...piece],pieceIndex) =>{
+      newGenerated.push([]);
       rubiks.forEach(([...rubik],i) => {
         let validPiece = 0;
         piece.slice(0,6).sort().forEach((face,index) =>{
           if(rubik.slice(0,6).sort()[index]===face) {validPiece++;}
         });
+        
         if(validPiece===6&&!checked.includes(pieceIndex)&&!otherChecked.includes(i)){
-          checked.push(pieceIndex);
-          otherChecked.push(i);
-          newGenerated.push([
-            ...rubik.slice(0,9),
-            ...piece.slice(9,12)
-          ]);
+          let validEdgePlacement = false;
+          if(piece.includes("edge")&&!piece.includes("center")){
+            if(piece[13]===rubik[13]) validEdgePlacement = true;
+          }
+          else{
+            validEdgePlacement = true;
+          }
+          if(validEdgePlacement){
+            checked.push(pieceIndex);
+            otherChecked.push(i);
+            newGenerated[pieceIndex]=[
+              ...rubik.slice(0,9),
+              ...piece.slice(9,14)
+            ];
+          }
         }
       }) 
     });
@@ -668,19 +679,30 @@ class App extends Component {
     let checked = [];
     let otherChecked = [];
     generated.tempArr.forEach(([...piece],pieceIndex) =>{
+      newGenerated.push([]);
       rubiks.forEach(([...rubik],i) => {
         let validPiece = 0;
         piece.slice(0,6).sort().forEach((face,index) =>{
           if(rubik.slice(0,6).sort()[index]===face) {validPiece++;}
         });
         if(validPiece===6&&!checked.includes(pieceIndex)&&!otherChecked.includes(i)){
-          matchedCount++;
-          checked.push(pieceIndex);
-          otherChecked.push(i);
-          newGenerated.push([
-            ...rubik.slice(0,9),
-            ...piece.slice(9,12)
-          ]);
+          let validEdgePlacement = false;
+          if(piece.includes("edge")&&!piece.includes("center")){
+            if(piece[13]===rubik[13]) validEdgePlacement = true;
+          }
+          else{
+            validEdgePlacement = true;
+          }
+
+          if(validEdgePlacement){
+            matchedCount++;
+            checked.push(pieceIndex);
+            otherChecked.push(i);
+            newGenerated[pieceIndex]=[
+              ...rubik.slice(0,9),
+              ...piece.slice(9,14)
+            ];
+          }
         }
       }) 
     });
@@ -731,6 +753,8 @@ class App extends Component {
       if(!solveable)
       obj.error=[`This configuration of the cube is not solveable. Check that you've entered all pieces correctly.`];
     }
+
+    console.log(obj.error);
 
     if(!obj.error) {obj.success = true;obj.newGenerated = newGenerated}
     return obj;
@@ -1242,6 +1266,7 @@ class App extends Component {
 
   generateAllSolveMoves = (state,rubiksObject) =>{
     let beforeObject = rubiksObject.map(e=>[...e]);
+    console.log(beforeObject);
     let tempState = {...state}, solvedSet = "";
     let currentIndex = null;
     let previousIndex = null;

@@ -30,6 +30,7 @@ const cube = {
               let side3 = "black";
               let side4 = "black";
               let side5 = "black";
+              let edgeType = null;
               if(i===_x-1) side2 = "red";
               else if (i===0) side4 ="orange";
               if(j===_y-1) side3 = "yellow";
@@ -57,41 +58,149 @@ const cube = {
                 tempType = "edge";
                 if(j === 0){
                   if(k===_z-1){
+                    if(tempEdges[0][0].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[0][0].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[0][0].push(tempArr.length);
                   }
                   else if(i===_x-1){
+                    if(tempEdges[0][1].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[0][1].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[0][1].push(tempArr.length);
                   }
                   else if(k===0){
+                    if(tempEdges[0][2].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[0][2].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[0][2].push(tempArr.length);
                   }
                   else if(i===0){
+                    if(tempEdges[0][3].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[0][3].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[0][3].push(tempArr.length);
                   }
                 } else if(j === _y-1){
                   if(k===_z-1){
+                    if(tempEdges[1][0].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[1][0].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[1][0].push(tempArr.length);
                   }
                   else if(i===_x-1){
+                    if(tempEdges[1][1].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[1][1].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[1][1].push(tempArr.length);
                   }
                   else if(k===0){
+                    if(tempEdges[1][2].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[1][2].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[1][2].push(tempArr.length);
                   }
                   else if(i===0){
+                    if(tempEdges[1][3].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[1][3].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[1][3].push(tempArr.length);
                   }
                 } else {
                   if(k===_z-1 && i===0){
+                    if(tempEdges[2][0].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[2][0].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[2][0].push(tempArr.length);
                   }
                   else if(k===_z-1 && i===_x-1){
+                    if(tempEdges[2][1].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[2][1].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[2][1].push(tempArr.length);
                   }
                   else if(k===0 && i===_x-1){
+                    if(tempEdges[2][2].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[2][2].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[2][2].push(tempArr.length);
                   }
                   else if(k===0 && i===0){
+                    if(tempEdges[2][3].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[2][3].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
                     tempEdges[2][3].push(tempArr.length);
                   }
                 }
@@ -105,6 +214,7 @@ const cube = {
                             i,j,k, // Current position x,y,z
                             i,j,k, // Solved position x,y,z
                             tempType,
+                            edgeType
                           ]);
             }
           }
@@ -121,13 +231,28 @@ const cube = {
             edges.push(...tempEdges[i][j]);
           }
         }
-        
+        console.log(tempArr);
         return {tempArr,middles,edges,corners};
     },
 
     generateBlank : function (_x,_y,_z){
       const tempArr = [];
-      
+      const middles = [];
+      const edges = [];
+      const corners = [];
+      const tempMiddles = [
+        [], // white
+        [], // yellow
+        [], // blue
+        [], // green
+        [], // orange
+        []  // red
+      ];
+      const tempEdges = [
+        [[],[],[],[]], // white edges
+        [[],[],[],[]], // middle edges
+        [[],[],[],[]]
+      ]
   
       for(let j = 0; j < _y; j++){      // Move back along the y-axis
         for(let k = _z-1; k >= 0; k--){ // Move down through the z-axis
@@ -138,21 +263,198 @@ const cube = {
             let side3 = "black";
             let side4 = "black";
             let side5 = "black";
-            if(i===_x-1) side2 = "white";
-            else if (i===0) side4 ="white";
-            if(j===_y-1) side3 = "white";
-            else if (j===0) side0 ="white";
-            if(k===_z-1) side1 = "white";
-            else if (k===0) side5 ="white";
+            let edgeType = null;
+            let greenSide = null;
+            let blueSide = null;
+              if(i===_x-1) side2 = "white";
+              else if (i===0) side4 ="white";
+              if(j===_y-1) side3 = "white";
+              else if (j===0) side0 ="white";
+              if(k===_z-1) side1 = "white";
+              else if (k===0) side5 ="white";
+              let tempCount = 0;
+              if(j===0 || j === _y-1) tempCount++;
+              if(k===0 || k === _z-1) tempCount++;
+              if(i===0 || i === _x-1) tempCount ++;
+              let tempType = "none";
+    
+              if(tempCount===1) {
+                tempType = "middle";
+                if(j===0) tempMiddles[0].push(tempArr.length);
+                if(j===_y-1) tempMiddles[1].push(tempArr.length);
+                if(k===_z-1) tempMiddles[2].push(tempArr.length);
+                if(i===0) tempMiddles[3].push(tempArr.length);
+                if(k===0) tempMiddles[4].push(tempArr.length);
+                if(i===_x-1) tempMiddles[5].push(tempArr.length);
+              }
+    
+              else if(tempCount===2) {
+                // do stuff in here to populate edges
+                tempType = "edge";
+                if(j === 0){
+                  if(k===_z-1){
+                    if(tempEdges[0][0].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[0][0].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[0][0].push(tempArr.length);
+                  }
+                  else if(i===_x-1){
+                    if(tempEdges[0][1].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[0][1].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[0][1].push(tempArr.length);
+                  }
+                  else if(k===0){
+                    if(tempEdges[0][2].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[0][2].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[0][2].push(tempArr.length);
+                  }
+                  else if(i===0){
+                    if(tempEdges[0][3].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[0][3].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[0][3].push(tempArr.length);
+                  }
+                } else if(j === _y-1){
+                  if(k===_z-1){
+                    if(tempEdges[1][0].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[1][0].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[1][0].push(tempArr.length);
+                  }
+                  else if(i===_x-1){
+                    if(tempEdges[1][1].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[1][1].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[1][1].push(tempArr.length);
+                  }
+                  else if(k===0){
+                    if(tempEdges[1][2].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[1][2].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[1][2].push(tempArr.length);
+                  }
+                  else if(i===0){
+                    if(tempEdges[1][3].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[1][3].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[1][3].push(tempArr.length);
+                  }
+                } else {
+                  if(k===_z-1 && i===0){
+                    if(tempEdges[2][0].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[2][0].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[2][0].push(tempArr.length);
+                  }
+                  else if(k===_z-1 && i===_x-1){
+                    if(tempEdges[2][1].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[2][1].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[2][1].push(tempArr.length);
+                  }
+                  else if(k===0 && i===_x-1){
+                    if(tempEdges[2][2].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[2][2].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[2][2].push(tempArr.length);
+                  }
+                  else if(k===0 && i===0){
+                    if(tempEdges[2][3].length+1<Math.floor(_x/2)){
+                      edgeType="firstHalf";
+                    }
+                    else if(_x%2&&tempEdges[2][3].length+1===Math.floor(_x/2)){
+                      edgeType="center";
+                    }
+                    else{
+                        edgeType="secondHalf";
+                    }
+                    tempEdges[2][3].push(tempArr.length);
+                  }
+                }
+              }
+              else if(tempCount===3) {
+                tempType = "corner";
+                corners.push(tempArr.length);
+              }
   
             tempArr.push([side0,side1,side2,side3,side4,side5, // piece colors
                           i,j,k, // Current position x,y,z
                           i,j,k, // solved position x,y,z
+                          tempType,
+                          edgeType
                         ]);
           }
         }
       }
-      
+      console.log(tempArr);
       return tempArr;
   },
 
