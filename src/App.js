@@ -588,6 +588,7 @@ class App extends Component {
     let generated = cube.generateSolved(this.state.cubeDimension,this.state.cubeDimension,this.state.cubeDimension);
     let newGenerated = [];
     let checked = [];
+    let otherChecked = [];
 
     generated.tempArr.forEach(([...piece],pieceIndex) =>{
       rubiks.forEach(([...rubik],i) => {
@@ -595,8 +596,9 @@ class App extends Component {
         piece.slice(0,6).sort().forEach((face,index) =>{
           if(rubik.slice(0,6).sort()[index]===face) {validPiece++;}
         });
-        if(validPiece===6&&!checked.includes(pieceIndex)){
+        if(validPiece===6&&!checked.includes(pieceIndex)&&!otherChecked.includes(i)){
           checked.push(pieceIndex);
+          otherChecked.push(i);
           newGenerated.push([
             ...rubik.slice(0,9),
             ...piece.slice(9,12)
@@ -664,15 +666,17 @@ class App extends Component {
     }
 
     let checked = [];
+    let otherChecked = [];
     generated.tempArr.forEach(([...piece],pieceIndex) =>{
       rubiks.forEach(([...rubik],i) => {
         let validPiece = 0;
         piece.slice(0,6).sort().forEach((face,index) =>{
           if(rubik.slice(0,6).sort()[index]===face) {validPiece++;}
         });
-        if(validPiece===6&&!checked.includes(pieceIndex)){
+        if(validPiece===6&&!checked.includes(pieceIndex)&&!otherChecked.includes(i)){
           matchedCount++;
           checked.push(pieceIndex);
+          otherChecked.push(i);
           newGenerated.push([
             ...rubik.slice(0,9),
             ...piece.slice(9,12)
@@ -1267,7 +1271,7 @@ class App extends Component {
           }
           moves.moveSet = temp;
         }
-        if((indexOccurence>10 && tempState.solveState<1)||counter>1000) {
+        if((indexOccurence>10 && tempState.solveState<1)||counter>10000) {
           error = true;
           //console.log(JSON.stringify({beforeObject}));
           moves.currentFunc="None";
