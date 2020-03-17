@@ -17,16 +17,23 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
 // TODO:
 /*
- * 1. Start moving functions to other files STARTED
+ * 1. Start moving functions to other files: STARTED
  * 
- * 2. Color picker
+ * 2. Color picker: STARTED
  * 
- * 3. UI Rework
+ * 3. UI Rework: NEXT
  * 
  * 4. Add changes to rotateFace and rotatePiece. Code can be greatly condensed
- *    by using a function with paramters to minimize repetative code. ATTEMPTED
+ *    by using a function with paramters to minimize repetative code: ATTEMPTED
  * 
  * 5. Continue working on solvers. STARTED
+ * 
+ * 6. ISSUES: NEXT
+ *  - Fullscreen/exit not always changing appropriately
+ *  - Change speed during autoplay
+ *  - Remove uneccessary move sequences in scramble
+ *  - Make solver position selectable
+ *  - Maybe break solver movesets into solver section
  */
 
 
@@ -604,9 +611,9 @@ class App extends Component {
           if(piece.includes("edge")&&!piece.includes("center")){
             if(piece[13]===rubik[13]) validEdgePlacement = true;
           }
-          else if(piece.includes("middle")){
-            if(piece[14]===rubik[14]) validEdgePlacement = true;
-          }
+          // else if(piece.includes("middle")){
+          //   //if(piece[14]===rubik[14]) validEdgePlacement = true;
+          // }
           else{
             validEdgePlacement = true;
           }
@@ -653,7 +660,6 @@ class App extends Component {
     let duplicateFace = false;
     let duplicateColors = []
     let matchedCount = 0;
-    let solveable = false;
     let obj = {};
     let validAmount = this.state.cubeDimension*this.state.cubeDimension;
     let rubiks = [...this.state.rubiksObject];
@@ -774,12 +780,13 @@ class App extends Component {
       console.log(generated);
       console.log(newGenerated);
       let solveData = this.generateAllSolveMoves(this.state,newGenerated);
-      solveable = solveData.solveable;
+      //let solveable = solveData.solveable;
       generated.tempArr.forEach((piece,i) => {
         if(piece.slice(0,6).join('')===solveData.rubiksObject[i].slice(0,6).join('')){}
-        else{solveable=false}
+        //else{solveable=false}
       })
-      if(!solveable){
+      if(!solveData.solveable){
+        console.log(solveData);
         obj.error.push(`This configuration of the cube is not solveable.`);
         obj.error.push(`Check that you've entered all pieces correctly.`);
         if(this.state.cubeDimension>3){

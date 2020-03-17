@@ -219,12 +219,17 @@
             }
           }, false);
 
-          $(document).keydown((e) => {
-            if(e.key==="Escape") 
-              while($("#fullscreenBtn").text()!=="Fullscreen")
-                console.log($("#fullscreenBtn").text());
+          document.addEventListener('fullscreenchange', exitHandler);
+          document.addEventListener('webkitfullscreenchange', exitHandler);
+          document.addEventListener('mozfullscreenchange', exitHandler);
+          document.addEventListener('MSFullscreenChange', exitHandler);
+
+          function exitHandler() {
+              if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
                 $("#fullscreenBtn").text("Fullscreen");
-          });
+                isFull=false;
+              }
+} 
         });
     </script>
     <div class="canvas" style="background-size: cover; background-position: center; background:url(https://k38gwjynpb-flywheel.netdna-ssl.com/wp-content/uploads/2015/10/black-background.jpeg)no-repeat;">
