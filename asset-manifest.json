@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/RubiksProgram/static/css/main.de3dd180.chunk.css",
-    "main.js": "/RubiksProgram/static/js/main.dc784c76.chunk.js",
-    "main.js.map": "/RubiksProgram/static/js/main.dc784c76.chunk.js.map",
+    "main.js": "/RubiksProgram/static/js/main.04e902b1.chunk.js",
+    "main.js.map": "/RubiksProgram/static/js/main.04e902b1.chunk.js.map",
     "runtime-main.js": "/RubiksProgram/static/js/runtime-main.1af83675.js",
     "runtime-main.js.map": "/RubiksProgram/static/js/runtime-main.1af83675.js.map",
     "static/css/2.dfee1050.chunk.css": "/RubiksProgram/static/css/2.dfee1050.chunk.css",
     "static/js/2.bbd4d71e.chunk.js": "/RubiksProgram/static/js/2.bbd4d71e.chunk.js",
     "static/js/2.bbd4d71e.chunk.js.map": "/RubiksProgram/static/js/2.bbd4d71e.chunk.js.map",
     "index.html": "/RubiksProgram/index.html",
-    "precache-manifest.8a440c20d9a09f3ec632465d60cc4821.js": "/RubiksProgram/precache-manifest.8a440c20d9a09f3ec632465d60cc4821.js",
+    "precache-manifest.3724cb0b8d53d28c5bc78b65ae937dd6.js": "/RubiksProgram/precache-manifest.3724cb0b8d53d28c5bc78b65ae937dd6.js",
     "service-worker.js": "/RubiksProgram/service-worker.js",
     "static/css/2.dfee1050.chunk.css.map": "/RubiksProgram/static/css/2.dfee1050.chunk.css.map",
     "static/css/main.de3dd180.chunk.css.map": "/RubiksProgram/static/css/main.de3dd180.chunk.css.map",
@@ -20,6 +20,6 @@
     "static/css/2.dfee1050.chunk.css",
     "static/js/2.bbd4d71e.chunk.js",
     "static/css/main.de3dd180.chunk.css",
-    "static/js/main.dc784c76.chunk.js"
+    "static/js/main.04e902b1.chunk.js"
   ]
 }
