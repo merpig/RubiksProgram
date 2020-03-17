@@ -96,24 +96,27 @@ const Navbar = props => (
                 &times;
               </button>
               <hr style={{backgroundColor:"#007bff",marginBottom:"0"}}></hr>
-              <div style={{backgroundColor:"black",marginTop:"0",color:"#00C000"}}>
-                <p style={{paddingTop: "1rem"}}>> Click and hold and drag anywhere on or around cube to rotate.</p>
+              <div style={{backgroundColor:"black",marginTop:"0",color:"#00C000",fontSize:"1rem"}}>
+                <p style={{paddingTop: "1rem"}}>> Click and drag anywhere not on the cube to rotate.</p>
                 <hr style={{backgroundColor:"lightgray"}}></hr>
-                <p>> Use buttons or keyboard to make turns: <br></br>
-                  > 
+                <p>> 1. Click and drag anywhere on the cube to make a move or</p>
+                <p>> 2. Use buttons(turn on in settings) or keyboard to make turns: <br></br>
+                  <div style={{width:"100%",textAlign:"center"}}>
                   <b style={{color: "white",backgroundColor:"black"}}> F, </b><b style={{color: "white",backgroundColor:"black"}}>f,</b>
                   <b style={{color: "blue",backgroundColor:"black"}}> U, </b><b style={{color: "blue",backgroundColor:"black"}}>u,</b>
                   <b style={{color: "red",backgroundColor:"black"}}> R, </b><b style={{color: "red",backgroundColor:"black"}}>r,</b>
                   <b style={{color: "yellow",backgroundColor:"black"}}> B, </b><b style={{color: "yellow",backgroundColor:"black"}}>b,</b>
                   <b style={{color: "orange",backgroundColor:"black"}}> L, </b><b style={{color: "orange",backgroundColor:"black"}}>l,</b>
                   <b style={{color: "green",backgroundColor:"black"}}> D, </b><b style={{color: "green",backgroundColor:"black"}}>d </b> 
+                  <p style={{width:"100%",textAlign:"center"}}>(lower case is clockwise, upper case is counterclockwise)</p>
+                  </div>
                 </p>
                 <hr style={{backgroundColor:"lightgray"}}></hr>
-                <p>> Top Left slider controls the speed</p>
-                <hr style={{backgroundColor:"lightgray"}}></hr>
-                <p>> Bottom left buttons are built in pattern functions</p>
-                <hr style={{backgroundColor:"lightgray"}}></hr>
-                <p style={{marginBottom: "0",paddingBottom:"1rem"}}>> Bottom right buttons are the core functions for the cube</p>
+                <p style={{marginBottom: "0",paddingBottom:"1rem"}}>> Author: Sasha Peters, <a target="#" href="https://www.github.com/merpig">github</a>, <a target="#" href="https://www.github.com/merpig/RubiksProgram">Project Repo</a></p>
+                <hr style={{backgroundColor:"lightgrey"}}></hr>
+                  <p style={{color: "white",backgroundColor:"black",textAlign:"center"}}>
+                  site design / cube © 2020 RubiksProgram
+                </p>
               </div>
             </div>
           </div>

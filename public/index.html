@@ -33,6 +33,15 @@
   </head>
   <body style="overflow: hidden; background-color: black;">
       <style>
+        body {
+          -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+              -moz-user-select: none; /* Old versions of Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                    user-select: none; /* Non-prefixed version, currently
+                                          supported by Chrome, Opera and Firefox */
+        }
         button:hover,.dropdown-item:hover{
           background-color: gray!important;
           color: white!important;
@@ -53,6 +62,12 @@
         #triggerBtn, #fullscreenBtn, .redoUndo, #moveSubmit{
           background-color: #343a40;
           color: lightgray;
+          border-radius: .25rem;
+          border: 1px solid #007bff;
+        }
+
+        .cpButton{
+          background-color: #343a40;
           border-radius: .25rem;
           border: 1px solid #007bff;
         }
@@ -79,7 +94,7 @@
           min-height:50%;   /* adjust as per your needs */
           margin-left:-37.5%;   /* negative half of width above */
           
-          background-color: #343a40;
+          background-color: black;
           border-radius: .25rem;
           border: 1.5px solid #007bff;
           color: lightgray;
@@ -122,6 +137,9 @@
           height:max-content;
           background-color: transparent;
         }
+        #fullscreenBtn,#triggerBtn{
+          font-size: 1.5rem;
+        }
 
         #centerMoves{
           display: inline-block;
@@ -147,6 +165,16 @@
         }
         .canvas{
           overflow: hidden;
+        }
+        #moveInput{
+          -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+              -moz-user-select: none; /* Old versions of Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                    user-select: none; /* Non-prefixed version, currently
+                                          supported by Chrome, Opera and Firefox */
+          min-width: max-content;
         }
   
       </style>

@@ -19,7 +19,8 @@ const Patterns = props => {
                                 left: "10px",
                                 backgroundColor: "Transparent",
                                 border: "none",
-                                color:"lightgray"
+                                color:"lightgray",
+                                fontSize:"1.5rem"
                             }}
                         >{e.name}</button>
                     )
