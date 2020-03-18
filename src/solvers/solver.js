@@ -21,7 +21,7 @@ const CONSTANTS = {
 }
 
 function solver(solveState,rubiksObject,cubeDimension,moveStringToArray,solveMoves,rubiksIndex,middles,edges,corners){
-    console.log(solveState);
+    //console.log(solveState);
     switch(solveState){
         case CONSTANTS.SOLVE_MIDDLES:
             return solveMiddles(rubiksObject,cubeDimension,moveStringToArray,rubiksIndex,middles);

@@ -534,6 +534,7 @@ class App extends Component {
   }
 
   onSliderChange = (value) => {
+
     switch(value){
       case 0:
         this.changeSpeed(1.5,1050,"Slowest");
@@ -565,8 +566,12 @@ class App extends Component {
   }
 
   // Functions to change speed
-  changeSpeed = (_speed,_rotationSpeed,_name) => {
-    if(this.state.currentFunc !== "None") return;
+  changeSpeed = (_speed,_rotationSpeed,_name,bypass) => {
+    if(this.state.currentFunc==="Solving"&&!bypass) {
+      this.setState({moveSet:[[_speed,_rotationSpeed,_name],...this.state.moveSet]})
+      return;
+    }
+    if(this.state.currentFunc !== "None" && !bypass) return;
     this.setState({currentSpeed: _name,speed: _speed, start: _speed, end: 0, rotationSpeed: _rotationSpeed});
   }
 
@@ -1012,12 +1017,38 @@ class App extends Component {
 
   rewindSolve = () => {
     if(this.state.playOne) return;
-    let tempPrev = this.state.prevSet;
+    let newMoveSet = [];
     let tempMoveSet = this.state.moveSet;
+    let tempPrev = this.state.prevSet;
     let lastEl = tempPrev[tempPrev.length-1];
     let popped = tempPrev.pop();
+    if(!popped) return;
     popped[popped.length-1]==="'" ? popped=popped.slice(0,3) : popped+="'";
-    let newMoveSet = [popped,lastEl,...tempMoveSet];
+    newMoveSet.push(popped,lastEl,...tempMoveSet);
+    this.setState({
+      playOne:true,
+      prevSet:tempPrev,
+      moveSet:newMoveSet
+    })
+  }
+
+  rewindAllSolve = () => {
+    if(this.state.playOne) return;
+    let newMoveSet = [];
+    let tempMoveSet = this.state.moveSet;
+    let tempPrev = this.state.prevSet;
+    let lastElArray = [];
+    let poppedArray = [];
+    for(let i = 0; i < tempMoveSet.length; i++){
+      let lastEl = tempPrev[tempPrev.length-1];
+      let popped = tempPrev.pop();
+      if(!popped) return;
+      popped[popped.length-1]==="'" ? popped=popped.slice(0,3) : popped+="'";
+      poppedArray.push(popped);
+      lastElArray.push(lastEl);
+    }
+    
+    newMoveSet.push(...poppedArray,...lastElArray,...tempMoveSet);
     this.setState({
       playOne:true,
       prevSet:tempPrev,
@@ -2016,7 +2047,8 @@ class App extends Component {
             }
             // If there are no moves queued, check to see if more moves can be queued
             else if(!this.state.moveSet.length){
-              this.stopSolve();
+              //this.stopSolve();
+              if(this.state.autoPlay) {this.setState({autoPlay:false});}
             }
             // If playone or autoplay is true, progress accordingly
             else if(this.state.playOne||this.state.autoPlay){
@@ -2028,41 +2060,61 @@ class App extends Component {
               let moveSet = this.state.moveSet;
               let end = this.state.end;
               let solveState = this.state.solveState;
-              let obj = {};
+              let obj = {prevSet:this.state.prevSet};
 
-              if(this.state.autoPlay) {
-                obj.prevSet = this.state.prevSet;
-                obj.prevSet.push(moveSet[0]);
+              if(typeof(moveSet[0][0])==='number') {
+                this.changeSpeed(...moveSet[0],true);
+                moveSet.shift();
+                obj.moveSet=moveSet;
+              }
+              else{
+                if(this.state.autoPlay) {
+                  obj.prevSet.push(moveSet[0])
+                }
+
+                // generates data for next move
+                let moveData = this.parseMoveArray(moveSet);
+
+                // takes next move data and queues changes to be made to state
+                
+                if(moveData){
+                  obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
+                }
+
+                // Turn off play one so only runs once
+                if(this.state.playOne) obj.playOne = false;
+
+                // hides move the hint during the move
+                this.mouseLeave();
+                
+                // store the object here
+                if(moveData)
+                  obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,tempRubiks);
+
+                //console.log(obj);
               }
 
-              // generates data for next move
-              let moveData = this.parseMoveArray(moveSet);
-
-              // takes next move data and queues changes to be made to state
-              
-              if(moveData){
-                obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
-              }
-
-              // Turn off play one so only runs once
-              if(this.state.playOne) obj.playOne = false;
-
-              // hides move the hint during the move
-              this.mouseLeave();
-              
-              // store the object here
-              if(moveData)
-                obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,tempRubiks);
-
-              //console.log(obj);
               this.setState(obj);
             }
             // Show hint over next move
             else if(this.state.moveSet.length){
-              let data = this.convertMoveToData(this.state.moveSet[0]);
-              if(data){
-                this.mouseOver(this.state.moveSet[0],data);
+              let moveSet = this.state.moveSet;
+              let obj = {};
+              if(typeof(moveSet[0][0])==='number') {
+                //console.log("changing speed");
+                this.changeSpeed(...moveSet[0],true);
+                moveSet.shift();
+                obj.moveSet=moveSet;
               }
+              else{
+                let data = this.convertMoveToData(moveSet[0]);
+                if(data){
+                  this.mouseOver(this.state.moveSet[0],data);
+                }
+              }
+              if(obj.length){
+                this.setState({obj});
+              }   
             }
           }
 
@@ -2111,8 +2163,8 @@ class App extends Component {
     let solveInterface = <div style={{position:"fixed", borderRadius: ".25rem",bottom: "60px", right: "10px",backgroundColor: "#343a40", border: "1px solid #007bff",color:"lightgray",fontSize:"1.5rem"}}>
         {!this.state.autoPlay? <button onClick={() => this.setState({autoPlay:true})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Auto Play</button> : 
         <button onClick={() => this.setState({autoPlay:false})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Pause</button>} <br></br>
-        {!this.state.autoPlay? <button onClick={() => this.setState({playOne:true,prevSet:[...this.state.prevSet,this.state.moveSet[0]]})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Play "{this.state.moveSet[0]}"</button > : <button disabled style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Play "{this.state.moveSet[0]}"</button> }<br></br>
-        {!this.state.autoPlay && this.state.prevSet.length? <button onClick={() => this.rewindSolve()} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Rewind "{this.state.prevSet[this.state.prevSet.length-1]}"</button > : <button disabled style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Rewind "No move"</button> }<br></br>
+        {!this.state.autoPlay? <button onClick={() => this.setState({playOne:true,prevSet:[...this.state.prevSet,this.state.moveSet[0]]})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Play "{this.state.moveSet[0]&&typeof(this.state.moveSet[0][0])==='string'&&this.state.moveSet[0]!=="'"?this.state.moveSet[0]:"No Move"}"</button > : <button disabled style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Play "{this.state.moveSet[0]&&typeof(this.state.moveSet[0][0])==='string'&&this.state.moveSet[0]!=="'"?this.state.moveSet[0]:"No Move"}"</button> }<br></br>
+  {!this.state.autoPlay? <button onClick={() => this.rewindSolve()} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Rewind "{this.state.prevSet.length-1>=0?this.state.prevSet[this.state.prevSet.length-1]:"No Move"}"</button > : <button disabled style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Rewind {this.state.prevSet.length-1>=0?this.state.prevSet[this.state.prevSet.length-1]:"No Move"}</button> }<br></br>
         <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>STOP SOLVE</button>
     </div>;
     // let stopSolveBtn = <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>;
@@ -2138,7 +2190,7 @@ class App extends Component {
 
         <Speeds //Top left with slider
           onSliderChange={this.onSliderChange}
-          isDisabled={this.state.currentFunc==="None" ? false:true}
+          isDisabled={this.state.currentFunc==="None"||this.state.currentFunc==="Solving"? false:true}
         />
 
         { this.state.showMoveInput? 
