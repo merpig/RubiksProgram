@@ -788,7 +788,7 @@ class App extends Component {
       //let solveable = solveData.solveable;
       generated.tempArr.forEach((piece,i) => {
         if(piece.slice(0,6).join('')===solveData.rubiksObject[i].slice(0,6).join('')){}
-        //else{solveable=false}
+        else{solveData.solveable=false}
       })
       if(!solveData.solveable){
         console.log(solveData);
