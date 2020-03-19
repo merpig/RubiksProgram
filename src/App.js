@@ -788,9 +788,14 @@ class App extends Component {
       //let solveable = solveData.solveable;
       generated.tempArr.forEach((piece,i) => {
         if(piece.slice(0,6).join('')===solveData.rubiksObject[i].slice(0,6).join('')){}
-        else{solveData.solveable=false}
+        else if(this.state.cubeDimension<4){
+          //solveData.solveable=false
+        }
+        else{
+          console.log(piece.slice(0,6).join(''),solveData.rubiksObject[i].slice(0,6).join(''));
+        }
       })
-      if(!solveData.solveable){
+      if(solveData.solveable===false){
         console.log(solveData);
         obj.error.push(`This configuration of the cube is not solveable.`);
         obj.error.push(`Check that you've entered all pieces correctly.`);
@@ -1407,6 +1412,15 @@ class App extends Component {
     splitSet.forEach(e => e[e.length-1]==="'"? moveSet.push(e.replace("'","")):moveSet.push(e+"'"));
     let extraMoves = 0;
 
+    let temp = [];
+    console.log(moveSet.length);
+    for(let i = 0; i<moveSet.length; i++){
+      
+      if(moveSet[i]===''||moveSet[i]===' '||moveSet[i][0]==="N"||moveSet[i]==="'"){}
+      else {temp.push(moveSet[i]);}
+    }
+    moveSet = temp;
+
     for(let i = 0; i < moveSet.length-2; i++){
       if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
         moveSet[i]="";
@@ -1425,20 +1439,36 @@ class App extends Component {
       }
     }
 
-    let temp = [];
-    for(let i = 0; i<moveSet.length; i++){
-      
-      if(moveSet[i]===''||moveSet[i]===' '||moveSet[i][0]==="N"||moveSet[i]==="'"){}
-      else {temp.push(moveSet[i]);}
+    console.log("Pruned moves(first run): ",extraMoves);
+    console.log("Number of moves(first run): \n",moveSet.length);
+
+    for(let i = 0; i < moveSet.length-2; i++){
+      if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
+        moveSet[i]="";
+        moveSet[i+1]="";
+        extraMoves+=2;
+      }
     }
-    moveSet = temp;
+
+    for(let i = 0; i < moveSet.length-3; i++){
+      if(moveSet[i]===moveSet[i+1] && moveSet[i+1]===moveSet[i+2]){
+        if(moveSet[i].length===3){moveSet[i]+="'"}
+        else{moveSet[i]=moveSet[i].substring(0,3)}
+        moveSet[i+1]="";
+        moveSet[i+2]="";
+        extraMoves+=2;
+      }
+    }
+
+    
     
     console.log("Pruned moves: ",extraMoves);
     console.log("Number of moves: \n",moveSet.length);
     if(error) {
       console.log("Stopped due to probable infinite loop");
+      return {moveSet,rubiksObject : beforeObject,solveable:false};
     }
-    return {moveSet,rubiksObject : beforeObject,solveable:!error};
+    return {moveSet,rubiksObject : beforeObject,solveable:true};
   }
 
   // Initialization and animation functions
@@ -2159,13 +2189,59 @@ class App extends Component {
 
   // Renders html to the index.html page
   render() {
-    let solveBtn = (this.state.cubeDimension < 51) ? <button onClick={this.beginSolve} style={{position:"fixed", bottom: "60px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>SOLVE</button> : "";
-    let solveInterface = <div style={{position:"fixed", borderRadius: ".25rem",bottom: "60px", right: "10px",backgroundColor: "#343a40", border: "1px solid #007bff",color:"lightgray",fontSize:"1.5rem"}}>
-        {!this.state.autoPlay? <button onClick={() => this.setState({autoPlay:true})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Auto Play</button> : 
-        <button onClick={() => this.setState({autoPlay:false})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Pause</button>} <br></br>
-        {!this.state.autoPlay? <button onClick={() => this.setState({playOne:true,prevSet:[...this.state.prevSet,this.state.moveSet[0]]})} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Play "{this.state.moveSet[0]&&typeof(this.state.moveSet[0][0])==='string'&&this.state.moveSet[0]!=="'"?this.state.moveSet[0]:"No Move"}"</button > : <button disabled style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Play "{this.state.moveSet[0]&&typeof(this.state.moveSet[0][0])==='string'&&this.state.moveSet[0]!=="'"?this.state.moveSet[0]:"No Move"}"</button> }<br></br>
-  {!this.state.autoPlay? <button onClick={() => this.rewindSolve()} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Rewind "{this.state.prevSet.length-1>=0?this.state.prevSet[this.state.prevSet.length-1]:"No Move"}"</button > : <button disabled style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>Rewind {this.state.prevSet.length-1>=0?this.state.prevSet[this.state.prevSet.length-1]:"No Move"}</button> }<br></br>
-        <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>STOP SOLVE</button>
+    let solveBtn = (this.state.cubeDimension < 51&&this.state.currentFunc==="None") ? 
+      <button onClick={this.beginSolve} style={{position:"fixed", bottom: "60px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>SOLVE{this.state.cubeDimension>4?"(not finished)":""}</button> : "";
+    let solveInterface = 
+      <div 
+        style={{position:"fixed", borderRadius: ".25rem",bottom: "60px", right: "10px",backgroundColor: "#343a40", border: "1px solid #007bff",color:"lightgray",fontSize:"1.5rem"}}>
+        {!this.state.autoPlay? 
+          <button 
+            onClick={() => this.setState({autoPlay:true})}
+            style={{backgroundColor: "Transparent", 
+            border: "none",color:"lightgray",
+            fontSize:"1.5rem"}}>Auto Play</button> : 
+          <button 
+            onClick={() => this.setState({autoPlay:false})} 
+            style={{backgroundColor: "Transparent", 
+            border: "none",
+            color:"lightgray",
+            fontSize:"1.5rem"}}>
+            Pause
+          </button>} <br></br>
+        {!this.state.autoPlay? 
+          <button 
+            onClick={() => this.setState({playOne:true,prevSet:[...this.state.prevSet,this.state.moveSet[0]]})}
+            style={{backgroundColor: "Transparent", 
+            border: "none",
+            color:"lightgray",
+            fontSize:"1.5rem"}}>
+              Play "{this.state.moveSet[0]&&typeof(this.state.moveSet[0][0])==='string'&&this.state.moveSet[0]!=="'"?this.state.moveSet[0]:"No Move"}"
+          </button > : 
+          <button 
+            disabled 
+            style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>
+            Play "{this.state.moveSet[0]&&typeof(this.state.moveSet[0][0])==='string'&&this.state.moveSet[0]!=="'"?this.state.moveSet[0]:"No Move"}"
+          </button> 
+        }
+        <br></br>
+        {!this.state.autoPlay?
+          <button 
+            onClick={() => this.rewindSolve()} 
+            style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>
+            Rewind "{this.state.prevSet.length-1>=0?this.state.prevSet[this.state.prevSet.length-1]:"No Move"}"
+          </button > :
+          <button 
+            disabled 
+            style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>
+            Rewind {this.state.prevSet.length-1>=0?this.state.prevSet[this.state.prevSet.length-1]:"No Move"}
+          </button> 
+        }
+        <br></br>
+        <button 
+          onClick={this.stopSolve} 
+          style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>
+          STOP SOLVE
+        </button>
     </div>;
     // let stopSolveBtn = <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>;
     return (
@@ -2213,10 +2289,10 @@ class App extends Component {
             isValidConfig={this.state.isValidConfig}
             setColorPickedCube={this.setColorPickedCube}
             cpErrors={this.state.cpErrors}
-          /> : <Patterns
+          /> : this.state.currentFunc==="None"?<Patterns
           algorithm={this.algorithm}
           size={this.getSizeFromUrl()}
-        />
+        />:""
         }
 
         { this.state.generatedButtons && this.state.showControls? 
@@ -2234,10 +2310,10 @@ class App extends Component {
   
         {/* Create a component for these that works similarly to patterns to auto populate functions */}
         {/* Bottom Right */} 
-        {this.state.solveState < 0 &&this.state.cubeDimension<5?<button onClick={this.beginColorPicker} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>COLOR PICKER</button>:""}
+        {this.state.currentFunc==="None"&&this.state.solveState < 0 &&this.state.cubeDimension<5?<button onClick={this.beginColorPicker} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>COLOR PICKER</button>:""}
         {this.state.moveSet[0]==="'"?this.stopSolve():""}
         {this.state.solveState < 0 ? solveBtn : solveInterface}
-        <button onClick={this.beginScramble} style={{position:"fixed", bottom: "30px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>SCRAMBLE</button>
+        {this.state.currentFunc==="None"?<button onClick={this.beginScramble} style={{position:"fixed", bottom: "30px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>SCRAMBLE</button>:""}
         <button onClick={()=>this.setState({currentFunc:"Reset"})} style={{position:"fixed", bottom: "0px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>RESET</button>
       </div>
     );

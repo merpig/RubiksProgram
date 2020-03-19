@@ -13,7 +13,7 @@ const ColorPicker = (props) => {
         <div style={{position: "absolute", zIndex: "99"}}>
             <Draggable
             handle=".handle"
-            defaultPosition={{x:0 , y: 150}}
+            defaultPosition={{x:0 , y: window.innerHeight-400}}
             position={null}
             grid={[50, 50]}
             scale={1}
