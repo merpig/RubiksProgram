@@ -110,12 +110,13 @@
 
   .solverMoves{
     display: inline-block;
-    height: 25vh;
+    height: 26vh;
     /* padding-bottom: 75vh; */
     width: 100%;
     overflow: auto;
     border-radius: .25rem;
     border: 2px solid #007bff;
+    margin-top: 5px;
   }
 
   .solverMoves > div{

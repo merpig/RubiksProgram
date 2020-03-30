@@ -1252,23 +1252,25 @@ class App extends Component {
     //console.log("1",moveLog);
     let obj = this.rotateCubeFace(randFace, randTurn,randDepth,randIsMulti,blockMoveLog,moveLog,solveMoves,end,solveState);
     //console.log("2",obj.moveLog);
-
-    //moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length
     
-
-    
-
-    // if(this.state.moveLog.length&&obj.moveLog.length){
-    //   if(this.state.moveLog[this.state.moveLog.length-1].slice(0,3)===obj.moveLog[obj.moveLog.length-1].slice(0,3) && this.state.moveLog[this.state.moveLog.length-1].length!==obj.moveSet[obj.moveLog.length-1].length){
-    //     this.scramble();
-    //     //return;
-    //   }
-    //   else{
-        obj.moves = this.state.moves+1;
-        obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
-        this.setState(obj);
-    //   }
-    // }
+    if(moveLog.length&&obj.moveLog.length){
+      let firstLog = moveLog.split(" ");
+      let secondLog = obj.moveLog.split(" ");
+      //console.log(firstLog[firstLog.length-1],secondLog[secondLog.length-1]);
+      //console.log(moveLog);
+      //console.log(obj.moveLog[this.state.moveLog.length-1].replace("'",""));
+      if(firstLog[firstLog.length-1].slice(0,3)===secondLog[secondLog.length-1].slice(0,3) && firstLog[firstLog.length-1].length!==secondLog[secondLog.length-1].length){
+        //console.log("duplicate move found and ignored");
+        // this.scramble();
+        return;
+      }
+    }
+      //else{
+    obj.moves = this.state.moves+1;
+    obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
+    this.setState(obj);
+      //}
+    //}
 
   }
 

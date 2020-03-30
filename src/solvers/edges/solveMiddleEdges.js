@@ -45,7 +45,7 @@ function solveMiddleEdges(rubiksObject,moveStringToArray,edges,dim){
   for(let i = 0; i < cube.length; i++){
     if(moveString.length) space = " ";
     //if(cube[i].includes("green") || cube[i].includes("blue")){
-      let emptyCount = 0;
+      //let emptyCount = 0;
       let blueSide = -1;
       let greenSide = -1;
       let cubeX = cube[i][6];
@@ -53,7 +53,7 @@ function solveMiddleEdges(rubiksObject,moveStringToArray,edges,dim){
       let cubeZ = cube[i][8];
 
       for(let j = 0; j < 6; j++){
-        if (cube[i][j] === "black") emptyCount++;
+        if (cube[i][j] === "black");
         else {
           if(cube[i][j] === "blue") blueSide = j;
           else if(cube[i][j] === "green") greenSide = j;

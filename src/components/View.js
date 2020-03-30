@@ -16,6 +16,7 @@ class View extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
 
+        if(this.props.state.solvedSetIndex!==nextProps.state.solvedSetIndex) return true;
         if(!this.props.state.autoTarget&&nextProps.autoTarget) return true;
         if(nextProps.state.autoRewind&&nextProps.state.solvedSetIndex >= nextProps.state.targetSolveIndex-1) return true;
         if(nextProps.state.autoPlay&&nextProps.state.solvedSetIndex < nextProps.state.targetSolveIndex-1) return true;
