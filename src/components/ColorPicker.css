@@ -1,0 +1,29 @@
+.warningPopup{
+    display:none;
+    position: absolute;
+    background-color: white;
+    border-radius: .25rem;
+    z-index: 100;
+    border: 2px solid #007bff;
+    color: #343a40;
+    left: 0;
+    width:95%;
+    height: 95%;
+    text-align: center;
+}
+
+.cpMessage{
+    margin:auto;
+    padding: 20px;
+}
+
+.cpLeaveStay{
+    color: lightgrey;
+    background-color: #343a40;
+    border-radius: .25rem;
+    border: 1px solid #007bff;
+    font-size: 1rem;
+    height: 22.5%;
+    white-space: nowrap;
+    margin: 5px;
+  }

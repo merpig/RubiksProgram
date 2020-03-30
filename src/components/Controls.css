@@ -1,0 +1,41 @@
+#controlsDiv{
+    width:100%;
+    height:100%;
+    background-color: transparent;
+    white-space: nowrap;
+  }
+
+  .centerMoves{
+    display: inline-block;
+    height:100%;
+    overflow: hidden;
+  }
+
+  .singleLayerMoves{
+    display: inline-block;
+    height:100%;
+    overflow: hidden;
+  }
+  .centerLayerColumns,.singleLayerColumns,.multiLayerColumns{
+    display: inline-block;
+    width:min-content;
+    height:100%;
+    white-space: pre-wrap;
+  }
+  .multiLayerMoves{
+    display: inline-block;
+    height:100%;
+    overflow: hidden;
+    /* float: left; */
+  }
+  .moveBtn{
+    border-radius: 4px;
+    font-size: .75rem;
+    height: 12%;
+    margin:4px;
+  }
+
+  .moveBtn:hover{
+      background-color: lightblue!important;
+      color: black!important;
+  }

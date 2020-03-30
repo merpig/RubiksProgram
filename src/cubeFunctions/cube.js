@@ -233,14 +233,14 @@ const cube = {
             edges.push(...tempEdges[i][j]);
           }
         }
-        console.log(tempArr);
+        //console.log(tempArr);
         return {tempArr,middles,edges,corners};
     },
 
     generateBlank : function (_x,_y,_z){
       const tempArr = [];
-      const middles = [];
-      const edges = [];
+      // const middles = [];
+      // const edges = [];
       const corners = [];
       const tempMiddles = [
         [], // white
@@ -456,7 +456,7 @@ const cube = {
           }
         }
       }
-      console.log(tempArr);
+      //console.log(tempArr);
       return tempArr;
   },
 

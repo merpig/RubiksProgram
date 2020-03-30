@@ -1,5 +1,5 @@
 import React from 'react';
-import Draggable from 'react-draggable';
+import "./Controls.css";
 
 
 let centerButtons=[];
@@ -55,51 +55,42 @@ const Controls = props => {
     multiCols=[];
 
     return (
-        <div id="divInfo" style={{position: "absolute", zIndex: "98"}}>
-        <Draggable
-                handle=".handle"
-                defaultPosition={{x:130, y: window.innerHeight-370}}
-                position={null}
-                grid={[50, 50]}
-                scale={1}
-                onStart={props.handleStart}
-                onDrag={props.handleDrag}
-                onStop={props.handleStop}>
         <div id="controlsDiv">
-        <div className="handle" style={{color:"grey"}}>Drag from here</div>
             {
                 props.size%2 ? 
-                <div id="centerMoves" style={{marginRight: "5px"}}>
+                <div className="centerMoves" style={{marginRight: "5px"}}>
+                    <div className='centerLayerColumns'>
                     {
                         props.generatedButtons.center.forEach(element => {
                             centerButtons.push(
-                                <button className="moveBtn" 
+                                <div className="moveBtn" 
                                         key={key} 
-                                        onClick={() => props.rotateOneFace(element.clockwise.name,element.clockwise.data)} 
+                                        onMouseDown={() => props.rotateOneFace(element.clockwise.name,element.clockwise.data)} 
                                         style={{position:"relative", left: "0px",backgroundColor: "magenta",width:"45px"}}
-                                        onMouseEnter={()=>props.mouseEnter(element.clockwise.name,element.clockwise.data)}
+                                        onMouseEnter={(e)=>props.mouseEnter(element.clockwise.name,element.clockwise.data,e)}
                                         onMouseLeave={()=>props.mouseLeave()}
                                         >
                                         
                                     {element.clockwise.name}
-                                </button>
+                                </div>
                             );
                             key+=1
                             centerButtons.push(
-                                <button className="moveBtn" 
+                                <div className="moveBtn" 
                                         key={key} 
-                                        onClick={() => props.rotateOneFace(element.counter.name,element.counter.data)} 
+                                        onMouseDown={() => props.rotateOneFace(element.counter.name,element.counter.data)} 
                                         style={{position:"relative", left: "0px",backgroundColor: "magenta",width:"45px"}}
                                         onMouseEnter={()=>props.mouseEnter(element.counter.name,element.counter.data)}
                                         onMouseLeave={()=>props.mouseLeave()}
                                         >
                                     {element.counter.name}
-                                </button>
+                                </div>
                             );
                             key+=1
                         })
                     }
                     {centerButtons}
+                    </div>
                 </div> : ""
             }
             <div className="singleLayerMoves" style={{marginRight: "5px"}}>
@@ -110,27 +101,27 @@ const Controls = props => {
                         let lengthBtns = singleButtons.length-2;
                         let lengthBtns1 = singleButtons.length-1;
                         singleButtons[lengthBtns].push(
-                            <button className="moveBtn" 
+                            <div className="moveBtn" 
                                     key={key} 
-                                    onClick={() => props.rotateOneFace(element.counter.name,element.counter.data)} 
+                                    onMouseDown={() => props.rotateOneFace(element.counter.name,element.counter.data)} 
                                     style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}
                                     onMouseEnter={()=>props.mouseEnter(element.counter.name,element.counter.data)}
                                     onMouseLeave={()=>props.mouseLeave()}
                                     >
                                 {element.counter.name}
-                            </button>
+                            </div>
                         )
                         key+=1;
                         singleButtons[lengthBtns1].push(
-                            <button className="moveBtn" 
-                                    key={key} 
-                                    onClick={() => props.rotateOneFace(element.clockwise.name,element.clockwise.data)} 
-                                    style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}
-                                    onMouseEnter={()=>props.mouseEnter(element.clockwise.name,element.clockwise.data)}
-                                    onMouseLeave={()=>props.mouseLeave()}
-                                    >
+                            <div className="moveBtn" 
+                                key={key} 
+                                onMouseDown={() => props.rotateOneFace(element.clockwise.name,element.clockwise.data)} 
+                                style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}
+                                onMouseEnter={()=>props.mouseEnter(element.clockwise.name,element.clockwise.data)}
+                                onMouseLeave={()=>props.mouseLeave()}
+                                >
                                 {element.clockwise.name}
-                            </button>
+                            </div>
                         )
                         key+=1;
                     })
@@ -158,27 +149,27 @@ const Controls = props => {
                         let lengthBtns = multiButtons.length-2;
                         let lengthBtns1 = multiButtons.length-1;
                         multiButtons[lengthBtns].push(
-                            <button className="moveBtn" 
-                                    key={key} 
-                                    onClick={() => props.rotateOneFace(element.counter.name,element.counter.data)} 
-                                    style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}
-                                    onMouseEnter={()=>props.mouseEnter(element.counter.name,element.counter.data)}
-                                    onMouseLeave={()=>props.mouseLeave()}
-                                    >
+                            <div className="moveBtn" 
+                                key={key} 
+                                onMouseDown={() => props.rotateOneFace(element.counter.name,element.counter.data)} 
+                                style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}
+                                onMouseEnter={()=>props.mouseEnter(element.counter.name,element.counter.data)}
+                                onMouseLeave={()=>props.mouseLeave()}
+                                >
                                 {element.counter.name}
-                            </button>
+                            </div>
                         )
                         key+=1;
                         multiButtons[lengthBtns1].push(
-                            <button className="moveBtn" 
-                                    key={key} 
-                                    onClick={() => props.rotateOneFace(element.clockwise.name,element.clockwise.data)} 
-                                    style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}
-                                    onMouseEnter={()=>props.mouseEnter(element.clockwise.name,element.clockwise.data)}
-                                    onMouseLeave={()=>props.mouseLeave()}
-                                    >
+                            <div className="moveBtn" 
+                                key={key} 
+                                onMouseDown={() => props.rotateOneFace(element.clockwise.name,element.clockwise.data)} 
+                                style={{position:"relative", left: "0px",backgroundColor: colors.bgc,color: colors.color,width:"45px"}}
+                                onMouseEnter={()=>props.mouseEnter(element.clockwise.name,element.clockwise.data)}
+                                onMouseLeave={()=>props.mouseLeave()}
+                                >
                                 {element.clockwise.name}
-                            </button>
+                            </div>
                         )
                         key+=1;
                     })
@@ -199,9 +190,7 @@ const Controls = props => {
                 }
             </div>
         </div>
-        </Draggable>
-        </div>
     )
 }
 
-export default React.memo(Controls);
+export default Controls;

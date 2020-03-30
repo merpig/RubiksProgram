@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import Navbar from "./components/Navbar/Navbar";
-import Patterns from "./components/Patterns"
+//import Patterns from "./components/Patterns"
 import Speeds from "./components/Speeds"
-import Controls from "./components/Controls"
+//import Controls from "./components/Controls"
 import MoveInput from "./components/MoveInput"
 //import Core from "./components/Core";
-import ColorPicker from "./components/ColorPicker";
+//import ColorPicker from "./components/ColorPicker";
+import Menu from "./components/MenuWrapper/MenuWrapper";
 import * as THREE from "three";
 import Stats from "stats.js";
 import './App.css';
@@ -63,6 +64,8 @@ class App extends Component {
     reload : false,       // Lets animate know when to reload the cube (after every move)
     solveState : -1,      // Dictates progression of solve function
     solveMoves : "",      // Keeps track of moves used during solve
+    solvedSet: [],
+    solvedSetIndex: 0,
     facePosX : null,
     facePosY : null,
     facePosZ : null,
@@ -96,16 +99,21 @@ class App extends Component {
     controlledPositionControls: {
       x: 0, y: 0
     },
-    isMulti: false,
-    isVisible: false,
-    isValidConfig:false,
+    isMulti : false,
+    isVisible : false,
+    isValidConfig : false,
     hoverData : [],
     showSolveController : false,
     autoPlay : false,
+    autoRewind: false,
+    autoTarget: false,
     playOne : false,
     generateAllMoves: false,
     isLocal : null,
     cpErrors : [],
+    activeMenu : "",
+    solveTime:0,
+    targetSolveIndex: -1
   };
 
   // rotate colors on face (memory cube)
@@ -585,15 +593,277 @@ class App extends Component {
       let tempCube = [...tempObj[i]];
       if(tempCube[6]===pos.x && tempCube[7]===pos.y && tempCube[8]===pos.z){
         tempCube[side]=color;
-      }
-      tempObj[i] = tempCube;
+        tempObj[i] = [...tempCube];
+        i = tempObj.length;
+      }  
     }
-    this.setState({rubiksObject:tempObj,isValidConfig:false},()=>{
+    this.setState({rubiksObject:[...tempObj]},()=>{
       this.reloadTurnedPieces('cp');
       let obj = this.checkColors();
       if(obj.error) this.setState({isValidConfig:false,cpErrors:[...obj.error]});
       else if(obj.success) this.setState({isValidConfig:true,cpErrors:[]});
     });
+  }
+
+  convertToBlueWhiteEdge(_piece){
+    const piece = [..._piece];
+    const dim = this.state.cubeDimension;
+    const max = dim-1;
+    const white=0,blue=dim-1,red=dim-1,yellow=dim-1,orange=0,green=0;
+    console.log({
+      colors:[
+        piece[0], // piece on left(4) is now on front(0)
+        piece[1], // piece on top(1) is still on top(1)
+        piece[2], // piece on front(0) is now on right(2)
+        piece[3], // piece on right(2) is now on back(3)
+        piece[4], // piece on back(3) is now on left(4)
+        piece[5] // piece on bottom(5) is still on bottom(5)
+      ].join(""),
+      position:[
+        piece[6], // inverse y becomes x
+        0,  // y becomes 0
+        max // becomes top
+      ].join("")
+    });
+
+    if(piece[7]===white&&piece[8]===blue) {
+      console.log("we here");
+      return {
+        colors:[
+          piece[0], // piece on left(4) is now on front(0)
+          piece[1], // piece on top(1) is still on top(1)
+          piece[2], // piece on front(0) is now on right(2)
+          piece[3], // piece on right(2) is now on back(3)
+          piece[4], // piece on back(3) is now on left(4)
+          piece[5] // piece on bottom(5) is still on bottom(5)
+        ].join(""),
+        position:[
+          piece[6], // inverse y becomes x
+          0,  // y becomes 0
+          max // becomes top
+        ].join("")
+      }
+    }
+
+    if(piece[6]===orange&&piece[8]===blue) {
+      return {
+        colors:[
+          piece[4], // piece on left(4) is now on front(0)
+          piece[1], // piece on top(1) is still on top(1)
+          piece[0], // piece on front(0) is now on right(2)
+          piece[2], // piece on right(2) is now on back(3)
+          piece[3], // piece on back(3) is now on left(4)
+          piece[5] // piece on bottom(5) is still on bottom(5)
+        ].join(""),
+        position:[
+          max-piece[7], // inverse y becomes x
+          0,  // y becomes 0
+          max // becomes top
+        ].join("")
+      }
+    }
+
+    if(piece[7]===yellow&&piece[8]===blue){
+      return {
+        colors:[
+          piece[3], // piece on back(3) is now on front(0)
+          piece[1], // piece on top(1) is still on top(1)
+          piece[4], // piece on left(4) is now on right(2)
+          piece[0], // piece on front(0) is now on back(3)
+          piece[2], // piece on right(2) is now on left(4)
+          piece[5] // piece on bottom(5) is still on bottom(5)
+        ].join(""),
+        position:[
+          dim-(piece[6]+1), // inverse x becomes x
+          0,  // y becomes 0
+          max // becomes top
+        ].join("")
+      }
+    }
+
+    if(piece[6]===red&&piece[8]===blue){
+      return {
+        colors:[
+          piece[2], // piece on right(2) is now on front(0)
+          piece[1], // piece on top(1) is still on top(1)
+          piece[3], // piece on back(3) is now on right(2)
+          piece[4], // piece on left(4) is now on back(3)
+          piece[0], // piece on front(0) is now on left(4)
+          piece[5] // piece on bottom(5) is still on bottom(5)
+        ].join(""),
+        position:[
+          piece[7], // inverse y becomes x
+          0,  // y becomes 0
+          max // becomes tops
+        ].join("")
+      }
+    }
+
+    if(piece[6]===orange&&piece[7]===white){
+      return {
+        colors:[
+          piece[0], // piece on front(0) is still on front(0)
+          piece[4], // piece on left(4) is now on top(1)
+          piece[1], // piece on top(1) is now on right(2)
+          piece[3], // piece on back(3) is still on back(3)
+          piece[5], // piece on bottom(5) is now on left(4)
+          piece[2] // piece on right(2) is now on bottom(5)
+        ].join(""),
+        position:[
+          piece[8], // z becomes x
+          0,  // y 0
+          max // becomes tops
+        ].join("")
+      }
+    }
+
+    if(piece[6]===red&&piece[7]===white){
+      return {
+        colors:[
+          piece[0], // piece on front(0) is still on front(0)
+          piece[2], // piece on right(2) is now on top(1)
+          piece[5], // piece on bottom(5) is now on right(2)
+          piece[3], // piece on back(3) is still on back(3)
+          piece[1], // piece on top(1) is now on left(4)
+          piece[4] // piece on left(4) is now on bottom(5)
+        ].join(""),
+        position:[
+          max-piece[8], // inverse z becomes x
+          0,  // y remains the same
+          max // becomes tops
+        ].join("")
+      }
+    }
+
+    if(piece[6]===orange&&piece[7]===yellow){
+      return {
+        colors:[
+          piece[4], // piece on left(4) is now on front(0)
+          piece[3], // piece on back(3) is now on top(1)
+          "black",
+          "black",
+          "black",
+          "black",
+        ].join(""),
+        position:[
+          piece[8], // z becomes x
+          0,  // y remains the same
+          max // becomes tops
+        ].join("")
+      }
+    }
+
+    if(piece[6]===red&&piece[7]===yellow){
+      return {
+        colors:[
+          piece[2], // piece on right(2) is now on front(0)
+          piece[3], // piece on back(1) is still on top(1)
+          "black",
+          "black",
+          "black",
+          "black",
+        ].join(""),
+        position:[
+          max-piece[8], // inverse z becomes x
+          0,  // y remains the same
+          max // becomes tops
+        ].join("")
+      }
+    }
+
+    if(piece[7]===white&&piece[8]===green){
+      return {
+        colors:[
+          piece[0], // piece on front(0) is still on front(0)
+          piece[5], // piece on bottom(5) is now on top(1)
+          "black",
+          "black",
+          "black",
+          "black",
+        ].join(""),
+        position:[
+          max-piece[6], // inverse x becomes x
+          0,  // y remains the same
+          max // becomes tops
+        ].join("")
+      }
+    }
+
+    if(piece[6]===orange&&piece[8]===green){
+      return {
+        colors:[
+          piece[4], // piece on left(4) is now on front(0)
+          piece[5], // piece on bottom(5) is now on top(1)
+          "black",
+          "black",
+          "black",
+          "black",
+        ].join(""),
+        position:[
+          piece[7], // y becomes x
+          0,  // y remains the same
+          max // becomes tops
+        ].join("")
+      }
+    }
+
+    if(piece[7]===yellow&&piece[8]===green){
+      return {
+        colors:[
+          piece[3], // piece on back(3) is now on front(0)
+          piece[5], // piece on bottom(5) is now on top(1)
+          "black",
+          "black",
+          "black",
+          "black",
+        ].join(""),
+        position:[
+          piece[6], // x becomes x
+          0,  // y remains the same
+          max // becomes tops
+        ].join("")
+      }
+    }
+
+    if(piece[6]===red&&piece[8]===green){
+      return {
+        colors:[
+          piece[2], // piece on right(2) is now on front(0)
+          piece[5], // piece on bottom(5) is now on top(1)
+          "black",
+          "black",
+          "black",
+          "black",
+        ].join(""),
+        position:[
+          max-piece[7], // inverse y becomes x
+          0,  // y remains the same
+          max // becomes tops
+        ].join("")
+      }
+    }
+    
+    console.log("failed to register piece",piece);
+    return null;
+  }
+
+  checkValidMatch(validPiece,manualPiece){
+
+    // move piece to blue/white side
+    let newValidPiece = this.convertToBlueWhiteEdge([...validPiece]);
+    let newManualPiece = this.convertToBlueWhiteEdge([...manualPiece]); 
+
+    console.log(newValidPiece,newManualPiece);
+
+    if((newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position)){
+      console.log("valid");
+      return true;
+    }
+    else if(newValidPiece.colors!==newManualPiece.colors&&newValidPiece.position!==newManualPiece.position){
+      console.log("valid");
+      return true;
+    }
+    else return false;
   }
 
   setColorPickedCube = () => {
@@ -614,11 +884,8 @@ class App extends Component {
         if(validPiece===6&&!checked.includes(pieceIndex)&&!otherChecked.includes(i)){
           let validEdgePlacement = false;
           if(piece.includes("edge")&&!piece.includes("center")){
-            if(piece[13]===rubik[13]) validEdgePlacement = true;
+            validEdgePlacement = this.checkValidMatch(piece,rubik);
           }
-          // else if(piece.includes("middle")){
-          //   //if(piece[14]===rubik[14]) validEdgePlacement = true;
-          // }
           else{
             validEdgePlacement = true;
           }
@@ -711,12 +978,11 @@ class App extends Component {
         if(validPiece===6&&!checked.includes(pieceIndex)&&!otherChecked.includes(i)){
           let validEdgePlacement = false;
           if(piece.includes("edge")&&!piece.includes("center")){
-            if(piece[13]===rubik[13]) validEdgePlacement = true;
+            validEdgePlacement = this.checkValidMatch(piece,rubik);
           }
           else{
             validEdgePlacement = true;
           }
-
           if(validEdgePlacement){
             matchedCount++;
             checked.push(pieceIndex);
@@ -775,28 +1041,27 @@ class App extends Component {
       //});
     }
 
-    if(matchedCount!==rubiksLength){
+    if(matchedCount!==rubiksLength&&this.state.cubeDimension<4){
       if(!obj.error) obj.error = [];
       obj.error.push(`[${matchedCount-1}] out of [${rubiksLength-1}] matched. Missing [${(rubiksLength-1)-(matchedCount-1)}]`);
     }
 
     if(!obj.error){
       obj.error = [];
-      console.log(generated);
-      console.log(newGenerated);
-      let solveData = this.generateAllSolveMoves(this.state,newGenerated);
+      //console.log(generated);
+      //console.log(newGenerated);
+      const solveData = {...this.generateAllSolveMoves(this.state,newGenerated)};
       //let solveable = solveData.solveable;
       generated.tempArr.forEach((piece,i) => {
-        if(piece.slice(0,6).join('')===solveData.rubiksObject[i].slice(0,6).join('')){}
-        else if(this.state.cubeDimension<4){
-          //solveData.solveable=false
-        }
+        if(piece.slice(0,6).join('')===solveData.rubiksObject[i].slice(0,6).join('')||piece.includes('corner')){}
         else{
+          //solveData.solveable=false
+          console.log("failed matches");
           console.log(piece.slice(0,6).join(''),solveData.rubiksObject[i].slice(0,6).join(''));
         }
       })
       if(solveData.solveable===false){
-        console.log(solveData);
+        //console.log(solveData);
         obj.error.push(`This configuration of the cube is not solveable.`);
         obj.error.push(`Check that you've entered all pieces correctly.`);
         if(this.state.cubeDimension>3){
@@ -811,7 +1076,7 @@ class App extends Component {
       }
     }
     else{
-      obj.error.push('Not solvable');
+      //obj.error.push('Not solvable');
     }
 
     console.log(obj.error);
@@ -984,11 +1249,27 @@ class App extends Component {
     if(randDepth === Math.ceil(cD/2) && cD%2)
       randIsMulti=0;
 
+    //console.log("1",moveLog);
     let obj = this.rotateCubeFace(randFace, randTurn,randDepth,randIsMulti,blockMoveLog,moveLog,solveMoves,end,solveState);
-    obj.moves = this.state.moves+1;
-    obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
+    //console.log("2",obj.moveLog);
 
-    this.setState(obj);
+    //moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length
+    
+
+    
+
+    // if(this.state.moveLog.length&&obj.moveLog.length){
+    //   if(this.state.moveLog[this.state.moveLog.length-1].slice(0,3)===obj.moveLog[obj.moveLog.length-1].slice(0,3) && this.state.moveLog[this.state.moveLog.length-1].length!==obj.moveSet[obj.moveLog.length-1].length){
+    //     this.scramble();
+    //     //return;
+    //   }
+    //   else{
+        obj.moves = this.state.moves+1;
+        obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
+        this.setState(obj);
+    //   }
+    // }
+
   }
 
   // Changes state active function to begin scrambling
@@ -1003,14 +1284,16 @@ class App extends Component {
   }
 
   stopSolve = () => {
-    this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : []});
+    this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : [],targetSolveIndex:-1});
   }
 
   beginColorPicker = () => {
     let cD = this.state.cubeDimension;
     if(this.state.currentFunc !== "None") return;
-    const blank = cube.generateBlank(cD,cD,cD);
-    this.setState({currentFunc : "Color Picker",rubiksObject: blank},()=>{
+    const blank = [...cube.generateBlank(cD,cD,cD)];
+    this.setState({currentFunc : "Color Picker",rubiksObject: [...blank]},()=>{
+      //console.log(this.state.rubiksObject);
+      //console.log("reloading");
       this.reloadTurnedPieces('cp');
     });
   }
@@ -1023,17 +1306,21 @@ class App extends Component {
   rewindSolve = () => {
     if(this.state.playOne) return;
     let newMoveSet = [];
-    let tempMoveSet = this.state.moveSet;
-    let tempPrev = this.state.prevSet;
+    let tempMoveSet = [...this.state.moveSet];
+    let tempPrev = [...this.state.prevSet];
     let lastEl = tempPrev[tempPrev.length-1];
     let popped = tempPrev.pop();
-    if(!popped) return;
+    if(!popped) {
+      this.setState({autoRewind:false});
+      return;
+    }
     popped[popped.length-1]==="'" ? popped=popped.slice(0,3) : popped+="'";
     newMoveSet.push(popped,lastEl,...tempMoveSet);
     this.setState({
       playOne:true,
       prevSet:tempPrev,
-      moveSet:newMoveSet
+      moveSet:newMoveSet,
+      solvedSetIndex:this.state.solvedSetIndex-2
     })
   }
 
@@ -1112,7 +1399,7 @@ class App extends Component {
     
   }
 
-  mouseOver = (name,data) => {
+  mouseOver = (name,data,e) => {
     if(this.state.showHints)
       this.setState({
         isVisible: true,
@@ -1263,7 +1550,7 @@ class App extends Component {
 
   // Gets the url to be parsed
   getSizeFromUrl() {
-    let limit = 50;
+    let limit = 75;
     let cD;
     
     let parts = window.location.href.split('/');
@@ -1282,7 +1569,7 @@ class App extends Component {
       cD = parseInt(parts[parts.length-1].substr(3));
     }
 
-    if (cD <= limit && cD >= 2) return cD; else return 3;
+    if (cD <= limit && cD >= 1) return cD; else return 3;
   }
 
   calculateTurnAtFace(coord1,compare1,coord2,compare2,piece1,piece2,dir1,dir2){
@@ -1350,9 +1637,14 @@ class App extends Component {
 
   }
 
+  menuSetState = (obj) =>{
+    console.log(obj);
+    this.setState(obj);
+  }
+
   generateAllSolveMoves = (state,rubiksObject) =>{
     let beforeObject = rubiksObject.map(e=>[...e]);
-    console.log(beforeObject);
+    //console.log(beforeObject);
     let tempState = {...state}, solvedSet = "";
     let currentIndex = null;
     let previousIndex = null;
@@ -1382,7 +1674,8 @@ class App extends Component {
           }
           moves.moveSet = temp;
         }
-        if((indexOccurence>10 && tempState.solveState<1)||counter>10000) {
+        if((indexOccurence>10 && tempState.solveState<1)||counter>100000) {
+          console.log(tempState.solveState);
           error = true;
           //console.log(JSON.stringify({beforeObject}));
           moves.currentFunc="None";
@@ -1410,65 +1703,58 @@ class App extends Component {
     if(splitSet[0][0]==="N"||splitSet[0][0]==="'") splitSet.shift();
     let moveSet = []
     splitSet.forEach(e => e[e.length-1]==="'"? moveSet.push(e.replace("'","")):moveSet.push(e+"'"));
+    console.log(moveSet.length);
     let extraMoves = 0;
 
-    let temp = [];
-    console.log(moveSet.length);
+    let temp = [],temp2 = [];
     for(let i = 0; i<moveSet.length; i++){
       
       if(moveSet[i]===''||moveSet[i]===' '||moveSet[i][0]==="N"||moveSet[i]==="'"){}
       else {temp.push(moveSet[i]);}
     }
-    moveSet = temp;
-
-    for(let i = 0; i < moveSet.length-2; i++){
-      if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
-        moveSet[i]="";
-        moveSet[i+1]="";
-        extraMoves+=2;
-      }
-    }
-
-    for(let i = 0; i < moveSet.length-3; i++){
-      if(moveSet[i]===moveSet[i+1] && moveSet[i+1]===moveSet[i+2]){
-        if(moveSet[i].length===3){moveSet[i]+="'"}
-        else{moveSet[i]=moveSet[i].substring(0,3)}
-        moveSet[i+1]="";
-        moveSet[i+2]="";
-        extraMoves+=2;
-      }
-    }
-
-    console.log("Pruned moves(first run): ",extraMoves);
-    console.log("Number of moves(first run): \n",moveSet.length);
-
-    for(let i = 0; i < moveSet.length-2; i++){
-      if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
-        moveSet[i]="";
-        moveSet[i+1]="";
-        extraMoves+=2;
-      }
-    }
-
-    for(let i = 0; i < moveSet.length-3; i++){
-      if(moveSet[i]===moveSet[i+1] && moveSet[i+1]===moveSet[i+2]){
-        if(moveSet[i].length===3){moveSet[i]+="'"}
-        else{moveSet[i]=moveSet[i].substring(0,3)}
-        moveSet[i+1]="";
-        moveSet[i+2]="";
-        extraMoves+=2;
-      }
-    }
-
     
-    
+
+    for(let i = 0; i < temp.length-2; i++){
+      if(temp[i].substring(0,3)===temp[i+1].substring(0,3) && temp[i].length!==temp[i+1].length){
+        temp[i]="";
+        temp[i+1]="";
+        extraMoves+=2;
+      }
+    }
+
+    // for(let i = 0; i < temp.length-3; i++){
+    //   if(temp[i]===temp[i+1] && temp[i+1]===temp[i+2]){
+    //     if(temp[i].length===3){temp[i]+="'"}
+    //     else{temp[i]=temp[i].substring(0,3)}
+    //     temp[i+1]="";
+    //     temp[i+2]="";
+    //     extraMoves+=2;
+    //   }
+    // }
+
+    for(let i = 0; i<temp.length; i++){
+      
+      if(temp[i]===''||temp[i]===' '||temp[i][0]==="N"||temp[i]==="'"){}
+      else {temp2.push(moveSet[i]);}
+    }
+
     console.log("Pruned moves: ",extraMoves);
-    console.log("Number of moves: \n",moveSet.length);
+    console.log("Number of moves: \n",temp2.length);
+
+  
     if(error) {
       console.log("Stopped due to probable infinite loop");
-      return {moveSet,rubiksObject : beforeObject,solveable:false};
+      return {moveSet:[...temp2],rubiksObject : beforeObject,solveable:false};
     }
-    return {moveSet,rubiksObject : beforeObject,solveable:true};
+    return {moveSet:[...temp2],rubiksObject : beforeObject,solveable:true,solvedSet:[...temp2],solvedSetIndex:0};
+  }
+
+  animateRotation(tempCubes){
+    this.rotatePieces(cube.rotatePoint,tempCubes);
+  }
+
+  windowResized = () => {
+    this.setState({resized:true});
   }
 
   // Initialization and animation functions
@@ -1493,7 +1779,7 @@ class App extends Component {
     });
     let raycaster = new THREE.Raycaster();
     let mouse = new THREE.Vector2();
-    let cubeGeometry = new THREE.BoxGeometry( 1, 1, 1 );
+    let cubeGeometry = new THREE.BoxGeometry(  );
     let geometry = new THREE.PlaneGeometry(1,1);
     //const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp2vqlj5dzmGwQfEBy7yNWfDvDVm6mgsA4768bcpsJDmdp9t0g7w&s');
     const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
@@ -1510,8 +1796,7 @@ class App extends Component {
       mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
       mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;   
     }
-
-    function onWindowResize() {
+    function onWindowResize(resized) {
       camera.aspect = window.innerWidth / window.innerHeight;
       
       // adjust the FOV
@@ -1522,6 +1807,7 @@ class App extends Component {
 
       renderer.setSize( window.innerWidth, window.innerHeight-10 );
       renderer.render( scene, camera );
+      resized();
     }
 
     // Bind event listeners to window
@@ -1529,7 +1815,7 @@ class App extends Component {
     window.addEventListener("mousemove", onMouseMove, false );
     window.addEventListener("mousedown", this.onMouseDown.bind(this), false );
     window.addEventListener("mouseup", this.onMouseUp.bind(this), false );
-    window.addEventListener("resize", onWindowResize, false );
+    window.addEventListener("resize", () => onWindowResize(this.windowResized), false );
     
     // Set background color and size
     renderer.setClearColor(new THREE.Color("black"),0);
@@ -1824,6 +2110,7 @@ class App extends Component {
       currentFunc: 'Reset',
       generatedButtons: cube.generateButtonData(this.getSizeFromUrl())
     }, () => {
+      //let cubeGroup = new THREE.Group();
       // Callback required to wait for setState to finish
       for(let i = 0; i < rubiksObject.length; i++){
         // Logic to only render outer pieces since inside pieces aren't ever used
@@ -1833,6 +2120,9 @@ class App extends Component {
           scene.add( this.state.cubes[i] );
         } 
       }
+
+      //scene.add( cubeGroup);
+
       camera.position.z = this.state.cameraZ;// * Math.sin( this.state.angle );
       camera.position.y = this.state.cameraY;
       camera.position.x = this.state.cameraX;// * Math.cos( this.state.angle );
@@ -1934,9 +2224,7 @@ class App extends Component {
           }
 
           // Recolors last hovered piece. rgb values of cyan
-          if(intersects[0].object.material[tempIndex].opacity!==.8/*parseFloat(intersects[0].object.material[tempIndex].color.r) !== 0.6784313725490196 &&
-             parseFloat(intersects[0].object.material[tempIndex].color.g) !== 0.8470588235294118 &&
-             parseFloat(intersects[0].object.material[tempIndex].color.b) !== 0.9019607843137255*/){
+          if(intersects[0].object.material[tempIndex].opacity!==.8){
                
             if(previousPiece!==null) {
               let previousPiece = this.state.previousPiece;
@@ -1962,10 +2250,6 @@ class App extends Component {
             }
         }
 
-        // 1. Work on what values get stored for mouse and the object hovered 
-        // 2. Will be important for determing turn directions based on drag
-        // 3. Once available turn directions have been determined, calculate change
-        //    in mouse movement to determine which face gets turned and direction
         else if(this.state.mouseDown){
           if(this.state.mouseFace === null){
             // dragging mouse on canvas should rotate cube
@@ -1993,10 +2277,6 @@ class App extends Component {
             }catch(e){
               //console.error("Error prevented");
             }
-            // ** account for mouse not being over the cube after selected piece **
-            //
-            // Code here to figure out which faces can be turned from selected face
-            // Also code here to figure which direction to turn face based on mouse movement
           }
         }
 
@@ -2016,8 +2296,9 @@ class App extends Component {
       }
       
       // Animate queued rotation
+      
       if(this.state.start<=this.state.end){
-        this.rotatePieces(cube.rotatePoint,tempCubes);
+        this.animateRotation(tempCubes);
       }
 
       // Handles move queueing based on function
@@ -2072,6 +2353,7 @@ class App extends Component {
                 this.setState(this.generateAllSolveMoves(this.state,this.state.rubiksObject));
                 let b = performance.now();
                 console.log('It took ' + ((b - a)/1000).toFixed(3) + ' seconds to solve.');
+                this.setState({solveTime:((b - a)/1000).toFixed(3)})
               });
 
             }
@@ -2081,7 +2363,7 @@ class App extends Component {
               if(this.state.autoPlay) {this.setState({autoPlay:false});}
             }
             // If playone or autoplay is true, progress accordingly
-            else if(this.state.playOne||this.state.autoPlay){
+            else if(this.state.playOne){
               let cD = this.state.cubeDimension;
               let tempRubiks = this.state.rubiksObject;
               let blockMoveLog = this.state.blockMoveLog;
@@ -2090,7 +2372,7 @@ class App extends Component {
               let moveSet = this.state.moveSet;
               let end = this.state.end;
               let solveState = this.state.solveState;
-              let obj = {prevSet:this.state.prevSet};
+              let obj = {};
 
               if(typeof(moveSet[0][0])==='number') {
                 this.changeSpeed(...moveSet[0],true);
@@ -2098,9 +2380,6 @@ class App extends Component {
                 obj.moveSet=moveSet;
               }
               else{
-                if(this.state.autoPlay) {
-                  obj.prevSet.push(moveSet[0])
-                }
 
                 // generates data for next move
                 let moveData = this.parseMoveArray(moveSet);
@@ -2118,12 +2397,13 @@ class App extends Component {
                 this.mouseLeave();
                 
                 // store the object here
-                if(moveData)
+                if(moveData){
                   obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,tempRubiks);
+                  obj.solvedSetIndex = this.state.solvedSetIndex+1;
+                }
 
-                //console.log(obj);
+                console.log(obj);
               }
-
               this.setState(obj);
             }
             // Show hint over next move
@@ -2189,61 +2469,7 @@ class App extends Component {
 
   // Renders html to the index.html page
   render() {
-    let solveBtn = (this.state.cubeDimension < 51&&this.state.currentFunc==="None") ? 
-      <button onClick={this.beginSolve} style={{position:"fixed", bottom: "60px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>SOLVE{this.state.cubeDimension>4?"(not finished)":""}</button> : "";
-    let solveInterface = 
-      <div 
-        style={{position:"fixed", borderRadius: ".25rem",bottom: "60px", right: "10px",backgroundColor: "#343a40", border: "1px solid #007bff",color:"lightgray",fontSize:"1.5rem"}}>
-        {!this.state.autoPlay? 
-          <button 
-            onClick={() => this.setState({autoPlay:true})}
-            style={{backgroundColor: "Transparent", 
-            border: "none",color:"lightgray",
-            fontSize:"1.5rem"}}>Auto Play</button> : 
-          <button 
-            onClick={() => this.setState({autoPlay:false})} 
-            style={{backgroundColor: "Transparent", 
-            border: "none",
-            color:"lightgray",
-            fontSize:"1.5rem"}}>
-            Pause
-          </button>} <br></br>
-        {!this.state.autoPlay? 
-          <button 
-            onClick={() => this.setState({playOne:true,prevSet:[...this.state.prevSet,this.state.moveSet[0]]})}
-            style={{backgroundColor: "Transparent", 
-            border: "none",
-            color:"lightgray",
-            fontSize:"1.5rem"}}>
-              Play "{this.state.moveSet[0]&&typeof(this.state.moveSet[0][0])==='string'&&this.state.moveSet[0]!=="'"?this.state.moveSet[0]:"No Move"}"
-          </button > : 
-          <button 
-            disabled 
-            style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>
-            Play "{this.state.moveSet[0]&&typeof(this.state.moveSet[0][0])==='string'&&this.state.moveSet[0]!=="'"?this.state.moveSet[0]:"No Move"}"
-          </button> 
-        }
-        <br></br>
-        {!this.state.autoPlay?
-          <button 
-            onClick={() => this.rewindSolve()} 
-            style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>
-            Rewind "{this.state.prevSet.length-1>=0?this.state.prevSet[this.state.prevSet.length-1]:"No Move"}"
-          </button > :
-          <button 
-            disabled 
-            style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>
-            Rewind {this.state.prevSet.length-1>=0?this.state.prevSet[this.state.prevSet.length-1]:"No Move"}
-          </button> 
-        }
-        <br></br>
-        <button 
-          onClick={this.stopSolve} 
-          style={{backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>
-          STOP SOLVE
-        </button>
-    </div>;
-    // let stopSolveBtn = <button onClick={this.stopSolve} style={{backgroundColor: "Transparent", border: "none",color:"lightgray"}}>STOP SOLVE</button>;
+    
     return (
       <div className="App" style={{width:"max-content"}}>
         
@@ -2254,12 +2480,12 @@ class App extends Component {
           state={this.state}
         />
 
-        <p style={{position:"fixed", top: "100px", left: "10px",color: "white",fontSize:"1.5rem"}}>Speed: {this.state.currentSpeed}</p>
+        <p style={{position:"fixed", top: "60vh", left: "10px",color: "white",fontSize:"1rem"}}>Speed: {this.state.currentSpeed}</p>
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white",fontSize:"1.5rem"}}>{this.state.currentFunc === "None" ? "" : this.state.currentFunc}</p>
         <div style={{position:"absolute", top: "75px",marginLeft: "50%",left:"-105px"}}>
-          {this.state.currentFunc==="None"?
-          [<button className="redoUndo" style={{marginRight:"10px",width:"100px",height:"50px",fontSize:"1.5rem"}} onClick={() => this.undo()}>Undo</button>,
-          <button className="redoUndo" style={{marginRight:"10px",width:"100px",height:"50px",fontSize:"1.5rem"}} onClick={() => this.redo()}>Redo</button>]
+          {this.state.currentFunc==="None"||this.state.currentFunc==="Undo"||this.state.currentFunc==="Redo"||this.state.currentFunc==="Drag Turn"?
+          [<button key="undo" className="redoUndo" style={{marginRight:"10px",width:"100px",height:"50px",fontSize:"1.5rem"}} onClick={() => this.undo()}>Undo</button>,
+          <button key="redo" className="redoUndo" style={{marginRight:"10px",width:"100px",height:"50px",fontSize:"1.5rem"}} onClick={() => this.redo()}>Redo</button>]
           :""
           }
         </div>
@@ -2278,43 +2504,34 @@ class App extends Component {
           /> : ""
         }
 
-        { this.state.currentFunc==="Color Picker"? 
-          <ColorPicker
-            handleDrag = {this.handleDragInput}
-            onStart = {this.onStartInput}
-            onStop = {this.onStopInput}
-            endColorPicker={this.endColorPicker}
-            colorPicked={this.state.colorPicked}
-            changeColor={this.changeColor}
-            isValidConfig={this.state.isValidConfig}
-            setColorPickedCube={this.setColorPickedCube}
-            cpErrors={this.state.cpErrors}
-          /> : this.state.currentFunc==="None"?<Patterns
-          algorithm={this.algorithm}
-          size={this.getSizeFromUrl()}
-        />:""
-        }
-
-        { this.state.generatedButtons && this.state.showControls? 
-          <Controls
+        <Menu 
+          state = {this.state}
+          setState = {this.menuSetState}
+          beginScramble = {this.beginScramble}
           disableHover={this.state.showGuideArrows}
+
+          //Controls
           generatedButtons={this.state.generatedButtons}
           size={this.getSizeFromUrl()}
           rotateOneFace={this.rotateOneFace}
-          handleDrag = {this.handleDragControls}
-          onStart = {this.onStartControls}
-          onStop = {this.onStopControls}
           mouseEnter= {this.mouseOver}
           mouseLeave= {this.mouseLeave}
-        /> : ""}
+
+          //Color Picker
+          beginColorPicker={this.beginColorPicker}
+          endColorPicker={this.endColorPicker}
+          colorPicked={this.state.colorPicked}
+          changeColor={this.changeColor}
+          isValidConfig={this.state.isValidConfig}
+          setColorPickedCube={this.setColorPickedCube}
+          cpErrors={this.state.cpErrors}
+
+          //Solver
+          beginSolve={this.beginSolve}
+          stopSolve={this.stopSolve}
+          rewindOne={this.rewindSolve}
+        />
   
-        {/* Create a component for these that works similarly to patterns to auto populate functions */}
-        {/* Bottom Right */} 
-        {this.state.currentFunc==="None"&&this.state.solveState < 0 &&this.state.cubeDimension<5?<button onClick={this.beginColorPicker} style={{position:"fixed", bottom: "90px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>COLOR PICKER</button>:""}
-        {this.state.moveSet[0]==="'"?this.stopSolve():""}
-        {this.state.solveState < 0 ? solveBtn : solveInterface}
-        {this.state.currentFunc==="None"?<button onClick={this.beginScramble} style={{position:"fixed", bottom: "30px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>SCRAMBLE</button>:""}
-        <button onClick={()=>this.setState({currentFunc:"Reset"})} style={{position:"fixed", bottom: "0px", right: "10px",backgroundColor: "Transparent", border: "none",color:"lightgray",fontSize:"1.5rem"}}>RESET</button>
       </div>
     );
   }

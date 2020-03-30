@@ -1,6 +1,6 @@
-function move(space,depth,side){
-    return (space+(depth<10? "0":"") + depth + side);
-}
+// function move(space,depth,side){
+//     return (space+(depth<10? "0":"") + depth + side);
+// }
 
 let solveMiddleEdgeSegments = (current,solved,dim,blueSide,greenSide) => {
     const maxCoord = dim-1;

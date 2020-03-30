@@ -3,7 +3,7 @@ import 'rc-slider/assets/index.css';
 import React from 'react';
 import Slider from 'rc-slider'
 
-const style = { width: 100, position: "fixed", top: "87.5px", left: "10px",fontSize:"1rem"};
+const style = { width: 100, position: "fixed", top: "65vh", left: "10px",fontSize:"1rem"};
 
 const Speeds = props => (
 
