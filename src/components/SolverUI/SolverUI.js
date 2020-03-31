@@ -2,6 +2,8 @@
 import React,{Component} from "react";
 import {Row, Col} from "react-bootstrap";
 import "./SolverUI.css";
+import algorithms from "../../cubeFunctions/algorithms";
+import cube from '../../cubeFunctions/cube';
 
 function playOne(props){
     if(props.state.playOne===true) return;
@@ -54,10 +56,16 @@ class SolverUI extends Component {
             solverSet.push(<div id={i} className="solveMoveDiv targetSolveIndex" key={i}>{el+" "}</div>):
             solverSet.push(<div onClick={(e)=>setTarget(e,this.props)} id={i} className="solveMoveDiv" key={i}>{el+" "}</div>)
         )
-    
+
+        let algorithmSet = [];
+        
+        algorithms.forEach(algo=>algo.worksFor.includes(this.props.state.cubeDimension)?
+            algorithmSet.push(<button id={algo.name} key={algo.name} className={this.props.state.activeAlgo===algo.name?
+                "algoButton algoActive":"algoButton"} onClick={(e)=>algoStart(e,this.props)}>{algo.name}</button>)
+                :"")
+        //console.log(algorithmSet);
 
         let solveAll = <>
-        <p>Auto</p>
         <a className="solveButtonImage" href="#"><img 
             alt="fastforward" 
             src="https://image.flaticon.com/icons/svg/92/92330.svg"
@@ -65,7 +73,6 @@ class SolverUI extends Component {
         </img></a></>;
 
         let rewindAll = <>
-            <p>Auto</p>
             <a className="solveButtonImage" href="#"><img 
                 className="rotateimg180"
                 alt="fastforward" 
@@ -132,6 +139,18 @@ class SolverUI extends Component {
             }
         }
 
+        function algoStart(e,props){
+            let cD = props.state.cubeDimension;
+            let algo = e.target.id;
+            let algoSet = [];
+            let generated = cube.generateSolved(cD,cD,cD);
+            algorithms.forEach(e=>{
+                if(e.name===algo&&e.worksFor.includes(cD)) algoSet.push(...e.moves.split(" "));
+            })
+            //console.log(algoSet);
+            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0});
+        }
+
         return(<div className="solverUIWrapper">
             <div className="warningPopupSolver">
                 <div id="solverChangeData" data=""></div>
@@ -139,22 +158,24 @@ class SolverUI extends Component {
                 <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={()=>leave(this.props)} className="solverLeaveStay">Leave</button>
             </div>
             <Row style={{width:"100%",height:"100%",margin:0}}>
-                <Col>
-                    <div className="solverInfo">
-                        <div className="solveTime">
-                            Time:{this.props.state.solveTime}s
-                        </div>
-                        <div className="solveMoves">
-                            Moves:{this.props.state.solvedSet.length}
-                        </div>
-                    </div>
+                <Col style={{paddingRight:0}}>
+                    {this.props.state.currentFunc==="Solving"?
+                        <div className="solverInfo">
+                            <div className="solveTime">
+                                Time:{this.props.state.solveTime}s
+                            </div>
+                            <div className="solveMoves">
+                                Moves:{this.props.state.solvedSet.length}
+                            </div>
+                        </div>:""
+                    }
                     <div className="solverInterface">
                         <div className="solverButton rewindAll">
                             {this.props.state.autoRewind?pause:rewindAll}
                         </div>
 
                         <div className="solverButton rewindOne">
-                            <p>{this.props.state.prevSet.length-1>=0?this.props.state.prevSet[this.props.state.prevSet.length-1]:"None"}</p>
+                            <p style={{width:"100%"}}>{this.props.state.prevSet.length-1>=0?this.props.state.prevSet[this.props.state.prevSet.length-1]:"None"}</p>
                             <a className="solveButtonImage" href="#"><img 
                                 className="rotateimg180" 
                                 src="https://image.flaticon.com/icons/svg/92/92335.svg" 
@@ -163,7 +184,7 @@ class SolverUI extends Component {
                             </img></a>
                         </div>
                         <div className="solverButton playOne">
-                            <p>{this.props.state.moveSet[0]&&typeof(this.props.state.moveSet[0][0])==='string'&&this.props.state.moveSet[0]!=="'"?this.props.state.moveSet[0]:"None"}</p>
+                            <p style={{width:"100%"}}>{this.props.state.moveSet[0]&&typeof(this.props.state.moveSet[0][0])==='string'&&this.props.state.moveSet[0]!=="'"?this.props.state.moveSet[0]:"None"}</p>
                             <a className="solveButtonImage" href="#"><img 
                                 src="https://image.flaticon.com/icons/svg/92/92335.svg" 
                                 alt="play"

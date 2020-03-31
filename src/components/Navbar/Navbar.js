@@ -37,17 +37,6 @@ const Navbar = props => (
 
             <li>
               
-              Move Controls <br></br>
-              <label className="checkbox-inline">
-                <input type="checkbox" data-toggle="toggle" onClick={() => props.changeSettings('displayControls')}></input>
-                {props.state.showControls ? "ON " : "OFF "}
-              </label>
-              
-              
-            </li>
-
-            <li>
-              
               Move Hints <br></br>
               <label className="checkbox-inline">
                 <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayHints')}></input>
@@ -88,19 +77,19 @@ const Navbar = props => (
     <div style={{float:"right"}} >
     <Popup trigger={<button id="triggerBtn">Info</button>}>
         {close => (
-          <div style={{zIndex:"100"}}>
+          <div style={{zIndex:"100",width:"100%",height:"100%"}}>
             <div className="shadeBackground" style={{backgroundColor:"black",zIndex:"101"}} onClick={close}></div>
-            <div style={{zIndex:"102"}} className="popupDiv">
+            <div style={{zIndex:"102",width:"max-content",margin:"auto",transform:"translateX(-50%)"}} className="popupDiv">
               <b style={{fontSize: "2rem"}}>Instructions</b>
               <button className="close" id="closeBtn" onClick={close}>
                 &times;
               </button>
               <hr style={{backgroundColor:"#007bff",marginBottom:"0"}}></hr>
-              <div style={{backgroundColor:"black",marginTop:"0",color:"#00C000",fontSize:"1rem"}}>
-                <p style={{paddingTop: "1rem"}}>> Click and drag anywhere not on the cube to rotate.</p>
+              <div style={{backgroundColor:"black",marginTop:"0",color:"#00C000",fontSize:"1rem",textAlign:"left"}}>
+                <div style={{paddingTop: "1rem"}}>> Click and drag anywhere not on the cube to rotate.</div>
                 <hr style={{backgroundColor:"lightgray"}}></hr>
-                <p>> 1. Click and drag anywhere on the cube to make a move or</p>
-                <p>> 2. Use buttons(turn on in settings) or keyboard to make turns: <br></br>
+                <div>> 1. Click and drag anywhere on the cube to make a move or</div>
+                <div>> 2. Use buttons(Moves) or keyboard to make turns: <br></br>
                   <div style={{width:"100%",textAlign:"center"}}>
                   <b style={{color: "white",backgroundColor:"black"}}> F, </b><b style={{color: "white",backgroundColor:"black"}}>f,</b>
                   <b style={{color: "blue",backgroundColor:"black"}}> U, </b><b style={{color: "blue",backgroundColor:"black"}}>u,</b>
@@ -110,13 +99,13 @@ const Navbar = props => (
                   <b style={{color: "green",backgroundColor:"black"}}> D, </b><b style={{color: "green",backgroundColor:"black"}}>d </b> 
                   <p style={{width:"100%",textAlign:"center"}}>(lower case is clockwise, upper case is counterclockwise)</p>
                   </div>
-                </p>
+                </div>
                 <hr style={{backgroundColor:"lightgray"}}></hr>
-                <p style={{marginBottom: "0",paddingBottom:"1rem"}}>> Author: Sasha Peters, <a target="#" href="https://www.github.com/merpig">github</a>, <a target="#" href="https://www.github.com/merpig/RubiksProgram">Project Repo</a></p>
+                <div style={{marginBottom: "0",paddingBottom:"1rem"}}>> Author: Sasha Peters, <a target="#" href="https://www.github.com/merpig">github</a>, <a target="#" href="https://www.github.com/merpig/RubiksProgram">Project Repo</a></div>
                 <hr style={{backgroundColor:"lightgrey"}}></hr>
-                  <p style={{color: "white",backgroundColor:"black",textAlign:"center"}}>
+                  <div style={{color: "white",backgroundColor:"black",textAlign:"center"}}>
                   site design / cube © 2020 RubiksProgram
-                </p>
+                </div>
               </div>
             </div>
           </div>

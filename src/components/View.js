@@ -16,6 +16,16 @@ class View extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
 
+        if(this.props.state.currentFunc!==nextProps.state.currentFunc) return true;
+
+        if(this.props.state.activeAlgo!==nextProps.state.activeAlgo) return true;
+
+        if( this.props.state.activeAlgo===nextProps.state.activeAlgo&&
+            this.props.state.solvedSetIndex===nextProps.state.solvedSetIndex&&
+            ((this.props.state.autoRewind||this.props.state.autoPlay)
+            &&this.props.state.autoRewind===nextProps.state.autoRewind
+            &&this.props.state.autoPlay===nextProps.state.autoPlay)) return false;
+
         if(this.props.state.solvedSetIndex!==nextProps.state.solvedSetIndex) return true;
         if(!this.props.state.autoTarget&&nextProps.autoTarget) return true;
         if(nextProps.state.autoRewind&&nextProps.state.solvedSetIndex >= nextProps.state.targetSolveIndex-1) return true;
@@ -65,10 +75,19 @@ class View extends Component {
                 }
                 activeMenu=<SolverUI {...this.props}/>
                 break;
+            case 'Algorithms':
+                if(currentFunc==="None"){
+                    if(document.querySelector(".activeMenu")){
+                        document.querySelector(".activeMenu").classList.remove("activeMenu");
+                    }
+                    this.props.setState({activeMenu:""});
+                }
+                activeMenu=<SolverUI {...this.props}/>
+                break;
             default:
                 activeMenu=this.props.state.activeMenu;
         }
-        console.log("hi")
+        //console.log("hi")
         return (
         <div className="menuWrapper" style={{color:"white"}}>
             <Row style={{height: "100%", margin: "5px",paddingBottom: "10px"}}>

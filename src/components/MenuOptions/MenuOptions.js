@@ -1,5 +1,7 @@
 import React from "react";
 import "./MenuOptions.css"
+import algorithms from "../../cubeFunctions/algorithms";
+import cube from '../../cubeFunctions/cube';
 
 const MenuOptions = props => {
 
@@ -9,6 +11,26 @@ const MenuOptions = props => {
            <button id="Solver" data="Solving" onClick={optionClick} className="cpButton">Solver</button>
            <button id="Algorithms" data="None" onClick={optionClick} className="cpButton">Algorithms</button>
         </>
+
+        let algorithmSet = [];
+                
+        algorithms.forEach(algo=>algo.worksFor.includes(props.state.cubeDimension)?
+            algorithmSet.push(<button id={algo.name} key={algo.name} className={props.state.activeAlgo===algo.name?
+                "algoButton algoActive":"algoButton"} onClick={(e)=>algoStart(e,props)}>{algo.name}</button>)
+                :"")
+        //console.log(algorithmSet);
+
+        function algoStart(e,props){
+            let cD = props.state.cubeDimension;
+            let algo = e.target.id;
+            let algoSet = [];
+            let generated = cube.generateSolved(cD,cD,cD);
+            algorithms.forEach(e=>{
+                if(e.name===algo&&e.worksFor.includes(cD)) algoSet.push(...e.moves.split(" "));
+            })
+            //console.log(algoSet);
+            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0});
+        }
 
         function optionClick(e){
             // Already selected button (turns off)
@@ -21,23 +43,17 @@ const MenuOptions = props => {
                     case "Solving":
                         document.querySelector(".warningPopupSolver").style.display="block";
                         break;
+                    case "Algorithms":
+                        //this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : [],targetSolveIndex:-1,solvedSet:[]});
+                        props.setState({activeMenu:"",currentFunc:"Reset",solvedSet:[],hoverData:[],prevSet:[],moveSet:[],isValidConfig:false,targetSolveIndex:-1, solveMoves : "",autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,activeAlgo:"none"});
+                        break;
                     default:
                         document.querySelector(".activeMenu").classList.remove("activeMenu");
                         props.setState({activeMenu:"",currentFunct:"None"});
                 }
             }
             else {
-                if(props.state.currentFunc==="Color Picker"){
-                    document.querySelector(".warningPopup").style.display="block";
-                    document.querySelector("#cpChangeData").data=e.target.id+","+(e.target.id==="Solver"?"Solving":"None");
-                }
-
-                else if(props.state.currentFunc==="Solving"){
-                    document.querySelector(".warningPopupSolver").style.display="block";
-                    document.querySelector("#solverChangeData").data=e.target.id+","+(e.target.id==="ColorPicker"?"Color Picker":"None");
-                }
-                
-                else if(props.state.currentFunc==="None") {
+                if(props.state.currentFunc==="None") {
                     if(props.state.activeMenu!==""&&props.state.activeMenu!==null&&document.querySelector(".activeMenu")!==null) {
                         document.querySelector(".activeMenu").classList.remove("activeMenu");
                     }
@@ -51,22 +67,24 @@ const MenuOptions = props => {
                         props.setState({activeMenu:e.target.id});
                         props.beginSolve();
                     }
+                    else if(e.target.id==="Algorithms"){
+                        props.setState({activeMenu:e.target.id,currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[]});
+                    }
                     else props.setState({activeMenu:e.target.id,currentFunc:"None"});
                 }
             }
         }
         return (
         <div className="menuOptionsWrapper">
-           {props.state.currentFunc==="Solving"?<>
-           <button disabled id="Moves" data="None" className="cpButton hoverDisabled"></button>
-           <button disabled id="ColorPicker" data="Color Picker" className="cpButton hoverDisabled"></button>
-           <button id="Solver" data="Solving" onClick={optionClick} className="cpButton">Exit</button>
-           <button disabled id="Algorithms" data="None" className="cpButton hoverDisabled"></button></>:
-           props.state.currentFunc==="Color Picker"?<>
-           <button disabled id="Moves" data="None" className="cpButton hoverDisabled"></button>
-           <button id="ColorPicker" data="Color Picker" onClick={optionClick} className="cpButton">Exit</button>
-           <button disabled id="Solver" data="Solving" className="cpButton hoverDisabled"></button>
-           <button disabled id="Algorithms" data="None" className="cpButton hoverDisabled"></button></>:baseOptions}
+           {props.state.currentFunc==="Solving"?<><div style={{height:"45%"}}></div>
+           <button id="Solver" data="Solving" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:
+           props.state.currentFunc==="Color Picker"?<><div style={{paddingTop:"45%"}}></div>
+           <button id="ColorPicker" data="Color Picker" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:
+           props.state.currentFunc==="Algorithms"?<>
+           <div className="algoList">
+                {algorithmSet}  
+            </div>
+           <button id="Algorithms" data="Algorithms" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:baseOptions}
         </div>)
 
 }

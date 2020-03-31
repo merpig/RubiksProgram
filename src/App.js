@@ -113,7 +113,8 @@ class App extends Component {
     cpErrors : [],
     activeMenu : "",
     solveTime:0,
-    targetSolveIndex: -1
+    targetSolveIndex: -1,
+    activeAlgo:"none"
   };
 
   // rotate colors on face (memory cube)
@@ -575,7 +576,7 @@ class App extends Component {
 
   // Functions to change speed
   changeSpeed = (_speed,_rotationSpeed,_name,bypass) => {
-    if(this.state.currentFunc==="Solving"&&!bypass) {
+    if((this.state.currentFunc==="Solving"||this.state.currentFunc==="Algorithms")&&!bypass) {
       this.setState({moveSet:[[_speed,_rotationSpeed,_name],...this.state.moveSet]})
       return;
     }
@@ -610,24 +611,24 @@ class App extends Component {
     const dim = this.state.cubeDimension;
     const max = dim-1;
     const white=0,blue=dim-1,red=dim-1,yellow=dim-1,orange=0,green=0;
-    console.log({
-      colors:[
-        piece[0], // piece on left(4) is now on front(0)
-        piece[1], // piece on top(1) is still on top(1)
-        piece[2], // piece on front(0) is now on right(2)
-        piece[3], // piece on right(2) is now on back(3)
-        piece[4], // piece on back(3) is now on left(4)
-        piece[5] // piece on bottom(5) is still on bottom(5)
-      ].join(""),
-      position:[
-        piece[6], // inverse y becomes x
-        0,  // y becomes 0
-        max // becomes top
-      ].join("")
-    });
+    // console.log({
+    //   colors:[
+    //     piece[0], // piece on left(4) is now on front(0)
+    //     piece[1], // piece on top(1) is still on top(1)
+    //     piece[2], // piece on front(0) is now on right(2)
+    //     piece[3], // piece on right(2) is now on back(3)
+    //     piece[4], // piece on back(3) is now on left(4)
+    //     piece[5] // piece on bottom(5) is still on bottom(5)
+    //   ].join(""),
+    //   position:[
+    //     piece[6], // inverse y becomes x
+    //     0,  // y becomes 0
+    //     max // becomes top
+    //   ].join("")
+    // });
 
     if(piece[7]===white&&piece[8]===blue) {
-      console.log("we here");
+      //console.log("we here");
       return {
         colors:[
           piece[0], // piece on left(4) is now on front(0)
@@ -853,14 +854,14 @@ class App extends Component {
     let newValidPiece = this.convertToBlueWhiteEdge([...validPiece]);
     let newManualPiece = this.convertToBlueWhiteEdge([...manualPiece]); 
 
-    console.log(newValidPiece,newManualPiece);
+    //console.log(newValidPiece,newManualPiece);
 
     if((newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position)){
-      console.log("valid");
+      //console.log("valid");
       return true;
     }
     else if(newValidPiece.colors!==newManualPiece.colors&&newValidPiece.position!==newManualPiece.position){
-      console.log("valid");
+      //console.log("valid");
       return true;
     }
     else return false;
@@ -902,7 +903,7 @@ class App extends Component {
     });
 
     this.setState({rubiksObject:newGenerated,currentFunc : "None"},()=>{
-      console.log(newGenerated);
+      //console.log(newGenerated);
       this.reloadTurnedPieces('check');
     });
   }
@@ -1079,7 +1080,7 @@ class App extends Component {
       //obj.error.push('Not solvable');
     }
 
-    console.log(obj.error);
+    //console.log(obj.error);
 
     if(!obj.error) {obj.success = true;obj.newGenerated = newGenerated}
     return obj;
@@ -1286,7 +1287,7 @@ class App extends Component {
   }
 
   stopSolve = () => {
-    this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : [],targetSolveIndex:-1});
+    this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : [],targetSolveIndex:-1,solvedSet:[]});
   }
 
   beginColorPicker = () => {
@@ -1551,19 +1552,19 @@ class App extends Component {
   }
 
   // Gets the url to be parsed
-  getSizeFromUrl() {
+  getSizeFromUrl(checkLocal) {
     let limit = 75;
     let cD;
     
     let parts = window.location.href.split('/');
     let checkID = parts[parts.length-1][0]+parts[parts.length-1][1]+parts[parts.length-1][2];
 
-    if(this.state.isLocal===null){
+    if(checkLocal){
       if(parts[2].substr(0,9)==='localhost'){
-        this.setState({isLocal:true});
+        return true;
       }
       else {
-        this.setState({isLocal:false});
+        return false;
       }
     }
 
@@ -1640,8 +1641,12 @@ class App extends Component {
   }
 
   menuSetState = (obj) =>{
-    console.log(obj);
-    this.setState(obj);
+    //console.log(obj);
+    this.setState(obj,()=>{
+      if(obj.activeAlgo){
+        this.reloadTurnedPieces('all');
+      }
+    });
   }
 
   generateAllSolveMoves = (state,rubiksObject) =>{
@@ -1705,7 +1710,7 @@ class App extends Component {
     if(splitSet[0][0]==="N"||splitSet[0][0]==="'") splitSet.shift();
     let moveSet = []
     splitSet.forEach(e => e[e.length-1]==="'"? moveSet.push(e.replace("'","")):moveSet.push(e+"'"));
-    console.log(moveSet.length);
+    //console.log(moveSet.length);
     let extraMoves = 0;
 
     let temp = [],temp2 = [];
@@ -1740,8 +1745,8 @@ class App extends Component {
       else {temp2.push(moveSet[i]);}
     }
 
-    console.log("Pruned moves: ",extraMoves);
-    console.log("Number of moves: \n",temp2.length);
+    // console.log("Pruned moves: ",extraMoves);
+    // console.log("Number of moves: \n",temp2.length);
 
   
     if(error) {
@@ -2347,14 +2352,14 @@ class App extends Component {
               this.scramble() :
               this.setState({currentFunc : "None",moves : 0});
 
-          else if (this.state.currentFunc==="Solving"){
+          else if (this.state.currentFunc==="Solving"||this.state.currentFunc==="Algorithms"){
             // Place holder for full solve testing
             if(this.state.solveOnce){
               this.setState({solveOnce:false},()=>{
                 let a = performance.now();
                 this.setState(this.generateAllSolveMoves(this.state,this.state.rubiksObject));
                 let b = performance.now();
-                console.log('It took ' + ((b - a)/1000).toFixed(3) + ' seconds to solve.');
+                //console.log('It took ' + ((b - a)/1000).toFixed(3) + ' seconds to solve.');
                 this.setState({solveTime:((b - a)/1000).toFixed(3)})
               });
 
@@ -2404,7 +2409,7 @@ class App extends Component {
                   obj.solvedSetIndex = this.state.solvedSetIndex+1;
                 }
 
-                console.log(obj);
+                //console.log(obj);
               }
               this.setState(obj);
             }
@@ -2478,11 +2483,11 @@ class App extends Component {
         <Navbar
           title="Rubik's Cube"
           changeSettings={this.changeSettings.bind(this)}
-          isLocal={this.state.isLocal}
+          isLocal={this.getSizeFromUrl(true)}
           state={this.state}
         />
 
-        <p style={{position:"fixed", top: "60vh", left: "10px",color: "white",fontSize:"1rem"}}>Speed: {this.state.currentSpeed}</p>
+        <p style={{position:"fixed", top: "100px", left: "10px",color: "white",fontSize:"1rem"}}>Speed: {this.state.currentSpeed}</p>
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white",fontSize:"1.5rem"}}>{this.state.currentFunc === "None" ? "" : this.state.currentFunc}</p>
         <div style={{position:"absolute", top: "75px",marginLeft: "50%",left:"-105px"}}>
           {this.state.currentFunc==="None"||this.state.currentFunc==="Undo"||this.state.currentFunc==="Redo"||this.state.currentFunc==="Drag Turn"?
@@ -2494,7 +2499,7 @@ class App extends Component {
 
         <Speeds //Top left with slider
           onSliderChange={this.onSliderChange}
-          isDisabled={this.state.currentFunc==="None"||this.state.currentFunc==="Solving"? false:true}
+          isDisabled={this.state.currentFunc==="None"||this.state.currentFunc==="Solving"||this.state.currentFunc==="Algorithms"? false:true}
         />
 
         { this.state.showMoveInput? 
@@ -2532,6 +2537,7 @@ class App extends Component {
           beginSolve={this.beginSolve}
           stopSolve={this.stopSolve}
           rewindOne={this.rewindSolve}
+          reload={this.reloadTurnedPieces}
         />
   
       </div>

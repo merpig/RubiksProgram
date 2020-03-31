@@ -37,7 +37,7 @@ const ColorPicker = (props) => {
         document.querySelector(".warningPopup").style.display="none";
     }
     return (
-        <Row className="cp-container" style={{height:"99%",width:"100%", overflowX:"hidden!important",overflowY:"hidden!important",margin:"0px"}}>
+        <Row className="cp-container" style={{height:"98%",width:"100%", overflowX:"hidden!important",overflowY:"hidden!important",margin:"0px"}}>
             <div className="warningPopup">
                 <div id="cpChangeData" data=""></div>
                 <div className="cpMessage">Are you sure you want to leave Color Picker? Changes will not be saved.</div>

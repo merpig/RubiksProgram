@@ -1,32 +1,32 @@
 let algorithms = [
     {
         name : "Cross",
-        moves: "01R2 01L' 01D 01F2 01R' 01D' 01R' 01L 01U' 01D 01R 01D 01B2 01R' 01U 01D2",
+        moves: "01R 01R 01L' 01D 01F 01F 01R' 01D' 01R' 01L 01U' 01D 01R 01D 01B 01B 01R' 01U 01D 01D",
         worksFor: [3,4]
     },
     {
         name : "Cube x2",
-        moves: "01F 01L 01F 01U' 01R 01U 01F2 01L2 01U' 01L' 01B 01D' 01B' 01L2 01U",
+        moves: "01F 01L 01F 01U' 01R 01U 01F 01F 01L 01L 01U' 01L' 01B 01D' 01B' 01L 01L 01U",
         worksFor: [2,3,4]
     },
     {
         name : "Cube x2",
-        moves: "02f2 02r2 02u' 02f' 04d 02b' 02u2 02b 02u' 02r' 03R2 02b2 03R2 03f2 03L2 03B2",
+        moves: "02f 02f 02r 02r 02u' 02f' 04d 02b' 02u 02u 02b 02u' 02r' 03R 03R 02b 02b 03R 03R 03f 03f 03L 03L 03B 03B",
         worksFor: [6]
     },
     {
         name : "Cube x3",
-        moves: "01U' 01L' 01U' 01F' 01R2 01B' 01R 01F 01U 01B2 01U 01B' 01L 01U' 01F 01U 01R 01F'",
+        moves: "01U' 01L' 01U' 01F' 01R 01R 01B' 01R 01F 01U 01B 01B 01U 01B' 01L 01U' 01F 01U 01R 01F'",
         worksFor: [3]
     },
     {
         name : "Cube x4",
-        moves: "01B' 02R2 02L2 01U2 02R2 02L2 01B 01F2 01R 01U' 01R 01U 01R2 01U 01R2 01F' 01U 01F' 01U 02U 01L 02L 01U' 02U' 01F2 02F2 01D 02D 01R' 02R' 01U 02U 01F 02F 01D2 02D2 01R2 02R2",
+        moves: "01B' 02R 02R 02L 02L 01U 01U 02R 02R 02L 02L 01B 01F 01F 01R 01U' 01R 01U 01R 01R 01U 01R 01R 01F' 01U 01F' 01U 02U 01L 02L 01U' 02U' 01F 01F 02F 02F 01D 02D 01R' 02R' 01U 02U 01F 02F 01D 01D 02D 02D 01R 01R 02R 02R",
         worksFor: [4]
     },
     {
         name : "Cube x5",
-        moves: "01F 01U' 01B 01L 01U' 01F2 01U2 01F 01U 01F' 01U2 01D' 01B 01D 01L2 01B2 01U 02f 02u' 02b 02l 02u' 02f2 02u2 02f 02u 02f' 02u2 02d' 02b 02d 02l2 02b2 02u",
+        moves: "01F 01U' 01B 01L 01U' 01F 01F 01U 01U 01F 01U 01F' 01U 01U 01D' 01B 01D 01L 01L 01B 01B 01U 02f 02u' 02b 02l 02u' 02f 02f 02u 02u 02f 02u 02f' 02u 02u 02d' 02b 02d 02l 02l 02b 02b 02u",
         worksFor: [5]
     },
     {
@@ -36,17 +36,17 @@ let algorithms = [
     },
     {
         name : "CheckerBoard",
-        moves : "01U2 01D2 01R2 01L2 01F2 01B2",
+        moves : "01U 01U 01D 01D 01R 01R 01L 01L 01F 01F 01B 01B",
         worksFor: [3]
     },
     {
         name : "Checkerboard1",
-        moves : "01U' 01R2 01L2 01F2 01B2 01U' 01R 01L 01F 01B' 01U 01F2 01D2 01R2 01L2 01F2 01U2 01F2 01U' 01F2",
+        moves : "01U' 01R 01R 01L 01L 01F 01F 01B 01B 01U' 01R 01L 01F 01B' 01U 01F 01F 01D 01D 01R 01R 01L 01L 01F 01F 01U 01U 01F 01F 01U' 01F 01F",
         worksFor: [3]
     },
     {
         name: "Checkerboard2",
-        moves : "01B 01D 01F' 01B' 01D 01L2 01U 01L 01U' 01B 01D' 01R 01B 01R 01D' 01R 01L' 01F 01U2 01D",
+        moves : "01B 01D 01F' 01B' 01D 01L 01L 01U 01L 01U' 01B 01D' 01R 01B 01R 01D' 01R 01L' 01F 01U 01U 01D",
         worksFor: [3]
     },
     {
@@ -56,12 +56,12 @@ let algorithms = [
     },
     {
         name: "Python",
-        moves : "01F2 01R' 01B' 01U 01R' 01L 01F' 01L 01F' 01B 01D' 01R 01B 01L2",
+        moves : "01F 01F 01R' 01B' 01U 01R' 01L 01F' 01L 01F' 01B 01D' 01R 01B 01L 01L",
         worksFor: [3]
     },
     {
         name: "Rings",
-        moves: "02R 03R 04R 05R 02B' 03B' 04B' 01L2 02F 02B 01L2 02B' 02D' 03D' 04D' 05D' 02F' 01L2 02F 02B 01L2 02B' 02D2 03D2 04D2 05D2 03R 04R 01U' 03R' 04R' 02D' 03D' 04D' 05D' 03R 04R 01U 02R' 03R' 04R' 05R' 03F' 04F' 03R' 04R' 03F 04F 02F 03F 04F 05F 02L2 03L2 04L2 02F2 03R2 04R2 02B2 03B2 04B2 02L2",
+        moves: "02R 03R 04R 05R 02B' 03B' 04B' 01L 01L 02F 02B 01L 01L 02B' 02D' 03D' 04D' 05D' 02F' 01L 01L 02F 02B 01L 01L 02B' 02D 02D 03D 03D 04D 04D 05D 05D 03R 04R 01U' 03R' 04R' 02D' 03D' 04D' 05D' 03R 04R 01U 02R' 03R' 04R' 05R' 03F' 04F' 03R' 04R' 03F 04F 02F 03F 04F 05F 02L 02L 03L 03L 04L 04L 02F 02F 03R 03R 04R 04R 02B 02B 03B 03B 04B 04B 02L 02L",
         worksFor: [6]
     },
     {
