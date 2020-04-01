@@ -2152,7 +2152,7 @@ class App extends Component {
       // Mouse stuff here
       // Consider moving into another function to unclutter animate
       // Very expensive operation
-      if(this.state.currentFunc === "Color Picker" || this.state.currentFunc === "None"|| this.state.currentFunc === "Solving") {
+      if(this.state.currentFunc === "Color Picker" || this.state.currentFunc === "None"|| this.state.currentFunc === "Solving"|| this.state.currentFunc === "Algorithms") {
 
         //check here that data isn't the same as previous so not running this every time
         // Data on move button triggers visual move hints
