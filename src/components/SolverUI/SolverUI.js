@@ -139,13 +139,6 @@ class SolverUI extends Component {
             }
             else if(props.state.solvedSetIndex<=parseInt(e.target.id)){
                 props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
-                // console.log("begin:",{
-                //     solvedSetIndex:props.state.solvedSetIndex,
-                //     targetSolveIndex: parseInt(e.target.id),
-                //     moveSet: props.state.moveSet,
-                //     prevSet: props.state.prevSet,
-                //     solvedSet: props.state.solvedSet,
-                // })
                 let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
                 let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
                 let forwardMoves = props.state.solvedSet.slice(props.state.solvedSetIndex,parseInt(e.target.id));
@@ -158,13 +151,6 @@ class SolverUI extends Component {
             }
             else if(props.state.solvedSetIndex>parseInt(e.target.id)) {
                 props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
-                // console.log("begin:",{
-                //     solvedSetIndex:props.state.solvedSetIndex,
-                //     targetSolveIndex: parseInt(e.target.id),
-                //     moveSet: props.state.moveSet,
-                //     prevSet: props.state.prevSet,
-                //     solvedSet: props.state.solvedSet,
-                // })
                 let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
                 let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
                 let backwardMoves= props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSetIndex)

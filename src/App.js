@@ -1236,11 +1236,16 @@ class App extends Component {
     let randDepth = 1;
     let cD = this.state.cubeDimension;
 
+    if(randFace>2&&cD%2) maxDepth-=1;
+
     if(cD>2) 
       randDepth = Math.floor((Math.random() * maxDepth)) + 1;
 
+    if(randDepth===1) randIsMulti = 0;
+
     if(randDepth === Math.ceil(cD/2) && cD%2)
       randIsMulti=0;
+
     return this.convertDataToMove([randFace, randTurn,randDepth,randIsMulti]);
   }
 
@@ -1510,12 +1515,6 @@ class App extends Component {
     this.setState({cubes,reload : false});
   }
 
-  // function to solves edges on cubes greater than 3x3x3
-  // move to other file
-  solveMultipleEdges = () =>{
-    // code here
-  }
-
   // Changes the settings by passing setting to change and new val for the setting
   changeSettings (settingToChange,newVals) {
     switch(settingToChange){
@@ -1653,9 +1652,12 @@ class App extends Component {
         let rubiksObject = tempState.rubiksObject;
         let end = tempState.end;
         let solveState = tempState.solveState;
-        let moveData = this.parseMoveArray(tempState.moveSet); // generates data for next move
-        let obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
-        obj.rubiksObject = this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
+        let moveData = 
+          this.parseMoveArray(tempState.moveSet); // generates data for next move
+        let obj = 
+          this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
+        obj.rubiksObject = 
+          this.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
         tempState = {...tempState,...obj};
     }
     return [...tempState.rubiksObject];
@@ -1730,6 +1732,22 @@ class App extends Component {
         moveSet.splice(i,1);
       }
     }
+
+    let maxDepth = Math.floor(tempState.cubeDimension/2);
+    moveSet.map(move=>{
+      let dataMove = this.convertMoveToData(move);
+      if(parseInt(dataMove[2])>maxDepth){
+        dataMove[2]=(tempState.cubeDimension-dataMove[2])+1
+        if(parseInt(dataMove[0])===0) dataMove[0] = 3;
+        else if(parseInt(dataMove[0])===1) dataMove[0] = 5;
+        else if(parseInt(dataMove[0])===2) dataMove[0] = 4;
+        else if(parseInt(dataMove[0])===3) dataMove[0] = 0;
+        else if(parseInt(dataMove[0])===4) dataMove[0] = 2;
+        else if(parseInt(dataMove[0])===5) dataMove[0] = 1;
+        dataMove[1]===0?dataMove[1]=-1:dataMove[1]=0;
+      }
+      return this.convertDataToMove(dataMove);
+    })
     
 
     for(let i = 0; i < moveSet.length-2; i++){
@@ -1750,8 +1768,6 @@ class App extends Component {
         moveSet.splice(i+1,2);
       }
     }
-
-    // console.log(moveSet);
   
     if(error) {
       console.log("Stopped due to probable infinite loop");
