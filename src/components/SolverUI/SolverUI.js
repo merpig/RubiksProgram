@@ -83,7 +83,7 @@ class SolverUI extends Component {
             </img></a></>;
 
         let pause = <>
-        <p>Pause</p>
+        <p>{this.props.state.prevSet.length}</p>
         <a className="solveButtonImage" href="#"><img 
             alt="pause" 
             src="https://image.flaticon.com/icons/svg/92/92344.svg"

@@ -901,7 +901,7 @@ class App extends Component {
       }) 
     });
 
-    this.setState({rubiksObject:newGenerated,currentFunc : "None"},()=>{
+    this.setState({rubiksObject:newGenerated,currentFunc : "None",activeMenu:""},()=>{
       //console.log(newGenerated);
       this.reloadTurnedPieces('check');
     });
@@ -1274,7 +1274,7 @@ class App extends Component {
                 moveSet[moveSet.length-1]===temp);
         else moveSet.push(temp);
       }
-      this.setState({currentFunc : "Scrambling",moveSet},()=>console.log(this.state.moveSet));
+      this.setState({currentFunc : "Scrambling",moveSet});
     }
   }
 
@@ -1753,16 +1753,12 @@ class App extends Component {
     for(let i = 0; i < moveSet.length-2; i++){
       
       if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
-        //console.log(moveSet[i],moveSet[i+1]);
-        //console.log("fake move found");
         moveSet.splice(i,2);
       }
     }
 
     for(let i = 0; i < moveSet.length-3; i++){
       if(moveSet[i]===moveSet[i+1] && moveSet[i]===moveSet[i+2]){
-        // console.log(moveSet[i],moveSet[i+1],moveSet[i+2]);
-        // console.log("triple move found");
         if(moveSet[i].length===3){moveSet[i]+="'"}
         else{moveSet[i]=moveSet[i].substring(0,3)}
         moveSet.splice(i+1,2);
@@ -1818,8 +1814,6 @@ class App extends Component {
     let windowHeight = window.innerHeight;
 
     function onMouseMove( event ) {
-      // calculate mouse position in normalized device coordinates
-      // (-1 to +1) for both components
       mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
       mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;   
     }
