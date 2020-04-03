@@ -27,7 +27,6 @@ class View extends Component {
             &&this.props.state.autoPlay===nextProps.state.autoPlay)) return false;
 
         if(this.props.state.solvedSetIndex!==nextProps.state.solvedSetIndex) return true;
-        if(!this.props.state.autoTarget&&nextProps.autoTarget) return true;
         if(nextProps.state.autoRewind&&nextProps.state.solvedSetIndex >= nextProps.state.targetSolveIndex-1) return true;
         if(nextProps.state.autoPlay&&nextProps.state.solvedSetIndex < nextProps.state.targetSolveIndex-1) return true;
 
@@ -46,7 +45,7 @@ class View extends Component {
         if(this.props.state.solvedSetIndex===nextProps.state.solvedSetIndex && this.props.state.autoPlay && this.props.state.solvedSetIndex < this.props.state.targetSolveIndex) return false;
 
         if(this.props.state.solvedSetIndex===nextProps.state.solvedSetIndex && this.props.state.autoRewind && this.props.state.solvedSetIndex >= this.props.state.targetSolveIndex) return false;
-        
+
         return true;
     }
     render(){
@@ -62,7 +61,7 @@ class View extends Component {
                     if(document.querySelector(".activeMenu")){
                         document.querySelector(".activeMenu").classList.remove("activeMenu");
                     }
-                    this.props.setState({activeMenu:""});
+                    //if(this.props.activeMenu!=="") this.props.setState({activeMenu:""});
                 }
                 activeMenu = <ColorPicker {...this.props}/>
                 break;
@@ -71,7 +70,9 @@ class View extends Component {
                     if(document.querySelector(".activeMenu")){
                         document.querySelector(".activeMenu").classList.remove("activeMenu");
                     }
-                    this.props.setState({activeMenu:""});
+                    try{
+                        //if(this.props.activeMenu!=="") this.props.setState({activeMenu:""});
+                    }catch{}
                 }
                 activeMenu=<SolverUI {...this.props}/>
                 break;
@@ -80,7 +81,7 @@ class View extends Component {
                     if(document.querySelector(".activeMenu")){
                         document.querySelector(".activeMenu").classList.remove("activeMenu");
                     }
-                    this.props.setState({activeMenu:""});
+                    //if(this.props.activeMenu!=="") this.props.setState({activeMenu:""});
                 }
                 activeMenu=<SolverUI {...this.props}/>
                 break;

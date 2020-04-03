@@ -14,34 +14,38 @@ function playOne(props){
 
 class SolverUI extends Component {
 
-    // constructor(props) {
-    //     super(props);
-    // }
+    // eslint-disable-next-line no-useless-constructor
+    constructor(props) {
+        super(props);
+    }
+
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        if(nextProps.state.autoRewind===true && nextProps.state.solvedSetIndex >= nextProps.state.targetSolveIndex) {
+            //console.log("attempting rewind");
+            nextProps.rewindOne();
+        }
+        else if(nextProps.state.autoRewind===true && nextProps.state.solvedSetIndex <= nextProps.state.targetSolveIndex){
+            //console.log("ending rewind");
+            nextProps.setState({autoRewind:false});
+        }
+
+        if(nextProps.state.autoPlay===true && nextProps.state.solvedSetIndex < nextProps.state.targetSolveIndex) {
+            //console.log("attempting rewind");
+            playOne(nextProps);
+        }
+        else if(nextProps.state.autoPlay===true && nextProps.state.solvedSetIndex >= nextProps.state.targetSolveIndex){
+            //console.log("ending rewind");
+            nextProps.setState({autoPlay:false});
+        }
+      }
 
     // shouldComponentUpdate(nextProps, nextState) {
-    //     //if(this.props.state.autoRewind===true&&this.props.state.solvedSetIndex===nextProps.state.solvedSetIndex) return false;
-        
-    //     return true;
     // }
-    componentDidUpdate() {
-        if(document.querySelector(".nextSolveIndex")) document.querySelector(".nextSolveIndex").scrollIntoView(false);
-        if(this.props.state.autoRewind===true && this.props.state.solvedSetIndex >= this.props.state.targetSolveIndex) {
-            //console.log("attempting rewind");
-            this.props.rewindOne();
-        }
-        else if(this.props.state.autoRewind===true && this.props.state.solvedSetIndex <= this.props.state.targetSolveIndex){
-            //console.log("ending rewind");
-            this.props.setState({autoRewind:false,targetSolveIndex:-1});
-        }
 
-        if(this.props.state.autoPlay===true && this.props.state.solvedSetIndex < this.props.state.targetSolveIndex) {
-            //console.log("attempting rewind");
-            playOne(this.props);
-        }
-        else if(this.props.state.autoPlay===true && this.props.state.solvedSetIndex >= this.props.state.targetSolveIndex){
-            //console.log("ending rewind");
-            this.props.setState({autoPlay:false,targetSolveIndex:-1});
-        }
+
+
+    componentDidUpdate() {
+        //if(document.querySelector(".nextSolveIndex")) document.querySelector(".nextSolveIndex").scrollIntoView(false);
     }
 
     
@@ -52,8 +56,6 @@ class SolverUI extends Component {
         solverSet.push("Already solved"):
         this.props.state.solvedSet.forEach((el,i)=> i===this.props.state.solvedSetIndex?
             solverSet.push(<div id={i} className="solveMoveDiv nextSolveIndex" key={i}>{el+" "}</div>):
-            i===this.props.state.targetSolveIndex?
-            solverSet.push(<div id={i} className="solveMoveDiv targetSolveIndex" key={i}>{el+" "}</div>):
             solverSet.push(<div onClick={(e)=>setTarget(e,this.props)} id={i} className="solveMoveDiv" key={i}>{el+" "}</div>)
         )
 
@@ -119,11 +121,11 @@ class SolverUI extends Component {
         
 
         function fastforward(props){
-            props.setState({autoPlay:true,targetSolveIndex:props.state.solvedSet.length});
+            props.setState({autoPlay:true,autoRewind:false,targetSolveIndex:props.state.solvedSet.length});
         }
 
         function fastrewind(props){
-            props.setState({autoRewind:true,targetSolveIndex:0});
+            props.setState({autoPlay:false,autoRewind:true,targetSolveIndex:0});
         }
 
         function pauseSolver(props){
@@ -131,11 +133,48 @@ class SolverUI extends Component {
         }
 
         function setTarget(e,props){
-            if(props.state.solvedSetIndex<=parseInt(e.target.id)){
-                props.setState({autoPlay:true,targetSolveIndex:parseInt(e.target.id),autoTarget:true});
+            if(parseInt(e.target.id)-props.state.solvedSetIndex===1){
+                props.setState({targetSolveIndex:parseInt(e.target.id)});
+                playOne(props);
+            }
+            else if(props.state.solvedSetIndex<=parseInt(e.target.id)){
+                props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
+                // console.log("begin:",{
+                //     solvedSetIndex:props.state.solvedSetIndex,
+                //     targetSolveIndex: parseInt(e.target.id),
+                //     moveSet: props.state.moveSet,
+                //     prevSet: props.state.prevSet,
+                //     solvedSet: props.state.solvedSet,
+                // })
+                let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
+                let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
+                let forwardMoves = props.state.solvedSet.slice(props.state.solvedSetIndex,parseInt(e.target.id));
+
+                props.setState({
+                    solvedSetIndex:parseInt(e.target.id),
+                    prevSet:prevSetNew,
+                    moveSet:moveSetNew,
+                    rubiksObject:props.autoJump(props.state,forwardMoves)})
             }
             else if(props.state.solvedSetIndex>parseInt(e.target.id)) {
-                props.setState({autoRewind:true,targetSolveIndex:parseInt(e.target.id),autoTarget:true});
+                props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
+                // console.log("begin:",{
+                //     solvedSetIndex:props.state.solvedSetIndex,
+                //     targetSolveIndex: parseInt(e.target.id),
+                //     moveSet: props.state.moveSet,
+                //     prevSet: props.state.prevSet,
+                //     solvedSet: props.state.solvedSet,
+                // })
+                let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
+                let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
+                let backwardMoves= props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSetIndex)
+                    .map(move=>move.length===4?move.slice(0,3):(move+"'"));
+
+                props.setState({
+                    solvedSetIndex:parseInt(e.target.id),
+                    prevSet:prevSetNew,
+                    moveSet:moveSetNew,
+                    rubiksObject:props.autoJump(props.state,backwardMoves.reverse())})
             }
         }
 
@@ -199,6 +238,7 @@ class SolverUI extends Component {
                 </Col>
                 <Col>
                     <div className="solverMoves">
+                        
                         {solverSet}
                     </div>
                 </Col>

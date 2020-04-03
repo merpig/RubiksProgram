@@ -8,7 +8,7 @@ class Menu extends Component {
     }
     
     shouldComponentUpdate(nextProps, nextState) {
-        //if(this.props.state.activeMenu===nextProps.state.activeMenu) return false;
+        //if(this.props.state.currentFunc===nextProps.state.activeMenu) return false;
         return true;
     }
     render(){
