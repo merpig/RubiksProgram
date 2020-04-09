@@ -66,11 +66,11 @@ class SolverUI extends Component {
             <></>:
             el===this.props.state.solvedSet[i-1]?
                 i===this.props.state.solvedSetIndex||(i===this.props.state.solvedSetIndex+1&&el===this.props.state.solvedSet[i-1])?
-                    solverSet.push(<div id={i} className="solveMoveDiv nextSolveIndex" key={i}>{el.replace("0","").replace("1","").replace("'","")+"2"}</div>):
-                    solverSet.push(<div onClick={(e)=>setTarget(e,this.props)} id={i} className="solveMoveDiv" key={i}>{el.replace("0","").replace("1","").replace("'","")+"2"}</div>):
+                    solverSet.push(<div id={i-1} className="solveMoveDiv nextSolveIndex" key={i-1}>{el.replace("01","").replace("0","").replace("'","")+"2"}</div>):
+                    solverSet.push(<div onClick={(e)=>setTarget(e,this.props)} id={i-1} className="solveMoveDiv" key={i-1}>{el.replace("01","").replace("0","").replace("'","")+"2"}</div>):
                 i===this.props.state.solvedSetIndex||(i===this.props.state.solvedSetIndex+1&&el===this.props.state.solvedSet[i-1])?
-                    solverSet.push(<div id={i} className="solveMoveDiv nextSolveIndex" key={i}>{el.replace("0","").replace("1","")}</div>):
-                    solverSet.push(<div onClick={(e)=>setTarget(e,this.props)} id={i} className="solveMoveDiv" key={i}>{el.replace("0","").replace("1","")}</div>)
+                    solverSet.push(<div id={i} className="solveMoveDiv nextSolveIndex" key={i}>{el.replace("01","").replace("0","")}</div>):
+                    solverSet.push(<div onClick={(e)=>setTarget(e,this.props)} id={i} className="solveMoveDiv" key={i}>{el.replace("01","").replace("0","")}</div>)
         )
 
         let algorithmSet = [];
@@ -224,7 +224,11 @@ class SolverUI extends Component {
                         </div>
 
                         <div className="solverButton rewindOne">
-                            <p style={{width:"100%"}}>{this.props.state.prevSet.length-1>=0?this.props.state.prevSet[this.props.state.prevSet.length-1]:"None"}</p>
+                            <p style={{width:"100%"}}>{this.props.state.prevSet.length-1>=0?
+                            this.props.state.prevSet[this.props.state.prevSet.length-1]===this.props.state.prevSet[this.props.state.prevSet.length-2]?
+                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","").replace("'","")+2:
+                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","")
+                            :"None"}</p>
                             <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
                                 className="rotateimg180" 
                                 src="https://image.flaticon.com/icons/svg/92/92335.svg" 
@@ -233,7 +237,15 @@ class SolverUI extends Component {
                             </img></div></a>
                         </div>
                         <div className="solverButton playOne">
-                            <p style={{width:"100%"}}>{this.props.state.moveSet[0]&&typeof(this.props.state.moveSet[0][0])==='string'&&this.props.state.moveSet[0]!=="'"?this.props.state.moveSet[0]:"None"}</p>
+                            <p style={{width:"100%"}}>
+                                {this.props.state.moveSet[0]&&typeof(this.props.state.moveSet[0][0])==='string'&&this.props.state.moveSet[0]!=="'"?
+
+                                this.props.state.moveSet[0]===this.props.state.moveSet[1]?
+                                this.props.state.moveSet[0].replace("01","").replace("0","").replace("'","")+2:
+                                this.props.state.moveSet[0].replace("01","").replace("0","")
+
+                                :"None"
+                                }</p>
                             <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
                                 src="https://image.flaticon.com/icons/svg/92/92335.svg" 
                                 alt="play"
