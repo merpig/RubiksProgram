@@ -6,9 +6,17 @@ import algorithms from "../../cubeFunctions/algorithms";
 import cube from '../../cubeFunctions/cube';
 
 function playOne(props){
-    if(props.state.playOne===true) return;
-    if(props.state.moveSet[0]&&typeof(props.state.moveSet[0][0])==='string'&&props.state.moveSet[0]!=="'"){
-        props.setState({playOne:true,prevSet:[...props.state.prevSet,props.state.moveSet[0]]});
+    if(props.state.moveSet[0]===props.state.moveSet[1]&&!props.state.autoPlay){
+        props.setState({
+            autoPlay:true,
+            autoRewind:false,
+            targetSolveIndex:props.state.solvedSetIndex+2});
+    }
+    else{
+        if(props.state.playOne===true) return;
+        if(props.state.moveSet[0]&&typeof(props.state.moveSet[0][0])==='string'&&props.state.moveSet[0]!=="'"){
+            props.setState({playOne:true,prevSet:[...props.state.prevSet,props.state.moveSet[0]]});
+        }
     }
 }
 
@@ -52,11 +60,17 @@ class SolverUI extends Component {
 
     render(){
         let solverSet = [];
-        this.props.state.solvedSet[0]==="'"||this.props.state.solvedSet[0]===""||this.props.state.solvedSet[0]===" "?
+        !this.props.state.solvedSet.length?
         solverSet.push("Already solved"):
-        this.props.state.solvedSet.forEach((el,i)=> i===this.props.state.solvedSetIndex?
-            solverSet.push(<div id={i} className="solveMoveDiv nextSolveIndex" key={i}>{el+" "}</div>):
-            solverSet.push(<div onClick={(e)=>setTarget(e,this.props)} id={i} className="solveMoveDiv" key={i}>{el+" "}</div>)
+        this.props.state.solvedSet.forEach((el,i)=>el===this.props.state.solvedSet[i+1]?
+            <></>:
+            el===this.props.state.solvedSet[i-1]?
+                i===this.props.state.solvedSetIndex||(i===this.props.state.solvedSetIndex+1&&el===this.props.state.solvedSet[i-1])?
+                    solverSet.push(<div id={i} className="solveMoveDiv nextSolveIndex" key={i}>{el.replace("0","").replace("1","").replace("'","")+"2"}</div>):
+                    solverSet.push(<div onClick={(e)=>setTarget(e,this.props)} id={i} className="solveMoveDiv" key={i}>{el.replace("0","").replace("1","").replace("'","")+"2"}</div>):
+                i===this.props.state.solvedSetIndex||(i===this.props.state.solvedSetIndex+1&&el===this.props.state.solvedSet[i-1])?
+                    solverSet.push(<div id={i} className="solveMoveDiv nextSolveIndex" key={i}>{el.replace("0","").replace("1","")}</div>):
+                    solverSet.push(<div onClick={(e)=>setTarget(e,this.props)} id={i} className="solveMoveDiv" key={i}>{el.replace("0","").replace("1","")}</div>)
         )
 
         let algorithmSet = [];
@@ -68,27 +82,27 @@ class SolverUI extends Component {
         //console.log(algorithmSet);
 
         let solveAll = <>
-        <a className="solveButtonImage" href="#"><img 
+        <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
             alt="fastforward" 
             src="https://image.flaticon.com/icons/svg/92/92330.svg"
             onClick={() => fastforward(this.props)}>
-        </img></a></>;
+        </img></div></a></>;
 
         let rewindAll = <>
-            <a className="solveButtonImage" href="#"><img 
+            <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
                 className="rotateimg180"
                 alt="fastforward" 
                 src="https://image.flaticon.com/icons/svg/92/92330.svg"
                 onClick={() => fastrewind(this.props)}>
-            </img></a></>;
+            </img></div></a></>;
 
         let pause = <>
         <p>{this.props.state.prevSet.length}</p>
-        <a className="solveButtonImage" href="#"><img 
+        <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
             alt="pause" 
             src="https://image.flaticon.com/icons/svg/92/92344.svg"
             onClick={() => pauseSolver(this.props)}>
-        </img></a></>;
+        </img></div></a></>;
 
         function stay(){
             document.querySelector(".warningPopupSolver").style.display="none";
@@ -121,7 +135,13 @@ class SolverUI extends Component {
         
 
         function fastforward(props){
-            props.setState({autoPlay:true,autoRewind:false,targetSolveIndex:props.state.solvedSet.length});
+            if(!props.state.moveSet.length) return;
+            props.state.moveSet.length===1 ? 
+                playOne(props):
+                props.setState({
+                    autoPlay:true,
+                    autoRewind:false,
+                    targetSolveIndex:props.state.solvedSet.length});
         }
 
         function fastrewind(props){
@@ -132,8 +152,12 @@ class SolverUI extends Component {
             props.setState({autoPlay:false,autoRewind:false});
         }
 
+        //add small fix for jumping to double moves
         function setTarget(e,props){
-            if(parseInt(e.target.id)-props.state.solvedSetIndex===1){
+            if(props.state.autoPlay||props.state.autoRewind){
+
+            }
+            else if(parseInt(e.target.id)-props.state.solvedSetIndex===1){
                 props.setState({targetSolveIndex:parseInt(e.target.id)});
                 playOne(props);
             }
@@ -201,20 +225,20 @@ class SolverUI extends Component {
 
                         <div className="solverButton rewindOne">
                             <p style={{width:"100%"}}>{this.props.state.prevSet.length-1>=0?this.props.state.prevSet[this.props.state.prevSet.length-1]:"None"}</p>
-                            <a className="solveButtonImage" href="#"><img 
+                            <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
                                 className="rotateimg180" 
                                 src="https://image.flaticon.com/icons/svg/92/92335.svg" 
                                 alt="rewind"
                                 onClick={this.props.rewindOne}>
-                            </img></a>
+                            </img></div></a>
                         </div>
                         <div className="solverButton playOne">
                             <p style={{width:"100%"}}>{this.props.state.moveSet[0]&&typeof(this.props.state.moveSet[0][0])==='string'&&this.props.state.moveSet[0]!=="'"?this.props.state.moveSet[0]:"None"}</p>
-                            <a className="solveButtonImage" href="#"><img 
+                            <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
                                 src="https://image.flaticon.com/icons/svg/92/92335.svg" 
                                 alt="play"
                                 onClick={() => playOne(this.props)}>
-                            </img></a>
+                            </img></div></a>
                             
                         </div>
                         <div className="solverButton playAll">

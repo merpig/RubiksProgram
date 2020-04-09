@@ -32,12 +32,14 @@ let solveYellowMiddle = (current,solved,dim,index) => {
     
     
     let opposite = "01L'";
+
+    // This can be written smarter. Has a small flaw with extracting pieces from the back
     if(currentSide==="B"){
         moveString += move(" ",current.z+1,"D'");
 
         if(current.z!==solved.z){
             if(current.z === middle){
-                moveString += " 01R1";
+                moveString += " 01R";
             }
             else moveString += " 01R2";
         }

@@ -458,7 +458,7 @@ const cube = {
       }
       //console.log(tempArr);
       return tempArr;
-  },
+    },
 
     generateButtonData : function(size){
         let numLayers = Math.floor(size/2);
@@ -508,6 +508,143 @@ const cube = {
         return { p1 : (Math.cos(theta) * (p1-c1) - Math.sin(theta) * (p2-c2) + c1),
                  p2 : (Math.sin(theta) * (p1-c1) + Math.cos(theta) * (p2-c2) + c2)}
     },
+
+    // rotate pieces attached to face (visual cube)
+    /**
+     * 
+     * Possible Optimization!
+     * 
+     * Instead of turning each piece individually,
+     * group the pieces to be turned and then turn the group.
+     * - Pros
+     *    - Less Code
+     *    - Easier on the renderer
+     * 
+     * - Cons
+     *    - Not sure where to attempt implementation
+     * 
+     * Development Stage: Trial
+     * 
+     * - Resources
+     *    - https://jsfiddle.net/of1vfhzz/1/
+     *    - https://stackoverflow.com/questions/37779104/how-can-i-rotate-around-the-center-of-a-group-in-three-js
+     */
+    rotatePieces : function (rotate,tempCubes,state,setState){
+
+      // state variables asigned for shorter names
+      let centerPoint = state.cubeDimension/2-.5;
+      let cubes = state.cubes;
+      let turnDirection = state.turnDirection;
+      let speed = state.speed;
+      let start = state.start;
+      let face = state.face;
+      let cubeDepth = state.cubeDepth;
+      let isMulti = state.isMulti;
+
+      
+      //Rotate white center piece Face
+      if(face === 0){
+        for(let i = 0; i<state.rubiksObject.length;i++){
+
+          //implement isMulti for all of these comparisons
+          if((isMulti || cubes[i].position.y > cubeDepth-2) && cubes[i].position.y < cubeDepth){
+            
+            // Turn piece based on rotation direction
+            turnDirection<0 ? cubes[i].rotation.y += .1745*speed/10 : cubes[i].rotation.y -= .1745*speed/10;
+
+            // Calculate circular movement
+            let newPoint = rotate(centerPoint,centerPoint,turnDirection,cubes[i].position.x,cubes[i].position.z,speed);
+
+            // corrects rounding errors
+            if(start % 90 === 0){
+              newPoint.p1 = Math.round(newPoint.p1);
+              newPoint.p2 = Math.round(newPoint.p2);
+            }
+            
+            // set new locations for face 0
+            cubes[i].position.x = newPoint.p1;
+            cubes[i].position.z = newPoint.p2;
+          }
+        }     
+      }
+      // blue
+      if(face === 1){
+        for(let i = 0; i<state.rubiksObject.length;i++){
+          if((isMulti || cubes[i].position.z < state.cubeDimension + 1 - cubeDepth) && cubes[i].position.z > state.cubeDimension - 1 - cubeDepth){
+            turnDirection<0 ? cubes[i].rotation.z -= .1745*speed/10 : cubes[i].rotation.z += .1745*speed/10;
+            let newPoint = rotate(centerPoint,centerPoint,turnDirection,cubes[i].position.x,cubes[i].position.y,10*speed/10);
+            if(start % 90 === 0){
+              newPoint.p1 = Math.round(newPoint.p1);
+              newPoint.p2 = Math.round(newPoint.p2);
+            }
+            cubes[i].position.x = newPoint.p1;
+            cubes[i].position.y = newPoint.p2;
+          }
+        }
+      }
+      // red
+      if(face === 2){
+        for(let i = 0; i<state.rubiksObject.length;i++){
+          if((isMulti || tempCubes[i].position.x < state.cubeDimension + 1 - cubeDepth) && cubes[i].position.x > state.cubeDimension - 1 - cubeDepth){
+            turnDirection<0 ? tempCubes[i].rotation.x -= .1745*speed/10 : tempCubes[i].rotation.x += .1745*speed/10;
+            let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.y,tempCubes[i].position.z,10*speed/10);
+            if(start % 90 === 0){
+              newPoint.p1 = Math.round(newPoint.p1);
+              newPoint.p2 = Math.round(newPoint.p2);
+            }
+            tempCubes[i].position.y = newPoint.p1;
+            tempCubes[i].position.z = newPoint.p2;
+          }
+        }
+      }
+      // yellow
+      if(face === 3){
+        for(let i = 0; i<state.rubiksObject.length;i++){
+          if((isMulti || tempCubes[i].position.y < state.cubeDimension + 1 - cubeDepth) && cubes[i].position.y > state.cubeDimension - 1 - cubeDepth){
+            turnDirection<0 ? tempCubes[i].rotation.y += .1745*speed/10 : tempCubes[i].rotation.y -= .1745*speed/10;
+            let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.x,tempCubes[i].position.z,10*speed/10);
+            if(start % 90 === 0){
+              newPoint.p1 = Math.round(newPoint.p1);
+              newPoint.p2 = Math.round(newPoint.p2);
+            }
+            tempCubes[i].position.x = newPoint.p1;
+            tempCubes[i].position.z = newPoint.p2;
+          }
+        }
+      }
+      // orange
+      if(face === 4){
+        for(let i = 0; i<state.rubiksObject.length;i++){
+          if((isMulti || tempCubes[i].position.x > cubeDepth-2) && cubes[i].position.x < cubeDepth){
+            turnDirection<0 ? tempCubes[i].rotation.x -= .1745*speed/10 : tempCubes[i].rotation.x += .1745*speed/10;
+            let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.y,tempCubes[i].position.z,10*speed/10);              
+            if(start % 90 === 0){
+              newPoint.p1 = Math.round(newPoint.p1);
+              newPoint.p2 = Math.round(newPoint.p2);
+            }
+            tempCubes[i].position.y = newPoint.p1;
+            tempCubes[i].position.z = newPoint.p2;
+          }
+        }
+      }
+      // green
+      if(face === 5){
+        for(let i = 0; i<state.rubiksObject.length;i++){
+          if((isMulti || tempCubes[i].position.z > cubeDepth-2) && cubes[i].position.z < cubeDepth){
+            turnDirection<0 ? tempCubes[i].rotation.z -= .1745*speed/10 : tempCubes[i].rotation.z += .1745*speed/10;
+            let newPoint = rotate(centerPoint,centerPoint,turnDirection,tempCubes[i].position.x,tempCubes[i].position.y,10*speed/10);
+            if(start % 90 === 0){
+              newPoint.p1 = Math.round(newPoint.p1);
+              newPoint.p2 = Math.round(newPoint.p2);
+            }
+            tempCubes[i].position.x = newPoint.p1;
+            tempCubes[i].position.y = newPoint.p2;
+          }
+        }
+      } 
+
+      return {start : start+speed,reload : true};
+    },
     
     // For memory cube
     rotatePoint2 : function (c1,c2,direction,p1,p2){
@@ -515,6 +652,183 @@ const cube = {
         if(direction < 0) theta*=-1; 
         return { p1 : (- Math.sin(theta) * (p2-c2) + c1),
                  p2 :   (Math.sin(theta) * (p1-c1) + c2)}
+    },
+
+    // Memory cube rotation (only rotates by 90 degrees at a time)
+    rotateFace : function (cubeFace,direction,cubeDepth,isMulti,cD,object){
+      let cubeDimension = cD;
+      let centerPoint = cD/2-.5;
+      let rubiksObject = [...object];
+      let degrees = 90;
+  
+      if(direction < 0)  degrees *=-1;
+  
+      // Side 0 (white center piece)
+      if (cubeFace === 0){ 
+          for(let i = 0; i < rubiksObject.length; i++){
+  
+              // white side is y===0.
+              if ((isMulti || rubiksObject[i][7] > cubeDepth-2) &&
+                  rubiksObject[i][7] < cubeDepth){
+  
+                  // Rotate rubiksObject pieces to new location generated by rotatePoint2
+                  let newPoint = cube.rotatePoint2(centerPoint,
+                                                   centerPoint,
+                                                   degrees,
+                                                   rubiksObject[i][6],
+                                                   rubiksObject[i][8]);
+                  rubiksObject[i][6] = newPoint.p1;
+                  rubiksObject[i][8] = newPoint.p2;
+  
+                  // Unfortunately chunky
+                  // Swaps colors around on the face to match rotations
+                  if(direction === 0){
+                      let tempFace = rubiksObject[i][1];
+                      rubiksObject[i][1] = rubiksObject[i][2];
+                      rubiksObject[i][2] = rubiksObject[i][5];
+                      rubiksObject[i][5] = rubiksObject[i][4];
+                      rubiksObject[i][4] = tempFace;
+                  } else {
+                      let tempFace = rubiksObject[i][1];
+                      rubiksObject[i][1] = rubiksObject[i][4];
+                      rubiksObject[i][4] = rubiksObject[i][5];
+                      rubiksObject[i][5] = rubiksObject[i][2];
+                      rubiksObject[i][2] = tempFace;
+                  }
+              }
+          }
+      }
+  
+      // Side 1 (blue center piece)
+      if (cubeFace === 1){
+          for(let i = 0; i < rubiksObject.length; i++){
+              if ((isMulti || rubiksObject[i][8] < cubeDimension+1-cubeDepth) &&
+                  rubiksObject[i][8]>cubeDimension-1-cubeDepth){
+                  let newPoint = cube.rotatePoint2(centerPoint,
+                                                   centerPoint,
+                                                   degrees,
+                                                   rubiksObject[i][6],
+                                                   rubiksObject[i][7]);
+                  rubiksObject[i][6] = newPoint.p1;
+                  rubiksObject[i][7] = newPoint.p2;
+                  if(direction === 0){
+                      let tempFace = rubiksObject[i][3];
+                      rubiksObject[i][3] = rubiksObject[i][2];
+                      rubiksObject[i][2] = rubiksObject[i][0];
+                      rubiksObject[i][0] = rubiksObject[i][4];
+                      rubiksObject[i][4] = tempFace;
+                  } else {
+                      let tempFace = rubiksObject[i][3];
+                      rubiksObject[i][3] = rubiksObject[i][4];
+                      rubiksObject[i][4] = rubiksObject[i][0];
+                      rubiksObject[i][0] = rubiksObject[i][2];
+                      rubiksObject[i][2] = tempFace;
+                  }
+              }
+          }
+      }
+      // Side 2 (red center piece)
+      if (cubeFace === 2){
+          for(let i = 0; i < rubiksObject.length; i++){
+              if ((isMulti || rubiksObject[i][6] < cubeDimension+1-cubeDepth) &&
+                  rubiksObject[i][6]>cubeDimension-1-cubeDepth){
+                  let newPoint = cube.rotatePoint2(centerPoint,
+                                                   centerPoint,
+                                                   degrees,
+                                                   rubiksObject[i][7],
+                                                   rubiksObject[i][8]);
+                  rubiksObject[i][7] = newPoint.p1;
+                  rubiksObject[i][8] = newPoint.p2;
+                  if(direction === 0){
+                      let tempFace = rubiksObject[i][3];
+                      rubiksObject[i][3] = rubiksObject[i][5];
+                      rubiksObject[i][5] = rubiksObject[i][0];
+                      rubiksObject[i][0] = rubiksObject[i][1];
+                      rubiksObject[i][1] = tempFace;
+                  } else {
+                      let tempFace = rubiksObject[i][3];
+                      rubiksObject[i][3] = rubiksObject[i][1];
+                      rubiksObject[i][1] = rubiksObject[i][0];
+                      rubiksObject[i][0] = rubiksObject[i][5];
+                      rubiksObject[i][5] = tempFace;
+                  }
+              }
+          }
+      }
+      // Side 3 (yellow center piece)
+      if (cubeFace === 3){
+          for(let i = 0; i < rubiksObject.length; i++){
+              if ((isMulti || rubiksObject[i][7] < cubeDimension+1-cubeDepth) && rubiksObject[i][7]>cubeDimension-1-cubeDepth){
+                  let newPoint = cube.rotatePoint2(centerPoint,centerPoint,degrees,rubiksObject[i][6],rubiksObject[i][8]);
+                  rubiksObject[i][6] = newPoint.p1;
+                  rubiksObject[i][8] = newPoint.p2;
+                  if(direction === -1){
+                      let tempFace = rubiksObject[i][1];
+                      rubiksObject[i][1] = rubiksObject[i][4];
+                      rubiksObject[i][4] = rubiksObject[i][5];
+                      rubiksObject[i][5] = rubiksObject[i][2];
+                      rubiksObject[i][2] = tempFace;
+                  } else {
+                      let tempFace = rubiksObject[i][1];
+                      rubiksObject[i][1] = rubiksObject[i][2];
+                      rubiksObject[i][2] = rubiksObject[i][5];
+                      rubiksObject[i][5] = rubiksObject[i][4];
+                      rubiksObject[i][4] = tempFace;
+                  }
+              }
+          }
+      }
+      // Side 4 (orange center piece)
+      if (cubeFace === 4){
+          for(let i = 0; i < rubiksObject.length; i++){
+              if ((isMulti || rubiksObject[i][6] > cubeDepth-2) && rubiksObject[i][6] < cubeDepth){
+                  let newPoint = cube.rotatePoint2(centerPoint,centerPoint,degrees,rubiksObject[i][7],rubiksObject[i][8]);
+                  rubiksObject[i][7] = newPoint.p1;
+                  rubiksObject[i][8] = newPoint.p2;
+                  if(direction === -1){
+                      let tempFace = rubiksObject[i][3];
+                      rubiksObject[i][3] = rubiksObject[i][1];
+                      rubiksObject[i][1] = rubiksObject[i][0];
+                      rubiksObject[i][0] = rubiksObject[i][5];
+                      rubiksObject[i][5] = tempFace;
+                  } else {
+                      let tempFace = rubiksObject[i][3];
+                      rubiksObject[i][3] = rubiksObject[i][5];
+                      rubiksObject[i][5] = rubiksObject[i][0];
+                      rubiksObject[i][0] = rubiksObject[i][1];
+                      rubiksObject[i][1] = tempFace;
+                  }
+              }
+          } 
+      }
+      // Side 5 (green center piece)
+      if (cubeFace === 5){
+          for(let i = 0; i < rubiksObject.length; i++){
+              if ((isMulti || rubiksObject[i][8] > cubeDepth-2) && rubiksObject[i][8] < cubeDepth){
+                  let newPoint = cube.rotatePoint2(centerPoint,centerPoint,degrees,rubiksObject[i][6],rubiksObject[i][7]);
+                  rubiksObject[i][6] = newPoint.p1;
+                  rubiksObject[i][7] = newPoint.p2;
+                  if(direction === -1){
+                      let tempFace = rubiksObject[i][3];
+                      rubiksObject[i][3] = rubiksObject[i][4];
+                      rubiksObject[i][4] = rubiksObject[i][0];
+                      rubiksObject[i][0] = rubiksObject[i][2];
+                      rubiksObject[i][2] = tempFace;
+                  } else {
+                      let tempFace = rubiksObject[i][3];
+                      rubiksObject[i][3] = rubiksObject[i][2];
+                      rubiksObject[i][2] = rubiksObject[i][0];
+                      rubiksObject[i][0] = rubiksObject[i][4];
+                      rubiksObject[i][4] = tempFace;
+                  }
+              }
+          } 
+      }
+  
+      //add the move updates to state
+      // setState({rubiksObject : rubiksObject}, () =>{
+      // });
+      return rubiksObject;
     }
 }
 

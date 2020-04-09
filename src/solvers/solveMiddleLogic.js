@@ -36,6 +36,7 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
     }
 
     else{
+        //console.log(faceColor);
         switch(faceColor){
             case 0:
                 // Solved for all sizes

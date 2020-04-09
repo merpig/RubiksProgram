@@ -16,6 +16,8 @@ class View extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
 
+        
+
         if(this.props.state.currentFunc!==nextProps.state.currentFunc) return true;
 
         if(this.props.state.activeAlgo!==nextProps.state.activeAlgo) return true;
@@ -98,7 +100,7 @@ class View extends Component {
                 <Col style={{padding:0, color:"black",opacity:0}} xs={.5}>
                     .    
                 </Col>
-                <Col id="menuBox" style={{padding:0,overflow:"auto",position:"relative",top:"0px",width:"100%",height:"100%"}} xs={8}>
+                <Col id="menuBox" style={{padding:0,overflow:"auto",position:"relative",top:"0px",width:"100%"}} xs={8}>
                     {activeMenu}  
                 </Col>
                 <Col style={{padding:0, color:"black",opacity:0}} xs={.5}>
