@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "3283af236fa785dd08fe096e2e4718c3",
+    "revision": "8bbf34d3d37561ef37a1a44843c7f2f4",
     "url": "/RubiksProgram/index.html"
   },
   {
