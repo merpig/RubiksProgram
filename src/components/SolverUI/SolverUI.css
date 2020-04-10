@@ -38,11 +38,11 @@ a > img {
     border-radius: .25rem;
     z-index: 100000;
     color: #343a40;
-    left: 4px;
-    top: 4px;
+    left: 0;
+    top: 0;
     text-align: center;
-    height:97%;
-    width: 99%;
+    height:100%;
+    width: 100%;
     overflow: hidden;
 }
 

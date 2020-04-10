@@ -20,14 +20,11 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 /*
  * 1. Start moving functions to other files: STARTED
  * 
- * 2. Color picker: 2-4 Finished
+ * 2. UI Rework: Started
  * 
- * 3. UI Rework: Started
+ * 3. Continue working on solvers.
  * 
- * 4. Continue working on solvers.
- * 
- * 5. ISSUES:
- *  - Add small fix for jumping to double moves
+ * 4. ISSUES:
  *  - Fix issue is yellow solver
  */
 
@@ -1416,56 +1413,30 @@ class App extends Component {
     
     console.log(moveSet.length);
 
-    for(let i = 0; i < moveSet.length-2; i++){
-      
-      if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
-        moveSet.splice(i,2);
+
+    let moveSetLength = 0;
+    while(moveSet.length!==moveSetLength){
+      moveSetLength = moveSet.length;
+      for(let i = 0; i < moveSet.length-2; i++){
+        
+        if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
+          moveSet.splice(i,2);
+        }
       }
+
+      for(let i = 0; i < moveSet.length-2; i++){
+        if(moveSet[i]===moveSet[i+1] && moveSet[i]===moveSet[i+2]){
+          if(moveSet[i].length===3){moveSet[i]+="'"}
+          else{moveSet[i]=moveSet[i].substring(0,3)}
+          moveSet.splice(i+1,2);
+        }
+      }
+      console.log(moveSet.length);
     }
 
-    for(let i = 0; i < moveSet.length-2; i++){
-      if(moveSet[i]===moveSet[i+1] && moveSet[i]===moveSet[i+2]){
-        if(moveSet[i].length===3){moveSet[i]+="'"}
-        else{moveSet[i]=moveSet[i].substring(0,3)}
-        moveSet.splice(i+1,2);
-      }
-    }
+    
 
-    console.log(moveSet.length);
-
-    for(let i = 0; i < moveSet.length-2; i++){
-      
-      if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
-        moveSet.splice(i,2);
-      }
-    }
-
-    for(let i = 0; i < moveSet.length-2; i++){
-      if(moveSet[i]===moveSet[i+1] && moveSet[i]===moveSet[i+2]){
-        if(moveSet[i].length===3){moveSet[i]+="'"}
-        else{moveSet[i]=moveSet[i].substring(0,3)}
-        moveSet.splice(i+1,2);
-      }
-    }
-
-    console.log(moveSet.length);
-
-    for(let i = 0; i < moveSet.length-2; i++){
-      
-      if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
-        moveSet.splice(i,2);
-      }
-    }
-
-    for(let i = 0; i < moveSet.length-2; i++){
-      if(moveSet[i]===moveSet[i+1] && moveSet[i]===moveSet[i+2]){
-        if(moveSet[i].length===3){moveSet[i]+="'"}
-        else{moveSet[i]=moveSet[i].substring(0,3)}
-        moveSet.splice(i+1,2);
-      }
-    }
-
-    console.log(moveSet.length);
+    
   
     if(error) {
       alert("Sorry for the inconvenience. This error is caused by an infinite loop issue with the solver and has been stopped to prevent freezing the application. The current move set has still been pushed and is playable for debugging purposes. Maybe you can figure out the issue before I can ;)");
