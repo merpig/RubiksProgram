@@ -5,6 +5,9 @@
     <link rel="shortcut icon" href="%PUBLIC_URL%/icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
+    <meta
+          name="description"           
+          content="Rubik's Cube Simulator Program">
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -216,11 +219,11 @@
           document.addEventListener('MSFullscreenChange', exitHandler);
 
           function exitHandler() {
-              if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
-                $("#fullscreenBtn").text("Fullscreen");
-                isFull=false;
-              }
-} 
+            if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
+              $("#fullscreenBtn").text("Fullscreen");
+              isFull=false;
+            }
+          } 
         });
     </script>
     <div class="canvas" style="background-size: cover; background-position: center; background:url(https://k38gwjynpb-flywheel.netdna-ssl.com/wp-content/uploads/2015/10/black-background.jpeg)no-repeat;">
