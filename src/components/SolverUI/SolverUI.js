@@ -305,10 +305,10 @@ class SolverUI extends Component {
                         {solverSet}
                         
                     </div>
-                    {this.props.state.currentFunc==="Solving"?
-                        <div className="jumperButtons">
-                            {jumperButtons}
-                        </div>:<></>}
+                    
+                    <div className="jumperButtons">
+                        {jumperButtons}
+                    </div>
                 </Col>
             </Row>
         </div>
