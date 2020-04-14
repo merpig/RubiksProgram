@@ -118,7 +118,7 @@ a > img {
     border-radius: .25rem;
     border: 1px solid #343a40;
     background: color(#343a40.5);
-
+    margin-top: 5px;
   }
 
   .solverMoves > div{
@@ -173,4 +173,17 @@ a > img {
 
 .targetSolveIndex{
     border-radius: .25rem;
+}
+
+.jumperButtons{
+  position: fixed;
+  right: 0px;
+  bottom: 0px;
+  z-index: 100000000000;
+}
+
+.jumper{
+  width: 100%;
+  color: lightgrey;
+  font-size: .75rem;
 }

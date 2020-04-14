@@ -6,6 +6,7 @@ import algorithms from "../../cubeFunctions/algorithms";
 import cube from '../../cubeFunctions/cube';
 
 function playOne(props){
+    if(!props.state.moveSet.length) return;
     if(props.state.moveSet[0]===props.state.moveSet[1]&&!props.state.autoPlay){
         props.setState({
             autoPlay:true,
@@ -30,6 +31,9 @@ class SolverUI extends Component {
     UNSAFE_componentWillReceiveProps(nextProps) {
         if(nextProps.state.autoRewind===true && nextProps.state.solvedSetIndex >= nextProps.state.targetSolveIndex) {
             //console.log("attempting rewind");
+            if(nextProps.state.moveSet[0]==="stop'"){
+                nextProps.setState({autoRewind:false});
+            }
             nextProps.rewindOne();
         }
         else if(nextProps.state.autoRewind===true && nextProps.state.solvedSetIndex <= nextProps.state.targetSolveIndex){
@@ -39,6 +43,9 @@ class SolverUI extends Component {
 
         if(nextProps.state.autoPlay===true && nextProps.state.solvedSetIndex < nextProps.state.targetSolveIndex) {
             //console.log("attempting rewind");
+            if(nextProps.state.moveSet[0]==="stop'"){
+                nextProps.setState({autoPlay:false});
+            }
             playOne(nextProps);
         }
         else if(nextProps.state.autoPlay===true && nextProps.state.solvedSetIndex >= nextProps.state.targetSolveIndex){
@@ -53,17 +60,26 @@ class SolverUI extends Component {
 
 
     componentDidUpdate() {
-        //if(document.querySelector(".nextSolveIndex")) document.querySelector(".nextSolveIndex").scrollIntoView(false);
+        if(document.querySelector(".nextSolveIndex")&&this.props.state.autoScroll) {
+            document.querySelector(".nextSolveIndex").scrollIntoView(true);
+            this.props.setState({autoScroll:false});
+        }
     }
 
     
 
     render(){
         let solverSet = [];
+        let jumperButtons = [<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={0} className="solveMoveDiv jumper" key={-1}>Jump to: Start</div>];
         !this.props.state.solvedSet.length?
         solverSet.push("Already solved"):
         this.props.state.solvedSet.forEach((el,i)=>el===this.props.state.solvedSet[i+1]?
             <></>:
+            el==="stop'"? 
+            (solverSet.push(<><hr key={i} style={{border:"1px solid lightblue",marginLeft:"5px"}}></hr>{jumperButtons.length===1?"Edges: ":"3x3: "}</>),jumperButtons.push(
+                jumperButtons.length===1?<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={i+1} className="solveMoveDiv jumper" key={i}>Jump to: Edges</div>:
+                <div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={i+1} className="solveMoveDiv jumper" key={i}>Jump to: 3x3</div>
+            )):
             el===this.props.state.solvedSet[i-1]?
                 i===this.props.state.solvedSetIndex||(i===this.props.state.solvedSetIndex+1&&el===this.props.state.solvedSet[i-1])?
                     solverSet.push(<div 
@@ -88,6 +104,7 @@ class SolverUI extends Component {
                         id={i} className="solveMoveDiv" 
                         key={i}>{el.replace("01","").replace("0","")}</div>)
         )
+        jumperButtons.push(<div onClick={(e)=>setTarget(e,this.props)} id={this.props.state.solvedSet.length+1} className="solveMoveDiv jumper" key={solverSet.length+1}>Jump to: Finished</div>);
 
         let algorithmSet = [];
         
@@ -166,6 +183,11 @@ class SolverUI extends Component {
 
         function pauseSolver(props){
             props.setState({autoPlay:false,autoRewind:false});
+        }
+
+        function preSetTarget(e,props,setTarget){
+            props.setState({autoScroll:true});
+            setTarget(e,props);
         }
 
         //add small fix for jumping to double moves
@@ -278,7 +300,12 @@ class SolverUI extends Component {
                     <div className="solverMoves">
                         
                         {solverSet}
+                        
                     </div>
+                    {this.props.state.currentFunc==="Solving"?
+                        <div className="jumperButtons">
+                            {jumperButtons}
+                        </div>:<></>}
                 </Col>
             </Row>
         </div>

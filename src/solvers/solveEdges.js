@@ -19,11 +19,13 @@ function solveEdges(cube,dim,moveStringToArray,edges,index){
         obj.solveState = 1;
         obj.rubiksIndex = 0;
         obj.currentFunc = "Solving";
+        obj.moveSet = ['stop'];
     }
     else {
         obj.solveState = -1;
         obj.rubiksIndex = 0;
         obj.currentFunc = "None";
+        obj.moveSet = ['stop'];
     }
 
     return obj;

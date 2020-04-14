@@ -87,6 +87,26 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
           return {moveSet:moveArray};
         }
       }
+      else if(dim>3){
+        if(cube[pieceOne][6]===minCoord && cube[pieceOne][8]===maxCoord) {
+          if(cube[pieceTwo][6]===maxCoord && cube[pieceTwo][8]===maxCoord){
+            if(cube[pieceThree][6]===minCoord && cube[pieceThree][8]===minCoord){
+              let obj = {moveLog : "",currentFunc: "None",moveSet:[],solveState:-1};
+              if(solveMoves.length){
+                obj.solveMoves = "";
+                return obj;
+              }
+              return obj;
+            }
+            else {
+              alert('anomoly found');
+              moveString = "02R2 01B2 02R2 01B2 02B2 02R2 02B2";
+              moveArray = moveStringToArray(moveString);
+              return {moveSet:moveArray,solveState:4};
+            }
+          }
+        }
+      }
       else {
         let obj = {moveLog : "",currentFunc: "None",moveSet:[],solveState:-1};
         if(solveMoves.length){

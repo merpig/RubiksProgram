@@ -1343,6 +1343,14 @@ class App extends Component {
         
         let moves = solver(tempState.solveState,tempState.rubiksObject,tempState.cubeDimension,this.moveStringToArray,
           tempState.solveMoves,tempState.rubiksIndex,tempState.middles,tempState.edges,tempState.corners);
+        if(moves.moveSet && moves.moveSet[0]==='stop'){
+          if(this.state.currentFunc==="Solving"){
+            moves.solveMoves = tempState.solveMoves + ` ${moves.moveSet[0]}`;
+            moves.moveSet.pop();
+          }
+          else moves.moveSet.pop();
+        }
+        
         if(moves.moveSet){
           let temp = [];
           for(let i = 0; i<moves.moveSet.length; i++){
@@ -1391,8 +1399,9 @@ class App extends Component {
     }
 
     let maxDepth = Math.floor(tempState.cubeDimension/2);
-     moveSet = 
-    moveSet.map(move=>{
+    moveSet = moveSet.map(move=>{
+      if(move==="stop'") return move;
+      //console.log(move);
       let dataMove = this.convertMoveToData(move);
       if(parseInt(dataMove[2])>maxDepth&&!dataMove[3]){
         //console.log("Found over reaching move: [ " + move + " ]");

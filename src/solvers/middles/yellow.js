@@ -35,33 +35,46 @@ let solveYellowMiddle = (current,solved,dim,index) => {
 
     // This can be written smarter. Has a small flaw with extracting pieces from the back
     if(currentSide==="B"){
+        // moveString += move(" ",current.z+1,"D'");
+
+        // if(current.z!==solved.z){
+        //     if(current.z === middle){
+        //         moveString += " 01R";
+        //     }
+        //     else moveString += " 01R2";
+        // }
+
+        // else {
+        //     if(current.x===current.z){
+        //         moveString += " 01L'";
+        //         opposite = "01L";
+        //     }
+        //     else if(((current.x>= middle &&current.z>=middle))  ||
+        //         (current.x< middle &&current.z<middle) ||
+        //         (current.x> middle &&current.z<middle))
+        //         moveString += " 01L";
+        //     else{
+        //         moveString += " 01L'";
+        //         opposite = "01L";
+        //     }
+
+        //     moveString += move(" ",dim-current.x,"F");
+        //     moveString += " " + opposite;
+            
+        // }
+        // moveString += move(" ",current.z+1,"D");
         moveString += move(" ",current.z+1,"D'");
 
-        if(current.z!==solved.z){
-            if(current.z === middle){
-                moveString += " 01R";
-            }
-            else moveString += " 01R2";
-        }
+        moveString += (dim%2&&current.z===middle)? " 01R" : " 01R2";
 
-        else {
-            if(current.x===current.z){
-                moveString += " 01L'";
-                opposite = "01L";
-            }
-            else if(((current.x>= middle &&current.z>=middle))  ||
-                (current.x< middle &&current.z<middle) ||
-                (current.x> middle &&current.z<middle))
-                moveString += " 01L";
-            else{
-                moveString += " 01L'";
-                opposite = "01L";
-            }
+        moveString += move(" ",current.z+1,"D");
 
-            moveString += move(" ",dim-current.x,"F");
-            moveString += " " + opposite;
-            
-        }
+        moveString += move(" ",current.x+1,"F")
+
+        moveString += move(" ",current.z+1,"D'");
+
+        moveString += (dim%2&&current.z===middle)? " 01R'" : " 01R2";
+
         moveString += move(" ",current.z+1,"D");
     }
     else{
