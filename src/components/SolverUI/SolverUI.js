@@ -7,7 +7,7 @@ import cube from '../../cubeFunctions/cube';
 
 function playOne(props){
     if(!props.state.moveSet.length) return;
-    if(props.state.moveSet[0]===props.state.moveSet[1]&&!props.state.autoPlay){
+    if((props.state.moveSet[0]===props.state.moveSet[1]||props.state.moveSet[1]==="stop'")&&!props.state.autoPlay){
         props.setState({
             autoPlay:true,
             autoRewind:false,
@@ -76,7 +76,7 @@ class SolverUI extends Component {
         this.props.state.solvedSet.forEach((el,i)=>el===this.props.state.solvedSet[i+1]?
             <></>:
             el==="stop'"? 
-            (solverSet.push(<div key={i}><hr key={i} style={{border:"1px solid lightblue",marginLeft:"5px"}}></hr>{jumperButtons.length===1?"Edges: ":"3x3: "}</div>),jumperButtons.push(
+            (solverSet.push(<div key={i} style={{width:"100%"}}><hr key={i} style={{border:"1px solid lightblue",marginLeft:"5px"}}></hr>{jumperButtons.length===1?"Edges: ":"3x3: "}</div>),jumperButtons.push(
                 jumperButtons.length===1?<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={i+1} className="solveMoveDiv jumper" key={i}>Jump to: Edges</div>:
                 <div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={i+1} className="solveMoveDiv jumper" key={i}>Jump to: 3x3</div>
             )):

@@ -959,7 +959,7 @@ class App extends Component {
 
   rewindSolve = () => {
     if(this.state.playOne) return;
-    if(this.state.prevSet[this.state.prevSet.length-1]===this.state.prevSet[this.state.prevSet.length-2]&&!this.state.autoRewind){
+    if((this.state.prevSet[this.state.prevSet.length-1]===this.state.prevSet[this.state.prevSet.length-2]||this.state.prevSet[this.state.prevSet.length-1]==="stop'")&&!this.state.autoRewind){
       this.setState({
         autoPlay:false,autoRewind:true,targetSolveIndex:this.state.solvedSetIndex-2
       });
