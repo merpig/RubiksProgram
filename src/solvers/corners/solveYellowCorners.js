@@ -99,7 +99,6 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
               return obj;
             }
             else {
-              alert('anomoly found');
               moveString = "02R2 01B2 02R2 01B2 02B2 02R2 02B2";
               moveArray = moveStringToArray(moveString);
               return {moveSet:moveArray,solveState:4};
