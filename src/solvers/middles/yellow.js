@@ -31,7 +31,7 @@ let solveYellowMiddle = (current,solved,dim,index) => {
     // console.log(`Solved position: ${JSON.stringify(solved)}`);
     
     
-    let opposite = "01L'";
+    //let opposite = "01L'";
 
     // This can be written smarter. Has a small flaw with extracting pieces from the back
     if(currentSide==="B"){

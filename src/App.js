@@ -1420,7 +1420,7 @@ class App extends Component {
       return this.convertDataToMove(dataMove);
     })
     
-    console.log(moveSet.length);
+    //console.log(moveSet.length);
 
 
     let moveSetLength = 0;
@@ -1440,12 +1440,12 @@ class App extends Component {
           moveSet.splice(i+1,2);
         }
       }
-      console.log(moveSet.length);
+      //console.log(moveSet.length);
     }
 
     
 
-    
+    if(moveSet[0]==="stop'"&&moveSet[1]==="stop'"&&moveSet.length===2) moveSet = [];
   
     if(error) {
       alert("Sorry for the inconvenience. This error is caused by an infinite loop issue with the solver and has been stopped to prevent freezing the application. The current move set has still been pushed and is playable for debugging purposes. Maybe you can figure out the issue before I can ;)");
