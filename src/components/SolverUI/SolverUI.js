@@ -262,13 +262,19 @@ class SolverUI extends Component {
                         </div>
 
                         <div className="solverButton rewindOne">
-                            <p style={{width:"100%"}}>{this.props.state.prevSet.length-1>=0?
-                            this.props.state.prevSet[this.props.state.prevSet.length-1]==="stop'"?
-                            "":
-                            this.props.state.prevSet[this.props.state.prevSet.length-1]===this.props.state.prevSet[this.props.state.prevSet.length-2]?
-                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","").replace("'","")+2:
-                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","")
-                            :"None"}</p>
+                            <p style={{width:"100%"}}>
+                                {this.props.state.prevSet.length-1>=0?
+                                    this.props.state.prevSet[this.props.state.prevSet.length-1]==="stop'"?
+                                        this.props.state.prevSet[this.props.state.prevSet.length-2]===this.props.state.prevSet[this.props.state.prevSet.length-3]?
+                                            this.props.state.prevSet[this.props.state.prevSet.length-2].replace("01","").replace("0","").replace("'","")+2:
+                                            this.props.state.prevSet[this.props.state.prevSet.length-2].replace("01","").replace("0",""):
+
+                                        this.props.state.prevSet[this.props.state.prevSet.length-1]===this.props.state.prevSet[this.props.state.prevSet.length-2]?
+                                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","").replace("'","")+2:
+                                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0",""):
+                                    "None"
+                                }
+                            </p>
                             <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
                                 className="rotateimg180" 
                                 src="https://image.flaticon.com/icons/svg/92/92335.svg" 
@@ -279,20 +285,22 @@ class SolverUI extends Component {
                         <div className="solverButton playOne">
                             <p style={{width:"100%"}}>
                                 {this.props.state.moveSet[0]&&typeof(this.props.state.moveSet[0][0])==='string'&&this.props.state.moveSet[0]!=="'"?
-                                this.props.state.moveSet[0]==="stop'"?
-                                "":
-                                this.props.state.moveSet[0]===this.props.state.moveSet[1]?
-                                this.props.state.moveSet[0].replace("01","").replace("0","").replace("'","")+2:
-                                this.props.state.moveSet[0].replace("01","").replace("0","")
+                                    this.props.state.moveSet[0]==="stop'"?
+                                        this.props.state.moveSet[1]===this.props.state.moveSet[2]?
+                                            this.props.state.moveSet[1].replace("01","").replace("0","").replace("'","")+2:
+                                            this.props.state.moveSet[1].replace("01","").replace("0",""):
 
-                                :"None"
-                                }</p>
+                                        this.props.state.moveSet[0]===this.props.state.moveSet[1]?
+                                            this.props.state.moveSet[0].replace("01","").replace("0","").replace("'","")+2:
+                                            this.props.state.moveSet[0].replace("01","").replace("0",""):
+                                    "None"
+                                }
+                            </p>
                             <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
                                 src="https://image.flaticon.com/icons/svg/92/92335.svg" 
                                 alt="play"
                                 onClick={() => playOne(this.props)}>
-                            </img></div></a>
-                            
+                            </img></div></a> 
                         </div>
                         <div className="solverButton playAll">
                             {this.props.state.autoPlay?pause:solveAll}
