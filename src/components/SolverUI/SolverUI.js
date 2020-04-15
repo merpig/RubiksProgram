@@ -265,13 +265,19 @@ class SolverUI extends Component {
                             <p style={{width:"100%"}}>
                                 {this.props.state.prevSet.length-1>=0?
                                     this.props.state.prevSet[this.props.state.prevSet.length-1]==="stop'"?
-                                        this.props.state.prevSet[this.props.state.prevSet.length-2]===this.props.state.prevSet[this.props.state.prevSet.length-3]?
-                                            this.props.state.prevSet[this.props.state.prevSet.length-2].replace("01","").replace("0","").replace("'","")+2:
-                                            this.props.state.prevSet[this.props.state.prevSet.length-2].replace("01","").replace("0",""):
-
+                                        this.props.state.prevSet[this.props.state.prevSet.length-2]?
+                                            this.props.state.prevSet[this.props.state.prevSet.length-2]===this.props.state.prevSet[this.props.state.prevSet.length-3]?
+                                                this.props.state.prevSet[this.props.state.prevSet.length-2].replace("01","").replace("0","").replace("'","")+2
+                                            :
+                                                this.props.state.prevSet[this.props.state.prevSet.length-2].replace("01","").replace("0","")
+                                        :
+                                            "None"
+                                    :
                                         this.props.state.prevSet[this.props.state.prevSet.length-1]===this.props.state.prevSet[this.props.state.prevSet.length-2]?
-                                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","").replace("'","")+2:
-                                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0",""):
+                                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","").replace("'","")+2
+                                        :
+                                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","")
+                                :
                                     "None"
                                 }
                             </p>
