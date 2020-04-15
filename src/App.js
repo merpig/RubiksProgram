@@ -1360,7 +1360,8 @@ class App extends Component {
           }
           moves.moveSet = temp;
         }
-        if((indexOccurence>10 && tempState.solveState<1)||counter>100000) {
+        if((indexOccurence>100 && tempState.solveState<1)||counter>100000) {
+          console.log(indexOccurence,currentIndex,previousIndex,tempState.rubiksIndex);
           console.log(tempState.solveState);
           error = true;
           //console.log(JSON.stringify({beforeObject}));

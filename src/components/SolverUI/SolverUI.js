@@ -292,13 +292,19 @@ class SolverUI extends Component {
                             <p style={{width:"100%"}}>
                                 {this.props.state.moveSet[0]&&typeof(this.props.state.moveSet[0][0])==='string'&&this.props.state.moveSet[0]!=="'"?
                                     this.props.state.moveSet[0]==="stop'"?
-                                        this.props.state.moveSet[1]===this.props.state.moveSet[2]?
-                                            this.props.state.moveSet[1].replace("01","").replace("0","").replace("'","")+2:
-                                            this.props.state.moveSet[1].replace("01","").replace("0",""):
-
+                                        this.props.state.moveSet[1]?
+                                            this.props.state.moveSet[1]===this.props.state.moveSet[2]?
+                                                this.props.state.moveSet[1].replace("01","").replace("0","").replace("'","")+2
+                                            :
+                                                this.props.state.moveSet[1].replace("01","").replace("0","")
+                                        :
+                                            "None"
+                                    :
                                         this.props.state.moveSet[0]===this.props.state.moveSet[1]?
-                                            this.props.state.moveSet[0].replace("01","").replace("0","").replace("'","")+2:
-                                            this.props.state.moveSet[0].replace("01","").replace("0",""):
+                                            this.props.state.moveSet[0].replace("01","").replace("0","").replace("'","")+2
+                                        :
+                                            this.props.state.moveSet[0].replace("01","").replace("0","")
+                                :
                                     "None"
                                 }
                             </p>
