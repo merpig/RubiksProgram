@@ -6,10 +6,8 @@ const Mobile = props => {
         return (
         <div className="menuWrapper">
             <div className="mobileLeftPanel">
-
             </div>
             <div className="mobileRightPanel">
-                
             </div>
         </div>)
 

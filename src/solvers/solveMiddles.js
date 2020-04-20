@@ -100,6 +100,7 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
       if(index<((dim-2)*(dim-2))*5){
 
         const moveArray = moveStringToArray(moveString);
+        console.log(moveString);
         moveString.trim().length ? obj.moveSet = moveArray : obj.rubiksIndex = index+1;
 
       }

@@ -69,7 +69,11 @@ let solveYellowMiddle = (current,solved,dim,index) => {
 
         moveString += move(" ",current.z+1,"D");
 
+        moveString += (dim%2&&current.z===middle)? " 01R" : "";
+
         moveString += move(" ",current.x+1,"F")
+
+        moveString += (dim%2&&current.z===middle)? " 01R'" : "";
 
         moveString += move(" ",current.z+1,"D'");
 
