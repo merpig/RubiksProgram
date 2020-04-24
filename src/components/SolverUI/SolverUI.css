@@ -110,15 +110,18 @@ a > img {
   }
 
   .solverMoves{
+    overscroll-behavior: contain;
     position: relative;
-    height:28vh;
+    height:150px;
     min-height: 150px;
     width: 100%;
-    overflow: auto;
+    overflow-y: scroll;
+    /* -webkit-overflow-scrolling: touch; */
     border-radius: .25rem;
     border: 1px solid #343a40;
-    background: color(#343a40.5);
+    /* background-color: (#343a40).5; */
     margin-top: 5px;
+    z-index: 1000000000000000000000;
   }
 
   .solverMoves > div{

@@ -1,5 +1,10 @@
 let algorithms = [
     {
+        name : "None Selected",
+        moves : "",
+        worksFor: [2,3,4,5,6]
+    },
+    {
         name : "Cross",
         moves: "01R 01R 01L' 01D 01F 01F 01R' 01D' 01R' 01L 01U' 01D 01R 01D 01B 01B 01R' 01U 01D 01D",
         worksFor: [3,4]

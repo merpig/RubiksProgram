@@ -2236,10 +2236,10 @@ class App extends Component {
 
         <p style={{position:"fixed", top: "100px", left: "10px",color: "white",fontSize:"1rem"}}>Speed: {this.state.currentSpeed}</p>
         <p style={{position:"fixed", top: "75px", right: "10px",color: "white",fontSize:"1.5rem"}}>{this.state.currentFunc === "None" ? "" : this.state.currentFunc}</p>
-        <div style={{position:"absolute", top: "75px",marginLeft: "50%",left:"-105px"}}>
+        <div style={{position:"absolute", top: "75px",marginLeft: "50%",left:"-65px"}}>
           {this.state.currentFunc==="None"||this.state.currentFunc==="Undo"||this.state.currentFunc==="Redo"||this.state.currentFunc==="Drag Turn"?
-          [<button key="undo" className="redoUndo" style={{marginRight:"10px",width:"100px",height:"50px",fontSize:"1.5rem"}} onClick={() => this.undo()}>Undo</button>,
-          <button key="redo" className="redoUndo" style={{marginRight:"10px",width:"100px",height:"50px",fontSize:"1.5rem"}} onClick={() => this.redo()}>Redo</button>]
+          [<button key="undo" className="redoUndo" style={{marginRight:"10px",width:"70",height:"35px",fontSize:"1rem"}} onClick={() => this.undo()}>Undo</button>,
+          <button key="redo" className="redoUndo" style={{marginRight:"10px",width:"70",height:"35px",fontSize:"1rem"}} onClick={() => this.redo()}>Redo</button>]
           :""
           }
         </div>

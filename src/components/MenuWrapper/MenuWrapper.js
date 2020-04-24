@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import MobileView from "../MobileView"
+import MobileView from "../MobileView/MobileView"
 import View from "../View"
 class Menu extends Component {
     // eslint-disable-next-line no-useless-constructor

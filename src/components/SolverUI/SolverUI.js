@@ -228,11 +228,12 @@ class SolverUI extends Component {
 
         function algoStart(e,props){
             let cD = props.state.cubeDimension;
-            let algo = e.target.id;
+            let algo = null;
+            try{algo = e.target.id}catch{algo = e};
             let algoSet = [];
             let generated = cube.generateSolved(cD,cD,cD);
-            algorithms.forEach(e=>{
-                if(e.name===algo&&e.worksFor.includes(cD)) algoSet.push(...e.moves.split(" "));
+            algorithms.forEach(set=>{
+                if(set.name.replace(" ","")===algo&&set.worksFor.includes(cD)) algoSet.push(...set.moves.split(" "));
             })
             //console.log(algoSet);
             props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0});
@@ -320,6 +321,7 @@ class SolverUI extends Component {
                     </div>
                 </Col>
                 <Col>
+                    {!this.props.mobile?<>
                     <div className="solverMoves">
                         
                         {solverSet}
@@ -328,7 +330,25 @@ class SolverUI extends Component {
                     
                     <div className="jumperButtons">
                         {jumperButtons}
-                    </div>
+                    </div></>:<>
+                    <Row >
+                        <label htmlFor="patterns" style={{color:"lightgrey"}}>Choose a Pattern:</label>
+
+                        <select style={{color:"lightgrey",backgroundColor:"#343a40"}} id="patterns" onChange={(e) => algoStart(e.target.value.replace(" ",""),this.props)}>
+                        {algorithms.map(algo=>algo.worksFor.includes(this.props.state.cubeDimension)?
+                            <option id={algo.name.replace(" ","")} value={algo.name} key={algo.name}>{algo.name}</option>
+                                :"")}
+                        </select>
+                    </Row>
+                    <Row >
+                        <div className="solverMoves">
+                            
+                            {solverSet}
+                            
+                        </div>
+                        
+                    </Row></>
+                    }
                 </Col>
             </Row>
         </div>
