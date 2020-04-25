@@ -26,3 +26,13 @@
     white-space: nowrap;
     margin: 5px;
   }
+
+  .triggerBtn{
+    width:100%;
+    height:20%;
+    font-size: 1rem;
+    background-color: #343a40;
+    color: lightgray;
+    border-radius: .25rem;
+    border: 1px solid #007bff;
+  }

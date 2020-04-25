@@ -75,7 +75,7 @@ const Navbar = props => (
       </li>
     </ul>
     <div style={{float:"right"}} >
-    <Popup trigger={<button id="triggerBtn">Info</button>}>
+    <Popup trigger={<button id="infoBtn">Info</button>}>
         {close => (
           <div style={{zIndex:"100",width:"100%",height:"100%"}}>
             <div className="shadeBackground" style={{backgroundColor:"black",zIndex:"101"}} onClick={close}></div>

@@ -38,6 +38,7 @@
   <body style="background-color: black;">
       <style>
         body {
+          overflow: hidden;
           -webkit-touch-callout: none; /* iOS Safari */
             -webkit-user-select: none; /* Safari */
             -khtml-user-select: none; /* Konqueror HTML */
@@ -46,7 +47,7 @@
                     user-select: none; /* Non-prefixed version, currently
                                           supported by Chrome, Opera and Firefox */
         }
-        #triggerBtn:hover,.cpButton:hover,button:hover,.dropdown-item:hover{
+        #triggerBtn:hover,.cpButton:hover,button:hover,.dropdown-item:hover,#infoBtn:hover{
           background-color: gray!important;
           color: white!important;
         }
@@ -65,7 +66,7 @@
 
         button:focus {outline:0;}
 
-        #triggerBtn, #fullscreenBtn, .redoUndo, #moveSubmit{
+        #fullscreenBtn, .redoUndo, #moveSubmit,#infoBtn{
           font-size: 1rem;
           background-color: #343a40;
           color: lightgray;
@@ -139,7 +140,7 @@
           }
         }
         @media (max-width:420px) {
-          #triggerBtn{
+          #infoBtn{
             display: none;
           }
           #divInfo{
@@ -151,14 +152,14 @@
         }
 
         
-        #fullscreenBtn,#triggerBtn{
+        #fullscreenBtn,#triggerBtn,#infoBtn{
           font-size: 1.5rem;
         }
 
         
        
         .canvas{
-          /* overflow: hidden; */
+          overflow: hidden;
         }
         #moveInput{
           -webkit-touch-callout: none; /* iOS Safari */

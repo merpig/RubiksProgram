@@ -1222,15 +1222,7 @@ class App extends Component {
     if (cD <= limit && cD >= 1) return cD; else return 3;
   }
 
-  calculateTurnAtFace(coord1,compare1,coord2,compare2,piece1,piece2,dir1,dir2){
-    if(Math.abs(coord1)>=Math.abs(coord2)&&(Math.abs(coord1)>.1)) 
-      return {calculated : compare1?dir1:(dir1+"'"),depth : piece2}
-      
-    if(Math.abs(coord2)>Math.abs(coord1)&&(Math.abs(coord2)>.1)) {
-      return {calculated : compare2?dir2:(dir2+"'"),depth : piece1}
-    }
-    return null;
-  }
+  
 
   calculateTurn(current,previous,piece,pieceFace,cD){
 
@@ -1249,30 +1241,40 @@ class App extends Component {
       return null;
     }
 
+    function calculateTurnAtFace(coord1,compare1,coord2,compare2,piece1,piece2,dir1,dir2){
+      if(Math.abs(coord1)>=Math.abs(coord2)&&(Math.abs(coord1)>.05)) 
+        return {calculated : compare1?dir1:(dir1+"'"),depth : piece2}
+        
+      if(Math.abs(coord2)>Math.abs(coord1)&&(Math.abs(coord2)>.05)) {
+        return {calculated : compare2?dir2:(dir2+"'"),depth : piece1}
+      }
+      return {calculated:null,depth:null};
+    }
+
     //determines the move based on mouse difference from click to new position
     switch(pieceFace){
       case 0:
-        turn = this.calculateTurnAtFace(dif.z,dif.z<0,dif.x,dif.x>=0,cD-piece.z,cD-piece.x,"R","U");
+        turn = calculateTurnAtFace(dif.z,dif.z<0,dif.x,dif.x>=0,cD-piece.z,cD-piece.x,"R","U");
         calculated = turn.calculated; depth = turn.depth;
         break;
       case 1:
-        turn = this.calculateTurnAtFace(dif.x,dif.x<=0,dif.y,dif.y<0,cD-piece.x,piece.y+1,"F","R");
+        turn = calculateTurnAtFace(dif.x,dif.x<=0,dif.y,dif.y<0,cD-piece.x,piece.y+1,"F","R");
         calculated = turn.calculated; depth = turn.depth;
         break;
       case 2:
-        turn = this.calculateTurnAtFace(dif.z,dif.z>0,dif.y,dif.y>0,cD-piece.z,piece.y+1,"F","U");
+        turn = calculateTurnAtFace(dif.z,dif.z>0,dif.y,dif.y>0,cD-piece.z,piece.y+1,"F","U");
         calculated = turn.calculated; depth = turn.depth;
         break;
       case 3:
-        turn = this.calculateTurnAtFace(dif.z,dif.z>0,dif.x,dif.x<=0,cD-piece.z,cD-piece.x,"R","U");
+        turn = calculateTurnAtFace(dif.z,dif.z>0,dif.x,dif.x<=0,cD-piece.z,cD-piece.x,"R","U");
         calculated = turn.calculated; depth = turn.depth;
         break;
       case 4:
-        turn = this.calculateTurnAtFace(dif.z,dif.z<0,dif.y,dif.y<0,cD-piece.z,piece.y+1,"F","U");
+        turn = calculateTurnAtFace(dif.z,dif.z<0,dif.y,dif.y<0,cD-piece.z,piece.y+1,"F","U");
         calculated = turn.calculated; depth = turn.depth;
         break;
       case 5:
-        turn = this.calculateTurnAtFace(dif.x,dif.x>=0,dif.y,dif.y>0,cD-piece.x,piece.y+1,"F","R");
+        turn = calculateTurnAtFace(dif.x,dif.x>=0,dif.y,dif.y>0,cD-piece.x,piece.y+1,"F","R");
         calculated = turn.calculated; depth = turn.depth;
         break;
       default:
@@ -1466,15 +1468,16 @@ class App extends Component {
   // Initialization and animation functions
   componentDidMount() {
 
+    // Initial set up variables
     let cD = this.getSizeFromUrl();
     let generated = cube.generateSolved(cD,cD,cD);
     let rubiksObject = generated.tempArr;
     let tempCubes = [];
     let stats = new Stats();
     const groups = [[],[],[],[],[],[]];
-    let previousMousePos = null;
-    let piecePos = null;
-    let intersected = null;
+    let previousPiece = null;
+    let previousPieceIndex = null;
+    let ignoreChange = false;
 
     // === THREE.JS VARIABLES ===
     let scene = new THREE.Scene();
@@ -1493,13 +1496,11 @@ class App extends Component {
     const loader1 = new THREE.TextureLoader().load('https://cdn2.iconfinder.com/data/icons/communication-language/100/Up_Arrow-01-512.png');
     let material = new THREE.MeshBasicMaterial( {map:loader1,transparent: true,color: 'black', opacity:'.8',side: THREE.DoubleSide} );
     let tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
-
     let windowHeight = window.innerHeight;
 
-    function onMouseMove( event ) {
-      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-      mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;   
-    }
+    let calculateTurn = this.calculateTurn;
+    let algorithmFunc = this.algorithm;
+
     function onWindowResize(resized) {
       camera.aspect = window.innerWidth / window.innerHeight;
       
@@ -1514,11 +1515,174 @@ class App extends Component {
       resized();
     }
 
+    function ontouchstart( event ){
+      controls.enabled = true;
+      ignoreChange = false;
+      mouse.x = ( event.touches[0].clientX / window.innerWidth ) * 2 - 1;
+      mouse.y = - ( event.touches[0].clientY / window.innerHeight ) * 2 + 1;
+
+
+      // Projects mouse onto scene to find intersected objects
+      raycaster.setFromCamera( mouse, camera );
+
+      // Calculate objects intersecting the picking ray
+      let intersects = raycaster.intersectObjects( scene.children );
+
+      // Check if anything is intersected
+      if(intersects.length){
+        ignoreChange = true;
+        controls.saveState();
+        controls.enabled = false;
+        let faceInteresected = intersects[0].faceIndex;
+        let tempIndex = -1;
+        for(let i = 0; i < 6; i++){
+          if(faceInteresected===i*2 || faceInteresected=== i*2+1) {
+            tempIndex = i;
+            //this.setState({mouseFace : i});
+            break;
+          }
+        }
+        if(this.state.currentFunc==="Color Picker"){
+          let toFace = [2,4,3,0,1,5];
+          this.changeFaceColor({x:intersects[0].object.position.x,y:intersects[0].object.position.y,z:intersects[0].object.position.z},toFace[tempIndex],this.state.colorPicked)
+        }
+        if(intersects[0].object.material[tempIndex] && tempIndex > -1){
+          if(intersects[0].object.material[tempIndex].color){
+            previousPiece = intersects[0];
+            previousPieceIndex = tempIndex;
+            intersects[0].object.material[tempIndex].opacity=.8;
+          }
+        }
+      }
+      else{
+        controls.enabled = true;
+        previousPiece = null;
+        previousPieceIndex = null;
+      }
+    }
+
+    function onmousedown( event ){
+      controls.enabled = true;
+      ignoreChange = false;
+
+      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+      mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+      // Projects mouse onto scene to find intersected objects
+      raycaster.setFromCamera( mouse, camera );
+
+      // Calculate objects intersecting the picking ray
+      let intersects = raycaster.intersectObjects( scene.children );
+
+      // Check if anything is intersected
+      if(intersects.length){
+        ignoreChange = true;
+        controls.saveState();
+        controls.enabled = false;
+        let faceInteresected = intersects[0].faceIndex;
+        let tempIndex = -1;
+        for(let i = 0; i < 6; i++){
+          if(faceInteresected===i*2 || faceInteresected=== i*2+1) {
+            tempIndex = i;
+            //this.setState({mouseFace : i});
+            break;
+          }
+        }
+        if(this.state.currentFunc==="Color Picker"){
+          let toFace = [2,4,3,0,1,5];
+          this.changeFaceColor({x:intersects[0].object.position.x,y:intersects[0].object.position.y,z:intersects[0].object.position.z},toFace[tempIndex],this.state.colorPicked)
+        }
+        if(intersects[0].object.material[tempIndex] && tempIndex > -1){
+          if(intersects[0].object.material[tempIndex].color){
+            previousPiece = intersects[0];
+            previousPieceIndex = tempIndex;
+            intersects[0].object.material[tempIndex].opacity=.8;
+          }
+        }
+      }
+      else{
+        controls.enabled = true;
+        previousPiece = null;
+        previousPieceIndex = null;
+      }
+    }
+
+    function ontouchmove( event ){
+      
+      if(previousPiece) controls.enabled = false;
+      mouse.x = ( event.touches[0].clientX / window.innerWidth ) * 2 - 1;
+      mouse.y = - ( event.touches[0].clientY / window.innerHeight ) * 2 + 1;
+
+      // Projects mouse onto scene to find intersected objects
+      raycaster.setFromCamera( mouse, camera );
+
+      // calculate objects intersecting the picking ray
+      let intersects = raycaster.intersectObjects( scene.children );
+
+      if(previousPiece){
+        if(intersects.length){
+          let current = intersects[0].point;
+          let toFace = [2,4,3,0,1,5];
+          let tempPrev = {...previousPiece.point};
+          let tempPos = {...previousPiece.object.position};
+          let intersected = Math.floor(previousPiece.faceIndex/2);
+          let calculated = calculateTurn(current,tempPrev,tempPos,toFace[intersected],cD);
+          console.log(calculated);
+          if(calculated!==null&&!calculated.includes("null")){
+            algorithmFunc(calculated,"Drag Turn");
+            previousPiece.object.material[previousPieceIndex].opacity=1;
+            previousPiece = null;
+            previousPieceIndex = null;
+          }
+        }
+      }
+    }
+
+    function onMouseMove( event ) {
+      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+      mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+      // Projects mouse onto scene to find intersected objects
+      raycaster.setFromCamera( mouse, camera );
+
+      // calculate objects intersecting the picking ray
+      let intersects = raycaster.intersectObjects( scene.children );
+
+      if(previousPiece){
+        if(intersects.length){
+          let current = intersects[0].point;
+          let toFace = [2,4,3,0,1,5];
+          let tempPrev = {...previousPiece.point};
+          let tempPos = {...previousPiece.object.position};
+          let intersected = Math.floor(previousPiece.faceIndex/2);
+          let calculated = calculateTurn(current,tempPrev,tempPos,toFace[intersected],cD);
+          //console.log(calculated);
+          if(calculated!==null&&!calculated.includes("null")){
+            algorithmFunc(calculated,"Drag Turn");
+            previousPiece.object.material[previousPieceIndex].opacity=1;
+            previousPiece = null;
+            previousPieceIndex = null;
+          }
+        }
+      }
+    }
+
+    function ontouchend( event ){
+      if(previousPiece) previousPiece.object.material[previousPieceIndex].opacity=1;
+      if(ignoreChange) controls.reset();
+      ignoreChange = false;
+      previousPiece = null;
+      controls.enabled = true;
+    }
+
     // Bind event listeners to window
-    window.addEventListener("keydown", this.keyHandling);
-    window.addEventListener("mousemove", onMouseMove, false );
-    window.addEventListener("mousedown", this.onMouseDown.bind(this), false );
-    window.addEventListener("mouseup", this.onMouseUp.bind(this), false );
+    window.addEventListener("keydown", this.keyHandling, false);
+    window.addEventListener("mousemove", onMouseMove.bind(this), false );
+    window.addEventListener("mousedown", onmousedown.bind(this), false );
+    window.addEventListener("touchstart", ontouchstart.bind(this), false);
+    window.addEventListener("touchmove", ontouchmove.bind(this), false);
+    window.addEventListener("touchend", ontouchend, false);
+    window.addEventListener("mouseup", ontouchend, false );
     window.addEventListener("resize", () => onWindowResize(this.windowResized), false );
     
     // Set background color and size
@@ -1568,7 +1732,8 @@ class App extends Component {
     scene.translateZ(.5-cD/2);
 
     // Allows for drag to rotate camera
-    const controls = new OrbitControls( camera , renderer.domElement);
+    let controls = new OrbitControls( camera , renderer.domElement);
+    controls.enabled = true;
     controls.enableDamping = true;   //damping 
     controls.dampingFactor = 0.15;   //damping inertia
     controls.enableZoom = true;      //Zooming
@@ -1582,7 +1747,7 @@ class App extends Component {
       BOTTOM: null // down arrow
     };
 
-    controls.addEventListener("change", () => {
+    controls.addEventListener("change", (e) => {
       if (renderer) renderer.render(scene, camera);
     });
 
@@ -1839,10 +2004,10 @@ class App extends Component {
     let animate = () => {
 
       // clear visible move hints
-      for(let i = 0; i < groups.length;i++)
+      for(let i = 0; i < groups.length;i++){
         groups[i].forEach(group => group.visible = false)
+      }
 
-      controls.enabled = true;
       stats.begin();
       requestAnimationFrame( animate );
 
@@ -1901,102 +2066,14 @@ class App extends Component {
           }
         }
 
-        let previousPiece = this.state.previousPiece;
+        // let previousPiece = this.state.previousPiece;
 
-        // Projects mouse onto scene to find intersected objects
-        raycaster.setFromCamera( mouse, camera );
+        // // Projects mouse onto scene to find intersected objects
+        // raycaster.setFromCamera( mouse, camera );
 
-        // calculate objects intersecting the picking ray
-        let intersects = raycaster.intersectObjects( scene.children );
-        if (intersects[0] && intersects[0].object.material.length && !this.state.mouseDown){
-          previousMousePos = null;
-          piecePos = null;
-          intersected = null;
-          controls.enabled = false;
-          // Get faces to line up properly
-          let faceInteresected = intersects[0].faceIndex;
-          let tempIndex = -1;
-          
-          // Assign the intersected face index to be recolored on hover
-          
-          for(let i = 0; i < 6; i++){
-            if(faceInteresected===i*2 || faceInteresected=== i*2+1) {
-              tempIndex = i;
-              this.setState({mouseFace : i});
-              break;
-            }
-          }
-
-          // Recolors last hovered piece. rgb values of cyan
-          if(intersects[0].object.material[tempIndex].opacity!==.8){
-               
-            if(previousPiece!==null) {
-              let previousPiece = this.state.previousPiece;
-              previousPiece.opacity=1;
-              //this.reloadTurnedPieces(previousPiece);
-              this.setState({previousPiece:null});
-            }
-          }
-          
-          // Recolor face that mouse is over
-          if(intersects[0].object.material[tempIndex] && tempIndex > -1)
-            if(intersects[0].object.material[tempIndex].color){
-              // store the hovered face for use later
-              this.setState({facePosX : intersects[0].object.position.x,
-                            facePosY : intersects[0].object.position.y,
-                            facePosZ : intersects[0].object.position.z,
-                            faceSide : tempIndex });
-              intersects[0].object.material[tempIndex].opacity=.8;
-              //console.log(intersects[0].object.material[tempIndex].opacity);
-              // store the hovered coordinates so that if a different
-              // piece is hovered, the previous gets colored back.
-              this.setState({previousPiece : intersects[0].object.material[tempIndex]});
-            }
-        }
-
-        else if(this.state.mouseDown){
-          if(this.state.mouseFace === null){
-            // dragging mouse on canvas should rotate cube
-          } 
-
-          else{
-            try{
-              let toFace = [2,4,3,0,1,5];
-              
-              if(previousMousePos === null) {
-                previousMousePos = intersects[0].point;
-                piecePos = intersects[0].object.position;
-                intersected = Math.floor(intersects[0].faceIndex/2);
-              }
-              else{
-                  let calculated = this.calculateTurn(intersects[0].point,previousMousePos,piecePos,toFace[intersected],cD);
-                  if(calculated!==null&&!calculated.includes("null")){
-                    //console.log(calculated)
-                    this.setState({mouseDown: false},()=>{
-                      this.algorithm(calculated,"Drag Turn");
-                    });
-                  }
-                
-              }
-            }catch(e){
-              //console.error("Error prevented");
-            }
-          }
-        }
-
-        // 
-        else if(this.state.mouseFace !== null){
-          if(previousPiece!==null) {
-            previousPiece.opacity=1;
-            //this.reloadTurnedPieces(previousPiece);
-            this.setState({previousPiece:null});
-          }
-
-          previousMousePos = null;
-          piecePos = null;
-          intersected = null;
-          this.setState({mouseFace : null});
-        }
+        // // calculate objects intersecting the picking ray
+        // let intersects = raycaster.intersectObjects( scene.children );
+        // // 
       }
       
       // Animate queued rotation

@@ -60,6 +60,7 @@ class SolverUI extends Component {
 
 
     componentDidUpdate() {
+        
         if(document.querySelector(".nextSolveIndex")&&this.props.state.autoScroll) {
             document.querySelector(".nextSolveIndex").scrollIntoView(true);
             this.props.setState({autoScroll:false});
@@ -70,15 +71,15 @@ class SolverUI extends Component {
 
     render(){
         let solverSet = [];
-        let jumperButtons = [<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={0} className="solveMoveDiv jumper" key={-1}>Jump to: Start</div>];
+        let jumperButtons = [<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={0} className="solveMoveDiv jumper" key={-1}>Top</div>];
         !this.props.state.solvedSet.length?
         solverSet.push("Already solved"):
         this.props.state.solvedSet.forEach((el,i)=>el===this.props.state.solvedSet[i+1]?
             <></>:
             el==="stop'"? 
             (solverSet.push(<div key={i} style={{width:"100%"}}><hr key={i} style={{border:"1px solid lightblue",marginLeft:"5px"}}></hr>{jumperButtons.length===1?"Edges: ":"3x3: "}</div>),jumperButtons.push(
-                jumperButtons.length===1?<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={i+1} className="solveMoveDiv jumper" key={i}>Jump to: Edges</div>:
-                <div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={i+1} className="solveMoveDiv jumper" key={i}>Jump to: 3x3</div>
+                jumperButtons.length===1?<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={i+1} className="solveMoveDiv jumper" key={i}>Edges</div>:
+                <div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={i+1} className="solveMoveDiv jumper" key={i}>3x3</div>
             )):
             el===this.props.state.solvedSet[i-1]?
                 i===this.props.state.solvedSetIndex||(i===this.props.state.solvedSetIndex+1&&el===this.props.state.solvedSet[i-1])?
@@ -104,7 +105,7 @@ class SolverUI extends Component {
                         id={i} className="solveMoveDiv" 
                         key={i}>{el.replace("01","").replace("0","")}</div>)
         )
-        jumperButtons.push(<div onClick={(e)=>setTarget(e,this.props)} id={this.props.state.solvedSet.length+1} className="solveMoveDiv jumper" key={this.props.state.solvedSet.length+1}>Jump to: Finished</div>);
+        jumperButtons.push(<div onClick={(e)=>setTarget(e,this.props)} id={this.props.state.solvedSet.length+1} className="solveMoveDiv jumper" key={this.props.state.solvedSet.length+1}>Bottom</div>);
 
         let algorithmSet = [];
         
@@ -192,6 +193,7 @@ class SolverUI extends Component {
 
         //add small fix for jumping to double moves
         function setTarget(e,props){
+            e.stopPropagation();
             if(props.state.autoPlay||props.state.autoRewind){
 
             }
@@ -237,6 +239,49 @@ class SolverUI extends Component {
             })
             //console.log(algoSet);
             props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0});
+        }
+
+        function optionClick(e,props){
+            // Already selected button (turns off)
+            if(e.target.classList.contains("activeMenu")){
+                
+                switch(props.state.currentFunc){
+                    case "Color Picker":
+                        document.querySelector(".warningPopup").style.display="block";
+                        break;
+                    case "Solving":
+                        document.querySelector(".warningPopupSolver").style.display="block";
+                        break;
+                    case "Algorithms":
+                        //this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : [],targetSolveIndex:-1,solvedSet:[]});
+                        props.setState({activeMenu:"",currentFunc:"Reset",solvedSet:[],hoverData:[],prevSet:[],moveSet:[],isValidConfig:false,targetSolveIndex:-1, solveMoves : "",autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,activeAlgo:"none"});
+                        break;
+                    default:
+                        document.querySelector(".activeMenu").classList.remove("activeMenu");
+                        props.setState({activeMenu:"",currentFunct:"None"});
+                }
+            }
+            else {
+                if(props.state.currentFunc==="None") {
+                    if(props.state.activeMenu!==""&&props.state.activeMenu!==null&&document.querySelector(".activeMenu")!==null) {
+                        document.querySelector(".activeMenu").classList.remove("activeMenu");
+                    }
+                    e.target.classList.add("activeMenu");
+                    if(e.target.id==="ColorPicker"){
+                        
+                        props.setState({activeMenu:e.target.id});
+                        props.beginColorPicker();
+                    }
+                    else if(e.target.id==="Solver"){
+                        props.setState({activeMenu:e.target.id});
+                        props.beginSolve();
+                    }
+                    else if(e.target.id==="Algorithms"){
+                        props.setState({activeMenu:e.target.id,currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[]});
+                    }
+                    else props.setState({activeMenu:e.target.id,currentFunc:"None"});
+                }
+            }
         }
 
         return(<div className="solverUIWrapper">
@@ -319,6 +364,19 @@ class SolverUI extends Component {
                             {this.props.state.autoPlay?pause:solveAll}
                         </div>
                     </div>
+                    {this.props.mobile?<Row style={{height:"150px"}}>
+                        <Col>
+                        {this.props.state.currentFunc==="Solving"?<>
+                        <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:
+                        this.props.state.currentFunc==="Color Picker"?<>
+                        <button id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:
+                        this.props.state.currentFunc==="Algorithms"?<>
+                        <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:<></>}
+                        </Col>
+                        <Col>
+                        {jumperButtons}
+                        </Col>
+                    </Row>:<></>}
                 </Col>
                 <Col>
                     {!this.props.mobile?<>
@@ -331,7 +389,7 @@ class SolverUI extends Component {
                     <div className="jumperButtons">
                         {jumperButtons}
                     </div></>:<>
-                    <Row >
+                    {this.props.state.currentFunc==="Algorithms"?<><Row >
                         <label htmlFor="patterns" style={{color:"lightgrey"}}>Choose a Pattern:</label>
 
                         <select style={{color:"lightgrey",backgroundColor:"#343a40"}} id="patterns" onChange={(e) => algoStart(e.target.value.replace(" ",""),this.props)}>
@@ -347,7 +405,14 @@ class SolverUI extends Component {
                             
                         </div>
                         
-                    </Row></>
+                    </Row></>:<>
+                    <div className="solverMoves solverMovesSolver">
+                            
+                            {solverSet}
+                            
+                        </div>
+                    </>
+                    }</>
                     }
                 </Col>
             </Row>

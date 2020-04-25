@@ -58,7 +58,7 @@ const ColorPicker = (props) => {
                 
             </Col>
             <Col style={{width:"50%"}}>
-                {props.isValidConfig?<div id="triggerBtn" style={{width:"100%"}} onClick={()=>props.setColorPickedCube()}>Set <strong style={{color:'green',fontSize:'1rem'}}>Valid</strong></div>:<div id="triggerBtn" style={{width:"100%"}}>Set <strong style={{color:'red',fontSize:'1rem'}}>Invalid</strong></div>}
+                {props.isValidConfig?<div className="triggerBtn" onClick={()=>props.setColorPickedCube()}>Set <strong style={{color:'green',fontSize:'1rem'}}>Valid</strong></div>:<div className="triggerBtn">Set <strong style={{color:'red',fontSize:'1rem'}}>Invalid</strong></div>}
                 <div style={{fontSize:".5rem"}}>
                      
                         {li}
