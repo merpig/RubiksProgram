@@ -12,13 +12,14 @@ const Speeds = props => (
         {props.isDisabled ?
         <Slider 
             defaultValue={40} 
-            min={0} max={70} 
+            value={props.speed}
+            min={props.speed} max={props.speed} 
             step={10}
-            disabled
         />
         :
         <Slider 
             defaultValue={40} 
+            value={props.speed}
             min={0} max={70} 
             step={10}
             onChange={props.onSliderChange}
