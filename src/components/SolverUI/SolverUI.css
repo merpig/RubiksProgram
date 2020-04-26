@@ -113,8 +113,8 @@ a > img {
 
   .solverMoves{
     position: relative;
-    height:150px;
-    min-height: 150px;
+    height:140px;
+    min-height: 140px;
     width: 100%;
     overflow-y: scroll;
     border-radius: .25rem;
@@ -137,7 +137,7 @@ a > img {
   }
 
   .jumper{
-    height: 12.5%;
+    height: 20px;
   }
 
   .solveMoveDiv:hover{
@@ -184,8 +184,8 @@ a > img {
 
 .jumperButtons{
   position: fixed;
-  right: 0px;
-  bottom: 0px;
+  right: 5px;
+  bottom: 5px;
   z-index: 100000000000;
 }
 

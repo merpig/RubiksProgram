@@ -52,22 +52,14 @@ class SolverUI extends Component {
             //console.log("ending rewind");
             nextProps.setState({autoPlay:false});
         }
-      }
-
-    // shouldComponentUpdate(nextProps, nextState) {
-    // }
-
-
+    }
 
     componentDidUpdate() {
-        
         if(document.querySelector(".nextSolveIndex")&&this.props.state.autoScroll) {
             document.querySelector(".nextSolveIndex").scrollIntoView(true);
             this.props.setState({autoScroll:false});
         }
     }
-
-    
 
     render(){
         let solverSet = [];
@@ -373,7 +365,7 @@ class SolverUI extends Component {
                         this.props.state.currentFunc==="Algorithms"?<>
                         <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:<></>}
                         </Col>
-                        <Col>
+                        <Col style={{paddingLeft: 0,marginRight: "5px"}}>
                         {jumperButtons}
                         </Col>
                     </Row>:<></>}
@@ -386,7 +378,7 @@ class SolverUI extends Component {
                         
                     </div>
                     
-                    <div className="jumperButtons">
+                    <div className="jumperButtons" >
                         {jumperButtons}
                     </div></>:<>
                     {this.props.state.currentFunc==="Algorithms"?<><Row >

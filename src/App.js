@@ -109,8 +109,6 @@ class App extends Component {
     sliderSpeed:40
   };
 
-  
-
   // Bind keys to functions
   keyBinds = key => {
     switch (key){
@@ -187,14 +185,35 @@ class App extends Component {
           this.changeColor('green');
         }
         break;
-
+      case 'ArrowLeft':
+        if(this.state.currentFunc==='Solving'){
+          this.rewindSolve();
+        }
+        break;
+      case 'ArrowRight':
+        if(this.state.currentFunc==='Solving'){
+          if(!this.state.moveSet.length) return;
+          if((this.state.moveSet[0]===this.state.moveSet[1]||this.state.moveSet[1]==="stop'")&&!this.state.autoPlay){
+            this.setState({
+                  autoPlay:true,
+                  autoRewind:false,
+                  targetSolveIndex:this.state.solvedSetIndex+2});
+          }
+          else{
+              if(this.state.playOne===true) return;
+              if(this.state.moveSet[0]&&typeof(this.state.moveSet[0][0])==='string'&&this.state.moveSet[0]!=="'"){
+                this.setState({playOne:true,prevSet:[...this.state.prevSet,this.state.moveSet[0]]});
+              }
+          }
+        }
+        break;
       default:
     }
   }
 
   // Handles key press event
   keyHandling = e => {
-    if(e.keyCode <= 36 || e.keyCode >= 41) this.keyBinds(e.key);
+    this.keyBinds(e.key);
   }
 
   onMouseDown( event ) {
@@ -245,12 +264,9 @@ class App extends Component {
 
   // Functions to change speed
   changeSpeed = (_speed,_rotationSpeed,_name,bypass) => {
-    if((this.state.currentFunc==="Solving"||this.state.currentFunc==="Algorithms"||this.state.currentFunc==="Scrambling")&&!bypass) {
-      this.setState({moveSet:[[_speed,_rotationSpeed,_name],...this.state.moveSet]})
-      return;
-    }
-    if(this.state.currentFunc !== "None" && !bypass) return;
-    this.setState({currentSpeed: _name,speed: _speed, start: _speed, end: 0, rotationSpeed: _rotationSpeed});
+    this.state.currentFunc!=="None"&&!bypass ?
+      this.setState({moveSet:[[_speed,_rotationSpeed,_name],...this.state.moveSet]}):
+      this.setState({currentSpeed: _name,speed: _speed, start: _speed, end: 0, rotationSpeed: _rotationSpeed});
   }
 
   changeColor = (color) => {
@@ -948,8 +964,6 @@ class App extends Component {
     if(this.state.currentFunc !== "None") return;
     const blank = [...cube.generateBlank(cD,cD,cD)];
     this.setState({currentFunc : "Color Picker",rubiksObject: [...blank]},()=>{
-      //console.log(this.state.rubiksObject);
-      //console.log("reloading");
       this.reloadTurnedPieces('cp');
     });
   }
@@ -2324,7 +2338,6 @@ class App extends Component {
 
         <Speeds //Top left with slider
           onSliderChange={this.onSliderChange}
-          isDisabled={this.state.currentFunc==="Drag Turn"?true:false}
           speed={this.state.sliderSpeed}
         />
 

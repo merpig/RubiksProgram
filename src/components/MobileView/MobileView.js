@@ -111,7 +111,7 @@ class Mobile extends Component {
         return (
         <div className="menuWrapper">
             {(this.props.state.currentFunc === "None"||this.props.state.currentFunc === "Drag Turn")&&this.props.state.activeMenu!=="Moves"?
-                <Row style={{height: "100%"}}>
+                <Row style={{position: "absolute", bottom:"0px", paddingRight:"5px"}}>
                     <Col xs={6}>
                         <Button className="mobileButton" onClick={()=>this.props.setState({activeMenu: "Moves"})} key={0}>Moves</Button>
                         <Button className="mobileButton" id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} key={1}>Color Picker</Button> 
@@ -126,7 +126,7 @@ class Mobile extends Component {
                 </Row>
             :
                 this.props.state.currentFunc === "Color Picker"?
-                <ColorPicker {...this.props}></ColorPicker>:
+                <ColorPicker {...this.props} isMobile={true}></ColorPicker>:
                 this.props.state.currentFunc === "Solving"?
                 <SolverUI {...this.props} mobile={true}/>:
                 this.props.state.currentFunc === "Algorithms"?
@@ -135,7 +135,7 @@ class Mobile extends Component {
                 this.props.state.activeMenu==="Moves"?
                     <Row style={{height: "100%"}}>
                         <Col xs={2}>
-                            <Button className="mobileButton" style={{fontSize:"2rem",padding:0}} onClick={()=>{this.props.setState({activeMenu:""})}}>←</Button>
+                            <div id="infoBtn" style={{fontSize:"2rem",padding:0,display:"inline"}} onClick={()=>{this.props.setState({activeMenu:""})}}>←</div>
                         </Col>
                         <Col xs={10}>
                             <Controls {...this.props}/>
