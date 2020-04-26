@@ -190,7 +190,7 @@ a > img {
 }
 
 .jumper{
-  width: 100%;
+  display: inline-block;
   color: lightgrey;
   font-size: .75rem;
 }

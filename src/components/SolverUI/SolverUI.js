@@ -70,7 +70,7 @@ class SolverUI extends Component {
             <></>:
             el==="stop'"? 
             (solverSet.push(<div key={i} style={{width:"100%"}}><hr key={i} style={{border:"1px solid lightblue",marginLeft:"5px"}}></hr>{jumperButtons.length===1?"Edges: ":"3x3: "}</div>),jumperButtons.push(
-                jumperButtons.length===1?<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={i+1} className="solveMoveDiv jumper" key={i}>Edges</div>:
+                jumperButtons.length===1?<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={i+1} className="solveMoveDiv jumper" key={i}>Edge</div>:
                 <div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={i+1} className="solveMoveDiv jumper" key={i}>3x3</div>
             )):
             el===this.props.state.solvedSet[i-1]?
@@ -97,7 +97,8 @@ class SolverUI extends Component {
                         id={i} className="solveMoveDiv" 
                         key={i}>{el.replace("01","").replace("0","")}</div>)
         )
-        jumperButtons.push(<div onClick={(e)=>setTarget(e,this.props)} id={this.props.state.solvedSet.length+1} className="solveMoveDiv jumper" key={this.props.state.solvedSet.length+1}>Bottom</div>);
+        solverSet.push(<div key={solverSet.length*10}style={{height:"35px",width:"100%"}}></div>)
+        jumperButtons.push(<div onClick={(e)=>setTarget(e,this.props)} id={this.props.state.solvedSet.length+1} className="solveMoveDiv jumper" key={this.props.state.solvedSet.length+1}>End</div>);
 
         let algorithmSet = [];
         
@@ -286,9 +287,9 @@ class SolverUI extends Component {
                 <Col style={{paddingRight:0}}>
                     {this.props.state.currentFunc==="Solving"?
                         <div className="solverInfo">
-                            <div className="solveTime">
+                            {/* <div className="solveTime">
                                 Time:{this.props.state.solveTime}s
-                            </div>
+                            </div> */}
                             <div className="solveMoves">
                                 Moves:{this.props.state.solvedSet.length}
                             </div>
@@ -309,14 +310,14 @@ class SolverUI extends Component {
                                             :
                                                 this.props.state.prevSet[this.props.state.prevSet.length-2].replace("01","").replace("0","")
                                         :
-                                            "None"
+                                            ""
                                     :
                                         this.props.state.prevSet[this.props.state.prevSet.length-1]===this.props.state.prevSet[this.props.state.prevSet.length-2]?
                                             this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","").replace("'","")+2
                                         :
                                             this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","")
                                 :
-                                    "None"
+                                    ""
                                 }
                             </p>
                             <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
@@ -336,14 +337,14 @@ class SolverUI extends Component {
                                             :
                                                 this.props.state.moveSet[1].replace("01","").replace("0","")
                                         :
-                                            "None"
+                                            ""
                                     :
                                         this.props.state.moveSet[0]===this.props.state.moveSet[1]?
                                             this.props.state.moveSet[0].replace("01","").replace("0","").replace("'","")+2
                                         :
                                             this.props.state.moveSet[0].replace("01","").replace("0","")
                                 :
-                                    "None"
+                                    ""
                                 }
                             </p>
                             <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
@@ -357,15 +358,15 @@ class SolverUI extends Component {
                         </div>
                     </div>
                     {this.props.mobile?<Row style={{height:"150px"}}>
-                        <Col>
+                        <Col xs={4}>
                         {this.props.state.currentFunc==="Solving"?<>
-                        <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:
+                        <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu" style={{height:"auto"}}>Exit</button></>:
                         this.props.state.currentFunc==="Color Picker"?<>
                         <button id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:
                         this.props.state.currentFunc==="Algorithms"?<>
                         <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:<></>}
                         </Col>
-                        <Col style={{paddingLeft: 0,marginRight: "5px"}}>
+                        <Col xs={8} style={{paddingLeft: 0}}>
                         {jumperButtons}
                         </Col>
                     </Row>:<></>}
