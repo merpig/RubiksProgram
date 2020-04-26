@@ -111,14 +111,14 @@ class Mobile extends Component {
         return (
         <div className="menuWrapper">
             {(this.props.state.currentFunc === "None"||this.props.state.currentFunc === "Drag Turn")&&this.props.state.activeMenu!=="Moves"?
-                <Row style={{position: "absolute", bottom:"0px", paddingRight:"5px"}}>
+                <Row style={{position: "absolute", bottom:"0px", width:"100%"}}>
                     <Col xs={6}>
                         <Button className="mobileButton" onClick={()=>this.props.setState({activeMenu: "Moves"})} key={0}>Moves</Button>
                         <Button className="mobileButton" id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} key={1}>Color Picker</Button> 
                         <Button className="mobileButton" id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} key={2}>Solver</Button> 
                         <Button className="mobileButton" id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} key={3}>Patterns</Button> 
                     </Col>
-                    <Col xs={6}>
+                    <Col xs={6} style={{paddingRight:0}}>
                         <Button className="blankButton" key={0}></Button>
                         <Button className="mobileButton" id="Scramble" onClick={(e)=>otherOptionClick(e,this.props)} key={2}>Scramble</Button>
                         <Button className="mobileButton" id="Reset" onClick={(e)=>otherOptionClick(e,this.props)}  key={3}>Reset</Button>
