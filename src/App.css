@@ -31,3 +31,14 @@
     transform: rotate(360deg);
   }
 }
+
+.redoUndo:hover{
+  border-radius: .25rem;
+  border: 1px solid lightgray!important;
+  background-color: transparent!important;
+}
+
+.redoUndo:active{
+  border-radius: .25rem;
+  background-color: lightgray!important;
+}

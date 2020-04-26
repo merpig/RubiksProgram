@@ -110,7 +110,7 @@ class Mobile extends Component {
 
         return (
         <div className="menuWrapper">
-            {(this.props.state.currentFunc === "None"||this.props.state.currentFunc === "Drag Turn")&&this.props.state.activeMenu!=="Moves"?
+            {(this.props.state.currentFunc === "None"||this.props.state.currentFunc === "Drag Turn"||this.props.state.currentFunc === "Undo"||this.props.state.currentFunc === "Redo")&&this.props.state.activeMenu!=="Moves"?
                 <Row style={{position: "absolute", bottom:"0px", width:"100%"}}>
                     <Col xs={6}>
                         <Button className="mobileButton" onClick={()=>this.props.setState({activeMenu: "Moves"})} key={0}>Moves</Button>

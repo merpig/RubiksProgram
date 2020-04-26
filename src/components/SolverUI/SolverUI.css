@@ -193,4 +193,5 @@ a > img {
   display: inline-block;
   color: lightgrey;
   font-size: .75rem;
+  width:45%;
 }

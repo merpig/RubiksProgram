@@ -2330,8 +2330,8 @@ class App extends Component {
         {this.state.currentFunc==="Color Picker"?<></>:<p style={{position:"fixed", top: "110px", left: "10px",color: "white",fontSize:"1rem"}}>Speed: {this.state.currentSpeed}</p>}
         <div style={{width:"100px",position:"absolute", top: "75px",marginLeft: "50%",left:"-50px"}}>
           {this.state.currentFunc==="None"||this.state.currentFunc==="Undo"||this.state.currentFunc==="Redo"||this.state.currentFunc==="Drag Turn"?
-          [<div key="undo" className="redoUndo" style={{marginRight:"2px",display:"inline-block", width:"45%",height:"50px",fontSize:"1rem",background: "url(https://image.flaticon.com/icons/svg/889/889590.svg)",backgroundRepeat:"no-repeat"}} onClick={() => this.undo()}></div>,
-          <div key="redo" className="redoUndo" style={{marginLeft:"2px",display:"inline-block", width:"45%",height:"50px",fontSize:"1rem",background: "url(https://image.flaticon.com/icons/svg/889/889578.svg)",backgroundRepeat:"no-repeat"}} onClick={() => this.redo()}></div>]
+          [<button key="undo" className="redoUndo" style={{border:"none",marginRight:"2px",display:"inline-block", width:"45%",height:"50px",fontSize:"1rem",background: "url(https://image.flaticon.com/icons/svg/889/889590.svg)",backgroundRepeat:"no-repeat"}} onClick={() => this.undo()}></button>,
+          <button key="redo" className="redoUndo" style={{border:"none",marginLeft:"2px",display:"inline-block", width:"45%",height:"50px",fontSize:"1rem",background: "url(https://image.flaticon.com/icons/svg/889/889578.svg)",backgroundRepeat:"no-repeat"}} onClick={() => this.redo()}></button>]
           :""
           }
         </div>
