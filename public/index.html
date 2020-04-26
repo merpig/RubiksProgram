@@ -66,12 +66,19 @@
 
         button:focus {outline:0;}
 
-        #fullscreenBtn, .redoUndo, #moveSubmit,#infoBtn{
+        #fullscreenBtn, #moveSubmit,#infoBtn{
           font-size: 1rem;
           background-color: #343a40;
           color: lightgray;
           border-radius: .25rem;
           border: 1px solid #007bff;
+        }
+
+        .redoUndo{
+          -webkit-background-size: 90% 90%;           /* Safari 3.0 */
+            -moz-background-size: 90% 90%;           /* Gecko 1.9.2 (Firefox 3.6) */
+              -o-background-size: 90% 90%;           /* Opera 9.5 */
+                  background-size: 90% 90%;           /* Gecko 2.0 (Firefox 4.0) and other CSS3-compliant browsers */
         }
 
         .cpButton{
