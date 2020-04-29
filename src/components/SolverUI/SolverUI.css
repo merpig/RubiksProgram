@@ -60,6 +60,7 @@ a > img {
     height: 22.5%;
     white-space: nowrap;
     margin: 5px;
+    pointer-events: auto;
   }
 
 
@@ -78,6 +79,7 @@ a > img {
       margin-bottom: 20px;
       display: inline-block;
       text-align: center;
+      pointer-events: auto;
   }
 
   
@@ -134,6 +136,7 @@ a > img {
       border: 1px solid #343a40;
       border-radius: .25rem;
       width: 30px;
+      pointer-events: auto;
   }
 
   .jumper{
@@ -187,6 +190,7 @@ a > img {
   right: 5px;
   bottom: 5px;
   z-index: 100000000000;
+  pointer-events: auto;
 }
 
 .jumper{

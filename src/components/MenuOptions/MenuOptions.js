@@ -6,7 +6,6 @@ import cube from '../../cubeFunctions/cube';
 const MenuOptions = props => {
 
         const baseOptions = <>
-           <button id="Moves" data="None" onClick={optionClick} className="cpButton">Moves</button>
            {props.state.cubeDimension<5?<button id="ColorPicker" data="Color Picker" onClick={optionClick} className="cpButton">Color Picker</button>:<></>}
            <button id="Solver" data="Solving" onClick={optionClick} className="cpButton">Solver</button>
            <button id="Algorithms" data="None" onClick={optionClick} className="cpButton">Algorithms</button>

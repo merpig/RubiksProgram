@@ -25,6 +25,7 @@
     height: 22.5%;
     white-space: nowrap;
     margin: 5px;
+    pointer-events: auto;
   }
 
   .triggerBtn{

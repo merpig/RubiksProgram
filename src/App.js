@@ -1481,6 +1481,17 @@ class App extends Component {
     this.setState({resized:true});
   }
 
+  menuToggle(el){
+    let menu = document.querySelector(".menuWrapper")||document.querySelector(".menuWrapperOptions");
+
+    menu.style.display==="none"?menu.style.display="inline":menu.style.display="none";
+
+    console.log(el.target.innerHTML);
+    
+    (el.target.innerHTML==="˅")?
+      el.target.innerHTML="˄":el.target.innerHTML="˅";
+  }
+
   // Initialization and animation functions
   componentDidMount() {
 
@@ -1752,7 +1763,7 @@ class App extends Component {
     controls.enabled = true;
     controls.enableDamping = true;   //damping 
     controls.dampingFactor = 0.15;   //damping inertia
-    controls.enableZoom = true;      //Zooming
+    controls.enableZoom = false;      //Zooming
     controls.autoRotate = false;     //Enable auto rotation
     controls.minDistance = (2+cD);
     controls.maxDistance = (2+cD)+20;
@@ -2378,6 +2389,10 @@ class App extends Component {
           reload={this.reloadTurnedPieces}
           autoJump={this.autoJump}
         />
+
+        <button className="menuToggle cpButton" onClick={this.menuToggle}>˅</button>
+
+        {/* add button-> center bottom hide/show menu. let user make rotations for solve moves with swipes */}
   
       </div>
     );

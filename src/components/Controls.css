@@ -34,6 +34,7 @@
     height: 14%;
     margin-bottom:4px;
     margin-right: 4px;
+    pointer-events: auto;
   }
 
   .moveBtn:hover{

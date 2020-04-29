@@ -90,26 +90,29 @@ class View extends Component {
             default:
                 activeMenu=this.props.state.activeMenu;
         }
+
+        
         //console.log("hi")
         return (
-        <div className="menuWrapper" style={{color:"white"}}>
-            <Row style={{height: "100%", margin: "5px",paddingBottom: "10px"}}>
-                <Col style={{padding:0}}>
+        <div className={this.props.state.activeMenu===""?"menuWrapperOptions":"menuWrapper"} style={{color:"white",pointerEvents: "none"}}>
+            <Row style={{height: "100%",margin:"0px"}}>
+                <Col style={{paddingLeft:"0px"}}>
                     <MenuOptions {...this.props}/>
                 </Col>
                 <Col style={{padding:0, color:"black",opacity:0}} xs={.5}>
                     .    
                 </Col>
-                <Col id="menuBox" style={{padding:0,overflow:"auto",position:"relative",top:"0px",width:"100%"}} xs={8}>
+                <Col id="menuBox" style={{overflow:"auto",position:"relative",top:"0px",width:"100%"}} xs={8}>
                     {activeMenu}  
                 </Col>
                 <Col style={{padding:0, color:"black",opacity:0}} xs={.5}>
                     .    
                 </Col>
-                <Col style={{padding:0}}>
+                <Col style={{paddingLeft:"0px"}}>
                     <MenuOptionsOther {...this.props}/>
                 </Col>
             </Row>
+            
         </div>)
     }
 }

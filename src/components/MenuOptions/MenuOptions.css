@@ -9,10 +9,7 @@
     justify-content: space-between;
 }
 
-.activeMenu{
-    background-color: lightblue!important;
-    color: #343a40!important;
-}
+
 
 .hoverDisabled{
     opacity: 0.6;
@@ -32,6 +29,7 @@
     color: #343a40!important;
     border: 2px solid #007bff;
     border-radius: .25rem;
+    pointer-events: auto;
 }
 
 .algoButton{
