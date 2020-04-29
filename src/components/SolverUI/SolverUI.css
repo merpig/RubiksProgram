@@ -124,6 +124,7 @@ a > img {
     /* background-color: (#343a40).5; */
     margin-top: 5px;
     z-index: 100000;
+    pointer-events: auto;
   }
 
   .solverMoves > div{
