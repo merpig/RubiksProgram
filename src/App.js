@@ -1654,7 +1654,7 @@ class App extends Component {
           let tempPos = {...previousPiece.object.position};
           let intersected = Math.floor(previousPiece.faceIndex/2);
           let calculated = calculateTurn(current,tempPrev,tempPos,toFace[intersected],cD);
-          console.log(calculated);
+          //console.log(calculated);
           if(calculated!==null&&!calculated.includes("null")){
             algorithmFunc(calculated,"Drag Turn");
             previousPiece.object.material[previousPieceIndex].opacity=1;
@@ -1767,6 +1767,7 @@ class App extends Component {
     controls.autoRotate = false;     //Enable auto rotation
     controls.minDistance = (2+cD);
     controls.maxDistance = (2+cD)+20;
+    controls.enablePan = false;
     controls.keys = {
       LEFT: null, //left arrow
       UP: null, // up arrow
