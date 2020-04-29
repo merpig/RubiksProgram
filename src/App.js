@@ -1763,7 +1763,7 @@ class App extends Component {
     controls.enabled = true;
     controls.enableDamping = true;   //damping 
     controls.dampingFactor = 0.15;   //damping inertia
-    controls.enableZoom = false;      //Zooming
+    controls.enableZoom = true;      //Zooming
     controls.autoRotate = false;     //Enable auto rotation
     controls.minDistance = (2+cD);
     controls.maxDistance = (2+cD)+20;
