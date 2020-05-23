@@ -2391,7 +2391,7 @@ class App extends Component {
           autoJump={this.autoJump}
         />
 
-        <button className="menuToggle cpButton" onClick={this.menuToggle}>˅</button>
+        {/* <button className="menuToggle cpButton" onClick={this.menuToggle}>˅</button> */}
 
         {/* add button-> center bottom hide/show menu. let user make rotations for solve moves with swipes */}
   
