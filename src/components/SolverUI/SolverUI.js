@@ -368,7 +368,7 @@ class SolverUI extends Component {
                             <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:<></>}
                             </Col>
                             <Col xs={8} style={{paddingLeft: 0}}>
-                            {jumperButtons}{/* small fix here for mobile size jumper buttons */}
+                            {/* {jumperButtons}small fix here for mobile size jumper buttons */}
                             </Col>
                         </Row>:<></>
                     }
@@ -382,7 +382,7 @@ class SolverUI extends Component {
                     </div>
                     
                     <div className="jumperButtons" >
-                        {jumperButtons}
+                        {/* {jumperButtons} */}
                     </div></>:<>
                     {this.props.state.currentFunc==="Algorithms"?<><Row >
                         <label htmlFor="patterns" style={{color:"lightgrey"}}>Choose a Pattern:</label>
