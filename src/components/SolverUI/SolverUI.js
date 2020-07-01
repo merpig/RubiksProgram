@@ -357,19 +357,21 @@ class SolverUI extends Component {
                             {this.props.state.autoPlay?pause:solveAll}
                         </div>
                     </div>
-                    {this.props.mobile?<Row style={{height:"150px"}}>
-                        <Col xs={4}>
-                        {this.props.state.currentFunc==="Solving"?<>
-                        <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu" style={{height:"auto"}}>Exit</button></>:
-                        this.props.state.currentFunc==="Color Picker"?<>
-                        <button id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:
-                        this.props.state.currentFunc==="Algorithms"?<>
-                        <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:<></>}
-                        </Col>
-                        <Col xs={8} style={{paddingLeft: 0}}>
-                        {jumperButtons}
-                        </Col>
-                    </Row>:<></>}
+                    {this.props.mobile?
+                        <Row style={{height:"150px"}}>
+                            <Col xs={4}>
+                            {this.props.state.currentFunc==="Solving"?<>
+                            <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu" style={{height:"auto"}}>Exit</button></>:
+                            this.props.state.currentFunc==="Color Picker"?<>
+                            <button id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:
+                            this.props.state.currentFunc==="Algorithms"?<>
+                            <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:<></>}
+                            </Col>
+                            <Col xs={8} style={{paddingLeft: 0}}>
+                            {jumperButtons}{/* small fix here for mobile size jumper buttons */}
+                            </Col>
+                        </Row>:<></>
+                    }
                 </Col>
                 <Col>
                     {!this.props.mobile?<>

@@ -291,6 +291,15 @@ class App extends Component {
     });
   }
 
+  // convertToBlueMiddle(_piece){
+  //   const piece = [..._piece];
+  //   const dim = this.state.cubeDimension;
+  //   const max = dim-1;
+  //   const white=0,blue=dim-1,red=dim-1,yellow=dim-1,orange=0,green=0;
+
+
+  // }
+
   convertToBlueWhiteEdge(_piece){
     const piece = [..._piece];
     const dim = this.state.cubeDimension;
@@ -298,14 +307,13 @@ class App extends Component {
     const white=0,blue=dim-1,red=dim-1,yellow=dim-1,orange=0,green=0;
 
     if(piece[7]===white&&piece[8]===blue) {
-      //console.log("we here");
       return {
         colors:[
-          piece[0], // piece on left(4) is now on front(0)
+          piece[0], // piece on left(0) is now on front(0)
           piece[1], // piece on top(1) is still on top(1)
-          piece[2], // piece on front(0) is now on right(2)
-          piece[3], // piece on right(2) is now on back(3)
-          piece[4], // piece on back(3) is now on left(4)
+          piece[2], // piece on front(2) is now on right(2)
+          piece[3], // piece on right(3) is now on back(3)
+          piece[4], // piece on back(4) is now on left(4)
           piece[5] // piece on bottom(5) is still on bottom(5)
         ].join(""),
         position:[
@@ -521,6 +529,9 @@ class App extends Component {
   checkValidMatch(validPiece,manualPiece){
 
     // move piece to blue/white side
+    console.log("Valid Piece: ",validPiece);
+    console.log("Manual Piece: ",manualPiece);
+
     let newValidPiece = this.convertToBlueWhiteEdge([...validPiece]);
     let newManualPiece = this.convertToBlueWhiteEdge([...manualPiece]); 
 
@@ -536,6 +547,15 @@ class App extends Component {
     }
     else return false;
   }
+
+  // checkValidMatchMiddle(validPiece,manualPiece){
+  //   // move piece to white side
+  //   console.log("Valid Piece: ",validPiece);
+  //   console.log("Manual Piece: ",manualPiece);
+
+  //   let newValidPiece = this.convertToBlueMiddle([...validPiece]);
+  //   let newManualPiece = this.convertToBlueMiddle([...manualPiece]); 
+  // }
 
   setColorPickedCube = () => {
     let rubiks = [...this.state.rubiksObject];
@@ -557,6 +577,9 @@ class App extends Component {
           if(piece.includes("edge")&&!piece.includes("center")){
             validEdgePlacement = this.checkValidMatch(piece,rubik);
           }
+          // else if(){
+
+          // }
           else{
             validEdgePlacement = true;
           }
@@ -575,6 +598,8 @@ class App extends Component {
     this.setState({rubiksObject:newGenerated,currentFunc : "None",activeMenu:""},()=>{
       //console.log(newGenerated);
       this.reloadTurnedPieces('check');
+      this.setState({activeMenu:'Solver'});
+      this.beginSolve();
     });
   }
 
@@ -1499,6 +1524,7 @@ class App extends Component {
     let cD = this.getSizeFromUrl();
     let generated = cube.generateSolved(cD,cD,cD);
     let rubiksObject = generated.tempArr;
+    // console.log(rubiksObject[0]);
     let tempCubes = [];
     let stats = new Stats();
     const groups = [[],[],[],[],[],[]];

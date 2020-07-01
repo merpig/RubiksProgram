@@ -113,13 +113,20 @@ class Mobile extends Component {
             {(this.props.state.currentFunc === "None"||this.props.state.currentFunc === "Drag Turn"||this.props.state.currentFunc === "Undo"||this.props.state.currentFunc === "Redo")&&this.props.state.activeMenu!=="Moves"?
                 <Row style={{position: "absolute", bottom:"0px",margin:"0px", width:"100%"}}>
                     <Col xs={6}>
-                        <Button className="mobileButton" id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} key={1}>Color Picker</Button> 
-                        <Button className="mobileButton" id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} key={2}>Solver</Button> 
+                        {this.props.state.cubeDimension<5?
+                            <><Button className="mobileButton" id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} key={1}>Color Picker</Button> 
+                            <Button className="mobileButton" id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} key={2}>Solver</Button></>
+                            :<>
+                            <Button className="blankButton" key={1}></Button>
+                            <Button className="blankButton" key={2}></Button></>
+                        } 
                         <Button className="mobileButton" id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} key={3}>Patterns</Button> 
                     </Col>
                     <Col xs={6}>
-                        
-                        <Button className="mobileButton" onClick={()=>this.props.setState({activeMenu: "Moves"})} key={0}>Moves</Button>   
+                        {this.props.state.cubeDimension<5?
+                            <Button className="mobileButton" onClick={()=>this.props.setState({activeMenu: "Moves"})} key={0}>Moves</Button>:
+                            <Button className="blankButton" key={0}></Button>
+                        }    
                         <Button className="mobileButton" id="Scramble" onClick={(e)=>otherOptionClick(e,this.props)} key={2}>Scramble</Button>
                         <Button className="mobileButton" id="Reset" onClick={(e)=>otherOptionClick(e,this.props)}  key={3}>Reset</Button>
                     </Col>
