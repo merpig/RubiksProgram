@@ -186,12 +186,15 @@ class App extends Component {
         }
         break;
       case 'ArrowLeft':
-        if(this.state.currentFunc==='Solving'){
+        if(this.state.currentFunc==='Solving'||this.state.currentFunc==='Algorithms'){
           this.rewindSolve();
+        }
+        else if(this.state.currentFunc==='None'){
+          this.undo();
         }
         break;
       case 'ArrowRight':
-        if(this.state.currentFunc==='Solving'){
+        if(this.state.currentFunc==='Solving'||this.state.currentFunc==='Algorithms'){
           if(!this.state.moveSet.length) return;
           if((this.state.moveSet[0]===this.state.moveSet[1]||this.state.moveSet[1]==="stop'")&&!this.state.autoPlay){
             this.setState({
@@ -205,6 +208,9 @@ class App extends Component {
                 this.setState({playOne:true,prevSet:[...this.state.prevSet,this.state.moveSet[0]]});
               }
           }
+        }
+        else if(this.state.currentFunc==='None'){
+          this.redo();
         }
         break;
       default:
@@ -842,28 +848,6 @@ class App extends Component {
     }
   }
 
-  // Controls camera movements
-  // *** Needs to be reworked ***
-  rotateCamera = (key) => {
-    let y = this.state.cameraY;
-    //let x = this.state.cameraX;
-    //let z = this.state.cameraZ;
-    //let formula = this.state.cubeDimension+2+(y+1)/20;
-    if(key === 37){ // left
-      this.setState({angle: this.state.angle+.075}); 
-    }
-    if(key === 38){ // up
-      if(y < this.state.cubeDimension+2) this.setState({cameraY: y + .5});
-    }
-    if(key === 39){ // right
-      this.setState({angle: this.state.angle-.075});
-    }
-    if(key === 40){ // down
-      
-      if(y > -(this.state.cubeDimension+2)) this.setState({cameraY: y - .5});
-    }
-  }
-
   // Changes values in state to trigger face rotation
   rotateCubeFace = (face,direction,cubeDepth,isMulti,blockMoveLog,moveLog,solveMoves,end,solveState) => {
     let obj = {};
@@ -906,10 +890,94 @@ class App extends Component {
 
   // Takes prebuilt algorithms and converts to moves
   // allow for C,c
+  // **************************
+  // If during solve or algorithm state and the drag move is the same as the
+  // next move then allow the move to be queued as playOne
+
+  // Small bug, account for double turns
   algorithm = (moveString,moveName) => {
+    if(this.state.currentFunc === "Solving"||this.state.currentFunc === "Algorithms"){
+      if(this.state.moveSet[0]){
+        if(this.checkMoveEquivalence(moveString,this.state.moveSet[0])){
+          this.playOne(this);
+        }
+      }
+      return;
+    }
     if(this.state.currentFunc !== "None") return;
     const moveArray = this.moveStringToArray(moveString);
     this.setState({currentFunc : moveName, moveSet : moveArray});
+  }
+
+  checkMoveEquivalence(dragMove,nextMove){
+    if(dragMove===nextMove||this.invertMove(dragMove)===nextMove){
+      return true;
+    }
+    return false;
+  }
+
+  invertMove(_move){
+    const move =_move.split('');
+    let inverted = '';
+    let depth;
+    if(move[0]==='0'){
+      depth = this.state.cubeDimension - parseInt(move[1]) + 1;
+    }
+    else{
+      depth = this.state.cubeDimension - parseInt(move[0]+move[1]) + 1;
+    }
+
+    if(depth<10){
+      inverted+=`0${depth}`
+    }
+    else{
+      inverted+=`${depth}`
+    }
+
+    switch(move[2]){
+      case 'F':
+        inverted+='B';
+        break;
+      case 'f':
+        inverted+='b';
+        break;
+      case 'U':
+        inverted+='D';
+        break;
+      case 'u':
+        inverted+='d';
+        break;
+      case 'R':
+        inverted+='L';
+        break;
+      case 'r':
+        inverted+='l';
+        break;
+      case 'B':
+        inverted+='F';
+        break;
+      case 'b':
+        inverted+='f';
+        break;
+      case 'L':
+        inverted+='R';
+        break;
+      case 'l':
+        inverted+='r';
+        break;
+      case 'D':
+        inverted+='U';
+        break;
+      case 'd':
+        inverted+='u';
+        break;
+      default:
+    }
+
+    if(move.length<4) inverted+="'";
+    
+    return inverted;
+    
   }
 
   // Refreshes page to reset cube
@@ -996,6 +1064,22 @@ class App extends Component {
   endColorPicker = () => {
     this.reset();
     this.setState({currentFunc : "None",cpErrors:[]});
+  }
+
+  playOne = props => {
+    if(!props.state.moveSet.length) return;
+    if((props.state.moveSet[0]===props.state.moveSet[1]||props.state.moveSet[1]==="stop'")&&!props.state.autoPlay){
+        props.setState({
+            autoPlay:true,
+            autoRewind:false,
+            targetSolveIndex:props.state.solvedSetIndex+2});
+    }
+    else{
+        if(props.state.playOne===true) return;
+        if(props.state.moveSet[0]&&typeof(props.state.moveSet[0][0])==='string'&&props.state.moveSet[0]!=="'"){
+            props.setState({playOne:true,prevSet:[...props.state.prevSet,props.state.moveSet[0]]});
+        }
+    }
   }
 
   rewindSolve = () => {
@@ -1682,7 +1766,7 @@ class App extends Component {
           let calculated = calculateTurn(current,tempPrev,tempPos,toFace[intersected],cD);
           //console.log(calculated);
           if(calculated!==null&&!calculated.includes("null")){
-            algorithmFunc(calculated,"Drag Turn");
+            console.log("Drag turn");
             previousPiece.object.material[previousPieceIndex].opacity=1;
             previousPiece = null;
             previousPieceIndex = null;
@@ -1711,6 +1795,11 @@ class App extends Component {
           let calculated = calculateTurn(current,tempPrev,tempPos,toFace[intersected],cD);
           //console.log(calculated);
           if(calculated!==null&&!calculated.includes("null")){
+
+            if(this.state.currentFunc==="Solving"){
+              console.log("attempted move during solve state");
+            }
+
             algorithmFunc(calculated,"Drag Turn");
             previousPiece.object.material[previousPieceIndex].opacity=1;
             previousPiece = null;
@@ -2217,6 +2306,7 @@ class App extends Component {
             //   this.setState({currentFunc : "None",moves : 0});
           }
           else if (this.state.currentFunc==="Solving"||this.state.currentFunc==="Algorithms"){
+            
             // Place holder for full solve testing
             if(this.state.autoTarget && !this.state.autoPlay && !this.state.autoRewind) {
               this.setState({autoTarget:false},()=>this.reloadTurnedPieces('check'))
@@ -2412,6 +2502,7 @@ class App extends Component {
           //Solver
           beginSolve={this.beginSolve}
           stopSolve={this.stopSolve}
+          playOne={this.playOne}
           rewindOne={this.rewindSolve}
           reload={this.reloadTurnedPieces}
           autoJump={this.autoJump}

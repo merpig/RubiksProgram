@@ -5,21 +5,21 @@ import "./SolverUI.css";
 import algorithms from "../../cubeFunctions/algorithms";
 import cube from '../../cubeFunctions/cube';
 
-function playOne(props){
-    if(!props.state.moveSet.length) return;
-    if((props.state.moveSet[0]===props.state.moveSet[1]||props.state.moveSet[1]==="stop'")&&!props.state.autoPlay){
-        props.setState({
-            autoPlay:true,
-            autoRewind:false,
-            targetSolveIndex:props.state.solvedSetIndex+2});
-    }
-    else{
-        if(props.state.playOne===true) return;
-        if(props.state.moveSet[0]&&typeof(props.state.moveSet[0][0])==='string'&&props.state.moveSet[0]!=="'"){
-            props.setState({playOne:true,prevSet:[...props.state.prevSet,props.state.moveSet[0]]});
-        }
-    }
-}
+// function playOne(props){
+//     if(!props.state.moveSet.length) return;
+//     if((props.state.moveSet[0]===props.state.moveSet[1]||props.state.moveSet[1]==="stop'")&&!props.state.autoPlay){
+//         props.setState({
+//             autoPlay:true,
+//             autoRewind:false,
+//             targetSolveIndex:props.state.solvedSetIndex+2});
+//     }
+//     else{
+//         if(props.state.playOne===true) return;
+//         if(props.state.moveSet[0]&&typeof(props.state.moveSet[0][0])==='string'&&props.state.moveSet[0]!=="'"){
+//             props.setState({playOne:true,prevSet:[...props.state.prevSet,props.state.moveSet[0]]});
+//         }
+//     }
+// }
 
 class SolverUI extends Component {
 
@@ -46,7 +46,7 @@ class SolverUI extends Component {
             if(nextProps.state.moveSet[0]==="stop'"){
                 nextProps.setState({autoPlay:false});
             }
-            playOne(nextProps);
+            nextProps.playOne(nextProps);
         }
         else if(nextProps.state.autoPlay===true && nextProps.state.solvedSetIndex >= nextProps.state.targetSolveIndex){
             //console.log("ending rewind");
@@ -164,7 +164,7 @@ class SolverUI extends Component {
         function fastforward(props){
             if(!props.state.moveSet.length) return;
             props.state.moveSet.length===1 ? 
-                playOne(props):
+                props.playOne(props):
                 props.setState({
                     autoPlay:true,
                     autoRewind:false,
@@ -192,7 +192,7 @@ class SolverUI extends Component {
             }
             else if(parseInt(e.target.id)-props.state.solvedSetIndex===1){
                 props.setState({targetSolveIndex:parseInt(e.target.id)});
-                playOne(props);
+                props.playOne(props);
             }
             else if(props.state.solvedSetIndex<=parseInt(e.target.id)){
                 props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
@@ -350,7 +350,7 @@ class SolverUI extends Component {
                             <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
                                 src="https://image.flaticon.com/icons/svg/92/92335.svg" 
                                 alt="play"
-                                onClick={() => playOne(this.props)}>
+                                onClick={() => this.props.playOne(this.props)}>
                             </img></div></a> 
                         </div>
                         <div className="solverButton playAll">
