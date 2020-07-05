@@ -82,8 +82,16 @@ a > img {
       pointer-events: auto;
   }
 
-  
+  .mobileSolverButton{
+    padding: 4px;
+    width:30%;
+    margin-left:15%;
+    display: inline-block;
+    text-align: center;
+    pointer-events: auto;
+  }
 
+  
   .solverButton > p{
     height:1rem;
     padding: 0%;
@@ -100,9 +108,18 @@ a > img {
 
 
 
-  .solveTime,.solveMoves{
-      width:50%;
-      display: inline-block;
+  .solveMoves{
+      /* display: inline-block; */
+      float: left;
+  }
+
+  .setLength{
+    display: inline-block;
+    border: 1px solid grey;
+    background-color: #007bff;
+    height: 90%;
+    width:38px;
+    border-radius: .25rem;
   }
 
   .rotateimg180 {

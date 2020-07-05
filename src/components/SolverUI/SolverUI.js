@@ -5,22 +5,6 @@ import "./SolverUI.css";
 import algorithms from "../../cubeFunctions/algorithms";
 import cube from '../../cubeFunctions/cube';
 
-// function playOne(props){
-//     if(!props.state.moveSet.length) return;
-//     if((props.state.moveSet[0]===props.state.moveSet[1]||props.state.moveSet[1]==="stop'")&&!props.state.autoPlay){
-//         props.setState({
-//             autoPlay:true,
-//             autoRewind:false,
-//             targetSolveIndex:props.state.solvedSetIndex+2});
-//     }
-//     else{
-//         if(props.state.playOne===true) return;
-//         if(props.state.moveSet[0]&&typeof(props.state.moveSet[0][0])==='string'&&props.state.moveSet[0]!=="'"){
-//             props.setState({playOne:true,prevSet:[...props.state.prevSet,props.state.moveSet[0]]});
-//         }
-//     }
-// }
-
 class SolverUI extends Component {
 
     // eslint-disable-next-line no-useless-constructor
@@ -124,12 +108,13 @@ class SolverUI extends Component {
             </img></div></a></>;
 
         let pause = <>
-        <p>{this.props.state.prevSet.length}</p>
+        
         <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
             alt="pause" 
             src="https://image.flaticon.com/icons/svg/92/92344.svg"
             onClick={() => pauseSolver(this.props)}>
-        </img></div></a></>;
+        </img></div></a>
+        </>;
 
         function stay(){
             document.querySelector(".warningPopupSolver").style.display="none";
@@ -291,17 +276,14 @@ class SolverUI extends Component {
                                 Time:{this.props.state.solveTime}s
                             </div> */}
                             <div className="solveMoves">
-                                Moves:{this.props.state.solvedSet.length}
+                                Total:<div className="setLength">{this.props.state.solvedSet.length}</div> Current:<div className="setLength">{this.props.state.prevSet.length}</div>
                             </div>
                         </div>:""
                     }
                     <div className="solverInterface">
-                        <div className="solverButton rewindAll">
-                            {this.props.state.autoRewind?pause:rewindAll}
-                        </div>
 
-                        <div className="solverButton rewindOne">
-                            <p style={{width:"100%"}}>
+                        <div className={`${this.props.mobile?"mobileSolverButton":"solverButton"} rewindOne`}>
+                            <p style={{width:"100%",marginBottom:"10px",marginTop:"2px"}}>
                                 {this.props.state.prevSet.length-1>=0?
                                     this.props.state.prevSet[this.props.state.prevSet.length-1]==="stop'"?
                                         this.props.state.prevSet[this.props.state.prevSet.length-2]?
@@ -310,14 +292,14 @@ class SolverUI extends Component {
                                             :
                                                 this.props.state.prevSet[this.props.state.prevSet.length-2].replace("01","").replace("0","")
                                         :
-                                            ""
+                                            "None"
                                     :
                                         this.props.state.prevSet[this.props.state.prevSet.length-1]===this.props.state.prevSet[this.props.state.prevSet.length-2]?
                                             this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","").replace("'","")+2
                                         :
                                             this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","")
                                 :
-                                    ""
+                                    "None"
                                 }
                             </p>
                             <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
@@ -327,8 +309,8 @@ class SolverUI extends Component {
                                 onClick={this.props.rewindOne}>
                             </img></div></a>
                         </div>
-                        <div className="solverButton playOne">
-                            <p style={{width:"100%"}}>
+                        <div className={`${this.props.mobile?"mobileSolverButton":"solverButton"} playOne`}>
+                            <p style={{width:"100%",marginBottom:"10px",marginTop:"2px"}}>
                                 {this.props.state.moveSet[0]&&typeof(this.props.state.moveSet[0][0])==='string'&&this.props.state.moveSet[0]!=="'"?
                                     this.props.state.moveSet[0]==="stop'"?
                                         this.props.state.moveSet[1]?
@@ -337,14 +319,14 @@ class SolverUI extends Component {
                                             :
                                                 this.props.state.moveSet[1].replace("01","").replace("0","")
                                         :
-                                            ""
+                                            "None"
                                     :
                                         this.props.state.moveSet[0]===this.props.state.moveSet[1]?
                                             this.props.state.moveSet[0].replace("01","").replace("0","").replace("'","")+2
                                         :
                                             this.props.state.moveSet[0].replace("01","").replace("0","")
                                 :
-                                    ""
+                                    "None"
                                 }
                             </p>
                             <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
@@ -353,9 +335,14 @@ class SolverUI extends Component {
                                 onClick={() => this.props.playOne(this.props)}>
                             </img></div></a> 
                         </div>
-                        <div className="solverButton playAll">
+                        
+                        <div className={`${this.props.mobile?"mobileSolverButton":"solverButton"} rewindAll`}>
+                            {this.props.state.autoRewind?pause:rewindAll}
+                        </div>
+                        <div className={`${this.props.mobile?"mobileSolverButton":"solverButton"} playAll`}>
                             {this.props.state.autoPlay?pause:solveAll}
                         </div>
+
                     </div>
                     {this.props.mobile?
                         <Row style={{height:"150px"}}>
