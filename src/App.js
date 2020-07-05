@@ -1766,7 +1766,8 @@ class App extends Component {
           let calculated = calculateTurn(current,tempPrev,tempPos,toFace[intersected],cD);
           //console.log(calculated);
           if(calculated!==null&&!calculated.includes("null")){
-            console.log("Drag turn");
+            //console.log("Drag turn");
+            algorithmFunc(calculated,"Drag Turn");
             previousPiece.object.material[previousPieceIndex].opacity=1;
             previousPiece = null;
             previousPieceIndex = null;
@@ -1796,9 +1797,9 @@ class App extends Component {
           //console.log(calculated);
           if(calculated!==null&&!calculated.includes("null")){
 
-            if(this.state.currentFunc==="Solving"){
-              console.log("attempted move during solve state");
-            }
+            // if(this.state.currentFunc==="Solving"){
+            //   console.log("attempted move during solve state");
+            // }
 
             algorithmFunc(calculated,"Drag Turn");
             previousPiece.object.material[previousPieceIndex].opacity=1;
