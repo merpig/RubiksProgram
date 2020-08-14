@@ -13,7 +13,7 @@ const Navbar = props => (
           {/*Open model here. Show bunch of settings. Pass changeSettings down to component to apply changes*/}
           <DropdownButton className="settings" aria-label="settings" id="settings" title={<i className='fa fa-cog'></i>}>
           <ul>
-            <li>
+            {/* <li>
               
               Stats <br></br>
               <label className="checkbox-inline">
@@ -22,7 +22,7 @@ const Navbar = props => (
               </label>
               
               
-            </li>
+            </li> */}
 
             <li>
               

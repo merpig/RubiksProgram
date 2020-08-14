@@ -8,7 +8,7 @@ import MoveInput from "./components/MoveInput"
 //import ColorPicker from "./components/ColorPicker";
 import Menu from "./components/MenuWrapper/MenuWrapper";
 import * as THREE from "three";
-import Stats from "stats.js";
+// import Stats from "stats.js";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
@@ -71,7 +71,7 @@ class App extends Component {
     rubiksIndex : 0,      // Index to keep track of middles while solving
     middles : [],         // Contains all middle segments
     corners : [],         // Contains all corner segments         
-    showStats: false,     // Setting for stats
+    // showStats: false,     // Setting for stats
     showMoveInput: false,  // Setting for custom move input
     showControls: false,   // Setting for move controls
     showHints: true,
@@ -1300,10 +1300,10 @@ class App extends Component {
   // Changes the settings by passing setting to change and new val for the setting
   changeSettings (settingToChange,newVals) {
     switch(settingToChange){
-      case 'displayStats':
-        this.state.showStats ? document.body.children[9].style.display = "none" : document.body.children[9].style.display = "";
-        this.setState({showStats : !this.state.showStats});
-        break;
+      // case 'displayStats':
+      //   this.state.showStats ? document.body.children[9].style.display = "none" : document.body.children[9].style.display = "";
+      //   this.setState({showStats : !this.state.showStats});
+      //   break;
       case 'displayMoveInput':
         this.setState({showMoveInput:!this.state.showMoveInput});
         break;
@@ -1610,7 +1610,7 @@ class App extends Component {
     let rubiksObject = generated.tempArr;
     // console.log(rubiksObject[0]);
     let tempCubes = [];
-    let stats = new Stats();
+    //let stats = new Stats();
     const groups = [[],[],[],[],[],[]];
     let previousPiece = null;
     let previousPieceIndex = null;
@@ -1834,9 +1834,9 @@ class App extends Component {
     renderer.setSize( window.innerWidth, window.innerHeight);
     document.body.children[5].appendChild( renderer.domElement );
 
-    stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-    document.body.appendChild( stats.dom);
-    document.body.children[9].style.display = "none"
+    // stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+    // document.body.appendChild( stats.dom);
+    // document.body.children[9].style.display = "none"
 
     // Prevents bluring
     loader.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -2152,7 +2152,7 @@ class App extends Component {
         groups[i].forEach(group => group.visible = false)
       }
 
-      stats.begin();
+      // stats.begin();
       requestAnimationFrame( animate );
 
       // Mouse stuff here
@@ -2439,7 +2439,7 @@ class App extends Component {
       
       controls.update();
       renderer.render( scene, camera );
-      stats.end();     
+      // stats.end();     
     };
   }
 
