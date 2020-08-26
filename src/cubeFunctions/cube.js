@@ -1,8 +1,11 @@
-// Functions to generate/manipulate cube
+import * as THREE from "three";
 
+// Functions to generate/manipulate cube
 const cube = {
     // Generates the inital solved state of rubiksObject
     generateSolved : function (_x,_y,_z){
+        const size = _z;
+        const half = Math.floor(size/2);
         const tempArr = [];
         const middles = [];
         const edges = [];
@@ -46,6 +49,13 @@ const cube = {
     
               if(tempCount===1) {
                 tempType = "middle";
+                if(size%2){
+                  if((j===half&&k===half)||
+                     (j===half&&i===half)||
+                     (i===half&&k===half)){
+                    middleType="center"
+                  }
+                }
                 if(j===0) {tempMiddles[0].push(tempArr.length);middleType=tempMiddles[0].length+1}
                 if(j===_y-1) {tempMiddles[1].push(tempArr.length);middleType=tempMiddles[1].length+1}
                 if(k===_z-1) {tempMiddles[2].push(tempArr.length);middleType=tempMiddles[2].length+1}
@@ -238,6 +248,8 @@ const cube = {
     },
 
     generateBlank : function (_x,_y,_z){
+      const size = _x;
+      const half = Math.floor(size/2);
       const tempArr = [];
       // const middles = [];
       // const edges = [];
@@ -281,6 +293,13 @@ const cube = {
     
               if(tempCount===1) {
                 tempType = "middle";
+                if(size%2){
+                  if((j===half&&k===half)||
+                     (j===half&&i===half)||
+                     (i===half&&k===half)){
+                    middleType="center"
+                  }
+                }
                 if(j===0) {tempMiddles[0].push(tempArr.length);middleType=tempMiddles[0].length+1}
                 if(j===_y-1) {tempMiddles[1].push(tempArr.length);middleType=tempMiddles[1].length+1}
                 if(k===_z-1) {tempMiddles[2].push(tempArr.length);middleType=tempMiddles[2].length+1}
@@ -499,6 +518,229 @@ const cube = {
         }
 
         return buttons;
+    },
+
+    generateMoveHints : function(image,cD){
+      const groups = [[],[],[],[],[],[]];
+      const geometry = new THREE.PlaneGeometry(1,1);
+      const material = new THREE.MeshBasicMaterial( {
+        map:image,
+        transparent: true,
+        color: 'black',
+        opacity:'.8',
+        side: THREE.DoubleSide
+      });
+
+      for(let k = 0; k < cD; k++){
+        let tempGroup = new THREE.Group();
+        let tempGroupOther = new THREE.Group();
+        for(let i = 0; i < 4; i++){
+          for(let j = 0; j<cD;j++){
+            let tempPlane = new THREE.Mesh( geometry, material );
+            let tempPlaneOther = new THREE.Mesh( geometry, material );
+            if(i===0){
+              tempPlane.translateX(cD-1-k);
+              tempPlane.translateZ((cD-1)+.51);
+              tempPlane.translateY((cD-1)-j);
+  
+              tempPlaneOther.translateX(cD-1-k);
+              tempPlaneOther.translateZ((cD-1)+.51);
+              tempPlaneOther.translateY((cD-1)-j);
+              tempPlaneOther.rotateZ(Math.PI);
+            }
+            else if(i===1){
+              tempPlane.translateX(cD-1-k);
+              tempPlane.translateZ((cD-1)-j);
+              tempPlane.translateY((cD-1)+.51);
+              tempPlane.rotateX(Math.PI/2);
+              tempPlane.rotateZ(Math.PI);
+  
+              tempPlaneOther.translateX(cD-1-k);
+              tempPlaneOther.translateZ((cD-1)-j);
+              tempPlaneOther.translateY((cD-1)+.51);
+              tempPlaneOther.rotateX(Math.PI/2);
+            }
+            else if(i===2){
+              tempPlane.translateX(cD-1-k);
+              tempPlane.translateZ(-.51);
+              tempPlane.translateY((cD-1)-j);
+              tempPlane.rotateX(Math.PI);
+  
+              tempPlaneOther.translateX(cD-1-k);
+              tempPlaneOther.translateZ(-.51);
+              tempPlaneOther.translateY((cD-1)-j);
+            }
+            else if(i===3){
+              tempPlane.translateX(cD-1-k);
+              tempPlane.translateZ((cD-1)-j);
+              tempPlane.translateY(-.51);
+              tempPlane.rotateX(-Math.PI/2);
+              tempPlane.rotateZ(Math.PI);
+  
+              tempPlaneOther.translateX(cD-1-k);
+              tempPlaneOther.translateZ((cD-1)-j);
+              tempPlaneOther.translateY(-.51);
+              tempPlaneOther.rotateX(-Math.PI/2);
+            }
+            tempGroup.add(tempPlane)
+            tempGroupOther.add(tempPlaneOther)
+          }
+        }
+        tempGroup.visible = false;
+        tempGroupOther.visible = false;
+        groups[2].push(tempGroup);
+        groups[5].push(tempGroupOther);
+      }
+  
+      // generate side 0 and 3 move hints
+      for(let k = 0; k < cD; k++){
+        let tempGroup = new THREE.Group();
+        let tempGroupOther = new THREE.Group();
+        for(let i = 0; i < 4; i++){
+          for(let j = 0; j<cD;j++){
+            let tempPlane = new THREE.Mesh( geometry, material );
+            let tempPlaneOther = new THREE.Mesh( geometry, material );
+            if(i===0){
+              tempPlane.translateX((cD-1)-j);
+              tempPlane.translateZ((cD-1)+.51);
+              tempPlane.translateY(k);
+              tempPlane.rotateZ(-Math.PI/2);
+              
+  
+              tempPlaneOther.translateX((cD-1)-j);
+              tempPlaneOther.translateZ((cD-1)+.51);
+              tempPlaneOther.translateY(k);
+              tempPlaneOther.rotateX(Math.PI);
+              tempPlaneOther.rotateZ(Math.PI/2);
+            }
+            else if(i===1){
+              tempPlane.translateX((cD-1)+.51);
+              tempPlane.translateZ((cD-1)-j);
+              tempPlane.translateY(k);
+              tempPlane.rotateX(Math.PI/2);
+              tempPlane.rotateZ(Math.PI);
+              tempPlane.rotateY(Math.PI/2);
+  
+              tempPlaneOther.translateX((cD-1)+.51);
+              tempPlaneOther.translateZ((cD-1)-j);
+              tempPlaneOther.translateY(k);
+              tempPlaneOther.rotateX(Math.PI/2);
+              tempPlaneOther.rotateY(Math.PI/2);
+            }
+            else if(i===2){
+              tempPlane.translateX((cD-1)-j);
+              tempPlane.translateZ(-.51);
+              tempPlane.translateY(k);
+              tempPlane.rotateX(Math.PI);
+              tempPlane.rotateZ(Math.PI/2);
+  
+              tempPlaneOther.translateX((cD-1)-j);
+              tempPlaneOther.translateZ(-.51);
+              tempPlaneOther.translateY(k);
+              tempPlaneOther.rotateZ(-Math.PI/2);
+            }
+            else if(i===3){
+              tempPlane.translateX(-.51);
+              tempPlane.translateZ((cD-1)-j);
+              tempPlane.translateY(k);
+              tempPlane.rotateX(-Math.PI/2);
+              tempPlane.rotateZ(Math.PI);
+              tempPlane.rotateY(-Math.PI/2);
+  
+              tempPlaneOther.translateX(-.51);
+              tempPlaneOther.translateZ((cD-1)-j);
+              tempPlaneOther.translateY(k);
+              tempPlaneOther.rotateX(-Math.PI/2);
+              tempPlaneOther.rotateY(Math.PI/2);
+              //tempPlaneOther.rotateZ(Math.PI);
+            }
+            tempGroup.add(tempPlane)
+            tempGroupOther.add(tempPlaneOther)
+          }
+        }
+        tempGroup.visible = false;
+        tempGroupOther.visible = false;
+        
+        groups[0].push(tempGroup);     //Clockwise for white, counter for yellow
+        groups[3].push(tempGroupOther);//Counter for white, clockwise for yellow
+      }
+  
+      // generate side 1 and 5 move hints
+      for(let k = 0; k < cD; k++){
+        let tempGroup = new THREE.Group();
+        let tempGroupOther = new THREE.Group();
+        for(let i = 0; i < 4; i++){
+          for(let j = 0; j<cD;j++){
+            let tempPlane = new THREE.Mesh( geometry, material );
+            let tempPlaneOther = new THREE.Mesh( geometry, material );
+            if(i===0){
+              tempPlane.translateX((cD-1)-j);
+              tempPlane.translateZ((cD-1)-k);
+              tempPlane.translateY((cD-1)+.51);
+              tempPlane.rotateZ(-Math.PI/2);
+              tempPlane.rotateY(Math.PI/2);
+              
+  
+              tempPlaneOther.translateX((cD-1)-j);
+              tempPlaneOther.translateZ((cD-1)-k);
+              tempPlaneOther.translateY((cD-1)+.51);
+              tempPlaneOther.rotateX(Math.PI);
+              tempPlaneOther.rotateZ(Math.PI/2);
+              tempPlaneOther.rotateY(Math.PI/2);
+            }
+            else if(i===1){
+              tempPlane.translateX((cD-1)+.51);
+              tempPlane.translateZ((cD-1)-k);
+              tempPlane.translateY((cD-1)-j);
+              //tempPlane.rotateX(Math.PI/2);
+              tempPlane.rotateZ(Math.PI);
+              tempPlane.rotateY(Math.PI/2);
+  
+              tempPlaneOther.translateX((cD-1)+.51);
+              tempPlaneOther.translateZ((cD-1)-k);
+              tempPlaneOther.translateY((cD-1)-j);
+              //tempPlaneOther.rotateX(Math.PI);
+              tempPlaneOther.rotateY(Math.PI/2);
+            }
+            else if(i===2){
+              tempPlane.translateX((cD-1)-j);
+              tempPlane.translateZ((cD-1)-k);
+              tempPlane.translateY(-.51);
+              tempPlane.rotateX(Math.PI/2);
+              tempPlane.rotateZ(Math.PI/2);
+  
+              tempPlaneOther.translateX((cD-1)-j);
+              tempPlaneOther.translateZ((cD-1)-k);
+              tempPlaneOther.translateY(-.51);
+              tempPlaneOther.rotateX(Math.PI/2);
+              tempPlaneOther.rotateZ(-Math.PI/2);
+            }
+            else if(i===3){
+              tempPlane.translateX(-.51);
+              tempPlane.translateZ((cD-1)-k);
+              tempPlane.translateY((cD-1)-j);
+              tempPlane.rotateX(Math.PI);
+              tempPlane.rotateZ(Math.PI);
+              tempPlane.rotateY(-Math.PI/2);
+  
+              tempPlaneOther.translateX(-.51);
+              tempPlaneOther.translateZ((cD-1)-k);
+              tempPlaneOther.translateY((cD-1)-j);
+              tempPlaneOther.rotateX(-Math.PI);
+              tempPlaneOther.rotateY(Math.PI/2);
+              //tempPlaneOther.rotateZ(Math.PI);
+            }
+            tempGroup.add(tempPlane)
+            tempGroupOther.add(tempPlaneOther)
+          }
+        }
+        tempGroup.visible = false;
+        tempGroupOther.visible = false;
+        
+        groups[1].push(tempGroup);     //Clockwise for white, counter for yellow
+        groups[4].push(tempGroupOther);//Counter for white, clockwise for yellow
+      }
+      return groups;
     },
 
     // For visual cube

@@ -8,6 +8,7 @@ import solveMiddleLogic from './solveMiddleLogic';
 
 function solveMiddles(cube,dim,moveStringToArray,index,middles){
 
+
     if(dim===2) {
         return {solveState : 1};
     }

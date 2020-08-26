@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
 import Navbar from "./components/Navbar/Navbar";
-//import Patterns from "./components/Patterns"
 import Speeds from "./components/Speeds"
-//import Controls from "./components/Controls"
 import MoveInput from "./components/MoveInput"
-//import Core from "./components/Core";
-//import ColorPicker from "./components/ColorPicker";
 import Menu from "./components/MenuWrapper/MenuWrapper";
 import * as THREE from "three";
-// import Stats from "stats.js";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
@@ -297,14 +292,121 @@ class App extends Component {
     });
   }
 
-  // convertToBlueMiddle(_piece){
-  //   const piece = [..._piece];
-  //   const dim = this.state.cubeDimension;
-  //   const max = dim-1;
-  //   const white=0,blue=dim-1,red=dim-1,yellow=dim-1,orange=0,green=0;
+  convertToBlueMiddle(_piece){
+    const piece = [..._piece];
+    const dim = this.state.cubeDimension;
+    const max = dim-1;
+    const white=0,blue=dim-1,red=dim-1,yellow=dim-1,orange=0,green=0;
 
+    if(piece[7]===white) {
+      return {
+        colors:[
+          piece[5], // color on bottom(face 5) is now on front(index 0)
+          piece[0], // color on front(0) is now on top(1)
+          piece[2], // color on right(2) is still on right(2)
+          piece[1], // color on top(1) is now on back(3)
+          piece[4], // color on left(4) is now on left(4)
+          piece[3]  // color on back(3) is now on bottom(5)
+        ].join(""),
+        position:[
+          piece[6],
+          piece[8],
+          max // becomes top
+        ]
+      }
+    }
 
-  // }
+    if(piece[8]===blue) {
+      return {
+        colors:[
+          piece[0], // piece on front(0) is now on front(0)
+          piece[1], // piece on top(1) is still on top(1)
+          piece[2], // piece on right(2) is now on right(2)
+          piece[3], // piece on back(3) is now on back(3)
+          piece[4], // piece on left(4) is now on left(4)
+          piece[5] // piece on bottom(5) is still on bottom(5)
+        ].join(""),
+        position:[
+          piece[6], // stays same
+          piece[7],  // stays same
+          max // becomes top
+        ]
+      }
+    }
+
+    if(piece[6]===red) {
+      return {
+        colors:[
+          piece[0], // piece on front(index 0) remains the same
+          piece[2], // piece on right(2) is still on top(1)
+          piece[5], // piece on bottom(5) is now on right(2)
+          piece[3], // piece on back(3) remains the same
+          piece[1], // piece on top(1) is now on left(4)
+          piece[4]  // piece on left(4) is still on bottom(5)
+        ].join(""),
+        position:[
+          piece[8], 
+          piece[7],  
+          max // becomes top
+        ]
+      }
+    }
+
+    if(piece[7]===yellow) {
+      return {
+        colors:[
+          piece[1], // piece on front(0) is now on bottom(5)
+          piece[3], // piece on top(1) is still on front(0)
+          piece[2], // piece on right(2) is now on right(2)
+          piece[5], // piece on back(3) is now on top(1)
+          piece[4], // piece on left(4) is now on left(4)
+          piece[0] // piece on bottom(5) is still on back(3)
+        ].join(""),
+        position:[
+          piece[6], // inverse y becomes x
+          max-piece[8],  // y becomes 0
+          max // becomes top
+        ]
+      }
+    }
+
+    if(piece[6]===orange) {
+      return {
+        colors:[
+          piece[0], // piece on front(0) is now on front(0)
+          piece[4], // piece on top(1) is still on right(2)
+          piece[1], // piece on right(2) is now on bottom(5)
+          piece[3], // piece on back(3) is now on back(3)
+          piece[5], // piece on left(4) is now on top(1)
+          piece[2] // piece on bottom(5) is still on left(4)
+        ].join(""),
+        position:[
+          piece[8], // inverse y becomes x
+          piece[7],  // y becomes 0
+          max // becomes top
+        ]
+      }
+    }
+
+    if(piece[8]===green) {
+      return {
+        colors:[
+          piece[0], // piece on front(0) is now on front(0)
+          piece[5], // piece on top(1) is still on bottom(5)
+          piece[4], // piece on right(2) is now on left(4)
+          piece[3], // piece on back(3) is now on back(3)
+          piece[2], // piece on left(4) is now on right(2)
+          piece[1] // piece on bottom(5) is still on top(1)
+        ].join(""),
+        position:[
+          max-piece[6], // inverse y becomes x
+          piece[7],  // y becomes 0
+          max // becomes top
+        ]
+      }
+    }
+
+  }
 
   convertToBlueWhiteEdge(_piece){
     const piece = [..._piece];
@@ -312,14 +414,15 @@ class App extends Component {
     const max = dim-1;
     const white=0,blue=dim-1,red=dim-1,yellow=dim-1,orange=0,green=0;
 
+    // colors according to the solved cube
     if(piece[7]===white&&piece[8]===blue) {
       return {
         colors:[
-          piece[0], // piece on left(0) is now on front(0)
+          piece[0], // piece on front(0) is now on front(0)
           piece[1], // piece on top(1) is still on top(1)
-          piece[2], // piece on front(2) is now on right(2)
-          piece[3], // piece on right(3) is now on back(3)
-          piece[4], // piece on back(4) is now on left(4)
+          piece[2], // piece on right(2) is now on right(2)
+          piece[3], // piece on back(3) is now on back(3)
+          piece[4], // piece on left(4) is now on left(4)
           piece[5] // piece on bottom(5) is still on bottom(5)
         ].join(""),
         position:[
@@ -535,15 +638,15 @@ class App extends Component {
   checkValidMatch(validPiece,manualPiece){
 
     // move piece to blue/white side
-    console.log("Valid Piece: ",validPiece);
-    console.log("Manual Piece: ",manualPiece);
+    // console.log("(1) Valid Piece: ",validPiece);
+    // console.log("(1) Manual Piece: ",manualPiece);
 
     let newValidPiece = this.convertToBlueWhiteEdge([...validPiece]);
     let newManualPiece = this.convertToBlueWhiteEdge([...manualPiece]); 
 
     //console.log(newValidPiece,newManualPiece);
 
-    if((newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position)){
+    if((newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position)||validPiece.includes("center")){
       //console.log("valid");
       return true;
     }
@@ -554,14 +657,50 @@ class App extends Component {
     else return false;
   }
 
-  // checkValidMatchMiddle(validPiece,manualPiece){
-  //   // move piece to white side
-  //   console.log("Valid Piece: ",validPiece);
-  //   console.log("Manual Piece: ",manualPiece);
+  checkValidMatchMiddle(validPiece,manualPiece){
+    //console.log("1: ",validPiece,manualPiece);
+    let cD = this.state.cubeDimension;
+    let newValidPiece = this.alignQuadrant(this.convertToBlueMiddle(validPiece));
+    let newManualPiece = this.alignQuadrant(this.convertToBlueMiddle(manualPiece));
+    //console.log("2: ",newValidPiece,newManualPiece);
+    // middles don't need to be matched
+    // if(cD%2){
+    //   let tempPos = newValidPiece.position.split("");
+    //   if(tempPos[0]===Math.floor(cD/2)&&tempPos[1]===Math.floor(cD/2)){
+    //     return true;
+    //   }
+    // }
 
-  //   let newValidPiece = this.convertToBlueMiddle([...validPiece]);
-  //   let newManualPiece = this.convertToBlueMiddle([...manualPiece]); 
-  // }
+    if(newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position){
+      if(newValidPiece.colors.includes("blue")){
+        //console.log("3: VALID")
+      }
+      return true;
+    }
+    
+    return false;
+  }
+
+  alignQuadrant(_piece){
+    let pos = _piece.position;
+    let piece = {colors:_piece.colors}
+    const dim = this.state.cubeDimension;
+    const max = dim-1;
+    const X = 0, Y = 1, Z = 2;
+
+    if(pos[X] < Math.floor(dim/2) && pos[Y] >= Math.floor(dim/2)){
+      piece.position = [ (max - pos[Y]), pos[X], pos[Z] ].join("");
+    }
+    else if(pos[X] >= Math.floor(dim/2) && pos[Y] >= Math.ceil(dim/2)){
+      piece.position = [ (max - pos[X]), max - pos[Y], pos[Z] ].join("");
+    }
+    else if(pos[X] >= Math.ceil(dim/2) && pos[Y] < Math.ceil(dim/2)){
+      piece.position = [ pos[Y], (max-pos[X]), pos[Z]].join("");
+    }
+    else piece.position=pos.join("");
+
+    return piece;
+  }
 
   setColorPickedCube = () => {
     let rubiks = [...this.state.rubiksObject];
@@ -580,16 +719,26 @@ class App extends Component {
         
         if(validPiece===6&&!checked.includes(pieceIndex)&&!otherChecked.includes(i)){
           let validEdgePlacement = false;
-          if(piece.includes("edge")&&!piece.includes("center")){
+          let validMiddlePlacement = false;
+          
+          if(piece.includes("edge")){
             validEdgePlacement = this.checkValidMatch(piece,rubik);
+            if((piece[13]==="center"&&rubik[13]!=="center")||
+              (rubik[13]==="center"&&piece[13]!=="center")){
+              validEdgePlacement = false;
+            }
+            else if (piece[13]==="center"&&rubik[13]==="center"){
+              validEdgePlacement = true;
+            }
           }
-          // else if(){
-
-          // }
+          else if(piece.includes("middle")){
+            validMiddlePlacement = this.checkValidMatchMiddle(piece,rubik);
+          }
           else{
             validEdgePlacement = true;
+            validMiddlePlacement = true;
           }
-          if(validEdgePlacement){
+          if(validEdgePlacement||validMiddlePlacement){
             checked.push(pieceIndex);
             otherChecked.push(i);
             newGenerated[pieceIndex]=[
@@ -602,7 +751,6 @@ class App extends Component {
     });
 
     this.setState({rubiksObject:newGenerated,currentFunc : "None",activeMenu:""},()=>{
-      //console.log(newGenerated);
       this.reloadTurnedPieces('check');
       this.setState({activeMenu:'Solver'});
       this.beginSolve();
@@ -639,7 +787,6 @@ class App extends Component {
     let rubiks = [...this.state.rubiksObject];
     let generated = cube.generateSolved(this.state.cubeDimension,this.state.cubeDimension,this.state.cubeDimension);
     let newGenerated = [];
-
     for(let i = 0; i < rubiks.length; i++){
       let rubik = [...rubiks[i]];
       const colors = ['white','blue','red','yellow','orange','green'];
@@ -679,25 +826,40 @@ class App extends Component {
         });
         if(validPiece===6&&!checked.includes(pieceIndex)&&!otherChecked.includes(i)){
           let validEdgePlacement = false;
-          if(piece.includes("edge")&&!piece.includes("center")){
+          let validMiddlePlacement = false;
+          if(piece.includes("edge")){
             validEdgePlacement = this.checkValidMatch(piece,rubik);
+            // A center edge cannot match with a non center edge
+            if((piece[13]==="center"&&rubik[13]!=="center")||
+              (rubik[13]==="center"&&piece[13]!=="center")){
+                validEdgePlacement = false;
+            }
+            else if (piece[13]==="center"&&rubik[13]==="center"){
+              validEdgePlacement = true;
+            }
+          }
+          else if(piece.includes("middle")){
+            validMiddlePlacement = this.checkValidMatchMiddle(piece,rubik);
+            //validMiddlePlacement = true;
           }
           else{
             validEdgePlacement = true;
+            validMiddlePlacement = true;
           }
-          if(validEdgePlacement){
+          if(validEdgePlacement||validMiddlePlacement){
             matchedCount++;
             checked.push(pieceIndex);
             otherChecked.push(i);
+            
             newGenerated[pieceIndex]=[
               ...rubik.slice(0,9),
               ...piece.slice(9,15)
             ];
           }
-        }
-      }) 
-    });
 
+        }
+      })
+    });
     
     let invalidAmounts = [];
     if(whiteCount!==validAmount){
@@ -750,18 +912,16 @@ class App extends Component {
 
     if(!obj.error){
       obj.error = [];
-      //console.log(generated);
-      //console.log(newGenerated);
       const solveData = {...this.generateAllSolveMoves(this.state,newGenerated)};
       //let solveable = solveData.solveable;
-      generated.tempArr.forEach((piece,i) => {
-        if(piece.slice(0,6).join('')===solveData.rubiksObject[i].slice(0,6).join('')||piece.includes('corner')){}
-        else{
-          //solveData.solveable=false
-          console.log("failed matches");
-          console.log(piece.slice(0,6).join(''),solveData.rubiksObject[i].slice(0,6).join(''));
-        }
-      })
+      // generated.tempArr.forEach((piece,i) => {
+      //   if(piece.slice(0,6).join('')===solveData.rubiksObject[i].slice(0,6).join('')||piece.includes('corner')){}
+      //   else{
+      //     //solveData.solveable=false
+      //     //console.log("failed matches");
+      //     //console.log(piece.slice(0,6).join(''),solveData.rubiksObject[i].slice(0,6).join(''));
+      //   }
+      // })
       if(solveData.solveable===false){
         //console.log(solveData);
         obj.error.push(`This configuration of the cube is not solveable.`);
@@ -909,7 +1069,9 @@ class App extends Component {
     this.setState({currentFunc : moveName, moveSet : moveArray});
   }
 
+  // Compares dragged move with the next move in algorithm or solver
   checkMoveEquivalence(dragMove,nextMove){
+    // Check both ways a move can be made
     if(dragMove===nextMove||this.invertMove(dragMove)===nextMove){
       return true;
     }
@@ -1347,8 +1509,6 @@ class App extends Component {
     if (cD <= limit && cD >= 1) return cD; else return 3;
   }
 
-  
-
   calculateTurn(current,previous,piece,pieceFace,cD){
 
     let calculated = null;
@@ -1464,6 +1624,7 @@ class App extends Component {
     while(tempState.currentFunc==="Solving"){
       
       if(!tempState.moveSet || !tempState.moveSet.length) {
+        //console.log(tempState.rubiksIndex);
         currentIndex=tempState.rubiksIndex;
         if(currentIndex===previousIndex) indexOccurence = indexOccurence+1;
         else indexOccurence = 0;
@@ -1488,6 +1649,7 @@ class App extends Component {
           moves.moveSet = temp;
         }
         if((indexOccurence>10 && tempState.solveState<1)||counter>100000) {
+
           console.log(indexOccurence,currentIndex,previousIndex,tempState.rubiksIndex);
           console.log(moves);
           error = true;
@@ -1608,10 +1770,8 @@ class App extends Component {
     let cD = this.getSizeFromUrl();
     let generated = cube.generateSolved(cD,cD,cD);
     let rubiksObject = generated.tempArr;
-    // console.log(rubiksObject[0]);
     let tempCubes = [];
-    //let stats = new Stats();
-    const groups = [[],[],[],[],[],[]];
+    
     let previousPiece = null;
     let previousPieceIndex = null;
     let ignoreChange = false;
@@ -1619,21 +1779,16 @@ class App extends Component {
     // === THREE.JS VARIABLES ===
     let scene = new THREE.Scene();
     let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, .1, 1000 );
-    let renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true
-    });
+    let renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     let raycaster = new THREE.Raycaster();
     let mouse = new THREE.Vector2();
     let cubeGeometry = new THREE.BoxGeometry(  );
-    let geometry = new THREE.PlaneGeometry(1,1);
-    //const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp2vqlj5dzmGwQfEBy7yNWfDvDVm6mgsA4768bcpsJDmdp9t0g7w&s');
-    const loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
-    //const loader1 = new THREE.TextureLoader().load('https://cdn0.iconfinder.com/data/icons/arrows-11/100/arrow-1-512.png');
-    const loader1 = new THREE.TextureLoader().load('https://cdn2.iconfinder.com/data/icons/communication-language/100/Up_Arrow-01-512.png');
-    let material = new THREE.MeshBasicMaterial( {map:loader1,transparent: true,color: 'black', opacity:'.8',side: THREE.DoubleSide} );
+    let loader = new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW92XE-j1aJzRMI9kvvMZIf2VikZzzdEI87zl4rWgHMJBNJ9iw7A&s');
+    let moveHintImage = new THREE.TextureLoader().load('https://cdn2.iconfinder.com/data/icons/communication-language/100/Up_Arrow-01-512.png');
     let tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
     let windowHeight = window.innerHeight;
+
+    const groups = cube.generateMoveHints(moveHintImage,cD);
 
     let calculateTurn = this.calculateTurn;
     let algorithmFunc = this.algorithm;
@@ -1840,7 +1995,7 @@ class App extends Component {
 
     // Prevents bluring
     loader.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    loader1.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    moveHintImage.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
     // generate cubes with face colors based off memory cube
     for(let i = 0; i < rubiksObject.length; i++){
@@ -1895,219 +2050,7 @@ class App extends Component {
       if (renderer) renderer.render(scene, camera);
     });
 
-    // generate side 4 and 2 move hints
-    for(let k = 0; k < cD; k++){
-      let tempGroup = new THREE.Group();
-      let tempGroupOther = new THREE.Group();
-      for(let i = 0; i < 4; i++){
-        for(let j = 0; j<cD;j++){
-          let tempPlane = new THREE.Mesh( geometry, material );
-          let tempPlaneOther = new THREE.Mesh( geometry, material );
-          if(i===0){
-            tempPlane.translateX(cD-1-k);
-            tempPlane.translateZ((cD-1)+.51);
-            tempPlane.translateY((cD-1)-j);
-
-            tempPlaneOther.translateX(cD-1-k);
-            tempPlaneOther.translateZ((cD-1)+.51);
-            tempPlaneOther.translateY((cD-1)-j);
-            tempPlaneOther.rotateZ(Math.PI);
-          }
-          else if(i===1){
-            tempPlane.translateX(cD-1-k);
-            tempPlane.translateZ((cD-1)-j);
-            tempPlane.translateY((cD-1)+.51);
-            tempPlane.rotateX(Math.PI/2);
-            tempPlane.rotateZ(Math.PI);
-
-            tempPlaneOther.translateX(cD-1-k);
-            tempPlaneOther.translateZ((cD-1)-j);
-            tempPlaneOther.translateY((cD-1)+.51);
-            tempPlaneOther.rotateX(Math.PI/2);
-          }
-          else if(i===2){
-            tempPlane.translateX(cD-1-k);
-            tempPlane.translateZ(-.51);
-            tempPlane.translateY((cD-1)-j);
-            tempPlane.rotateX(Math.PI);
-
-            tempPlaneOther.translateX(cD-1-k);
-            tempPlaneOther.translateZ(-.51);
-            tempPlaneOther.translateY((cD-1)-j);
-          }
-          else if(i===3){
-            tempPlane.translateX(cD-1-k);
-            tempPlane.translateZ((cD-1)-j);
-            tempPlane.translateY(-.51);
-            tempPlane.rotateX(-Math.PI/2);
-            tempPlane.rotateZ(Math.PI);
-
-            tempPlaneOther.translateX(cD-1-k);
-            tempPlaneOther.translateZ((cD-1)-j);
-            tempPlaneOther.translateY(-.51);
-            tempPlaneOther.rotateX(-Math.PI/2);
-          }
-          tempGroup.add(tempPlane)
-          tempGroupOther.add(tempPlaneOther)
-        }
-      }
-      tempGroup.visible = false;
-      tempGroupOther.visible = false;
-      groups[2].push(tempGroup);
-      groups[5].push(tempGroupOther);
-    }
-
-    // generate side 0 and 3 move hints
-    for(let k = 0; k < cD; k++){
-      let tempGroup = new THREE.Group();
-      let tempGroupOther = new THREE.Group();
-      for(let i = 0; i < 4; i++){
-        for(let j = 0; j<cD;j++){
-          let tempPlane = new THREE.Mesh( geometry, material );
-          let tempPlaneOther = new THREE.Mesh( geometry, material );
-          if(i===0){
-            tempPlane.translateX((cD-1)-j);
-            tempPlane.translateZ((cD-1)+.51);
-            tempPlane.translateY(k);
-            tempPlane.rotateZ(-Math.PI/2);
-            
-
-            tempPlaneOther.translateX((cD-1)-j);
-            tempPlaneOther.translateZ((cD-1)+.51);
-            tempPlaneOther.translateY(k);
-            tempPlaneOther.rotateX(Math.PI);
-            tempPlaneOther.rotateZ(Math.PI/2);
-          }
-          else if(i===1){
-            tempPlane.translateX((cD-1)+.51);
-            tempPlane.translateZ((cD-1)-j);
-            tempPlane.translateY(k);
-            tempPlane.rotateX(Math.PI/2);
-            tempPlane.rotateZ(Math.PI);
-            tempPlane.rotateY(Math.PI/2);
-
-            tempPlaneOther.translateX((cD-1)+.51);
-            tempPlaneOther.translateZ((cD-1)-j);
-            tempPlaneOther.translateY(k);
-            tempPlaneOther.rotateX(Math.PI/2);
-            tempPlaneOther.rotateY(Math.PI/2);
-          }
-          else if(i===2){
-            tempPlane.translateX((cD-1)-j);
-            tempPlane.translateZ(-.51);
-            tempPlane.translateY(k);
-            tempPlane.rotateX(Math.PI);
-            tempPlane.rotateZ(Math.PI/2);
-
-            tempPlaneOther.translateX((cD-1)-j);
-            tempPlaneOther.translateZ(-.51);
-            tempPlaneOther.translateY(k);
-            tempPlaneOther.rotateZ(-Math.PI/2);
-          }
-          else if(i===3){
-            tempPlane.translateX(-.51);
-            tempPlane.translateZ((cD-1)-j);
-            tempPlane.translateY(k);
-            tempPlane.rotateX(-Math.PI/2);
-            tempPlane.rotateZ(Math.PI);
-            tempPlane.rotateY(-Math.PI/2);
-
-            tempPlaneOther.translateX(-.51);
-            tempPlaneOther.translateZ((cD-1)-j);
-            tempPlaneOther.translateY(k);
-            tempPlaneOther.rotateX(-Math.PI/2);
-            tempPlaneOther.rotateY(Math.PI/2);
-            //tempPlaneOther.rotateZ(Math.PI);
-          }
-          tempGroup.add(tempPlane)
-          tempGroupOther.add(tempPlaneOther)
-        }
-      }
-      tempGroup.visible = false;
-      tempGroupOther.visible = false;
-      
-      groups[0].push(tempGroup);     //Clockwise for white, counter for yellow
-      groups[3].push(tempGroupOther);//Counter for white, clockwise for yellow
-    }
-
-    // generate side 1 and 5 move hints
-    for(let k = 0; k < cD; k++){
-      let tempGroup = new THREE.Group();
-      let tempGroupOther = new THREE.Group();
-      for(let i = 0; i < 4; i++){
-        for(let j = 0; j<cD;j++){
-          let tempPlane = new THREE.Mesh( geometry, material );
-          let tempPlaneOther = new THREE.Mesh( geometry, material );
-          if(i===0){
-            tempPlane.translateX((cD-1)-j);
-            tempPlane.translateZ((cD-1)-k);
-            tempPlane.translateY((cD-1)+.51);
-            tempPlane.rotateZ(-Math.PI/2);
-            tempPlane.rotateY(Math.PI/2);
-            
-
-            tempPlaneOther.translateX((cD-1)-j);
-            tempPlaneOther.translateZ((cD-1)-k);
-            tempPlaneOther.translateY((cD-1)+.51);
-            tempPlaneOther.rotateX(Math.PI);
-            tempPlaneOther.rotateZ(Math.PI/2);
-            tempPlaneOther.rotateY(Math.PI/2);
-          }
-          else if(i===1){
-            tempPlane.translateX((cD-1)+.51);
-            tempPlane.translateZ((cD-1)-k);
-            tempPlane.translateY((cD-1)-j);
-            //tempPlane.rotateX(Math.PI/2);
-            tempPlane.rotateZ(Math.PI);
-            tempPlane.rotateY(Math.PI/2);
-
-            tempPlaneOther.translateX((cD-1)+.51);
-            tempPlaneOther.translateZ((cD-1)-k);
-            tempPlaneOther.translateY((cD-1)-j);
-            //tempPlaneOther.rotateX(Math.PI);
-            tempPlaneOther.rotateY(Math.PI/2);
-          }
-          else if(i===2){
-            tempPlane.translateX((cD-1)-j);
-            tempPlane.translateZ((cD-1)-k);
-            tempPlane.translateY(-.51);
-            tempPlane.rotateX(Math.PI/2);
-            tempPlane.rotateZ(Math.PI/2);
-
-            tempPlaneOther.translateX((cD-1)-j);
-            tempPlaneOther.translateZ((cD-1)-k);
-            tempPlaneOther.translateY(-.51);
-            tempPlaneOther.rotateX(Math.PI/2);
-            tempPlaneOther.rotateZ(-Math.PI/2);
-          }
-          else if(i===3){
-            tempPlane.translateX(-.51);
-            tempPlane.translateZ((cD-1)-k);
-            tempPlane.translateY((cD-1)-j);
-            tempPlane.rotateX(Math.PI);
-            tempPlane.rotateZ(Math.PI);
-            tempPlane.rotateY(-Math.PI/2);
-
-            tempPlaneOther.translateX(-.51);
-            tempPlaneOther.translateZ((cD-1)-k);
-            tempPlaneOther.translateY((cD-1)-j);
-            tempPlaneOther.rotateX(-Math.PI);
-            tempPlaneOther.rotateY(Math.PI/2);
-            //tempPlaneOther.rotateZ(Math.PI);
-          }
-          tempGroup.add(tempPlane)
-          tempGroupOther.add(tempPlaneOther)
-        }
-      }
-      tempGroup.visible = false;
-      tempGroupOther.visible = false;
-      
-      groups[1].push(tempGroup);     //Clockwise for white, counter for yellow
-      groups[4].push(tempGroupOther);//Counter for white, clockwise for yellow
-    }
-
     groups.forEach(group => scene.add(...group));
-    // scene.add(...groups.flat(2)); //issues with new edge
 
     // add cubes to state and then render
     this.setState({
