@@ -715,14 +715,13 @@ class App extends Component {
         let validPiece = 0;
         piece.slice(0,6).sort().forEach((face,index) =>{
           if(rubik.slice(0,6).sort()[index]===face) {validPiece++;}
-        });
-        
+        }); 
         if(validPiece===6&&!checked.includes(pieceIndex)&&!otherChecked.includes(i)){
           let validEdgePlacement = false;
           let validMiddlePlacement = false;
-          
           if(piece.includes("edge")){
             validEdgePlacement = this.checkValidMatch(piece,rubik);
+            // A center edge cannot match with a non center edge
             if((piece[13]==="center"&&rubik[13]!=="center")||
               (rubik[13]==="center"&&piece[13]!=="center")){
               validEdgePlacement = false;
@@ -782,11 +781,13 @@ class App extends Component {
     let duplicateFace = false;
     let duplicateColors = []
     let matchedCount = 0;
-    let obj = {};
+    let obj = {error:[]};
     let validAmount = this.state.cubeDimension*this.state.cubeDimension;
     let rubiks = [...this.state.rubiksObject];
     let generated = cube.generateSolved(this.state.cubeDimension,this.state.cubeDimension,this.state.cubeDimension);
     let newGenerated = [];
+    let invalidMiddleConfig;
+    let invalidEdgeConfig
     for(let i = 0; i < rubiks.length; i++){
       let rubik = [...rubiks[i]];
       const colors = ['white','blue','red','yellow','orange','green'];
@@ -840,7 +841,6 @@ class App extends Component {
           }
           else if(piece.includes("middle")){
             validMiddlePlacement = this.checkValidMatchMiddle(piece,rubik);
-            //validMiddlePlacement = true;
           }
           else{
             validEdgePlacement = true;
@@ -850,80 +850,65 @@ class App extends Component {
             matchedCount++;
             checked.push(pieceIndex);
             otherChecked.push(i);
-            
             newGenerated[pieceIndex]=[
               ...rubik.slice(0,9),
               ...piece.slice(9,15)
             ];
           }
-
         }
       })
+      if(newGenerated[pieceIndex].length===0)
+        if(piece[12]==="edge")
+          invalidEdgeConfig="Invalid edge configuration.";
+        else if(piece[12]==="middle")
+          invalidMiddleConfig = "Invalid middle configuration.";
     });
+
+
     
     let invalidAmounts = [];
     if(whiteCount!==validAmount){
-      if(!obj.error) obj.error = [];
       invalidAmounts.push("white");
-      //obj.error.push(`Invalid white sticker count.`);
     }
     if(blueCount!==validAmount){
-      if(!obj.error) obj.error = [];
       invalidAmounts.push("blue");
-      //obj.error.push(`Invalid blue sticker count.`);
     }
     if(redCount!==validAmount){
-      if(!obj.error) obj.error = [];
       invalidAmounts.push("red");
-      //obj.error.push(`Invalid red sticker count.`);
     }
     if(yellowCount!==validAmount){
-      if(!obj.error) obj.error = [];
       invalidAmounts.push("yellow");
-      //obj.error.push(`Invalid yellow sticker count.`);
     }
     if(orangeCount!==validAmount){
-      if(!obj.error) obj.error = [];
       invalidAmounts.push("orange");
-      //obj.error.push(`Invalid orange sticker count.`);
     }
     if(greenCount!==validAmount){
-      if(!obj.error) obj.error = [];
       invalidAmounts.push("green");
-      //obj.error.push(`Invalid green sticker count.`);
     }
     if(invalidAmounts.length){
-      invalidAmounts=invalidAmounts.join(', ')
-      if(!obj.error) obj.error = [];
+      invalidAmounts=invalidAmounts.join(', ');
       obj.error.push(`Invalid ${invalidAmounts} sticker count.`);
     }
 
     if(duplicateFace){
-      //duplicateColors.forEach(color => {
-        duplicateColors=duplicateColors.join(', ')
-        obj.error.push(`More than one occurence of ${duplicateColors} found on a piece.`);
-      //});
+      duplicateColors=duplicateColors.join(', ');
+      obj.error.push(`More than one occurence of ${duplicateColors} found on a piece.`);
     }
 
     if(matchedCount!==rubiksLength&&this.state.cubeDimension<4){
-      if(!obj.error) obj.error = [];
       obj.error.push(`[${matchedCount-1}] out of [${rubiksLength-1}] matched. Missing [${(rubiksLength-1)-(matchedCount-1)}]`);
     }
 
-    if(!obj.error){
-      obj.error = [];
+    if(invalidEdgeConfig){
+      obj.error.push(invalidEdgeConfig);
+    }
+    if(invalidMiddleConfig){
+      obj.error.push(invalidMiddleConfig);
+    }
+
+    if(!obj.error.length){
       const solveData = {...this.generateAllSolveMoves(this.state,newGenerated)};
-      //let solveable = solveData.solveable;
-      // generated.tempArr.forEach((piece,i) => {
-      //   if(piece.slice(0,6).join('')===solveData.rubiksObject[i].slice(0,6).join('')||piece.includes('corner')){}
-      //   else{
-      //     //solveData.solveable=false
-      //     //console.log("failed matches");
-      //     //console.log(piece.slice(0,6).join(''),solveData.rubiksObject[i].slice(0,6).join(''));
-      //   }
-      // })
       if(solveData.solveable===false){
-        //console.log(solveData);
         obj.error.push(`This configuration of the cube is not solveable.`);
         obj.error.push(`Check that you've entered all pieces correctly.`);
         if(this.state.cubeDimension>3){
@@ -934,14 +919,22 @@ class App extends Component {
         }
       }
       else{
-        obj.error = undefined;
+        if(solveData.tempObject){
+          console.log(solveData.tempObject);
+          for(let i = 0; i<solveData.tempObject.length; i++){
+            if((solveData.tempObject[i].slice(0,6).sort().join("")!==generated.tempArr[i].slice(0,6).sort().join(""))&&solveData.tempObject[i][12]==="corner"){
+              // console.log(solveData.tempObject[i].slice(0,6).sort().join(""),generated.tempArr[i].slice(0,6).sort().join(""));
+              // obj.error.push(`Invalid corner alignment`);
+              // break;
+            }
+          }
+          if(!obj.error.length) obj.error = undefined;
+        }
+        else{
+          obj.error = undefined;
+        }
       }
     }
-    else{
-      //obj.error.push('Not solvable');
-    }
-
-    //console.log(obj.error);
 
     if(!obj.error) {obj.success = true;obj.newGenerated = newGenerated}
     return obj;
@@ -1071,13 +1064,16 @@ class App extends Component {
 
   // Compares dragged move with the next move in algorithm or solver
   checkMoveEquivalence(dragMove,nextMove){
-    // Check both ways a move can be made
+    // Check both ways a move can be made, on a 3x3 02U is the same as 02D
     if(dragMove===nextMove||this.invertMove(dragMove)===nextMove){
       return true;
     }
     return false;
   }
 
+  // converts a move into it's equivalent other move, 
+  // ex: (on a 3x3) 03F === 01B'
+  // invertMove("03F") => "01B'"
   invertMove(_move){
     const move =_move.split('');
     let inverted = '';
@@ -1142,7 +1138,7 @@ class App extends Component {
     
   }
 
-  // Refreshes page to reset cube
+  // Resets the cube and the move log
   reset = () => {
     let cD = this.state.cubeDimension;
     let generated = cube.generateSolved(cD,cD,cD);
@@ -1150,7 +1146,6 @@ class App extends Component {
     this.setState({rubiksObject,moveSet: [],moveLog: "",currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [],cpErrors:[]},()=>{
       this.reloadTurnedPieces('all');
     });
-    //window.location.reload();
   }
 
   // Generates a random move
@@ -1741,7 +1736,7 @@ class App extends Component {
       alert("Sorry for the inconvenience. This error is caused by an infinite loop issue with the solver and has been stopped to prevent freezing the application. The current move set has still been pushed and is playable for debugging purposes. Maybe you can figure out the issue before I can ;)");
       return {moveSet:[...moveSet],rubiksObject : beforeObject,solveable:false,solvedSet:[...moveSet],solvedSetIndex:0};
     }
-    return {moveSet:[...moveSet],rubiksObject : beforeObject,solveable:true,solvedSet:[...moveSet],solvedSetIndex:0};
+    return {moveSet:[...moveSet],rubiksObject : beforeObject,solveable:true,solvedSet:[...moveSet],solvedSetIndex:0,tempObject:tempState.rubiksObject};
   }
 
   animateRotation(tempCubes){

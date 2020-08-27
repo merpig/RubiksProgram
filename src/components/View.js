@@ -102,15 +102,20 @@ class View extends Component {
                 <Col style={{padding:0, color:"black",opacity:0}} xs={.5}>
                     .    
                 </Col>
-                <Col id="menuBox" style={{overflow:"auto",position:"relative",top:"0px",width:"100%"}} xs={8}>
+                <Col 
+                    id="menuBox" 
+                    style={{overflow:"auto",position:"relative",top:"0px",width:"100%"}} 
+                    xs={(this.props.state.currentFunc==="Color Picker"||this.props.state.activeMenu==="Solver"||this.props.state.activeMenu==="Algorithms")?10:8}>
                     {activeMenu}  
                 </Col>
-                <Col style={{padding:0, color:"black",opacity:0}} xs={.5}>
+                {(this.props.state.currentFunc==="Color Picker"||this.props.state.activeMenu==="Solver"||this.props.state.activeMenu==="Algorithms")?
+                []:
+                [<Col style={{padding:0, color:"black",opacity:0}} xs={.5}>
                     .    
-                </Col>
+                </Col>,
                 <Col style={{paddingLeft:"0px"}}>
                     <MenuOptionsOther {...this.props}/>
-                </Col>
+                </Col>]}
             </Row>
             
         </div>)
