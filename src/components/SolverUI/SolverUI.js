@@ -214,9 +214,8 @@ class SolverUI extends Component {
             let generated = cube.generateSolved(cD,cD,cD);
             algorithms.forEach(set=>{
                 if(set.name.replace(" ","")===algo&&set.worksFor.includes(cD)) algoSet.push(...set.moves.split(" "));
-            })
-            //console.log(algoSet);
-            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0});
+            });
+            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[]});
         }
 
         function optionClick(e,props){

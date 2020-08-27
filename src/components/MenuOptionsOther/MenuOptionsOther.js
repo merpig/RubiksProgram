@@ -4,11 +4,11 @@ import "../MenuOptions/MenuOptions.css"
 const MenuOptionsOther = props => {
 
     const baseOptions = <>
-        <button id="Moves" data="None" onClick={optionClick} className="cpButton">Moves</button>
-        <button id="Scramble" onClick={otherOptionClick} className="cpButton scramble">
+        <button id="Moves" key="Moves" data="None" onClick={optionClick} className="cpButton">Moves</button>
+        <button id="Scramble" key="Scramble" onClick={otherOptionClick} className="cpButton scramble">
             Scramble
         </button>
-        <button id="Reset" onClick={otherOptionClick} className="cpButton reset">
+        <button id="Reset" key="Reset" onClick={otherOptionClick} className="cpButton reset">
             Reset
         </button>
     </>

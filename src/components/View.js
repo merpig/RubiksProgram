@@ -96,24 +96,26 @@ class View extends Component {
         return (
         <div className={this.props.state.activeMenu===""?"menuWrapperOptions":"menuWrapper"} style={{color:"white",pointerEvents: "none"}}>
             <Row style={{height: "100%",margin:"0px"}}>
-                <Col style={{paddingLeft:"0px"}}>
+                 {(this.props.state.activeMenu==="ColorPicker")?
+                []:
+                [<Col key="MenuOptions" style={{paddingLeft:"0px"}}>
                     <MenuOptions {...this.props}/>
-                </Col>
-                <Col style={{padding:0, color:"black",opacity:0}} xs={.5}>
+                </Col>,
+                <Col key="MenuOptionsPadding" style={{padding:0, color:"black",opacity:0}} xs={.5}>
                     .    
-                </Col>
+                </Col>]}
                 <Col 
                     id="menuBox" 
                     style={{overflow:"auto",position:"relative",top:"0px",width:"100%"}} 
-                    xs={(this.props.state.currentFunc==="Color Picker"||this.props.state.activeMenu==="Solver"||this.props.state.activeMenu==="Algorithms")?10:8}>
+                    xs={this.props.state.currentFunc==="Color Picker"?12:(this.props.state.activeMenu==="Solver"||this.props.state.activeMenu==="Algorithms")?10:8}>
                     {activeMenu}  
                 </Col>
-                {(this.props.state.currentFunc==="Color Picker"||this.props.state.activeMenu==="Solver"||this.props.state.activeMenu==="Algorithms")?
+                {(this.props.state.activeMenu==="ColorPicker"||this.props.state.activeMenu==="Solver"||this.props.state.activeMenu==="Algorithms")?
                 []:
-                [<Col style={{padding:0, color:"black",opacity:0}} xs={.5}>
+                [<Col key="MenuOptionsOther" style={{padding:0, color:"black",opacity:0}} xs={.5}>
                     .    
                 </Col>,
-                <Col style={{paddingLeft:"0px"}}>
+                <Col key="MenuOptionsOtherPadding" style={{paddingLeft:"0px"}}>
                     <MenuOptionsOther {...this.props}/>
                 </Col>]}
             </Row>

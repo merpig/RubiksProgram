@@ -6,9 +6,9 @@ import cube from '../../cubeFunctions/cube';
 const MenuOptions = props => {
 
         const baseOptions = <>
-           {props.state.cubeDimension<6?<button id="ColorPicker" data="Color Picker" onClick={optionClick} className="leftButton">Color Picker</button>:<></>}
-           {props.state.cubeDimension<6?<button id="Solver" data="Solving" onClick={optionClick} className="leftButton">Solver</button>:<></>}
-           <button id="Algorithms" data="None" onClick={optionClick} className="leftButton">Algorithms</button>
+           {props.state.cubeDimension<6?<button id="ColorPicker" key="Color Picker" data="Color Picker" onClick={optionClick} className="leftButton">Color Picker</button>:<></>}
+           {props.state.cubeDimension<6?<button id="Solver" key="Soler" data="Solving" onClick={optionClick} className="leftButton">Solver</button>:<></>}
+           <button id="Algorithms" key="Algorithms" data="None" onClick={optionClick} className="leftButton">Algorithms</button>
         </>
 
         let algorithmSet = [];
@@ -76,14 +76,14 @@ const MenuOptions = props => {
         return (
         <div className="menuOptionsWrapper">
             {props.state.currentFunc==="Solving"?<><div style={{height:"45%"}}></div>
-            <button id="Solver" data="Solving" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:
+            <button id="Solver" data="Solving" key="Solving" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:
             props.state.currentFunc==="Color Picker"?<><div style={{paddingTop:"45%"}}></div>
-            <button id="ColorPicker" data="Color Picker" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:
+            <button id="ColorPicker" data="Color Picker" key="Color Picker" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:
             props.state.currentFunc==="Algorithms"?<>
             <div className="algoList">
                 {algorithmSet}  
             </div>
-           <button id="Algorithms" data="Algorithms" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:baseOptions}
+           <button id="Algorithms" data="Algorithms" key="Algorithms" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:baseOptions}
         </div>)
 
 }
