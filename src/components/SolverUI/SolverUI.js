@@ -371,16 +371,16 @@ class SolverUI extends Component {
                         {/* {jumperButtons} */}
                     </div></>:<>
                     {this.props.state.currentFunc==="Algorithms"?<><Row >
-                        <label htmlFor="patterns" style={{color:"lightgrey"}}>Choose a Pattern:</label>
+                        {/* <label htmlFor="patterns" style={{color:"lightgrey"}}>Choose a Pattern:</label> */}
 
                         <select style={{color:"lightgrey",backgroundColor:"#343a40"}} id="patterns" onChange={(e) => algoStart(e.target.value.replace(" ",""),this.props)}>
                         {algorithms.map(algo=>algo.worksFor.includes(this.props.state.cubeDimension)?
-                            <option id={algo.name.replace(" ","")} value={algo.name} key={algo.name}>{algo.name}</option>
+                            <option className="mobileAlgo" id={algo.name.replace(" ","")} value={algo.name} key={algo.name}>{algo.name}</option>
                                 :"")}
                         </select>
                     </Row>
                     <Row >
-                        <div className="solverMoves">
+                        <div className="algoMoves">
                             
                             {solverSet}
                             

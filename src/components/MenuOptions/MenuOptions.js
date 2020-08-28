@@ -3,11 +3,13 @@ import "./MenuOptions.css"
 import algorithms from "../../cubeFunctions/algorithms";
 import cube from '../../cubeFunctions/cube';
 
+const optionLimit = 5;
+
 const MenuOptions = props => {
 
         const baseOptions = <>
-           {props.state.cubeDimension<6?<button id="ColorPicker" key="Color Picker" data="Color Picker" onClick={optionClick} className="leftButton">Color Picker</button>:<></>}
-           {props.state.cubeDimension<6?<button id="Solver" key="Soler" data="Solving" onClick={optionClick} className="leftButton">Solver</button>:<></>}
+           {props.state.cubeDimension<=optionLimit?<button id="ColorPicker" key="Color Picker" data="Color Picker" onClick={optionClick} className="leftButton">Color Picker</button>:<></>}
+           {props.state.cubeDimension<=optionLimit?<button id="Solver" key="Soler" data="Solving" onClick={optionClick} className="leftButton">Solver</button>:<></>}
            <button id="Algorithms" key="Algorithms" data="None" onClick={optionClick} className="leftButton">Algorithms</button>
         </>
 
@@ -17,9 +19,9 @@ const MenuOptions = props => {
             algorithmSet.push(<button id={algo.name} key={algo.name} className={props.state.activeAlgo===algo.name?
                 "algoButton algoActive":"algoButton"} onClick={(e)=>algoStart(e,props)}>{algo.name}</button>)
                 :"")
-        //console.log(algorithmSet);
 
         function algoStart(e,props){
+            if(props.state.autoPlay||props.state.autoRewind||props.state.playOne) return;
             let cD = props.state.cubeDimension;
             let algo = e.target.id;
             let algoSet = [];
@@ -28,7 +30,7 @@ const MenuOptions = props => {
                 if(e.name===algo&&e.worksFor.includes(cD)) algoSet.push(...e.moves.split(" "));
             })
             //console.log(algoSet);
-            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0});
+            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[],autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,});
         }
 
         function optionClick(e){

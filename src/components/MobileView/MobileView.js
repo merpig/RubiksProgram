@@ -6,6 +6,8 @@ import SolverUI from "../SolverUI/SolverUI";
 import ColorPicker from "../ColorPicker";
 import {Row, Col, Button} from "react-bootstrap";
 
+const optionLimit = 5;
+
 class Mobile extends Component {
 
     // eslint-disable-next-line
@@ -113,7 +115,7 @@ class Mobile extends Component {
             {(this.props.state.currentFunc === "None"||this.props.state.currentFunc === "Drag Turn"||this.props.state.currentFunc === "Undo"||this.props.state.currentFunc === "Redo")&&this.props.state.activeMenu!=="Moves"?
                 <Row style={{position: "absolute", bottom:"0px",margin:"0px", width:"100%"}}>
                     <Col xs={6}>
-                        {this.props.state.cubeDimension<6?
+                        {this.props.state.cubeDimension<=optionLimit?
                             <><Button className="mobileButton" id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} key={1}>Color Picker</Button> 
                             <Button className="mobileButton" id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} key={2}>Solver</Button></>
                             :<>

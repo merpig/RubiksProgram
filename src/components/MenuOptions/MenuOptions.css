@@ -42,19 +42,30 @@
     border: 2px solid #007bff;
     border-radius: .25rem;
     pointer-events: auto;
+    padding-left: 8px;
+    padding-top: 8px;
 }
 
 .algoButton{
     width: 100%;
-    color: #343a40;
+    color: #007bff;
     border: none;
-    border-bottom: 1px solid grey;
+    /* border-bottom: 1px solid grey; */
+    background: rgba(0, 0, 0, 0.0);
 }
 
 .algoButton:active{
-    opacity:75%;
+    opacity:70%;
+    border-radius: .25rem;
+}
+
+.algoButton:hover{
+    border-radius: .25rem;
+    background-color: rgba(100, 100, 100, 0.75);
 }
 
 .algoActive{
-    background-color: lightblue;
+    background-color: rgba(100, 100, 100, 0.5);
+    border-radius: .25rem;
+    color: lightgray;
 }

@@ -640,6 +640,7 @@ class App extends Component {
     // move piece to blue/white side
     // console.log("(1) Valid Piece: ",validPiece);
     // console.log("(1) Manual Piece: ",manualPiece);
+    let max = this.state.cubeDimension-1;
 
     let newValidPiece = this.convertToBlueWhiteEdge([...validPiece]);
     let newManualPiece = this.convertToBlueWhiteEdge([...manualPiece]); 
@@ -648,10 +649,12 @@ class App extends Component {
 
     if((newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position)||validPiece.includes("center")){
       //console.log("valid");
+      //console.log(newValidPiece,newManualPiece)
       return true;
     }
-    else if(newValidPiece.colors!==newManualPiece.colors&&newValidPiece.position!==newManualPiece.position){
+    else if(newValidPiece.colors!==newManualPiece.colors&&parseInt(newValidPiece.position[0])===max-parseInt(newManualPiece.position[0])){
       //console.log("valid");
+      //console.log(newValidPiece,newManualPiece)
       return true;
     }
     else return false;
@@ -787,6 +790,7 @@ class App extends Component {
     let generated = cube.generateSolved(this.state.cubeDimension,this.state.cubeDimension,this.state.cubeDimension);
     let newGenerated = [];
     let invalidMiddleConfig;
+    let invalidMiddleMatch = [];
     let invalidEdgeConfig
     for(let i = 0; i < rubiks.length; i++){
       let rubik = [...rubiks[i]];
@@ -820,6 +824,7 @@ class App extends Component {
     //getting assigned or assigning to second half segments(becomes unsolvable).
     generated.tempArr.forEach(([...piece],pieceIndex) =>{
       newGenerated.push([]);
+      let tempInvalidMatch = [];
       rubiks.forEach(([...rubik],i) => {
         let validPiece = 0;
         piece.slice(0,6).sort().forEach((face,index) =>{
@@ -841,6 +846,7 @@ class App extends Component {
           }
           else if(piece.includes("middle")){
             validMiddlePlacement = this.checkValidMatchMiddle(piece,rubik);
+            if(!validMiddlePlacement) tempInvalidMatch.push([piece,rubik]);
           }
           else{
             validEdgePlacement = true;
@@ -860,8 +866,11 @@ class App extends Component {
       if(newGenerated[pieceIndex].length===0)
         if(piece[12]==="edge")
           invalidEdgeConfig="Invalid edge configuration.";
-        else if(piece[12]==="middle")
+        else if(piece[12]==="middle"){
           invalidMiddleConfig = "Invalid middle configuration.";
+          console.log("Invalid middle configuration.");
+          console.log(tempInvalidMatch);
+        }
     });
 
 
@@ -909,6 +918,7 @@ class App extends Component {
     if(!obj.error.length){
       const solveData = {...this.generateAllSolveMoves(this.state,newGenerated)};
       if(solveData.solveable===false){
+        console.log(newGenerated);
         obj.error.push(`This configuration of the cube is not solveable.`);
         obj.error.push(`Check that you've entered all pieces correctly.`);
         if(this.state.cubeDimension>3){

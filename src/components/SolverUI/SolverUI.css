@@ -133,12 +133,26 @@ a > img {
 
   .solverMoves{
     position: relative;
-    height:140px;
-    min-height: 140px;
+    max-height: 28vh;
+    min-height: 28vh;
     width: 100%;
     overflow-y: scroll;
     border-radius: .25rem;
-    border: 1px solid #343a40;
+    border: 2px solid #007bff;;
+    /* background-color: (#343a40).5; */
+    margin-top: 5px;
+    z-index: 100000;
+    pointer-events: auto;
+  }
+
+  .algoMoves{
+    position: relative;
+    max-height: 24vh;
+    min-height: 24vh;
+    width: 100%;
+    overflow-y: scroll;
+    border-radius: .25rem;
+    border: 2px solid #007bff;;
     /* background-color: (#343a40).5; */
     margin-top: 5px;
     z-index: 100000;
@@ -147,7 +161,12 @@ a > img {
 
   .solverMoves > div{
     display: inline-block;
-    color: lightgray;
+    color: #007bff;;
+  }
+
+  .algoMoves > div{
+    display: inline-block;
+    color: #007bff;;
   }
 
   .solveMoveDiv{
@@ -217,4 +236,10 @@ a > img {
   color: lightgrey;
   font-size: .75rem;
   width:45%;
+}
+
+#patterns{
+  margin-top: 2px;
+  border-radius: .25rem;
+  border: none;
 }
