@@ -52,20 +52,18 @@
     border: none;
     /* border-bottom: 1px solid grey; */
     background: rgba(0, 0, 0, 0.0);
+    border-radius: .25rem;
 }
 
 .algoButton:active{
-    opacity:70%;
-    border-radius: .25rem;
+    opacity: 80%;
 }
 
 .algoButton:hover{
-    border-radius: .25rem;
-    background-color: rgba(100, 100, 100, 0.75);
+    background-color: rgb(150, 150, 150);
 }
 
 .algoActive{
-    background-color: rgba(100, 100, 100, 0.5);
-    border-radius: .25rem;
+    background-color: rgb(100, 100, 100);
     color: lightgray;
 }

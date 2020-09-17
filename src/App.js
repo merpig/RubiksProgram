@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Navbar from "./components/Navbar/Navbar";
-import Speeds from "./components/Speeds"
+import Speeds from "./components/Speeds/Speeds"
 import MoveInput from "./components/MoveInput"
 import Menu from "./components/MenuWrapper/MenuWrapper";
 import * as THREE from "three";
@@ -636,20 +636,10 @@ class App extends Component {
   }
 
   checkValidMatch(validPiece,manualPiece){
-
-    // move piece to blue/white side
-    // console.log("(1) Valid Piece: ",validPiece);
-    // console.log("(1) Manual Piece: ",manualPiece);
     let max = this.state.cubeDimension-1;
-
     let newValidPiece = this.convertToBlueWhiteEdge([...validPiece]);
     let newManualPiece = this.convertToBlueWhiteEdge([...manualPiece]); 
-
-    //console.log(newValidPiece,newManualPiece);
-
     if((newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position)||validPiece.includes("center")){
-      //console.log("valid");
-      //console.log(newValidPiece,newManualPiece)
       return true;
     }
     else if(newValidPiece.colors!==newManualPiece.colors&&parseInt(newValidPiece.position[0])===max-parseInt(newManualPiece.position[0])){
@@ -661,23 +651,10 @@ class App extends Component {
   }
 
   checkValidMatchMiddle(validPiece,manualPiece){
-    //console.log("1: ",validPiece,manualPiece);
-    let cD = this.state.cubeDimension;
     let newValidPiece = this.alignQuadrant(this.convertToBlueMiddle(validPiece));
     let newManualPiece = this.alignQuadrant(this.convertToBlueMiddle(manualPiece));
-    //console.log("2: ",newValidPiece,newManualPiece);
-    // middles don't need to be matched
-    // if(cD%2){
-    //   let tempPos = newValidPiece.position.split("");
-    //   if(tempPos[0]===Math.floor(cD/2)&&tempPos[1]===Math.floor(cD/2)){
-    //     return true;
-    //   }
-    // }
 
     if(newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position){
-      if(newValidPiece.colors.includes("blue")){
-        //console.log("3: VALID")
-      }
       return true;
     }
     
@@ -782,7 +759,7 @@ class App extends Component {
 
     let whiteCount = 0,blueCount = 0,redCount = 0,yellowCount = 0,orangeCount = 0,greenCount = 0;
     let duplicateFace = false;
-    let duplicateColors = []
+    let duplicateColors = [];
     let matchedCount = 0;
     let obj = {error:[]};
     let validAmount = this.state.cubeDimension*this.state.cubeDimension;
@@ -790,8 +767,7 @@ class App extends Component {
     let generated = cube.generateSolved(this.state.cubeDimension,this.state.cubeDimension,this.state.cubeDimension);
     let newGenerated = [];
     let invalidMiddleConfig;
-    let invalidMiddleMatch = [];
-    let invalidEdgeConfig
+    let invalidEdgeConfig;
     for(let i = 0; i < rubiks.length; i++){
       let rubik = [...rubiks[i]];
       const colors = ['white','blue','red','yellow','orange','green'];
@@ -1589,7 +1565,8 @@ class App extends Component {
   }
 
   autoJump = (state,moves) =>{
-    let tempState = JSON.parse(JSON.stringify(state));
+
+    let tempState = {...state};
     tempState.moveSet = moves;
     
     while(tempState.moveSet.length){

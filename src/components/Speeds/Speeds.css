@@ -1,0 +1,8 @@
+.rc-slider-rail,.rc-slider-track{
+    height: 8px;
+}
+
+.rc-slider-handle{
+    height: 18px;
+    width: 18px;
+}

@@ -88,7 +88,7 @@ const ColorPicker = (props) => {
             </div>
 
             <Col style={{width:"50%",margin:0}}>
-                <button id="ColorPicker" data="Color Picker" onClick={optionClick} className="cpButton activeMenu" style={{float:"left",width:"25%",marginLeft:"2px"}}>←</button>
+                <button id="ColorPicker" data="Color Picker" onClick={optionClick} className="cpButton activeMenu" style={{float:"left",width:"25%",marginLeft:"2px",fontSize:"2rem",background:"url(https://cdn.iconscout.com/icon/premium/png-512-thumb/back-arrow-1486702-1258752.png)",backgroundSize:"auto 100%",backgroundRepeat:"no-repeat",backgroundPosition: "center",backgroundColor:"#343a40"}}></button>
                 {props.colorPicked==="yellow"||props.colorPicked==="white"?
                     <div style={{backgroundColor:props.colorPicked, borderRadius: ".25rem",height:"22.5%",fontSize:"1.5rem",color:"#343a40",width:"70%",margin:"auto",border:"1px solid #343a40",float:"right",marginRight:"2px"}}>Color</div>:
                     <div style={{backgroundColor:props.colorPicked, borderRadius: ".25rem",height:"22.5%",fontSize:"1.5rem",color:"lightgrey",width:"70%",margin:"auto",border:"1px solid #343a40",float:"right",marginRight:"2px"}}>Color</div>

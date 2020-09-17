@@ -147,8 +147,8 @@ a > img {
 
   .algoMoves{
     position: relative;
-    max-height: 24vh;
-    min-height: 24vh;
+    max-height: 23vh;
+    min-height: 23vh;
     width: 100%;
     overflow-y: scroll;
     border-radius: .25rem;
@@ -173,7 +173,8 @@ a > img {
       margin:2px;
       border: 1px solid #343a40;
       border-radius: .25rem;
-      width: 30px;
+      width: 2rem;
+      height: 2rem;
       pointer-events: auto;
   }
 

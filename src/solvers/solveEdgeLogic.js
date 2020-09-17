@@ -32,9 +32,11 @@ function solveEdgeLogic(cubeDimensions,rubiksObjectAtIndex,index,cube,edges){
     };
 
     if(current.x===solved.x && current.y===solved.y && current.z===solved.z){
-        if( (whiteSide === 0 && section === 0) ||
+        //console.log(rubiksObjectAtIndex);
+        if( (whiteSide === 0  && section === 0)||
             (yellowSide === 3 && section === 1)||
-            section===2){
+            (blueSide === 1   && section === 2)||
+            (greenSide === 5  && section === 2)){
             //console.log("SOLVED");
             return "";
         }      
@@ -50,17 +52,11 @@ function solveEdgeLogic(cubeDimensions,rubiksObjectAtIndex,index,cube,edges){
             break;
         case 2:
             // Not started
-            moveString = middleEdges(current,solved,dim,blueSide,greenSide);
+            moveString = middleEdges(current,solved,dim);
             break;
         default:
             console.log("Should never reach here");
     }
-    //console.log("Section: ", section);
-    // if(section === 0) console.log("White side: ",whiteSide);
-    // else if(section === 1) console.log("Yellow side: ",yellowSide);
-    // else if(blueSide > -1) console.log("Blue side: ", blueSide);
-    // else if(greenSide > -1) console.log("Green side: ", greenSide);
-    //console.log("Current: ",current,"\nSolved: ",solved);
 
     return moveString;
 }

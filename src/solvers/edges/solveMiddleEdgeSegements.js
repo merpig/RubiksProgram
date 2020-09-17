@@ -1,12 +1,13 @@
-// function move(space,depth,side){
-//     return (space+(depth<10? "0":"") + depth + side);
-// }
+function move(depth,side){
+    return ((depth<10? "0":"") + depth + side);
+}
 
-let solveMiddleEdgeSegments = (current,solved,dim,blueSide,greenSide) => {
-    const maxCoord = dim-1;
+let solveMiddleEdgeSegments = (current,solved,cubeSize) => {
+    const maxCoord = cubeSize-1;
     const minCoord = 0;
+    const centerEdge = Math.floor(cubeSize/2);
 
-    let moveString = "";
+    let moves = [];
 
     // where blue and orange meet
     let firstEdge = (solved.x===minCoord && solved.z===maxCoord);
@@ -16,92 +17,191 @@ let solveMiddleEdgeSegments = (current,solved,dim,blueSide,greenSide) => {
     let thirdEdge = (solved.x===maxCoord && solved.z===minCoord);
 
     // flip edge segment in place
-    let flip = "01R 01U' 01B 01R' 01U";
-    // move solved edge to flip location to flip and then return
-    let firstPieceFlip = "01U2 01R 01U' 01B 01R' 01U'";
+    let flip = ["01R","01U'","01B","01R'","01U"];
+    let flip2 = ["01D","01R'","01B","01D'","01R"];
+    let flip3 = ["01L","01D'","01B","01L'","01D"];
 
-    let flip2 = "01D 01R' 01B 01D' 01R";
-    let firstPieceFlip2 = "01R2 01D 01R' 01B 01D' 01R'";
+    const flipFirstCenterEdge = [
+        move(centerEdge+1,"B'"),
+        "01R","01B","01R'","01U","01R'","01U'","01R",
+        move(centerEdge+1,"B"),
+    ];
 
-    let flip3 = "01L 01D' 01B 01L' 01D";
-    let firstPieceFlip3 = "01D2 01L 01D' 01B 01L' 01D'";
+    const flipSecondCenterEdge = [
+        move(centerEdge+1,"B'"),
+        "01D","01B","01D'","01R","01D'","01R'","01D",
+        move(centerEdge+1,"B"),
+    ];
+
+    const flipThirdCenterEdge = [
+        move(centerEdge+1,"B'"),
+        "01L","01B","01L'","01D","01L'","01D'","01L",
+        move(centerEdge+1,"B"),
+    ];
+
+    const swapLastTwoCenterEdges = [
+        move(centerEdge,"b2"),"01L2","01D2",
+        move(centerEdge,"b2"),"01D2","01L2",
+        move(centerEdge,"b2"),"01D2"
+    ];
+
+    const flipLastCenterEdge = [
+        move(centerEdge,"f"),"01L2",move(centerEdge,"f"),"01L2",
+        move(centerEdge,"f'"),"01L2",move(centerEdge,"f"),"01L2",
+        move(centerEdge,"b'"),"01L2",move(centerEdge,"f"),"01L2",
+        move(centerEdge,"f'"),"01L2",move(cubeSize,"f'"),move(centerEdge,"f'"),
+        "01L2",move(centerEdge,"f'"),"01L2",move(centerEdge+1,"F"),
+        "01L'","01B","01D"
+    ];
 
     // solves piece diagonally to solved location
-    let solveUp = "01F 02F 01R 01U' 01B 01R' 01U 01F' 02F'";
-    let solveDown = "03F 04F 01R 01U' 01B 01R' 01U 03F' 04F'";
+    let solveUp = depth => {
+        return ["01F",move(depth,"F"),"01R","01U'","01B","01R'","01U","01F'",move(depth,"F'")];
+    }
+    let solveDown = depth => {
+        return [move(depth,"B'"),"01B'","01R","01U'","01B","01R'","01U",move(depth,"B"),"01B"];
+    }
+    let solveUp2 = depth => {
+        return ["01F",move(depth,"F"),"01D","01R'","01B","01D'","01R","01F'",move(depth,"F'")];
+    }
+    let solveDown2 = depth => {
+        return [move(depth,"B'"),"01B'","01D","01R'","01B","01D'","01R",move(depth,"B"),"01B"];
+    }
+    let solveUp3 = depth => {
+        return ["01F",move(depth,"F"),"01L","01D'","01B","01L'","01D","01F'",move(depth,"F'")];
+    }
+    let solveDown3 = depth => {
+        return [move(depth,"B'"),"01B'","01L","01D'","01B","01L'","01D",move(depth,"B"),"01B"];
+    }
 
-    let solveUp2 = "01F 02F 01D 01R' 01B 01D' 01R 01F' 02F'";
-    let solveDown2 = "03F 04F 01D 01R' 01B 01D' 01R 03F' 04F'";
+    let solveLastEdge = depth => {
+        return [
+            move(depth,"B'"),"01D2",move(depth,"F") ,"01L2",
+            move(depth,"F'"),"01L2",move(depth,"B2"),"01D2",
+            move(depth,"B") ,"01D2",move(depth,"B'"),"01D2","01L2",
+            move(depth,"B2"),"01L2"
+        ];
+    }
 
-    let solveUp3 = "01F 02F 01L 01D' 01B 01L' 01D 01F' 02F'";
-    let solveDown3 = "03F 04F 01L 01D' 01B 01L' 01D 03F' 04F'";
-
-    if(dim===4){
+    if(cubeSize>4&&cubeSize%2&&current.y===centerEdge) {
+        if(firstEdge){
+            if(current.x===minCoord&&current.z===minCoord){
+                moves=[move(centerEdge+1,"F'"),"01D2",move(centerEdge+1,"F")];
+            }
+            else if(current.x===maxCoord&&current.z===minCoord){
+                moves=["01D2"];
+            }
+            else if(current.x===maxCoord&&current.z===maxCoord){
+                moves=[move(centerEdge+1,"F"),"01R2",move(centerEdge+1,"F'")];
+            }
+            else moves=flipFirstCenterEdge;
+        }
+        else if(secondEdge){
+            if(current.x===minCoord&&current.z===minCoord){
+                moves=["01D2"];
+            }
+            else if(current.x===maxCoord&&current.z===minCoord){
+                moves=[move(centerEdge+1,"F"),"01D2",move(centerEdge+1,"F'")];
+            }
+            else moves=flipSecondCenterEdge;
+        }
+        else if(thirdEdge){
+            if(current.x===maxCoord&&current.z===minCoord){
+                moves=flipThirdCenterEdge;
+            }
+            else {
+                moves=swapLastTwoCenterEdges;
+            }
+        }
+        else{
+            moves=flipLastCenterEdge;
+        }
+    }
+    else {
         if(firstEdge){
             if(current.x===minCoord&&current.z===maxCoord){
-                moveString=firstPieceFlip;
+                if(current.y>=centerEdge){
+                    moves=solveDown(cubeSize-current.y);
+                }
+                else{
+                    moves=solveUp(current.y+1);
+                }
             }
             else if(current.x===maxCoord&&current.z===maxCoord){
                 if(current.y===solved.y){
-                    moveString=flip;
+                    moves=flip;
                 }
                 else{
-                    if(current.y===(maxCoord-1)){
-                        moveString=solveUp;
+                    if(current.y>=centerEdge){
+                        moves=solveUp(cubeSize-current.y);
                     }
                     else{
-                        moveString=solveDown;
+                        moves=solveDown(current.y+1);
                     }
                 }
             }
             else if(current.x===minCoord&&current.z===minCoord){
-                moveString="01D2 01R2";
+                moves.push("01D2","01R2");
             }
-            else if(current.x===maxCoord&&current.z===minCoord){
-                moveString="01R2";
+            else {
+                moves.push("01R2");
             }
         }
         else if(secondEdge){
             if(current.x===maxCoord&&current.z===maxCoord){
-                moveString=firstPieceFlip2;
+                if(current.y>=centerEdge){
+                        moves=solveDown2(cubeSize-current.y);
+                    }
+                    else{
+                        moves=solveUp2(current.y+1);
+                    }
             }
             else if(current.x===maxCoord&&current.z===minCoord){
                 if(current.y===solved.y){
-                    moveString=flip2;
+                    moves=flip2;
                 }
                 else{
-                    if(current.y===(maxCoord-1)){
-                        moveString=solveUp2;
+                    if(current.y>=centerEdge){
+                        moves=solveUp2(cubeSize-current.y);
                     }
                     else{
-                        moveString=solveDown2;
+                        moves=solveDown2(current.y+1);
                     }
                 }
             }
-            else if(current.x===minCoord&&current.z===minCoord){
-                moveString="01D2";
+            else {
+                moves.push("01D2");
             }
         }
         else if(thirdEdge){
             if(current.x===maxCoord&&current.z===minCoord){
-                moveString=firstPieceFlip3;
+                if(current.y===(maxCoord-1)){
+                        moves=solveDown3(cubeSize-current.y);
+                    }
+                    else{
+                        moves=solveUp3(current.y+1);
+                    }
             }
             else if(current.x===minCoord&&current.z===minCoord){
                 if(current.y===solved.y){
-                    moveString=flip3;
+                    moves=flip3;
                 }
                 else{
                     if(current.y===(maxCoord-1)){
-                        moveString=solveUp3;
+                        moves=solveUp3(cubeSize-current.y);
                     }
                     else{
-                        moveString=solveDown3;
+                        moves=solveDown3(current.y+1);
                     }
                 }
             }
         }
+        else {
+            moves=solveLastEdge(current.y+1);
+        }
     }
-    return moveString;
+
+    return moves.join(" ");
 }
 
 module.exports = solveMiddleEdgeSegments;

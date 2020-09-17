@@ -81,16 +81,13 @@ class SolverUI extends Component {
                         id={i} className="solveMoveDiv" 
                         key={i}>{el.replace("01","").replace("0","")}</div>)
         )
-        solverSet.push(<div key={solverSet.length*10}style={{height:"35px",width:"100%"}}></div>)
-        jumperButtons.push(<div onClick={(e)=>setTarget(e,this.props)} id={this.props.state.solvedSet.length+1} className="solveMoveDiv jumper" key={this.props.state.solvedSet.length+1}>End</div>);
-
+        
         let algorithmSet = [];
         
         algorithms.forEach(algo=>algo.worksFor.includes(this.props.state.cubeDimension)?
             algorithmSet.push(<button id={algo.name} key={algo.name} className={this.props.state.activeAlgo===algo.name?
                 "algoButton algoActive":"algoButton"} onClick={(e)=>algoStart(e,this.props)}>{algo.name}</button>)
                 :"")
-        //console.log(algorithmSet);
 
         let solveAll = <>
         <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
@@ -261,6 +258,8 @@ class SolverUI extends Component {
             }
         }
 
+        let prevSet = this.props.state.prevSet;
+        let moveSet = this.props.state.moveSet;
         return(<div className="solverUIWrapper">
             <div className="warningPopupSolver">
                 <div id="solverChangeData" data=""></div>
@@ -271,11 +270,8 @@ class SolverUI extends Component {
                 <Col style={{paddingRight:0,paddingLeft:0}}>
                     {this.props.state.currentFunc==="Solving"?
                         <div className="solverInfo">
-                            {/* <div className="solveTime">
-                                Time:{this.props.state.solveTime}s
-                            </div> */}
                             <div className="solveMoves">
-                                <div className="setLength">{this.props.state.solvedSet.length}</div> Current:<div className="setLength">{this.props.state.prevSet.length}</div>
+                                <div className="setLength">{this.props.state.solvedSet.length}</div> Current:<div className="setLength">{prevSet.length}</div>
                             </div>
                         </div>:""
                     }
@@ -283,20 +279,20 @@ class SolverUI extends Component {
 
                         <div className={`${this.props.mobile?"mobileSolverButton":"solverButton"} rewindOne`}>
                             <p style={{width:"100%",marginBottom:"10px",marginTop:"2px"}}>
-                                {this.props.state.prevSet.length-1>=0?
-                                    this.props.state.prevSet[this.props.state.prevSet.length-1]==="stop'"?
-                                        this.props.state.prevSet[this.props.state.prevSet.length-2]?
-                                            this.props.state.prevSet[this.props.state.prevSet.length-2]===this.props.state.prevSet[this.props.state.prevSet.length-3]?
-                                                this.props.state.prevSet[this.props.state.prevSet.length-2].replace("01","").replace("0","").replace("'","")+2
+                                {prevSet.length-1>=0?
+                                    prevSet[prevSet.length-1]==="stop'"?
+                                        prevSet[prevSet.length-2]?
+                                            prevSet[prevSet.length-2]===prevSet[prevSet.length-3]?
+                                                prevSet[prevSet.length-2].replace("01","").replace("0","").replace("'","")+2
                                             :
-                                                this.props.state.prevSet[this.props.state.prevSet.length-2].replace("01","").replace("0","")
+                                                prevSet[prevSet.length-2].replace("01","").replace("0","")
                                         :
                                             "-"
                                     :
-                                        this.props.state.prevSet[this.props.state.prevSet.length-1]===this.props.state.prevSet[this.props.state.prevSet.length-2]?
-                                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","").replace("'","")+2
+                                        prevSet[prevSet.length-1]===prevSet[prevSet.length-2]?
+                                            prevSet[prevSet.length-1].replace("01","").replace("0","").replace("'","")+2
                                         :
-                                            this.props.state.prevSet[this.props.state.prevSet.length-1].replace("01","").replace("0","")
+                                            prevSet[prevSet.length-1].replace("01","").replace("0","")
                                 :
                                     "-"
                                 }
@@ -310,20 +306,20 @@ class SolverUI extends Component {
                         </div>
                         <div className={`${this.props.mobile?"mobileSolverButton":"solverButton"} playOne`}>
                             <p style={{width:"100%",marginBottom:"10px",marginTop:"2px"}}>
-                                {this.props.state.moveSet[0]&&typeof(this.props.state.moveSet[0][0])==='string'&&this.props.state.moveSet[0]!=="'"?
-                                    this.props.state.moveSet[0]==="stop'"?
-                                        this.props.state.moveSet[1]?
-                                            this.props.state.moveSet[1]===this.props.state.moveSet[2]?
-                                                this.props.state.moveSet[1].replace("01","").replace("0","").replace("'","")+2
+                                {moveSet[0]&&typeof(moveSet[0][0])==='string'&&moveSet[0]!=="'"?
+                                    moveSet[0]==="stop'"?
+                                        moveSet[1]?
+                                            moveSet[1]===moveSet[2]?
+                                                moveSet[1].replace("01","").replace("0","").replace("'","")+2
                                             :
-                                                this.props.state.moveSet[1].replace("01","").replace("0","")
+                                                moveSet[1].replace("01","").replace("0","")
                                         :
                                             "-"
                                     :
-                                        this.props.state.moveSet[0]===this.props.state.moveSet[1]?
-                                            this.props.state.moveSet[0].replace("01","").replace("0","").replace("'","")+2
+                                        moveSet[0]===moveSet[1]?
+                                            moveSet[0].replace("01","").replace("0","").replace("'","")+2
                                         :
-                                            this.props.state.moveSet[0].replace("01","").replace("0","")
+                                            moveSet[0].replace("01","").replace("0","")
                                 :
                                     "-"
                                 }
@@ -334,7 +330,6 @@ class SolverUI extends Component {
                                 onClick={() => this.props.playOne(this.props)}>
                             </img></div></a> 
                         </div>
-                        
                         <div className={`${this.props.mobile?"mobileSolverButton":"solverButton"} rewindAll`}>
                             {this.props.state.autoRewind?pause:rewindAll}
                         </div>

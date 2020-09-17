@@ -15,7 +15,6 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
     
     let dim = cubeDimensions;
     let faceColor = Math.floor((index)/((dim-2)*(dim-2)));
-    let moveString = "";
 
     // Coordinates organized
     let current = {
@@ -29,40 +28,37 @@ function solveMiddleLogic(cubeDimensions,rubiksObjectAtIndex,index){
         z:rubiksObjectAtIndex[11]
     };
 
-    
-
-    if(current.x===solved.x && current.y===solved.y && current.z===solved.z){
-        //console.log("SOLVED");
-    }
-
-    else{
-        //console.log(faceColor);
+    function solve(faceColor){
         switch(faceColor){
             case 0:
                 // Solved for all sizes
-                moveString = whiteSolver(current,solved,dim,index);
-                break;
+                return whiteSolver(current,solved,dim,index);
             case 1:
                 // Solved for all sizes
-                moveString = yellowSolver(current,solved,dim,index);
-                break;
+                return yellowSolver(current,solved,dim,index);
             case 2:
                 // Solved for all sizes
-                moveString = blueSolver(current,solved,dim);
-                break;
+                return blueSolver(current,solved,dim);
             case 3:
                 // In Progress. Solved for 4x4
-                moveString = orangeSolver(current,solved,dim);
-                break;
+                return orangeSolver(current,solved,dim);
             case 4:
                 // In Progress. Solved for 4x4
-                moveString = greenSolver(current,solved,dim,index);
-                break;
+                return greenSolver(current,solved,dim,index);
             default:
                 console.log("Should never reach here");
         }
     }
-    return moveString;
+
+    if(current.x===solved.x && current.y===solved.y && current.z===solved.z){
+        
+    }
+
+    else{
+        return solve(faceColor);
+    }
+
+    return "";
 }
 
 export default solveMiddleLogic;

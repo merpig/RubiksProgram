@@ -13,16 +13,6 @@ const Navbar = props => (
           {/*Open model here. Show bunch of settings. Pass changeSettings down to component to apply changes*/}
           <DropdownButton className="settings" aria-label="settings" id="settings" title={<i className='fa fa-cog'></i>}>
           <ul>
-            {/* <li>
-              
-              Stats <br></br>
-              <label className="checkbox-inline">
-                <input type="checkbox" data-toggle="toggle" onClick={() => props.changeSettings('displayStats')}></input>
-                {props.state.showStats ? "ON " : "OFF "}
-              </label>
-              
-              
-            </li> */}
 
             <li>
               
@@ -53,20 +43,20 @@ const Navbar = props => (
 
           {props.isLocal ?
           <>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=2" style={{backgroundColor:"lightgrey"}}>2 X 2 X 2</Dropdown.Item>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=3">3 X 3 X 3</Dropdown.Item>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=4" style={{backgroundColor:"lightgrey"}}>4 X 4 X 4</Dropdown.Item>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=5">5 X 5 X 5</Dropdown.Item>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=6" style={{backgroundColor:"lightgrey"}}>6 X 6 X 6</Dropdown.Item>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=7">7 X 7 X 7</Dropdown.Item>
+          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=2" style={{backgroundColor:"lightgrey"}}>2 X 2</Dropdown.Item>
+          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=3">3 X 3</Dropdown.Item>
+          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=4" style={{backgroundColor:"lightgrey"}}>4 X 4</Dropdown.Item>
+          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=5">5 X 5</Dropdown.Item>
+          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=6" style={{backgroundColor:"lightgrey"}}>6 X 6</Dropdown.Item>
+          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=7">7 X 7</Dropdown.Item>
           </>:
           <>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=2" style={{backgroundColor:"lightgrey"}}>2 X 2 X 2</Dropdown.Item>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=3">3 X 3 X 3</Dropdown.Item>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=4" style={{backgroundColor:"lightgrey"}}>4 X 4 X 4</Dropdown.Item>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=5">5 X 5 X 5</Dropdown.Item>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=6" style={{backgroundColor:"lightgrey"}}>6 X 6 X 6</Dropdown.Item>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=7">7 X 7 X 7</Dropdown.Item>
+          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=2" style={{backgroundColor:"lightgrey"}}>2 X 2</Dropdown.Item>
+          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=3">3 X 3</Dropdown.Item>
+          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=4" style={{backgroundColor:"lightgrey"}}>4 X 4</Dropdown.Item>
+          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=5">5 X 5</Dropdown.Item>
+          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=6" style={{backgroundColor:"lightgrey"}}>6 X 6</Dropdown.Item>
+          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=7">7 X 7</Dropdown.Item>
           </>}
 
           
@@ -86,10 +76,10 @@ const Navbar = props => (
               </button>
               <hr style={{backgroundColor:"#007bff",marginBottom:"0"}}></hr>
               <div style={{backgroundColor:"black",marginTop:"0",color:"#00C000",fontSize:"1rem",textAlign:"left"}}>
-                <div style={{paddingTop: "1rem"}}>> Click and drag anywhere not on the cube to rotate.</div>
+                <div style={{paddingTop: "1rem"}}>&gt; Click and drag anywhere not on the cube to rotate.</div>
                 <hr style={{backgroundColor:"lightgray"}}></hr>
-                <div>> 1. Click and drag anywhere on the cube to make a move or</div>
-                <div>> 2. Use buttons(Moves) or keyboard to make turns: <br></br>
+                <div>&gt; 1. Click and drag anywhere on the cube to make a move or</div>
+                <div>&gt; 2. Use buttons(Moves) or keyboard to make turns: <br></br>
                   <div style={{width:"100%",textAlign:"center"}}>
                   <b style={{color: "white",backgroundColor:"black"}}> F, </b><b style={{color: "white",backgroundColor:"black"}}>f,</b>
                   <b style={{color: "blue",backgroundColor:"black"}}> U, </b><b style={{color: "blue",backgroundColor:"black"}}>u,</b>
@@ -101,7 +91,7 @@ const Navbar = props => (
                   </div>
                 </div>
                 <hr style={{backgroundColor:"lightgray"}}></hr>
-                <div style={{marginBottom: "0",paddingBottom:"1rem"}}>> Author: Sasha Peters, <a target="#" href="https://www.github.com/merpig">github</a>, <a target="#" href="https://www.github.com/merpig/RubiksProgram">Project Repo</a></div>
+                <div style={{marginBottom: "0",paddingBottom:"1rem"}}>&gt; Author: Sasha Peters, <a target="#" href="https://www.github.com/merpig">github</a>, <a target="#" href="https://www.github.com/merpig/RubiksProgram">Project Repo</a></div>
                 <hr style={{backgroundColor:"lightgrey"}}></hr>
                   <div style={{color: "white",backgroundColor:"black",textAlign:"center"}}>
                   site design / cube © 2020 RubiksProgram
@@ -112,8 +102,6 @@ const Navbar = props => (
         )}
       </Popup> {" "}
       <button id="fullscreenBtn" value="true">Fullscreen</button>
-      
-      {/*<button className="btn btn-primary btn-circle btn-circle-sm m-1" onClick={() => props.changeSettings([1],["Hello"])}><i className="fa fa-cog"></i></button> */}
     </div>
   </nav>
 );
