@@ -11,6 +11,7 @@ class SolverUI extends Component {
     constructor(props) {
         super(props);
     }
+    
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         if(nextProps.state.autoRewind===true && nextProps.state.solvedSetIndex >= nextProps.state.targetSolveIndex) {
@@ -47,6 +48,8 @@ class SolverUI extends Component {
 
     render(){
         let solverSet = [];
+        let prevSet = this.props.state.prevSet;
+        let moveSet = this.props.state.moveSet;
         let jumperButtons = [<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={0} className="solveMoveDiv jumper" key={-1}>Top</div>];
         !this.props.state.solvedSet.length?
         solverSet.push("Already solved"):
@@ -89,29 +92,52 @@ class SolverUI extends Component {
                 "algoButton algoActive":"algoButton"} onClick={(e)=>algoStart(e,this.props)}>{algo.name}</button>)
                 :"")
 
-        let solveAll = <>
-        <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
-            alt="fastforward" 
-            src="https://image.flaticon.com/icons/svg/92/92330.svg"
-            onClick={() => fastforward(this.props)}>
-        </img></div></a></>;
+        let play = "";
 
-        let rewindAll = <>
-            <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
-                className="rotateimg180"
-                alt="fastforward" 
-                src="https://image.flaticon.com/icons/svg/92/92330.svg"
-                onClick={() => fastrewind(this.props)}>
-            </img></div></a></>;
+        let rewind = "";
 
-        let pause = <>
-        
-        <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
-            alt="pause" 
-            src="https://image.flaticon.com/icons/svg/92/92344.svg"
-            onClick={() => pauseSolver(this.props)}>
-        </img></div></a>
-        </>;
+        let previousMove = 
+            <div className="previousMove">
+                {prevSet.length-1>=0?
+                    prevSet[prevSet.length-1]==="stop'"?
+                        prevSet[prevSet.length-2]?
+                            prevSet[prevSet.length-2]===prevSet[prevSet.length-3]?
+                                prevSet[prevSet.length-2].replace("01","").replace("0","").replace("'","")+2
+                            :
+                                prevSet[prevSet.length-2].replace("01","").replace("0","")
+                        :
+                            "-"
+                    :
+                        prevSet[prevSet.length-1]===prevSet[prevSet.length-2]?
+                            prevSet[prevSet.length-1].replace("01","").replace("0","").replace("'","")+2
+                        :
+                            prevSet[prevSet.length-1].replace("01","").replace("0","")
+                :
+                    "-"}
+            </div>
+
+        let nextMove = 
+            <div className="nextMove">
+                {moveSet[0]&&typeof(moveSet[0][0])==='string'&&moveSet[0]!=="'"?
+                    moveSet[0]==="stop'"?
+                        moveSet[1]?
+                            moveSet[1]===moveSet[2]?
+                                moveSet[1].replace("01","").replace("0","").replace("'","")+2
+                            :
+                                moveSet[1].replace("01","").replace("0","")
+                        :
+                            "-"
+                    :
+                        moveSet[0]===moveSet[1]?
+                            moveSet[0].replace("01","").replace("0","").replace("'","")+2
+                        :
+                            moveSet[0].replace("01","").replace("0","")
+                :
+                    "-"
+                }
+            </div>;
+
+
 
         function stay(){
             document.querySelector(".warningPopupSolver").style.display="none";
@@ -140,8 +166,6 @@ class SolverUI extends Component {
                 props.setState({activeMenu:"",currentFunct:"None",isValidConfig:false});
             }
         }
-
-        
 
         function fastforward(props){
             if(!props.state.moveSet.length) return;
@@ -258,8 +282,6 @@ class SolverUI extends Component {
             }
         }
 
-        let prevSet = this.props.state.prevSet;
-        let moveSet = this.props.state.moveSet;
         return(<div className="solverUIWrapper">
             <div className="warningPopupSolver">
                 <div id="solverChangeData" data=""></div>
@@ -267,103 +289,12 @@ class SolverUI extends Component {
                 <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={()=>leave(this.props)} className="solverLeaveStay">Leave</button>
             </div>
             <Row style={{width:"100%",height:"100%",margin:0}}>
-                <Col style={{paddingRight:0,paddingLeft:0}}>
-                    {this.props.state.currentFunc==="Solving"?
-                        <div className="solverInfo">
-                            <div className="solveMoves">
-                                <div className="setLength">{this.props.state.solvedSet.length}</div> Current:<div className="setLength">{prevSet.length}</div>
-                            </div>
-                        </div>:""
-                    }
-                    <div className="solverInterface">
-
-                        <div className={`${this.props.mobile?"mobileSolverButton":"solverButton"} rewindOne`}>
-                            <p style={{width:"100%",marginBottom:"10px",marginTop:"2px"}}>
-                                {prevSet.length-1>=0?
-                                    prevSet[prevSet.length-1]==="stop'"?
-                                        prevSet[prevSet.length-2]?
-                                            prevSet[prevSet.length-2]===prevSet[prevSet.length-3]?
-                                                prevSet[prevSet.length-2].replace("01","").replace("0","").replace("'","")+2
-                                            :
-                                                prevSet[prevSet.length-2].replace("01","").replace("0","")
-                                        :
-                                            "-"
-                                    :
-                                        prevSet[prevSet.length-1]===prevSet[prevSet.length-2]?
-                                            prevSet[prevSet.length-1].replace("01","").replace("0","").replace("'","")+2
-                                        :
-                                            prevSet[prevSet.length-1].replace("01","").replace("0","")
-                                :
-                                    "-"
-                                }
-                            </p>
-                            <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
-                                className="rotateimg180" 
-                                src="https://image.flaticon.com/icons/svg/92/92335.svg" 
-                                alt="rewind"
-                                onClick={this.props.rewindOne}>
-                            </img></div></a>
-                        </div>
-                        <div className={`${this.props.mobile?"mobileSolverButton":"solverButton"} playOne`}>
-                            <p style={{width:"100%",marginBottom:"10px",marginTop:"2px"}}>
-                                {moveSet[0]&&typeof(moveSet[0][0])==='string'&&moveSet[0]!=="'"?
-                                    moveSet[0]==="stop'"?
-                                        moveSet[1]?
-                                            moveSet[1]===moveSet[2]?
-                                                moveSet[1].replace("01","").replace("0","").replace("'","")+2
-                                            :
-                                                moveSet[1].replace("01","").replace("0","")
-                                        :
-                                            "-"
-                                    :
-                                        moveSet[0]===moveSet[1]?
-                                            moveSet[0].replace("01","").replace("0","").replace("'","")+2
-                                        :
-                                            moveSet[0].replace("01","").replace("0","")
-                                :
-                                    "-"
-                                }
-                            </p>
-                            <a className="solveButtonImage" href="#"><div className="solveButtonImage"><img 
-                                src="https://image.flaticon.com/icons/svg/92/92335.svg" 
-                                alt="play"
-                                onClick={() => this.props.playOne(this.props)}>
-                            </img></div></a> 
-                        </div>
-                        <div className={`${this.props.mobile?"mobileSolverButton":"solverButton"} rewindAll`}>
-                            {this.props.state.autoRewind?pause:rewindAll}
-                        </div>
-                        <div className={`${this.props.mobile?"mobileSolverButton":"solverButton"} playAll`}>
-                            {this.props.state.autoPlay?pause:solveAll}
-                        </div>
-
-                    </div>
-                    {this.props.mobile?
-                        <Row style={{height:"150px"}}>
-                            <Col xs={4}>
-                            {this.props.state.currentFunc==="Solving"?<>
-                            <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu" style={{height:"auto"}}>Exit</button></>:
-                            this.props.state.currentFunc==="Color Picker"?<>
-                            <button id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:
-                            this.props.state.currentFunc==="Algorithms"?<>
-                            <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="cpButton activeMenu">Exit</button></>:<></>}
-                            </Col>
-                            <Col xs={8} style={{paddingLeft: 0}}>
-                            {/* {jumperButtons}small fix here for mobile size jumper buttons */}
-                            </Col>
-                        </Row>:<></>
-                    }
-                </Col>
-                <Col>
+                <Col style={!this.props.mobile?{paddingLeft:"0px"}:{}}> 
                     {!this.props.mobile?<>
                     <div className="solverMoves">
                         
                         {solverSet}
                         
-                    </div>
-                    
-                    <div className="jumperButtons" >
-                        {/* {jumperButtons} */}
                     </div></>:<>
                     {this.props.state.currentFunc==="Algorithms"?<><Row >
                         {/* <label htmlFor="patterns" style={{color:"lightgrey"}}>Choose a Pattern:</label> */}
@@ -391,6 +322,54 @@ class SolverUI extends Component {
                     }</>
                     }
                 </Col>
+                <Col style={{paddingRight:0,paddingLeft:0}}>
+                    <div className="exitDiv" style={{width:"100%",maxWidth:"300px",marginLeft:"auto",marginRight:"auto",float:"right",height:"20%"}}>
+                    {this.props.state.currentFunc==="Solving"?<>
+                        <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="exitButton activeMenu" style={{float:"right"}}>Exit</button></>:
+                        <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="exitButton activeMenu"style={{float:"right"}}>Exit</button>}
+                    </div>
+                    <div className="solverInterface">
+                        <button 
+                            className={`solverButton rewindOne`}
+                            onClick={() => this.props.rewindOne(this.props)}> 
+                            Previous {previousMove}
+                        </button>
+                        <button 
+                            className={`solverButton playOne`}
+                            onClick={() => this.props.playOne(this.props)}> 
+                            Next {nextMove}
+                        </button>
+                        {this.props.state.autoRewind?
+                        <button 
+                            className={`solverButton pause`}
+                            onClick={() => pauseSolver(this.props)}> 
+                            Pause
+                        </button>
+                        :
+                        <button 
+                            className={`solverButton rewindAll`}
+                            onClick={() => fastrewind(this.props)}> 
+                            Fast Rewind
+                        </button>
+                        }
+                        {this.props.state.autoPlay?
+                        <button 
+                            className={`solverButton pause`}
+                            onClick={() => pauseSolver(this.props)}> 
+                            Pause
+                        </button>
+                        :
+                        <button 
+                            className={`solverButton fastforward`}
+                            onClick={() => fastforward(this.props)}> 
+                            Fast Forward
+                        </button>
+                        }
+                        
+                    </div>
+
+                </Col>
+                
             </Row>
         </div>
     )}

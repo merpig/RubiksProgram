@@ -77,15 +77,13 @@ const MenuOptions = props => {
         }
         return (
         <div className="menuOptionsWrapper">
-            {props.state.currentFunc==="Solving"?<><div style={{height:"45%"}}></div>
-            <button id="Solver" data="Solving" key="Solving" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:
+            {props.state.currentFunc==="Solving"?[]:
             props.state.currentFunc==="Color Picker"?<><div style={{paddingTop:"45%"}}></div>
             <button id="ColorPicker" data="Color Picker" key="Color Picker" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:
-            props.state.currentFunc==="Algorithms"?<>
+            props.state.currentFunc==="Algorithms"?
             <div className="algoList">
                 {algorithmSet}  
-            </div>
-           <button id="Algorithms" data="Algorithms" key="Algorithms" onClick={optionClick} className="cpButton activeMenu">Exit</button></>:baseOptions}
+            </div>:baseOptions}
         </div>)
 
 }

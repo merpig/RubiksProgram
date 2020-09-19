@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import Navbar from "./components/Navbar/Navbar";
-import Speeds from "./components/Speeds/Speeds"
-import MoveInput from "./components/MoveInput"
+import Speeds from "./components/Speeds/Speeds";
+import MoveInput from "./components/MoveInput";
+import SolverInfo from "./components/SolverInfo/SolverInfo";
 import Menu from "./components/MenuWrapper/MenuWrapper";
+
 import * as THREE from "three";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -898,7 +900,7 @@ class App extends Component {
         obj.error.push(`This configuration of the cube is not solveable.`);
         obj.error.push(`Check that you've entered all pieces correctly.`);
         if(this.state.cubeDimension>3){
-          obj.error.push(`There may be a few edge cases on the 4x4, where`);
+          obj.error.push(`There may be a few edge cases on the 4x4, where`); 
           obj.error.push(`a valid scramble cube may not work. Sorry for the`);
           obj.error.push(`inconvenience, a fix is on the way. Make a few`);
           obj.error.push(`moves and try again :)`);
@@ -2390,7 +2392,7 @@ class App extends Component {
           }
         </div>
 
-        {this.state.currentFunc==="Color Picker"?<></>:<Speeds //Top left with slider
+        {this.state.currentFunc==="Color Picker"?[]:<Speeds //Top left with slider
           onSliderChange={this.onSliderChange}
           speed={this.state.sliderSpeed}
         />}
@@ -2400,7 +2402,13 @@ class App extends Component {
             handleDrag = {this.handleDragInput}
             onStart = {this.onStartInput}
             onStop = {this.onStopInput}
-          /> : ""
+          /> : []
+        }
+        {this.state.currentFunc==="Solving"?
+            <SolverInfo
+              solvedSetLength={this.state.solvedSet.length}
+              prevSetLength={this.state.prevSet.length}
+            />:[]
         }
 
         <Menu 

@@ -3,7 +3,7 @@ import "../MenuWrapper/MenuWrapper.css";
 import "./MobileView.css"
 import Controls from "../Controls";
 import SolverUI from "../SolverUI/SolverUI";
-import ColorPicker from "../ColorPicker";
+import ColorPicker from "../ColorPicker/ColorPicker";
 import {Row, Col, Button} from "react-bootstrap";
 
 const optionLimit = 5;
@@ -113,24 +113,24 @@ class Mobile extends Component {
         return (
         <div className={this.props.state.activeMenu===""?"menuWrapperOptions":"menuWrapper"}>
             {(this.props.state.currentFunc === "None"||this.props.state.currentFunc === "Drag Turn"||this.props.state.currentFunc === "Undo"||this.props.state.currentFunc === "Redo")&&this.props.state.activeMenu!=="Moves"?
-                <Row style={{position: "absolute", bottom:"0px",margin:"0px", width:"100%"}}>
+                <Row style={{position: "absolute", bottom:"0px",margin:"0px", width:"100%", height:"100%"}}>
                     <Col xs={6}>
                         {this.props.state.cubeDimension<=optionLimit?
-                            <><Button className="mobileButton" id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} key={1}>Color Picker</Button> 
-                            <Button className="mobileButton" id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} key={2}>Solver</Button></>
+                            <><button className="mobileButton" id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} key={1}>Color Picker</button> 
+                            <button className="mobileButton" id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} key={2}>Solver</button></>
                             :<>
-                            <Button className="blankButton" key={1}></Button>
-                            <Button className="blankButton" key={2}></Button></>
+                            <button className="blankButton" key={1}></button>
+                            <button className="blankButton" key={2}></button></>
                         } 
-                        <Button className="mobileButton" id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} key={3}>Patterns</Button> 
+                        <button className="mobileButton" id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} key={3}>Patterns</button> 
                     </Col>
                     <Col xs={6}>
                         {this.props.state.cubeDimension<5?
-                            <Button className="mobileButton" onClick={()=>this.props.setState({activeMenu: "Moves"})} key={0}>Moves</Button>:
-                            <Button className="blankButton" key={0}></Button>
+                            <button className="mobileButton" onClick={()=>this.props.setState({activeMenu: "Moves"})} key={0}>Moves</button>:
+                            <button className="blankButton" key={0}></button>
                         }    
-                        <Button className="mobileButton" id="Scramble" onClick={(e)=>otherOptionClick(e,this.props)} key={2}>Scramble</Button>
-                        <Button className="mobileButton" id="Reset" onClick={(e)=>otherOptionClick(e,this.props)}  key={3}>Reset</Button>
+                        <button className="mobileButton" id="Scramble" onClick={(e)=>otherOptionClick(e,this.props)} key={2}>Scramble</button>
+                        <button className="mobileButton" id="Reset" onClick={(e)=>otherOptionClick(e,this.props)}  key={3}>Reset</button>
                     </Col>
                 </Row>
             :

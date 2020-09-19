@@ -8,18 +8,32 @@
     flex-direction: column;
     justify-content: space-between;
     padding: 5px;
+    padding-top:0px;
 }
 
 .leftButton{
     color: lightgrey;
-    background-color: #343a40;
+    background-color:transparent;
     border-radius: .25rem;
-    border: 1px solid #007bff;
+    border: 2px solid #007bff;
     font-size: 1rem;
-    height: 20%;
+    height: 30%;
     white-space: nowrap;
     pointer-events: auto;
     margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.rightButton{
+    color: lightgrey;
+    background-color:transparent;
+    border-radius: .25rem;
+    border: 2px solid #007bff;
+    font-size: 1rem;
+    height: 30%;
+    white-space: nowrap;
+    pointer-events: auto;
+    margin-right: 5px;
     margin-bottom: 5px;
 }
 
@@ -33,11 +47,9 @@
     width:100%;
     margin-right:0px;
     overflow-y: scroll;
-    height: 20vh;
+    height: 28vh;
     min-height: 100px;
     overflow-x: hidden;
-    margin-top: 5px;
-    margin-bottom: 5px;
     color: #343a40!important;
     border: 2px solid #007bff;
     border-radius: .25rem;

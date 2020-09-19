@@ -93,12 +93,12 @@ const ColorPicker = (props) => {
                     <div style={{backgroundColor:props.colorPicked, borderRadius: ".25rem",height:"22.5%",fontSize:"1.5rem",color:"#343a40",width:"70%",margin:"auto",border:"1px solid #343a40",float:"right",marginRight:"2px"}}>Color</div>:
                     <div style={{backgroundColor:props.colorPicked, borderRadius: ".25rem",height:"22.5%",fontSize:"1.5rem",color:"lightgrey",width:"70%",margin:"auto",border:"1px solid #343a40",float:"right",marginRight:"2px"}}>Color</div>
                 }
-                <div className="cpButton" style={{color:'lightgrey',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('white')}>{props.isMobile?"White":"1. White"}</div>
-                <div className="cpButton" style={{color:'blue',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('blue')}>{props.isMobile?"Blue":"2. Blue"}</div>
-                <div className="cpButton" style={{color:'red',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('red')}>{props.isMobile?"Red":"3. Red"}</div>
-                <div className="cpButton" style={{color:'yellow',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('yellow')}>{props.isMobile?"Yellow":"4. Yellow"}</div>
-                <div className="cpButton" style={{color:'orange',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('orange')}>{props.isMobile?"Orange":"5. Orange"}</div>
-                <div className="cpButton" style={{color:'green',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('green')}>{props.isMobile?"Green":"6. Green"}</div>
+                <div className="cpButton white" style={{color:'lightgrey',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('white')}>{props.isMobile?"White":"1. White"}</div>
+                <div className="cpButton blue" style={{color:'blue',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('blue')}>{props.isMobile?"Blue":"2. Blue"}</div>
+                <div className="cpButton red" style={{color:'red',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('red')}>{props.isMobile?"Red":"3. Red"}</div>
+                <div className="cpButton yellow" style={{color:'yellow',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('yellow')}>{props.isMobile?"Yellow":"4. Yellow"}</div>
+                <div className="cpButton orange" style={{color:'orange',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('orange')}>{props.isMobile?"Orange":"5. Orange"}</div>
+                <div className="cpButton green" style={{color:'green',width:"45%",display:"inline-block",height:"20%", margin:"2px"}} onClick={()=>props.changeColor('green')}>{props.isMobile?"Green":"6. Green"}</div>
                 
             </Col>
             <Col style={{width:"50%",margin:0}}>

@@ -4,7 +4,7 @@ import {Row, Col} from "react-bootstrap";
 import MenuOptions from "./MenuOptions/MenuOptions";
 import MenuOptionsOther from "./MenuOptionsOther/MenuOptionsOther";
 import Controls from "./Controls";
-import ColorPicker from "./ColorPicker";
+import ColorPicker from "./ColorPicker/ColorPicker";
 import SolverUI from "./SolverUI/SolverUI";
 
 
@@ -96,7 +96,7 @@ class View extends Component {
         return (
         <div className={this.props.state.activeMenu===""?"menuWrapperOptions":"menuWrapper"} style={{color:"white",pointerEvents: "none"}}>
             <Row style={{height: "100%",margin:"0px"}}>
-                 {(this.props.state.activeMenu==="ColorPicker")?
+                 {(this.props.state.activeMenu==="ColorPicker"||this.props.state.activeMenu==="Solver")?
                 []:
                 [<Col key="MenuOptions" style={{paddingLeft:"0px"}}>
                     <MenuOptions {...this.props}/>
@@ -107,7 +107,9 @@ class View extends Component {
                 <Col 
                     id="menuBox" 
                     style={{overflow:"auto",position:"relative",top:"0px",width:"100%"}} 
-                    xs={this.props.state.currentFunc==="Color Picker"?12:(this.props.state.activeMenu==="Solver"||this.props.state.activeMenu==="Algorithms")?10:8}>
+                    xs={
+                        this.props.state.currentFunc==="Color Picker"||this.props.state.activeMenu==="Solver"?
+                        12:8}>
                     {activeMenu}  
                 </Col>
                 {(this.props.state.activeMenu==="ColorPicker"||this.props.state.activeMenu==="Solver"||this.props.state.activeMenu==="Algorithms")?

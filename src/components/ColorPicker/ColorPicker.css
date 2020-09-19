@@ -1,0 +1,87 @@
+.warningPopup{
+    display:none;
+    position: absolute;
+    background-color: white;
+    border-radius: .25rem;
+    z-index: 100;
+    color: #343a40;
+    left: 0;
+    width:100%;
+    height: 100%;
+    text-align: center;
+}
+
+.cpMessage{
+    margin:auto;
+    padding: 20px;
+}
+
+.cpLeaveStay{
+    color: lightgrey;
+    background-color: #343a40;
+    border-radius: .25rem;
+    border: 1px solid #007bff;
+    font-size: 1rem;
+    height: 22.5%;
+    white-space: nowrap;
+    margin: 5px;
+    pointer-events: auto;
+  }
+
+  .triggerBtn{
+    width:100%;
+    height:20%;
+    font-size: 1rem;
+    background-color: #343a40;
+    color: lightgray;
+    border-radius: .25rem;
+    border: 1px solid #007bff;
+  }
+
+  .white{
+    background-color: rgba(255,255,255,.1);
+  }
+
+  .white:hover{
+    background-color: rgba(255,255,255,.75)!important;
+  }
+
+  .blue{
+    background-color: rgba(0,0,255,.1);
+  }
+
+  .blue:hover{
+    background-color: rgba(0,0,255,.75)!important;
+  }
+
+  .red{
+    background-color: rgba(255,0,0,.1);
+  }
+
+  .red:hover{
+    background-color: rgba(255,0,0,.75)!important;
+  }
+
+  .yellow{
+    background-color: rgba(255,255,0,.1);
+  }
+
+  .yellow:hover{
+    background-color: rgba(255,255,0,.75)!important;
+  }
+
+  .orange{
+    background-color: rgba(255,165,0,.1);
+  }
+
+  .orange:hover{
+    background-color: rgba(255,165,0,.75)!important;
+  }
+
+  .green{
+    background-color: rgba(0,255,0,.1);
+  }
+
+  .green:hover{
+    background-color: rgba(0,255,0,.75)!important;
+  }
