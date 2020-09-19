@@ -140,11 +140,10 @@ class SolverUI extends Component {
 
 
         function stay(){
-            e.stopPropagation();
             document.querySelector(".warningPopupSolver").style.display="none";
         }
 
-        function leave(props){
+        function leave(e,props){
             e.stopPropagation();
             props.stopSolve();
 
@@ -298,7 +297,7 @@ class SolverUI extends Component {
                         <div className="warningPopupSolver">
                             <div id="solverChangeData" data=""></div>
                             <div className="solverMessage">Are you sure you want to leave Solver? Progress will not be saved.</div>
-                            <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={()=>leave(this.props)} className="solverLeaveStay">Leave</button>
+                            <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={(e)=>leave(e,this.props)} className="solverLeaveStay">Leave</button>
                         </div>
                         <button 
                             className={`solverButton rewindOne`}
