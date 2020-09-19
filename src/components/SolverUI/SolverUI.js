@@ -140,10 +140,12 @@ class SolverUI extends Component {
 
 
         function stay(){
+            e.stopPropagation();
             document.querySelector(".warningPopupSolver").style.display="none";
         }
 
         function leave(props){
+            e.stopPropagation();
             props.stopSolve();
 
             if( document.querySelector(".activeMenu")){
@@ -240,7 +242,6 @@ class SolverUI extends Component {
         }
 
         function optionClick(e,props){
-            e.stopPropagation();
             switch(props.state.currentFunc){
                 case "Solving":
                     document.querySelector(".warningPopupSolver").style.display="block";
