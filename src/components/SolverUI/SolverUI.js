@@ -240,46 +240,20 @@ class SolverUI extends Component {
         }
 
         function optionClick(e,props){
-            // Already selected button (turns off)
-            if(e.target.classList.contains("activeMenu")){
-                
-                switch(props.state.currentFunc){
-                    case "Color Picker":
-                        document.querySelector(".warningPopup").style.display="block";
-                        break;
-                    case "Solving":
-                        document.querySelector(".warningPopupSolver").style.display="block";
-                        break;
-                    case "Algorithms":
-                        //this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : [],targetSolveIndex:-1,solvedSet:[]});
-                        props.setState({activeMenu:"",currentFunc:"Reset",solvedSet:[],hoverData:[],prevSet:[],moveSet:[],isValidConfig:false,targetSolveIndex:-1, solveMoves : "",autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,activeAlgo:"none"});
-                        break;
-                    default:
-                        document.querySelector(".activeMenu").classList.remove("activeMenu");
-                        props.setState({activeMenu:"",currentFunct:"None"});
-                }
+            e.stopPropagation();
+            switch(props.state.currentFunc){
+                case "Solving":
+                    document.querySelector(".warningPopupSolver").style.display="block";
+                    break;
+                case "Algorithms":
+                    //this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : [],targetSolveIndex:-1,solvedSet:[]});
+                    props.setState({activeMenu:"",currentFunc:"Reset",solvedSet:[],hoverData:[],prevSet:[],moveSet:[],isValidConfig:false,targetSolveIndex:-1, solveMoves : "",autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,activeAlgo:"none"});
+                    break;
+                default:
+                    document.querySelector(".activeMenu").classList.remove("activeMenu");
+                    props.setState({activeMenu:"",currentFunct:"None"});
             }
-            else {
-                if(props.state.currentFunc==="None") {
-                    if(props.state.activeMenu!==""&&props.state.activeMenu!==null&&document.querySelector(".activeMenu")!==null) {
-                        document.querySelector(".activeMenu").classList.remove("activeMenu");
-                    }
-                    e.target.classList.add("activeMenu");
-                    if(e.target.id==="ColorPicker"){
-                        
-                        props.setState({activeMenu:e.target.id});
-                        props.beginColorPicker();
-                    }
-                    else if(e.target.id==="Solver"){
-                        props.setState({activeMenu:e.target.id});
-                        props.beginSolve();
-                    }
-                    else if(e.target.id==="Algorithms"){
-                        props.setState({activeMenu:e.target.id,currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[]});
-                    }
-                    else props.setState({activeMenu:e.target.id,currentFunc:"None"});
-                }
-            }
+
         }
 
         return(<div className="solverUIWrapper">
