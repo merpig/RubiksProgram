@@ -283,11 +283,6 @@ class SolverUI extends Component {
         }
 
         return(<div className="solverUIWrapper">
-            <div className="warningPopupSolver">
-                <div id="solverChangeData" data=""></div>
-                <div className="solverMessage">Are you sure you want to leave Solver? Progress will not be saved.</div>
-                <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={()=>leave(this.props)} className="solverLeaveStay">Leave</button>
-            </div>
             <Row style={{width:"100%",height:"100%",margin:0}}>
                 <Col style={!this.props.mobile?{paddingLeft:"0px"}:{}}> 
                     {!this.props.mobile?<>
@@ -323,12 +318,13 @@ class SolverUI extends Component {
                     }
                 </Col>
                 <Col style={{paddingRight:0,paddingLeft:0}}>
-                    <div className="exitDiv" style={{width:"100%",maxWidth:"300px",marginLeft:"auto",marginRight:"auto",float:"right",height:"20%"}}>
-                    {this.props.state.currentFunc==="Solving"?<>
-                        <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="exitButton activeMenu" style={{float:"right"}}>Exit</button></>:
-                        <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="exitButton activeMenu"style={{float:"right"}}>Exit</button>}
-                    </div>
+                    
                     <div className="solverInterface">
+                        <div className="warningPopupSolver">
+                            <div id="solverChangeData" data=""></div>
+                            <div className="solverMessage">Are you sure you want to leave Solver? Progress will not be saved.</div>
+                            <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={()=>leave(this.props)} className="solverLeaveStay">Leave</button>
+                        </div>
                         <button 
                             className={`solverButton rewindOne`}
                             onClick={() => this.props.rewindOne(this.props)}> 
@@ -341,31 +337,37 @@ class SolverUI extends Component {
                         </button>
                         {this.props.state.autoRewind?
                         <button 
-                            className={`solverButton pause`}
+                            className={`solverButton rewindAll`}
                             onClick={() => pauseSolver(this.props)}> 
-                            Pause
+                            Pause Solver
                         </button>
                         :
                         <button 
                             className={`solverButton rewindAll`}
                             onClick={() => fastrewind(this.props)}> 
-                            Fast Rewind
+                            Auto Rewind
                         </button>
                         }
                         {this.props.state.autoPlay?
                         <button 
-                            className={`solverButton pause`}
+                            className={`solverButton fastforward`}
                             onClick={() => pauseSolver(this.props)}> 
-                            Pause
+                            Pause Solver
                         </button>
                         :
                         <button 
                             className={`solverButton fastforward`}
                             onClick={() => fastforward(this.props)}> 
-                            Fast Forward
+                            Auto Forward
                         </button>
                         }
                         
+                    </div>
+                    <div className="exitDiv" style={{width:"100%",maxWidth:"300px",float:"right",height:"20%"}}>
+                        <button id="blankExit"></button>
+                    {this.props.state.currentFunc==="Solving"?<>
+                        <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="exitButton activeMenu">Exit</button></>:
+                        <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="exitButton activeMenu">Exit</button>}
                     </div>
 
                 </Col>
