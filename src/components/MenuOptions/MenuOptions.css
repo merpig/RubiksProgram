@@ -24,6 +24,10 @@
     margin-bottom: 5px;
 }
 
+.leftButton:hover,.rightButton:hover{
+    background-color: rgba(0,0,255,.5);
+}
+
 .rightButton{
     color: lightgrey;
     background-color:transparent;

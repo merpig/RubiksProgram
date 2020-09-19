@@ -33,13 +33,13 @@ a > img {
 
 .warningPopupSolver{
     display:none;
+    position: absolute;
     background-color: lightgrey;
     border-radius: .25rem;
     z-index: 100001;
     color: #343a40;
     text-align: center;
     height:100%;
-    width: 100%;
     overflow: hidden;
 }
 
@@ -55,6 +55,9 @@ a > img {
     border: 1px solid #007bff;
     font-size: 1rem;
     height: 22.5%;
+    width: 35%;
+    padding-left: 6px;
+    padding-right: 6px;
     white-space: nowrap;
     margin: 5px;
     pointer-events: auto;
