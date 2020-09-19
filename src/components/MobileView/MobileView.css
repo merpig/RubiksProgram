@@ -9,6 +9,14 @@
     margin-bottom: 4px;
 }
 
+.mobileButton:active{
+    background-color: transparent;
+}
+
+.mobileButton:hover{
+    background-color: rgba(0,0,255,.5);
+}
+
 .blankButton{
     opacity: 0;
     border-radius: .25rem;

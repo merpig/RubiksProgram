@@ -28,6 +28,10 @@
     background-color: rgba(0,0,255,.5);
 }
 
+.leftButton:active,.rightButton:active{
+    background-color: rgba(0,0,255,.25)
+}
+
 .rightButton{
     color: lightgrey;
     background-color:transparent;
