@@ -89,11 +89,11 @@ a > img {
   }
 
   .solverButton:hover,.exitButton:hover{
-    background-color: rgb(50, 50, 50)!important;
+    background-color: rgba(0,0,255,.5)!important;
   }
 
   .solverButton:active,.exitButton:active{
-    background-color: rgb(75, 75, 75)!important;
+    background-color: rgba(0,0,255,.25)!important;
   }
   
   .solverButton > p{

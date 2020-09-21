@@ -38,50 +38,80 @@
     border: 1px solid #007bff;
   }
 
-  .white{
-    background-color: rgba(255,255,255,.1);
+  .colorButtonContainer{
+    max-width: 300px;
+    height: 100%;
+    float: right;
   }
 
+  .colorPicker{
+    width:45%;
+    height:20%;
+    margin:3px;
+    display: inline-block;
+    border: 2px solid;
+    border-radius: .25rem;
+    background-color: transparent;
+    pointer-events: auto;
+  }
+
+  .colorPickerBlank{
+    border: none;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .colorPickerExit{
+    color: lightgrey;
+    background: Transparent no-repeat;
+    border-radius: .25rem;
+    border: 2px solid #007bff;
+  }
+
+  .white{
+    color: lightgray;
+    border-color: lightgray;
+  }
   .white:hover{
-    background-color: rgba(255,255,255,.75)!important;
+    background-color: rgba(255,255,255,.3)!important;
   }
 
   .blue{
-    background-color: rgba(0,0,255,.1);
+    color: blue;
+    border-color: blue;
   }
-
   .blue:hover{
-    background-color: rgba(0,0,255,.75)!important;
+    background-color: rgba(0,0,255,.3)!important;
   }
 
   .red{
-    background-color: rgba(255,0,0,.1);
+    color: red;
+    border-color: red;
   }
-
   .red:hover{
-    background-color: rgba(255,0,0,.75)!important;
+    background-color: rgba(255,0,0,.3)!important;
   }
 
   .yellow{
-    background-color: rgba(255,255,0,.1);
+    color: yellow;
+    border-color: yellow;
   }
-
   .yellow:hover{
-    background-color: rgba(255,255,0,.75)!important;
+    background-color: rgba(255,255,0,.3)!important;
   }
 
   .orange{
-    background-color: rgba(255,165,0,.1);
+    color: orange;
+    border-color: orange;
   }
-
   .orange:hover{
-    background-color: rgba(255,165,0,.75)!important;
+    background-color: rgba(255,165,0,.3)!important;
   }
 
   .green{
-    background-color: rgba(0,255,0,.1);
+    color: green;
+    border-color: green;
   }
-
   .green:hover{
-    background-color: rgba(0,255,0,.75)!important;
+    background-color: rgba(0,255,0,.3)!important;
   }

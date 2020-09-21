@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar/Navbar";
 import Speeds from "./components/Speeds/Speeds";
 import MoveInput from "./components/MoveInput";
 import SolverInfo from "./components/SolverInfo/SolverInfo";
+import ColorPickerInfo from "./components/ColorPickerInfo/ColorPickerInfo";
 import Menu from "./components/MenuWrapper/MenuWrapper";
 
 import * as THREE from "three";
@@ -2408,6 +2409,11 @@ class App extends Component {
             <SolverInfo
               solvedSetLength={this.state.solvedSet.length}
               prevSetLength={this.state.prevSet.length}
+            />:[]
+        }
+        {this.state.currentFunc==="Color Picker"?
+            <ColorPickerInfo
+              colorPicked={this.state.colorPicked}
             />:[]
         }
 
