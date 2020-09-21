@@ -84,7 +84,7 @@ a > img {
     background: Transparent no-repeat;
     color: lightgray;
     border-radius: .25rem;
-    border: 2px solid lightgray;
+    border: 2px solid #007bff;
     padding: 0px;
   }
 
@@ -105,33 +105,47 @@ a > img {
   }
 
   .solverMoves{
-    position: relative;
-    max-height: 28vh;
-    min-height: 28vh;
-    width: 100%;
+    position: absolute;
+    height: 100%;
+    width:100%;
     max-width: 400px;
     overflow-y: scroll;
     border-radius: .25rem;
-    border: 2px solid #007bff;
+    border: 2px solid rgb(52, 58, 64);
     z-index: 100000;
     pointer-events: auto;
+    bottom:0;
+    left:0;
+  }
+
+  .solverMovesMobile{
+    position: absolute;
+    height: 100%;
+    width:90%;
+    max-width: 400px;
+    overflow-y: scroll;
+    border-radius: .25rem;
+    border: 2px solid rgb(52, 58, 64);
+    z-index: 100000;
+    pointer-events: auto;
+    bottom:0;
   }
 
   .algoMoves{
-    position: relative;
-    max-height: 23vh;
-    min-height: 23vh;
+    position: absolute;
+    height: 87%;
     width: 100%;
     overflow-y: scroll;
     border-radius: .25rem;
-    border: 2px solid #007bff;
+    border: 2px solid rgb(52, 58, 64);
     /* background-color: (#343a40).5; */
     margin-top: 5px;
     z-index: 100000;
     pointer-events: auto;
+    bottom:0;
   }
 
-  .solverMoves > div{
+  .solverMoves,.solverMovesMobile > div{
     display: inline-block;
     color: #007bff;
   }
@@ -148,6 +162,7 @@ a > img {
       width: 2rem;
       height: 2rem;
       pointer-events: auto;
+      display: inline-block;
   }
 
   .jumper{
@@ -212,14 +227,18 @@ a > img {
 }
 
 #patterns{
+  width: 100%;
   margin-top: 2px;
   border-radius: .25rem;
   border: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
 .previousMove,.nextMove{
   border-radius: .25rem;
-  border: 1px solid #007bff;
+  border: 1px solid lightgrey;
   margin-left: 6px;
   margin-right: 6px;
 }
@@ -228,13 +247,12 @@ a > img {
   color: lightgrey;
   background: Transparent no-repeat;
   border-radius: .25rem;
-  border: 2px solid #007bff;
+  border: 2px solid lightgrey;
   font-size: 1rem;
-  width: 45%;
+  width: 93%;
   white-space: nowrap;
   pointer-events: auto;
   padding:0px;
-  margin: 4px;
   height: 100%;
 }
 
@@ -244,4 +262,12 @@ a > img {
   background: transparent;
   padding:0px;
   margin: 4px;
+}
+
+.rewindOne,.playOne{
+  margin-top: 0px;
+}
+
+.rewindAll,.fastforward{
+  margin-bottom: 0px;
 }

@@ -282,7 +282,7 @@ class SolverUI extends Component {
                         </div>
                         
                     </Row></>:<>
-                    <div className="solverMoves solverMovesSolver">
+                    <div className="solverMovesMobile">
                             
                             {solverSet}
                             
@@ -337,8 +337,8 @@ class SolverUI extends Component {
                         }
                         
                     </div>
-                    <div className="exitDiv" style={{width:"100%",maxWidth:"300px",float:"right",height:"20%"}}>
-                        <button id="blankExit"></button>
+                    <div className="exitDiv" style={{width:"100%",maxWidth:"300px",float:"right",height:"25%"}}>
+                        {/* <button id="blankExit"></button> */}
                     {this.props.state.currentFunc==="Solving"?<>
                         <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="exitButton activeMenu">Exit</button></>:
                         <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="exitButton activeMenu">Exit</button>}
