@@ -291,7 +291,7 @@ class SolverUI extends Component {
                     }</>
                     }
                 </Col>
-                <Col style={{paddingRight:0,paddingLeft:0}}>
+                <Col style={{paddingRight:0,paddingLeft:0,maxWidth:"300px"}}>
                     
                     <div className="solverInterface">
                         <div className="warningPopupSolver">
