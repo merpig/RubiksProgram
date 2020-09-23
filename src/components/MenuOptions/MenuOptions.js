@@ -3,13 +3,14 @@ import "./MenuOptions.css"
 import algorithms from "../../cubeFunctions/algorithms";
 import cube from '../../cubeFunctions/cube';
 
-const optionLimit = 5;
+const optionLimitCP = 5;
+const optionLimitSOLVER = 7;
 
 const MenuOptions = props => {
 
         const baseOptions = <>
-           {props.state.cubeDimension<=optionLimit?<button id="ColorPicker" key="Color Picker" data="Color Picker" onClick={optionClick} className="leftButton">Color Picker</button>:<></>}
-           {props.state.cubeDimension<=optionLimit?<button id="Solver" key="Soler" data="Solving" onClick={optionClick} className="leftButton">Solver</button>:<></>}
+           {props.state.cubeDimension<=optionLimitCP?<button id="ColorPicker" key="Color Picker" data="Color Picker" onClick={optionClick} className="leftButton">Color Picker</button>:<button className="leftButton invis" style={{top: 0}}></button>}
+           {props.state.cubeDimension<=optionLimitSOLVER?<button id="Solver" key="Soler" data="Solving" onClick={optionClick} className="leftButton">Solver</button>:<button className="leftButton invis" style={{top: 0}}></button>}
            <button id="Algorithms" key="Algorithms" data="None" onClick={optionClick} className="leftButton">Algorithms</button>
         </>
 
@@ -27,52 +28,28 @@ const MenuOptions = props => {
             let algoSet = [];
             let generated = cube.generateSolved(cD,cD,cD);
             algorithms.forEach(e=>{
-                if(e.name===algo&&e.worksFor.includes(cD)) algoSet.push(...e.moves.split(" "));
+                if(e.moves&&e.name===algo&&e.worksFor.includes(cD)) algoSet.push(...e.moves.split(" "));
             })
             //console.log(algoSet);
             props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[],autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,});
         }
 
         function optionClick(e){
-            // Already selected button (turns off)
-            if(e.target.classList.contains("activeMenu")){
-                
-                switch(props.state.currentFunc){
-                    case "Color Picker":
-                        document.querySelector(".warningPopup").style.display="block";
-                        break;
-                    case "Solving":
-                        document.querySelector(".warningPopupSolver").style.display="block";
-                        break;
-                    case "Algorithms":
-                        //this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : [],targetSolveIndex:-1,solvedSet:[]});
-                        props.setState({activeMenu:"",currentFunc:"Reset",solvedSet:[],hoverData:[],prevSet:[],moveSet:[],isValidConfig:false,targetSolveIndex:-1, solveMoves : "",autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,activeAlgo:"none"});
-                        break;
-                    default:
-                        document.querySelector(".activeMenu").classList.remove("activeMenu");
-                        props.setState({activeMenu:"",currentFunct:"None"});
+            if(props.state.currentFunc==="None") {
+                if(e.target.id==="ColorPicker"){
+                    
+                    props.setState({activeMenu:e.target.id,isValidConfig:true});
+                    props.beginColorPicker();
                 }
-            }
-            else {
-                if(props.state.currentFunc==="None") {
-                    if(props.state.activeMenu!==""&&props.state.activeMenu!==null&&document.querySelector(".activeMenu")!==null) {
-                        document.querySelector(".activeMenu").classList.remove("activeMenu");
-                    }
-                    e.target.classList.add("activeMenu");
-                    if(e.target.id==="ColorPicker"){
-                        
-                        props.setState({activeMenu:e.target.id});
-                        props.beginColorPicker();
-                    }
-                    else if(e.target.id==="Solver"){
-                        props.setState({activeMenu:e.target.id});
-                        props.beginSolve();
-                    }
-                    else if(e.target.id==="Algorithms"){
-                        props.setState({activeMenu:e.target.id,currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[]});
-                    }
-                    else props.setState({activeMenu:e.target.id,currentFunc:"None"});
+                else if(e.target.id==="Solver"){
+                    props.setState({activeMenu:e.target.id},props.beginSolve());
+                    
                 }
+                else if(e.target.id==="Algorithms"){
+                    //props.setState({activeMenu:"",currentFunc:"Reset",solvedSet:[],hoverData:[],prevSet:[],moveSet:[],isValidConfig:false,targetSolveIndex:-1, solveMoves : "",autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,activeAlgo:"none"});
+                    props.setState({activeMenu:e.target.id,currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[]});
+                }
+                else props.setState({activeMenu:e.target.id,currentFunc:"None"});
             }
         }
         return (

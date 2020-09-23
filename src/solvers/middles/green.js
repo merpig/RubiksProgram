@@ -253,6 +253,7 @@ let solveGreenMiddle = (current,solved,dim,index) => {
                 break;
             default:
                 console.log("Woops something broke. Only red and green should be unsolved.");
+                return "error";
         }
     }
 

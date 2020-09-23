@@ -1,7 +1,8 @@
 .mobileButton{
     border: 2px solid #007bff;
     color: lightgrey;
-    background-color: transparent;
+    transition: background-color .4s ease;
+    background-color:rgba(0,0,255,.10);
     border-radius: .25rem;
     display: block;
     width: 100%;
@@ -9,11 +10,11 @@
     margin-bottom: 4px;
 }
 
-.mobileButton:active{
-    background-color: transparent;
+.mobileButton:hover{
+    background-color:rgba(0,0,255,.10);
 }
 
-.mobileButton:hover{
+.mobileButton:active{
     background-color: rgba(0,0,255,.5);
 }
 

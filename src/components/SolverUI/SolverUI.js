@@ -47,12 +47,14 @@ class SolverUI extends Component {
     }
 
     render(){
+        
         let solverSet = [];
         let prevSet = this.props.state.prevSet;
         let moveSet = this.props.state.moveSet;
+        let defaultMessage = this.props.state.currentFunc==="Solving"?"Already solved":"None Selected";
         let jumperButtons = [<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={0} className="solveMoveDiv jumper" key={-1}>Top</div>];
         !this.props.state.solvedSet.length?
-        solverSet.push("Already solved"):
+        solverSet.push(defaultMessage):
         this.props.state.solvedSet.forEach((el,i)=>el===this.props.state.solvedSet[i+1]?
             <></>:
             el==="stop'"? 
@@ -235,7 +237,7 @@ class SolverUI extends Component {
             let algoSet = [];
             let generated = cube.generateSolved(cD,cD,cD);
             algorithms.forEach(set=>{
-                if(set.name.replace(" ","")===algo&&set.worksFor.includes(cD)) algoSet.push(...set.moves.split(" "));
+                if(set.name&&set.name.replace(" ","")===algo&&set.worksFor.includes(cD)) algoSet.push(...set.moves.split(" "));
             });
             props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[]});
         }
@@ -250,7 +252,6 @@ class SolverUI extends Component {
                     props.setState({activeMenu:"",currentFunc:"Reset",solvedSet:[],hoverData:[],prevSet:[],moveSet:[],isValidConfig:false,targetSolveIndex:-1, solveMoves : "",autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,activeAlgo:"none"});
                     break;
                 default:
-                    document.querySelector(".activeMenu").classList.remove("activeMenu");
                     props.setState({activeMenu:"",currentFunct:"None"});
             }
 
@@ -258,14 +259,14 @@ class SolverUI extends Component {
 
         return(<div className="solverUIWrapper">
             <Row style={{width:"100%",height:"100%",margin:0}}>
-                <Col style={!this.props.mobile?{paddingLeft:"0px"}:{}}> 
+                <Col style={{paddingLeft:"0px"}}> 
                     {!this.props.mobile?<>
                     <div className="solverMoves">
                         
                         {solverSet}
                         
                     </div></>:<>
-                    {this.props.state.currentFunc==="Algorithms"?<><Row >
+                    {this.props.state.currentFunc==="Algorithms"?<><Row style={{paddingLeft:"15px"}}>
                         {/* <label htmlFor="patterns" style={{color:"lightgrey"}}>Choose a Pattern:</label> */}
 
                         <select style={{color:"lightgrey",backgroundColor:"#343a40"}} id="patterns" onChange={(e) => algoStart(e.target.value.replace(" ",""),this.props)}>
@@ -274,7 +275,7 @@ class SolverUI extends Component {
                                 :"")}
                         </select>
                     </Row>
-                    <Row >
+                    <Row style={{paddingLeft:"15px"}}>
                         <div className="algoMoves">
                             
                             {solverSet}
@@ -299,49 +300,58 @@ class SolverUI extends Component {
                             <div className="solverMessage">Are you sure you want to leave Solver? Progress will not be saved.</div>
                             <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={(e)=>leave(e,this.props)} className="solverLeaveStay">Leave</button>
                         </div>
-                        <button 
-                            className={`solverButton rewindOne`}
-                            onClick={() => this.props.rewindOne(this.props)}> 
+                        <div className="solverButtonDiv rewindOne">
+                            <button 
+                                className={`solverButton`}
+                                onClick={() => this.props.rewindOne(this.props)}> 
                             Previous {previousMove}
-                        </button>
-                        <button 
-                            className={`solverButton playOne`}
-                            onClick={() => this.props.playOne(this.props)}> 
+                            </button>
+                        </div>
+                        <div className="solverButtonDiv playOne">
+                            <button 
+                                className={`solverButton`}
+                                onClick={() => this.props.playOne(this.props)}> 
                             Next {nextMove}
-                        </button>
-                        {this.props.state.autoRewind?
-                        <button 
-                            className={`solverButton rewindAll`}
-                            onClick={() => pauseSolver(this.props)}> 
+                            </button>
+                        </div>
+                        <div className="solverButtonDiv rewindAll">
+                            {this.props.state.autoRewind?
+                            <button 
+                                className={`solverButton`}
+                                onClick={() => pauseSolver(this.props)}> 
                             Pause Solver
-                        </button>
-                        :
-                        <button 
-                            className={`solverButton rewindAll`}
-                            onClick={() => fastrewind(this.props)}> 
+                            </button>
+                            :
+                            <button 
+                                className={`solverButton`}
+                                onClick={() => fastrewind(this.props)}> 
                             Auto Rewind
-                        </button>
-                        }
-                        {this.props.state.autoPlay?
-                        <button 
-                            className={`solverButton fastforward`}
-                            onClick={() => pauseSolver(this.props)}> 
+                            </button>
+                            }
+                        </div>
+                        <div className="solverButtonDiv fastforward">
+                           {this.props.state.autoPlay?
+                            <button 
+                                className={`solverButton`}
+                                onClick={() => pauseSolver(this.props)}> 
                             Pause Solver
-                        </button>
-                        :
-                        <button 
-                            className={`solverButton fastforward`}
-                            onClick={() => fastforward(this.props)}> 
+                            </button>
+                            :
+                            <button 
+                                className={`solverButton`}
+                                onClick={() => fastforward(this.props)}> 
                             Auto Forward
-                        </button>
-                        }
+                            </button>
+                            } 
+                        </div>
+                        
                         
                     </div>
-                    <div className="exitDiv" style={{width:"100%",maxWidth:"300px",float:"right",height:"25%"}}>
+                    <div className="exitDiv" style={{width:"100%",height:"25%"}}>
                         {/* <button id="blankExit"></button> */}
                     {this.props.state.currentFunc==="Solving"?<>
-                        <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="exitButton activeMenu">Exit</button></>:
-                        <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="exitButton activeMenu">Exit</button>}
+                        <button id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} className="exitButton">Exit</button></>:
+                        <button id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} className="exitButton">Exit</button>}
                     </div>
 
                 </Col>

@@ -59,42 +59,22 @@ class View extends Component {
                 activeMenu = <Controls {...this.props}/>
                 break;
             case 'ColorPicker':
-                if(currentFunc==="None"){
-                    if(document.querySelector(".activeMenu")){
-                        document.querySelector(".activeMenu").classList.remove("activeMenu");
-                    }
-                    //if(this.props.activeMenu!=="") this.props.setState({activeMenu:""});
-                }
                 activeMenu = <ColorPicker {...this.props}/>
                 break;
             case 'Solver':
-                if(currentFunc==="None"){
-                    if(document.querySelector(".activeMenu")){
-                        document.querySelector(".activeMenu").classList.remove("activeMenu");
-                    }
-                    try{
-                        //if(this.props.activeMenu!=="") this.props.setState({activeMenu:""});
-                    }catch{}
-                }
                 activeMenu=<SolverUI {...this.props}/>
                 break;
             case 'Algorithms':
-                if(currentFunc==="None"){
-                    if(document.querySelector(".activeMenu")){
-                        document.querySelector(".activeMenu").classList.remove("activeMenu");
-                    }
-                    //if(this.props.activeMenu!=="") this.props.setState({activeMenu:""});
-                }
                 activeMenu=<SolverUI {...this.props}/>
                 break;
             default:
-                activeMenu=this.props.state.activeMenu;
+                activeMenu="";
         }
 
         
         //console.log("hi")
         return (
-        <div className={this.props.state.activeMenu===""?"menuWrapperOptions":"menuWrapper"} style={{color:"white",pointerEvents: "none"}}>
+        <div className="menuWrapper" style={{pointerEvents: "none"}}>
             <Row style={{height: "100%",margin:"0px"}}>
                  {(this.props.state.activeMenu==="ColorPicker"||this.props.state.activeMenu==="Solver")?
                 []:
@@ -106,10 +86,10 @@ class View extends Component {
                 </Col>]}
                 <Col 
                     id="menuBox" 
-                    style={{overflow:"auto",position:"relative",top:"0px",width:"100%"}} 
+                    style={{position:"relative",bottom:"0",height:"100%"}} 
                     xs={
                         this.props.state.currentFunc==="Color Picker"||this.props.state.activeMenu==="Solver"?
-                        12:8}>
+                        12:this.props.state.currentFunc==="None"||this.props.state.currentFunc==="Scrambling"||this.props.state.currentFunc==="Reset"?4:8}>
                     {activeMenu}  
                 </Col>
                 {(this.props.state.activeMenu==="ColorPicker"||this.props.state.activeMenu==="Solver"||this.props.state.activeMenu==="Algorithms")?
@@ -117,7 +97,7 @@ class View extends Component {
                 [<Col key="MenuOptionsOther" style={{padding:0, color:"black",opacity:0}} xs={.5}>
                     .    
                 </Col>,
-                <Col key="MenuOptionsOtherPadding" style={{paddingLeft:"0px"}}>
+                <Col key="MenuOptionsOtherPadding" style={{paddingLeft:"0px",minWidth: "150px",paddingRight:"0px"}}>
                     <MenuOptionsOther {...this.props}/>
                 </Col>]}
             </Row>

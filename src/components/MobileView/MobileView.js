@@ -6,7 +6,8 @@ import SolverUI from "../SolverUI/SolverUI";
 import ColorPicker from "../ColorPicker/ColorPicker";
 import {Row, Col, Button} from "react-bootstrap";
 
-const optionLimit = 5;
+const optionLimitCP = 5;
+const optionLimitSOLVER = 7;
 
 class Mobile extends Component {
 
@@ -64,58 +65,34 @@ class Mobile extends Component {
                     }
                     break;
                 default:
+                    props.setState({activeMenu:e.target.id,currentFunc:"None"});
             }
         }
 
         function optionClick(e,props){
-            // Already selected button (turns off)
-            if(e.target.classList.contains("activeMenu")){
-                
-                switch(props.state.currentFunc){
-                    case "Color Picker":
-                        document.querySelector(".warningPopup").style.display="block";
-                        break;
-                    case "Solving":
-                        document.querySelector(".warningPopupSolver").style.display="block";
-                        break;
-                    case "Algorithms":
-                        //this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : [],targetSolveIndex:-1,solvedSet:[]});
-                        props.setState({activeMenu:"",currentFunc:"Reset",solvedSet:[],hoverData:[],prevSet:[],moveSet:[],isValidConfig:false,targetSolveIndex:-1, solveMoves : "",autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,activeAlgo:"none"});
-                        break;
-                    default:
-                        document.querySelector(".activeMenu").classList.remove("activeMenu");
-                        props.setState({activeMenu:"",currentFunct:"None"});
+            if(props.state.currentFunc==="None") {
+                if(e.target.id==="ColorPicker"){
+                    
+                    props.setState({activeMenu:e.target.id,isValidConfig:true});
+                    props.beginColorPicker();
                 }
-            }
-            else {
-                if(props.state.currentFunc==="None") {
-                    if(props.state.activeMenu!==""&&props.state.activeMenu!==null&&document.querySelector(".activeMenu")!==null) {
-                        document.querySelector(".activeMenu").classList.remove("activeMenu");
-                    }
-                    e.target.classList.add("activeMenu");
-                    if(e.target.id==="ColorPicker"){
-                        
-                        props.setState({activeMenu:e.target.id});
-                        props.beginColorPicker();
-                    }
-                    else if(e.target.id==="Solver"){
-                        props.setState({activeMenu:e.target.id});
-                        props.beginSolve();
-                    }
-                    else if(e.target.id==="Algorithms"){
-                        props.setState({activeMenu:e.target.id,currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[]});
-                    }
-                    else props.setState({activeMenu:e.target.id,currentFunc:"None"});
+                else if(e.target.id==="Solver"){
+                    props.setState({activeMenu:e.target.id});
+                    props.beginSolve();
+                }
+                else if(e.target.id==="Algorithms"){
+                    //props.setState({activeMenu:"",currentFunc:"Reset",solvedSet:[],hoverData:[],prevSet:[],moveSet:[],isValidConfig:false,targetSolveIndex:-1, solveMoves : "",autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,activeAlgo:"none"});
+                    props.setState({activeMenu:e.target.id,currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[]});
                 }
             }
         }
 
         return (
-        <div className={this.props.state.activeMenu===""?"menuWrapperOptions":"menuWrapper"}>
-            {(this.props.state.currentFunc === "None"||this.props.state.currentFunc === "Drag Turn"||this.props.state.currentFunc === "Undo"||this.props.state.currentFunc === "Redo")&&this.props.state.activeMenu!=="Moves"?
-                <Row style={{position: "absolute", bottom:"0px",margin:"0px", width:"100%", height:"100%"}}>
-                    <Col xs={6}>
-                        {this.props.state.cubeDimension<=optionLimit?
+        <div className="menuWrapper">
+            {(this.props.state.currentFunc === "None"||this.props.state.currentFunc === "Drag Turn"||this.props.state.currentFunc === "Undo"||this.props.state.currentFunc === "Redo"||this.props.state.currentFunc === "Scrambling")&&this.props.state.activeMenu!=="Moves"?
+                <Row style={{width:"100%", height:"100%", margin: 0}}>
+                    <Col xs={6} style={{paddingRight:"7.5px"}}>
+                        {this.props.state.cubeDimension<=optionLimitCP?
                             <><button className="mobileButton" id="ColorPicker" data="Color Picker" onClick={(e)=>optionClick(e,this.props)} key={1}>Color Picker</button> 
                             <button className="mobileButton" id="Solver" data="Solving" onClick={(e)=>optionClick(e,this.props)} key={2}>Solver</button></>
                             :<>
@@ -124,9 +101,9 @@ class Mobile extends Component {
                         } 
                         <button className="mobileButton" id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} key={3}>Patterns</button> 
                     </Col>
-                    <Col xs={6}>
-                        {this.props.state.cubeDimension<5?
-                            <button className="mobileButton" onClick={()=>this.props.setState({activeMenu: "Moves"})} key={0}>Moves</button>:
+                    <Col xs={6} style={{paddingLeft:"7.5px"}}>
+                        {this.props.state.cubeDimension<1?
+                            <button className="mobileButton" onClick={()=>otherOptionClick} key={0}>Moves</button>:
                             <button className="blankButton" key={0}></button>
                         }    
                         <button className="mobileButton" id="Scramble" onClick={(e)=>otherOptionClick(e,this.props)} key={2}>Scramble</button>

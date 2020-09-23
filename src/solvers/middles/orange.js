@@ -257,6 +257,7 @@ let solveOrangeMiddle = (current,solved,dim) => {
                 break;
             default:
                 console.log("Something broke");
+                return "error";
         }
 
     }

@@ -1,5 +1,4 @@
 .menuOptionsWrapper{
-    position: absolute;
     width: 100%;
     max-width: 300px;
     height: 100%;
@@ -15,7 +14,8 @@
 
 .leftButton{
     color: lightgrey;
-    background-color:transparent;
+    transition: background-color .4s ease;
+    background-color:rgba(0,0,255,.10);
     border-radius: .25rem;
     border: 2px solid #007bff;
     font-size: 1rem;
@@ -24,7 +24,10 @@
     pointer-events: auto;
     margin-left: 5px;
     margin-bottom: 5px;
+    min-width: 125px;
 }
+
+
 
 .leftButton:hover,.rightButton:hover{
     background-color: rgba(0,0,255,.5);
@@ -35,8 +38,11 @@
 }
 
 .rightButton{
+    position: relative;
+    right: 0;
     color: lightgrey;
-    background-color:transparent;
+    transition: background-color .4s ease;
+    background-color:rgba(0,0,255,.10);
     border-radius: .25rem;
     border: 2px solid #007bff;
     font-size: 1rem;
@@ -45,6 +51,13 @@
     pointer-events: auto;
     margin-right: 5px;
     margin-bottom: 5px;
+    min-width: 125px;
+}
+
+.invis,.invis:hover,.invas:active{
+    background-color:transparent;
+    border-color:transparent; 
+    pointer-events: none;
 }
 
 .hoverDisabled{
@@ -54,6 +67,9 @@
 
 
   .algoList{
+    position: absolute;
+    bottom: 0px;
+    left: 15px;
     width:100%;
     margin-right:0px;
     overflow-y: scroll;
@@ -73,7 +89,8 @@
     color: #007bff;
     border: none;
     /* border-bottom: 1px solid grey; */
-    background: rgba(0, 0, 0, 0.0);
+    transition: all .4s;
+    background: rgba(0, 0, 0, .1);
     border-radius: .25rem;
 }
 
@@ -82,10 +99,10 @@
 }
 
 .algoButton:hover{
-    background-color: rgb(150, 150, 150);
+    background-color: rgba(100, 100, 100,.5);
 }
 
 .algoActive{
-    background-color: rgb(100, 100, 100);
+    background-color: rgba(50, 50, 50,.5);
     color: lightgray;
 }

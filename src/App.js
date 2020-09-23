@@ -59,7 +59,7 @@ class App extends Component {
     facePosY : null,
     facePosZ : null,
     faceSide : null,
-    colorPicked: 'blue',
+    colorPicked: 'white',
     mouseFace : null,
     mouseDown : false,
     mousePos : null,
@@ -90,7 +90,7 @@ class App extends Component {
     },
     isMulti : false,
     isVisible : false,
-    isValidConfig : false,
+    isValidConfig : true,
     hoverData : [],
     showSolveController : false,
     autoPlay : false,
@@ -897,19 +897,13 @@ class App extends Component {
     if(!obj.error.length){
       const solveData = {...this.generateAllSolveMoves(this.state,newGenerated)};
       if(solveData.solveable===false){
-        console.log(newGenerated);
-        obj.error.push(`This configuration of the cube is not solveable.`);
-        obj.error.push(`Check that you've entered all pieces correctly.`);
-        if(this.state.cubeDimension>3){
-          obj.error.push(`There may be a few edge cases on the 4x4, where`); 
-          obj.error.push(`a valid scramble cube may not work. Sorry for the`);
-          obj.error.push(`inconvenience, a fix is on the way. Make a few`);
-          obj.error.push(`moves and try again :)`);
-        }
+        //console.log(newGenerated);
+        obj.error.push(`This configuration of the cube is not solveable,
+        please check that you've entered all pieces correctly.`);
       }
       else{
         if(solveData.tempObject){
-          console.log(solveData.tempObject);
+          //console.log(solveData.tempObject);
           for(let i = 0; i<solveData.tempObject.length; i++){
             if((solveData.tempObject[i].slice(0,6).sort().join("")!==generated.tempArr[i].slice(0,6).sort().join(""))&&solveData.tempObject[i][12]==="corner"){
               // console.log(solveData.tempObject[i].slice(0,6).sort().join(""),generated.tempArr[i].slice(0,6).sort().join(""));
@@ -1132,7 +1126,7 @@ class App extends Component {
     let cD = this.state.cubeDimension;
     let generated = cube.generateSolved(cD,cD,cD);
     let rubiksObject = generated.tempArr;
-    this.setState({rubiksObject,moveSet: [],moveLog: "",currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [],cpErrors:[]},()=>{
+    this.setState({rubiksObject,moveSet: [],moveLog: "",currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [],cpErrors:[],activeMenu:"none"},()=>{
       this.reloadTurnedPieces('all');
     });
   }
@@ -1613,9 +1607,10 @@ class App extends Component {
         currentIndex=tempState.rubiksIndex;
         if(currentIndex===previousIndex) indexOccurence = indexOccurence+1;
         else indexOccurence = 0;
-        
-        let moves = solver(tempState.solveState,tempState.rubiksObject,tempState.cubeDimension,this.moveStringToArray,
+        let moves;
+        moves = solver(tempState.solveState,tempState.rubiksObject,tempState.cubeDimension,this.moveStringToArray,
           tempState.solveMoves,tempState.rubiksIndex,tempState.middles,tempState.edges,tempState.corners);
+        if (!moves) moves = {};
         if(moves.moveSet && moves.moveSet[0]==='stop'){
           if(this.state.currentFunc==="Solving"){
             moves.solveMoves = tempState.solveMoves + ` ${moves.moveSet[0]}`;
@@ -1633,7 +1628,7 @@ class App extends Component {
           }
           moves.moveSet = temp;
         }
-        if((indexOccurence>10 && tempState.solveState<1)||counter>100000) {
+        if((indexOccurence>10 && tempState.solveState<1)||counter>10000||(moves.moveSet&&moves.moveSet[0]==='error')) {
 
           console.log(indexOccurence,currentIndex,previousIndex,tempState.rubiksIndex);
           console.log(moves);
@@ -1723,7 +1718,7 @@ class App extends Component {
     if(moveSet[0]==="stop'"&&moveSet[1]==="stop'"&&moveSet.length===2) moveSet = [];
   
     if(error) {
-      alert("Sorry for the inconvenience. This error is caused by an infinite loop issue with the solver and has been stopped to prevent freezing the application. The current move set has still been pushed and is playable for debugging purposes. Maybe you can figure out the issue before I can ;)");
+      //alert("Sorry for the inconvenience. This error is caused by an infinite loop issue with the solver and has been stopped to prevent freezing the application. The current move set has still been pushed and is playable for debugging purposes. Maybe you can figure out the issue before I can ;)");
       return {moveSet:[...moveSet],rubiksObject : beforeObject,solveable:false,solvedSet:[...moveSet],solvedSetIndex:0};
     }
     return {moveSet:[...moveSet],rubiksObject : beforeObject,solveable:true,solvedSet:[...moveSet],solvedSetIndex:0,tempObject:tempState.rubiksObject};

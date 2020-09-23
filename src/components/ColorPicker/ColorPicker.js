@@ -45,30 +45,39 @@ const ColorPicker = (props) => {
 
     return (
         <Row className="cp-container" style={{height:"98%",width:"100%", overflowX:"hidden!important",overflowY:"hidden!important",margin:"0px"}}>
-            <div className="warningPopup">
-                <div id="cpChangeData" data=""></div>
-                <div className="cpMessage">Are you sure you want to leave Color Picker? Changes will not be saved.</div>
-                <button onClick={stay} className="cpLeaveStay">Stay</button><button onClick={leave} className="cpLeaveStay">Leave</button>
-            </div>
             <Col>
-                {props.isValidConfig?<div className="cpButton" onClick={()=>props.setColorPickedCube()}><strong style={{color:'green',fontSize:'1rem'}}>Solve</strong></div>:<div className="cpButton"><strong style={{color:'red',fontSize:'1rem'}}>Invalid</strong></div>}
-                <div style={{fontSize:".5rem"}}>
-                     
-                        {li}
+                <div className="cpInfo">
+                    {
+                        props.isValidConfig?
+                        <div className="solveCpDiv"><button className="solveCp" onClick={()=>props.setColorPickedCube()}>
+                            <strong style={{color:'green',fontSize:'1rem'}}>Solve</strong>
+                        </button></div>:
+                        []
+                    }
+                    <div style={{fontSize:".5rem"}}>
+                        
+                            {li}
+                    </div>
                 </div>
-
             </Col>
             <Col style={{padding:"0px"}}>
                 <div className="colorButtonContainer">
-                    {colors.map(color=><ColorButton 
+                    <div className="warningPopup">
+                        <div id="cpChangeData" data=""></div>
+                        <div className="cpMessage">Are you sure you want to leave Color Picker?</div>
+                        <button onClick={stay} className="cpLeaveStay">Stay</button><button onClick={leave} className="cpLeaveStay">Leave</button>
+                    </div>
+                    {colors.map((color,i)=><ColorButton
+                        index={i+1} 
                         key={color}
                         color={color}
                         colorPicked={props.colorPicked}
                         changeColor={props.changeColor}
                         isMobile={props.isMobile}
                     />)}
-                    <button className="colorPicker colorPickerBlank"></button>
-                    <button id="ColorPicker" data="Color Picker" onClick={optionClick} className="colorPicker activeMenu colorPickerExit">Exit</button>
+                    <div className="colorButtonDiv" style={{paddingBottom:"0px",width:"100%"}}>
+                        <button id="ColorPicker" data="Color Picker" onClick={optionClick} className="colorPicker activeMenu colorPickerExit">Exit</button>
+                    </div>
                 </div>
             </Col>
         </Row>
