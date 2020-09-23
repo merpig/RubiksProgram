@@ -2,3 +2,31 @@
     float: right!important;
 }
 
+.navbar{
+    /* border-radius: .25rem;
+    border: 2px solid blue; */
+    background-color:rgba(0,0,255,.3);
+}
+
+.cubes{
+    margin-right: 5px;
+}
+
+.navbar-brand,.settings,.cubes{
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+#infoBtn,#fullscreenBtn,.settings > button,.cubes > button{
+    height: 40px;
+    border: 2px solid blue;
+    border-radius: .25rem;
+    transition: background-color .4s ease;
+    background-color:transparent;
+    color: lightgray;
+}
+
+#infoBtn:hover,#fullscreenBtn:hover,.settings > button:hover,.cubes > button:hover{
+    background-color: blue;
+    border: 2px solid blue;
+}

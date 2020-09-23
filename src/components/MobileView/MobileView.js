@@ -7,7 +7,7 @@ import ColorPicker from "../ColorPicker/ColorPicker";
 import {Row, Col, Button} from "react-bootstrap";
 
 const optionLimitCP = 5;
-const optionLimitSOLVER = 7;
+const optionLimitSOLVER = 5;
 
 class Mobile extends Component {
 

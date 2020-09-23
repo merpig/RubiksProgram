@@ -5,7 +5,7 @@ import 'react-dropdown/style.css'
 import Popup from "reactjs-popup";
 
 const Navbar = props => (
-  <nav className="navbar navbar-dark fixed-top bg-dark">
+  <nav className="navbar navbar-dark fixed-top">
     <ul className="nav nav-justified mr-auto">
       <li className="nav-item nav-fix-for-edge">
         <p className="navbar-brand" style={{color:"lightgray"}}><b>{props.title}</b></p>
@@ -64,8 +64,8 @@ const Navbar = props => (
         
       </li>
     </ul>
-    <div style={{float:"right"}} >
-    <Popup trigger={<button id="infoBtn">Info</button>}>
+    <div style={{float:"right",height:"100%"}} >
+      <Popup trigger={<button id="infoBtn">Info</button>}>
         {close => (
           <div style={{zIndex:"100",width:"100%",height:"100%"}}>
             <div className="shadeBackground" style={{backgroundColor:"black",zIndex:"101"}} onClick={close}></div>

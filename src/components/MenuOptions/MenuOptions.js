@@ -4,22 +4,37 @@ import algorithms from "../../cubeFunctions/algorithms";
 import cube from '../../cubeFunctions/cube';
 
 const optionLimitCP = 5;
-const optionLimitSOLVER = 7;
+const optionLimitSOLVER = 5;
 
 const MenuOptions = props => {
+        let algorithmSet = 
+            algorithms
+                .filter(algo=>algo.worksFor.includes(props.state.cubeDimension))
+                .map(algo=>
+                    <button 
+                        id={algo.name} 
+                        key={algo.name}
+                        className={
+                            props.state.activeAlgo===algo.name?
+                                "algoButton algoActive":"algoButton"
+                        }
+                        onClick={(e)=>algoStart(e,props)}>
+                        {algo.name}
+                    </button>
+                    );
+                
+        // algorithms.forEach(algo=>algo.worksFor.includes(props.state.cubeDimension)?
+        //     algorithmSet.push(<button id={algo.name} key={algo.name} className={props.state.activeAlgo===algo.name?
+        //         "algoButton algoActive":"algoButton"} onClick={(e)=>algoStart(e,props)}>{algo.name}</button>)
+        //         :"")
 
         const baseOptions = <>
-           {props.state.cubeDimension<=optionLimitCP?<button id="ColorPicker" key="Color Picker" data="Color Picker" onClick={optionClick} className="leftButton">Color Picker</button>:<button className="leftButton invis" style={{top: 0}}></button>}
-           {props.state.cubeDimension<=optionLimitSOLVER?<button id="Solver" key="Soler" data="Solving" onClick={optionClick} className="leftButton">Solver</button>:<button className="leftButton invis" style={{top: 0}}></button>}
-           <button id="Algorithms" key="Algorithms" data="None" onClick={optionClick} className="leftButton">Algorithms</button>
+           {props.state.cubeDimension<=optionLimitCP?<button id="ColorPicker" key="Color Picker" data="Color Picker" onClick={optionClick} className="leftButton">Color Picker</button>:<button className="leftButton invis"></button>}
+           {props.state.cubeDimension<=optionLimitSOLVER?<button id="Solver" key="Soler" data="Solving" onClick={optionClick} className="leftButton">Solver</button>:<button className="leftButton invis"></button>}
+           {algorithmSet.length?<button id="Algorithms" key="Algorithms" data="None" onClick={optionClick} className="leftButton">Algorithms</button>:<button className="leftButton invis"></button>}
         </>
 
-        let algorithmSet = [];
-                
-        algorithms.forEach(algo=>algo.worksFor.includes(props.state.cubeDimension)?
-            algorithmSet.push(<button id={algo.name} key={algo.name} className={props.state.activeAlgo===algo.name?
-                "algoButton algoActive":"algoButton"} onClick={(e)=>algoStart(e,props)}>{algo.name}</button>)
-                :"")
+        
 
         function algoStart(e,props){
             if(props.state.autoPlay||props.state.autoRewind||props.state.playOne) return;
@@ -47,7 +62,7 @@ const MenuOptions = props => {
                 }
                 else if(e.target.id==="Algorithms"){
                     //props.setState({activeMenu:"",currentFunc:"Reset",solvedSet:[],hoverData:[],prevSet:[],moveSet:[],isValidConfig:false,targetSolveIndex:-1, solveMoves : "",autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,activeAlgo:"none"});
-                    props.setState({activeMenu:e.target.id,currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[]});
+                    props.setState({activeMenu:e.target.id,currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[],activeAlgo:""});
                 }
                 else props.setState({activeMenu:e.target.id,currentFunc:"None"});
             }
