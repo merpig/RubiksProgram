@@ -155,7 +155,7 @@ class SolverUI extends Component {
         }
 
         return(<div className="sideMenu">
-                    <div className="sideMenuBox0">
+                    <div className="sideMenuBox0 sideLimit">
                         {this.props.state.currentFunc==="Solving"?
                         <div className="sideMovesBox">
                             
