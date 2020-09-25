@@ -52,6 +52,7 @@ a > img {
     position: absolute;
     border-radius: .25rem;
     background-color: rgba(25,25,25,.7);
+    border: 2px solid rgb(52, 58, 64);
     z-index: 100001;
     color: lightgrey;
     text-align: center;
