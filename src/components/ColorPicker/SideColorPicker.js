@@ -12,7 +12,7 @@ const SideColorPicker = (props) => {
     
 
     return (
-        <div className="sideMenuBox0">
+        <div className="sideMenuBox0 sideLimit">
           <div className="sideMenuBox1">
             <div className="cpInfo" style={{width:"100%"}}>
                     {
