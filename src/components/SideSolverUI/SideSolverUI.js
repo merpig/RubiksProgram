@@ -168,7 +168,7 @@ class SolverUI extends Component {
                         </div>:
                         [
                         <div className="sideMenuBox1" key="sideMenuBox1">
-                            <div className="algoList" style={{minWidth:"30vw"}}>
+                            <div className="algoList" style={{maxWidth:"400px"}}>
                                 {algorithmSet}  
                             </div>
                         </div>,

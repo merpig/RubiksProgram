@@ -13,7 +13,9 @@
     right: 0px;
     height: 50%;
     width: 30vw;
-    max-width: 400px;
+    max-width: 300px;
+    max-height: 150px;
+    font-size: 1rem;
 }
 
 .buttonWrapper{

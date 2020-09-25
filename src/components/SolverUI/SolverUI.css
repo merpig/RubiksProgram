@@ -56,8 +56,7 @@ a > img {
     color: lightgrey;
     text-align: center;
     height:100%;
-    width:100%;
-    max-width: 400px;
+    width:30vw;
     margin-bottom:100%;
 }
 
