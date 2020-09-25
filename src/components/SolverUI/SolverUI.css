@@ -7,6 +7,22 @@
     background-color: lightgrey;
 }
 
+#centerControls{
+  position: absolute;
+  left: 15;
+  max-width: 300px;
+  width: 50%;
+  height: 100%;
+  padding-right: 4.5%!important;
+}
+#centerControls2{
+  position: absolute;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  padding-right: 0px;
+}
+
 a > img {
     height: 50%;
 }
@@ -40,6 +56,7 @@ a > img {
     color: #343a40;
     text-align: center;
     height:100%;
+    width:100%;
 }
 
 .solverMessage{
@@ -122,7 +139,7 @@ a > img {
     z-index: 100000;
     pointer-events: auto;
     bottom:0;
-    left:0;
+    left: 0;
   }
 
   .solverMovesMobile{
@@ -164,12 +181,13 @@ a > img {
 
   .solveMoveDiv{
       margin:2px;
-      border: 1px solid #343a40;
+      border: 1px solid transparent;
       border-radius: .25rem;
       width: 2rem;
       height: 2rem;
       pointer-events: auto;
       display: inline-block;
+      background: rgba(0, 0, 0, .7);
   }
 
   .jumper{
@@ -177,17 +195,7 @@ a > img {
   }
 
   .solveMoveDiv:hover{
-    color: gold;
-    border:1px solid gold;
-    border-radius: .25rem;
-  }
-
-  .solveMoveDiv:active{
-    color: gold;
-    border:1px solid gold;
-    border-radius: .25rem;
-    background-color: gold;
-    color: #343a40!important;
+    background-color: rgba(100, 100, 100, .2);
   }
 
   .solveButtonImage>img{
@@ -209,9 +217,8 @@ a > img {
   }
 
 .nextSolveIndex{
-    background-color: lightblue;
-    color: #343a40!important;
-    border-radius: .25rem;
+  background-color: rgba(100, 100, 100,.5);
+  color: lightgray;
 }
 
 .targetSolveIndex{

@@ -1,0 +1,101 @@
+.bottomMenuWrapper{
+    position:absolute;
+    bottom:0;
+    left: 0;
+    width: 100%;
+    height: 30vh;
+}
+
+.bottomExitDiv{
+    position:absolute;
+    bottom: 3%;
+    right: 0px;
+    height: 50%;
+    width: 30vw;
+    max-width: 400px;
+}
+
+.buttonWrapper{
+    height:30vh;
+    max-height: 300px;
+    width: 100%;
+}
+
+.controllerBox{
+    margin:auto;
+    height:100%;
+    max-width: 400px;
+}
+
+#controlsPopup{
+    position: relative;
+    width:30vw;
+    max-width: 400px;
+    max-height: 300px;
+    margin:auto;
+}
+
+.sideMenuWrapper{
+    min-width: 30vw;
+    max-width: 30vw;
+    min-height: 100%;
+    position: absolute;
+    bottom:0;
+    padding-top: 72px;
+    right:0;
+}
+
+.sideMenu{
+    width: 100%;
+    height:100%;
+    position: absolute;
+    bottom:0px;
+}
+
+.sideMenuBox{
+    height:30vh;
+    width:100%;
+    border: 2px solid rgb(52, 58, 64);
+    position: absolute;
+    bottom: 30vh;
+}
+
+.sideMenuBox0{
+    height:60vh;
+    width:100%;
+    position: absolute;
+    top: 72px;
+}
+
+.sideMenuBox1{
+    height:49%;
+    width:100%;
+    border-radius: .25rem;
+    position: relative;
+}
+
+.sideMenuBox2{
+    height:49%;
+    width:100%;
+    border-radius: .25rem;
+    position: absolute;
+    bottom: 0;
+}
+
+.sideMovesBox{
+    position: absolute;
+    height: 100%;
+    width:100%;
+    overflow-y: scroll;
+    transition: border .4s ease;
+    border: 2px solid rgb(52, 58, 64);
+    border-radius: .25rem;
+    pointer-events: auto;
+    bottom:0;
+    left: 0;
+    color: #007bff;
+}
+
+.sideLimit{
+    max-width:400px;
+}

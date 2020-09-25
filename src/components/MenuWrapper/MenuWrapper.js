@@ -1,6 +1,7 @@
 import React,{Component} from "react";
-import MobileView from "../MobileView/MobileView"
-import View from "../View"
+import MobileView from "../MobileView/MobileView";
+import View from "../View";
+import SideView from "../SideView/SideView";
 class Menu extends Component {
     // eslint-disable-next-line no-useless-constructor
     constructor(props) {
@@ -13,7 +14,11 @@ class Menu extends Component {
     }
     render(){
         const props = this.props;
-        return window.innerWidth > 600? <View {...props}/> : <MobileView {...props}/>;  
+        return (window.innerWidth > 760&&window.innerHeight>580)? 
+            <SideView {...props}/> 
+                : window.innerWidth > 600?
+            <View {...props}/>:
+            <MobileView {...props}/>;  
     } 
 }
 

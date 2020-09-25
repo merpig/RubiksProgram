@@ -8,6 +8,16 @@
     max-width: 200px;
 }
 
+.sideSolverInfo{
+    position: fixed;
+    color: lightgray;
+    top: 85px;
+    right: 32vw;
+    font-size: 1rem;
+    width: 50%;
+    max-width: 200px;
+}
+
 .setLengthWrapper{
     width: 100%;
     text-align: left;

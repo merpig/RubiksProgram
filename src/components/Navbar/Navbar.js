@@ -4,64 +4,62 @@ import {DropdownButton,Dropdown} from 'react-bootstrap'
 import 'react-dropdown/style.css'
 import Popup from "reactjs-popup";
 
-const Navbar = props => (
+const Navbar = props => {
+  const navCubes = [];
+  for (let i = 2; i<=10;i++){
+    navCubes.push(
+      <Dropdown.Item key={i} href={`/id=${i}` }>{i} X {i}</Dropdown.Item>
+    )
+  }
+  return (
   <nav className="navbar navbar-dark fixed-top">
     <ul className="nav nav-justified mr-auto">
       <li className="nav-item nav-fix-for-edge">
         <p className="navbar-brand" style={{color:"lightgray"}}><b>{props.title}</b></p>
 
           {/*Open model here. Show bunch of settings. Pass changeSettings down to component to apply changes*/}
+          <div className="settingsDropDown">
           <DropdownButton className="settings" aria-label="settings" id="settings" title={<i className='fa fa-cog'></i>}>
           <ul>
 
-            <li>
+            <li className="settingsDropDownItem" onClick={() => props.changeSettings('displayMoveInput')}>
               
-              Move Input <br></br>
-              <label className="checkbox-inline">
-                <input type="checkbox" data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
-                {props.state.showMoveInput ? "ON " : "OFF "}
-              </label>
               
+              <div className="checkbox-inline">
+                {props.state.showMoveInput ? 
+                <input type="checkbox" checked={true} data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
+                 : 
+                 <input type="checkbox" checked={false} data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
+                 }
+              </div>
+              Move Input
               
             </li>
 
-            <li>
+            <li className="settingsDropDownItem" onClick={() => props.changeSettings('displayHints')}>
               
-              Move Hints <br></br>
-              <label className="checkbox-inline">
-                <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayHints')}></input>
-                {props.state.showHints? "ON " : "OFF "}
-              </label>
               
+              <div className="checkbox-inline">
+                
+                {props.state.showHints? 
+                <input type="checkbox" checked={true} data-toggle="toggle" onClick={() => props.changeSettings('displayHints')}></input>
+                 : 
+                 <input type="checkbox" checked={false} data-toggle="toggle" onClick={() => props.changeSettings('displayHints')}></input>
+                 }
+              </div>
+              Move Hints
               
             </li>
             
           </ul>
 
         </DropdownButton>
-        <DropdownButton title="Cubes" className="cubes">
-
-          {props.isLocal ?
-          <>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=2" style={{backgroundColor:"lightgrey"}}>2 X 2</Dropdown.Item>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=3">3 X 3</Dropdown.Item>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=4" style={{backgroundColor:"lightgrey"}}>4 X 4</Dropdown.Item>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=5">5 X 5</Dropdown.Item>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=6" style={{backgroundColor:"lightgrey"}}>6 X 6</Dropdown.Item>
-          <Dropdown.Item href="http://localhost:3000/RubiksProgram/id=7">7 X 7</Dropdown.Item>
-          </>:
-          <>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=2" style={{backgroundColor:"lightgrey"}}>2 X 2</Dropdown.Item>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=3">3 X 3</Dropdown.Item>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=4" style={{backgroundColor:"lightgrey"}}>4 X 4</Dropdown.Item>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=5">5 X 5</Dropdown.Item>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=6" style={{backgroundColor:"lightgrey"}}>6 X 6</Dropdown.Item>
-          <Dropdown.Item href="https://merpig.github.io/RubiksProgram/id=7">7 X 7</Dropdown.Item>
-          </>}
-
-          
-        </DropdownButton>
-        
+        </div>
+        <div className="cubesDropdown">
+          <DropdownButton title="Cubes" className="cubes">
+            {navCubes}
+          </DropdownButton>
+        </div>
       </li>
     </ul>
     <div style={{float:"right",height:"100%"}} >
@@ -103,7 +101,7 @@ const Navbar = props => (
       </Popup> {" "}
       <button id="fullscreenBtn" value="true">Fullscreen</button>
     </div>
-  </nav>
-);
+  </nav>)
+};
 
 export default Navbar;

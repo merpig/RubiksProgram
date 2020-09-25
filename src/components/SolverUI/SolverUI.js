@@ -94,10 +94,6 @@ class SolverUI extends Component {
                 "algoButton algoActive":"algoButton"} onClick={(e)=>algoStart(e,this.props)}>{algo.name}</button>)
                 :"")
 
-        let play = "";
-
-        let rewind = "";
-
         let previousMove = 
             <div className="previousMove">
                 {prevSet.length-1>=0?
@@ -237,7 +233,7 @@ class SolverUI extends Component {
             let algoSet = [];
             let generated = cube.generateSolved(cD,cD,cD);
             algorithms.forEach(set=>{
-                if(set.moves&&set.name&&set.name.replace(" ","")===algo&&set.worksFor.includes(cD)) algoSet.push(...set.moves.split(" "));
+                if(set.moves&&set.name===algo&&set.worksFor.includes(cD)) algoSet.push(...set.moves.split(" "));
             });
             props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[]});
         }
@@ -259,7 +255,7 @@ class SolverUI extends Component {
 
         return(<div className="solverUIWrapper">
             <Row style={{width:"100%",height:"100%",margin:0}}>
-                <Col style={{paddingLeft:"0px"}}> 
+                <Col id={(!this.props.mobile&&this.props.state.currentFunc==="Algorithms")?"centerControls2":""} style={{paddingLeft:"0px"}}> 
                     {!this.props.mobile?<>
                     <div className="solverMoves">
                         
@@ -292,7 +288,7 @@ class SolverUI extends Component {
                     }</>
                     }
                 </Col>
-                <Col style={{paddingRight:0,paddingLeft:0,maxWidth:"300px"}}>
+                <Col id={(!this.props.mobile&&this.props.state.currentFunc==="Algorithms")?"centerControls":""} style={{paddingRight:0,paddingLeft:0,maxWidth:"300px"}}>
                     
                     <div className="solverInterface">
                         <div className="warningPopupSolver">
@@ -319,13 +315,13 @@ class SolverUI extends Component {
                             <button 
                                 className={`solverButton`}
                                 onClick={() => pauseSolver(this.props)}> 
-                            Pause Solver
+                            <div style={{width:"100%"}}>Pause</div> Solver
                             </button>
                             :
                             <button 
                                 className={`solverButton`}
                                 onClick={() => fastrewind(this.props)}> 
-                            Auto Rewind
+                            <div style={{width:"100%"}}>Auto</div> Rewind
                             </button>
                             }
                         </div>
@@ -334,13 +330,13 @@ class SolverUI extends Component {
                             <button 
                                 className={`solverButton`}
                                 onClick={() => pauseSolver(this.props)}> 
-                            Pause Solver
+                            <div style={{width:"100%"}}>Pause</div> Solver
                             </button>
                             :
                             <button 
                                 className={`solverButton`}
                                 onClick={() => fastforward(this.props)}> 
-                            Auto Forward
+                            <div style={{width:"100%"}}>Auto</div> Forward
                             </button>
                             } 
                         </div>
