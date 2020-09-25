@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/RubiksProgram/static/css/main.3260ec7b.chunk.css",
-    "main.js": "/RubiksProgram/static/js/main.38890ad2.chunk.js",
-    "main.js.map": "/RubiksProgram/static/js/main.38890ad2.chunk.js.map",
+    "main.css": "/RubiksProgram/static/css/main.3572ad72.chunk.css",
+    "main.js": "/RubiksProgram/static/js/main.34d7e713.chunk.js",
+    "main.js.map": "/RubiksProgram/static/js/main.34d7e713.chunk.js.map",
     "runtime-main.js": "/RubiksProgram/static/js/runtime-main.8ddb94a0.js",
     "runtime-main.js.map": "/RubiksProgram/static/js/runtime-main.8ddb94a0.js.map",
     "static/css/2.b6c0fe55.chunk.css": "/RubiksProgram/static/css/2.b6c0fe55.chunk.css",
     "static/js/2.fe70d9e5.chunk.js": "/RubiksProgram/static/js/2.fe70d9e5.chunk.js",
     "static/js/2.fe70d9e5.chunk.js.map": "/RubiksProgram/static/js/2.fe70d9e5.chunk.js.map",
     "index.html": "/RubiksProgram/index.html",
-    "precache-manifest.a3712fcbdeabdec19583693c9438c5cd.js": "/RubiksProgram/precache-manifest.a3712fcbdeabdec19583693c9438c5cd.js",
+    "precache-manifest.0ca6bce64ad9ae7638f075a4b9b6b0d4.js": "/RubiksProgram/precache-manifest.0ca6bce64ad9ae7638f075a4b9b6b0d4.js",
     "service-worker.js": "/RubiksProgram/service-worker.js",
     "static/css/2.b6c0fe55.chunk.css.map": "/RubiksProgram/static/css/2.b6c0fe55.chunk.css.map",
-    "static/css/main.3260ec7b.chunk.css.map": "/RubiksProgram/static/css/main.3260ec7b.chunk.css.map",
+    "static/css/main.3572ad72.chunk.css.map": "/RubiksProgram/static/css/main.3572ad72.chunk.css.map",
     "static/js/2.fe70d9e5.chunk.js.LICENSE.txt": "/RubiksProgram/static/js/2.fe70d9e5.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.8ddb94a0.js",
     "static/css/2.b6c0fe55.chunk.css",
     "static/js/2.fe70d9e5.chunk.js",
-    "static/css/main.3260ec7b.chunk.css",
-    "static/js/main.38890ad2.chunk.js"
+    "static/css/main.3572ad72.chunk.css",
+    "static/js/main.34d7e713.chunk.js"
   ]
 }
