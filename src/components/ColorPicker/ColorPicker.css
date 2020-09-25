@@ -1,10 +1,11 @@
 .warningPopup{
     display:none;
     position: absolute;
-    background-color: white;
+    background-color: rgba(25,25,25,.7);
+    border: 2px solid rgb(52, 58, 64);
     border-radius: .25rem;
     z-index: 100;
-    color: #343a40;
+    color: lightgrey;
     height: 100%;
     max-height: 300px;
     width:100%;
@@ -19,9 +20,10 @@
 
 .cpLeaveStay{
     color: lightgrey;
-    background-color: #343a40;
+    transition: background-color .4s ease;
+    background-color: rgba(0,0,255,.10);
     border-radius: .25rem;
-    border: 1px solid #007bff;
+    border: 2px solid #007bff;
     font-size: 1rem;
     height: 22.5%;
     width: 40%;
@@ -30,6 +32,14 @@
     white-space: nowrap;
     margin: 5px;
     pointer-events: auto;
+  }
+
+  .cpLeaveStay:hover{
+    background-color: rgba(0,0,255,.5)!important;
+  }
+
+  .cpLeaveStay:active{
+    background-color: rgba(0,0,255,.25)!important;
   }
 
 .solveCpDiv{

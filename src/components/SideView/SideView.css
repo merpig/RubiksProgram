@@ -7,8 +7,9 @@
 }
 
 .bottomExitDiv{
+    visibility: visible;
     position:absolute;
-    bottom: 3%;
+    bottom: 0px;
     right: 0px;
     height: 50%;
     width: 30vw;
@@ -22,6 +23,7 @@
 }
 
 .controllerBox{
+    visibility: visible;
     margin:auto;
     height:100%;
     max-width: 400px;

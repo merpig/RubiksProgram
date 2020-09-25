@@ -57,11 +57,15 @@ class SideView extends Component {
 
 
         let exitConfirm = () =>{
-            document.querySelector(".warningPopupSolver").style.display="block";
+            document.querySelector(".warningPopupSolver").style.visibility="visible";
+            document.querySelector(".controllerBox").style.visibility="hidden";
+            document.querySelector(".bottomExitDiv").style.visibility="hidden";
         }
 
         let exitCpConfirm = () => {
             document.querySelector(".warningPopup").style.display="block";
+            document.querySelector(".controllerBox").style.visibility="hidden";
+            document.querySelector(".bottomExitDiv").style.visibility="hidden";
         }
 
         let exitAlgo = () => {
@@ -69,15 +73,20 @@ class SideView extends Component {
         }
 
         function stay() {
-            document.querySelector(".warningPopupSolver").style.display = "none";
+            document.querySelector(".warningPopupSolver").style.visibility = "hidden";
+            document.querySelector(".controllerBox").style.visibility="visible";
+            document.querySelector(".bottomExitDiv").style.visibility="visible";
         }
 
         function stayCp(){
             document.querySelector(".warningPopup").style.display = "none";
+            document.querySelector(".controllerBox").style.visibility="visible";
+            document.querySelector(".bottomExitDiv").style.visibility="visible";
         }
 
         function leave(e, props) {
-            document.querySelector(".warningPopupSolver").style.display = "none";
+            document.querySelector(".warningPopupSolver").style.visibility = "hidden";
+            document.querySelector(".bottomExitDiv").style.visibility="visible";
             e.stopPropagation();
             props.stopSolve();
 
@@ -106,6 +115,7 @@ class SideView extends Component {
 
         let  leaveCp = () => {
             document.querySelector(".warningPopup").style.display = "none";
+            document.querySelector(".bottomExitDiv").style.visibility="visible";
             this.props.endColorPicker();
 
             if( document.querySelector(".activeMenu")){
@@ -151,14 +161,14 @@ class SideView extends Component {
                 className="exitButton">Exit</button>
 
         let confirmLeavePopup =
-            <div id="controlsPopup" className="warningPopupSolver" style={{marginBottom:"100%"}}>
+            <div id="controlsPopup" className="warningPopupSolver" style={{position:"absolute", left:"35vw", width:"30vw"}}>
                 <div id="solverChangeData" data=""></div>
                 <div className="solverMessage">Are you sure you want to leave Solver? Progress will not be saved.</div>
                 <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={(e) => leave(e, this.props)} className="solverLeaveStay">Leave</button>
             </div>
         
         let confirmLeavePopupCp=
-            <div className="warningPopup" style={{position:"relative", margin:"auto", width:"30vw",marginBottom:"100%"}}>
+            <div className="warningPopup" style={{position:"absolute", left:"35vw", width:"30vw"}}>
                 <div id="cpChangeData" data=""></div>
                 <div className="cpMessage">Are you sure you want to leave Color Picker?</div>
                 <button onClick={stayCp} className="cpLeaveStay">Stay</button><button onClick={leaveCp} className="cpLeaveStay">Leave</button>

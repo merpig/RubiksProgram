@@ -48,15 +48,16 @@ a > img {
 }
 
 .warningPopupSolver{
-    display:none;
+    visibility: hidden;
     position: absolute;
-    background-color: lightgrey;
     border-radius: .25rem;
+    background-color: rgba(25,25,25,.7);
     z-index: 100001;
-    color: #343a40;
+    color: lightgrey;
     text-align: center;
     height:100%;
     width:100%;
+    max-width: 400px;
     margin-bottom:100%;
 }
 
@@ -67,9 +68,10 @@ a > img {
 
 .solverLeaveStay{
     color: lightgrey;
-    background-color: #343a40;
+    transition: background-color .4s ease;
+    background-color: rgba(0,0,255,.10);
     border-radius: .25rem;
-    border: 1px solid #007bff;
+    border: 2px solid #007bff;
     font-size: 1rem;
     height: 22.5%;
     width: 40%;
@@ -112,11 +114,11 @@ a > img {
     padding: 0px;
   }
 
-  .solverButton:hover,.exitButton:hover{
+  .solverButton:hover,.exitButton:hover,.solverLeaveStay:hover{
     background-color: rgba(0,0,255,.5)!important;
   }
 
-  .solverButton:active,.exitButton:active{
+  .solverButton:active,.exitButton:active,.solverLeaveStay:active{
     background-color: rgba(0,0,255,.25)!important;
   }
   

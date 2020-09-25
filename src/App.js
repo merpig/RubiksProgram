@@ -103,7 +103,7 @@ class App extends Component {
     activeMenu : "",
     solveTime:0,
     targetSolveIndex: -1,
-    activeAlgo:"none",
+    activeAlgo:"None Selected",
     sliderSpeed:40
   };
 
