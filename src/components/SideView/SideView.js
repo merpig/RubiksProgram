@@ -151,14 +151,14 @@ class SideView extends Component {
                 className="exitButton">Exit</button>
 
         let confirmLeavePopup =
-            <div id="controlsPopup" className="warningPopupSolver">
+            <div id="controlsPopup" className="warningPopupSolver" style={{marginBottom:"100%"}}>
                 <div id="solverChangeData" data=""></div>
                 <div className="solverMessage">Are you sure you want to leave Solver? Progress will not be saved.</div>
                 <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={(e) => leave(e, this.props)} className="solverLeaveStay">Leave</button>
             </div>
         
         let confirmLeavePopupCp=
-            <div className="warningPopup" style={{position:"relative", margin:"auto", width:"30vw"}}>
+            <div className="warningPopup" style={{position:"relative", margin:"auto", width:"30vw",marginBottom:"100%"}}>
                 <div id="cpChangeData" data=""></div>
                 <div className="cpMessage">Are you sure you want to leave Color Picker?</div>
                 <button onClick={stayCp} className="cpLeaveStay">Stay</button><button onClick={leaveCp} className="cpLeaveStay">Leave</button>
