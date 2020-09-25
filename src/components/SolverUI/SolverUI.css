@@ -99,7 +99,9 @@ a > img {
     padding-bottom: 2%;
   }
 
-  
+  .solverInterface.exitDiv{
+    display: block;
+  }
 
   .solverButton{
     height: 100%;
@@ -160,7 +162,7 @@ a > img {
 
   .algoMoves{
     position: absolute;
-    height: 87%;
+    height: 80%;
     width: 98%;
     overflow-y: scroll;
     border-radius: .25rem;

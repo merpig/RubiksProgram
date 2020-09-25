@@ -138,7 +138,9 @@ class SolverUI extends Component {
 
 
         function stay(){
-            document.querySelector(".warningPopupSolver").style.display="none";
+            document.querySelector(".warningPopupSolver").style.visibility="hidden";
+            document.querySelector(".solverInterface").style.display="block";
+            document.querySelector(".exitDiv").style.display="block";
         }
 
         function leave(e,props){
@@ -241,7 +243,10 @@ class SolverUI extends Component {
         function optionClick(e,props){
             switch(props.state.currentFunc){
                 case "Solving":
-                    document.querySelector(".warningPopupSolver").style.display="block";
+                    document.querySelector(".warningPopupSolver").style.visibility="visible";
+                    document.querySelector(".warningPopupSolver").style.width="100%";
+                    document.querySelector(".solverInterface").style.display="none";
+                    document.querySelector(".exitDiv").style.display="none"
                     break;
                 case "Algorithms":
                     //this.setState({currentFunc : "None",solveState : -1,autoPlay : false, playOne : false, isVisible : false, hoverData : [], solveMoves : "", prevSet : [], moveSet : [],targetSolveIndex:-1,solvedSet:[]});
@@ -288,14 +293,14 @@ class SolverUI extends Component {
                     }</>
                     }
                 </Col>
-                <Col id={(!this.props.mobile&&this.props.state.currentFunc==="Algorithms")?"centerControls":""} style={{paddingRight:0,paddingLeft:0,maxWidth:"300px"}}>
-                    
-                    <div className="solverInterface">
+                <Col id={(!this.props.mobile&&this.props.state.currentFunc==="Algorithms")?"centerControls":"centerControlsOther"} style={{paddingRight:0,paddingLeft:0,maxWidth:"300px"}}>
                         <div className="warningPopupSolver">
-                            <div id="solverChangeData" data=""></div>
-                            <div className="solverMessage">Are you sure you want to leave Solver? Progress will not be saved.</div>
-                            <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={(e)=>leave(e,this.props)} className="solverLeaveStay">Leave</button>
+                                    <div id="solverChangeData" data=""></div>
+                                    <div className="solverMessage">Are you sure you want to leave Solver? Progress will not be saved.</div>
+                                    <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={(e)=>leave(e,this.props)} className="solverLeaveStay">Leave</button>
                         </div>
+                    <div className="solverInterface">
+                        
                         <div className="solverButtonDiv rewindOne">
                             <button 
                                 className={`solverButton`}

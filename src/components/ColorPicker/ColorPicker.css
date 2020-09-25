@@ -17,6 +17,10 @@
     padding: 10px;
 }
 
+.colorButtonContainer{
+  visibility: visible;
+}
+
 .cpLeaveStay{
     color: lightgrey;
     transition: background-color .4s ease;

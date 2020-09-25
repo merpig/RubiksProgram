@@ -37,10 +37,13 @@ const ColorPicker = (props) => {
     }
     function stay(){
         document.querySelector(".warningPopup").style.display="none";
+        document.querySelector(".colorButtonContainer").style.visibility="visible";
     }
 
     function optionClick(e){
         document.querySelector(".warningPopup").style.display="block";
+        document.querySelector(".warningPopup").style.width="100%";
+        document.querySelector(".colorButtonContainer").style.visibility="hidden";
     }
 
     return (
@@ -61,12 +64,13 @@ const ColorPicker = (props) => {
                 </div>
             </Col>
             <Col style={{padding:"0px"}}>
+                <div className="warningPopup">
+                    <div id="cpChangeData" data=""></div>
+                    <div className="cpMessage">Are you sure you want to leave Color Picker?</div>
+                    <button onClick={stay} className="cpLeaveStay">Stay</button><button onClick={leave} className="cpLeaveStay">Leave</button>
+                </div>
                 <div className="colorButtonContainer">
-                    <div className="warningPopup">
-                        <div id="cpChangeData" data=""></div>
-                        <div className="cpMessage">Are you sure you want to leave Color Picker?</div>
-                        <button onClick={stay} className="cpLeaveStay">Stay</button><button onClick={leave} className="cpLeaveStay">Leave</button>
-                    </div>
+                    
                     {colors.map((color,i)=><ColorButton
                         index={i+1} 
                         key={color}
