@@ -149,7 +149,11 @@ class SolverUI extends Component {
             try{algo = e.target.id}catch{algo = e};
             let algoSet = [];
             let generated = cube.generateSolved(cD,cD,cD);
-            algoSet = algorithms.find(set=>set.name===algo&&set.worksFor.includes(cD)).moves.split(" ");
+            if(algo!=="None Selected")
+                algoSet = algorithms
+                    .find(
+                        set=>set.name===algo&&
+                        set.worksFor.includes(cD)).moves.split(" ");
             
             props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[]});
         }
