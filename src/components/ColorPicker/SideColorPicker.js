@@ -9,6 +9,12 @@ const SideColorPicker = (props) => {
             {"- "+error}
         </p>);
     });
+
+    function solveCube(){
+        document.querySelector(".warningPopup").style.display = "none";
+        document.querySelector(".bottomExitDiv").style.visibility="visible";
+        props.setColorPickedCube()
+    }
     
 
     return (
@@ -17,7 +23,7 @@ const SideColorPicker = (props) => {
             <div className="cpInfo" style={{width:"100%"}}>
                     {
                         props.isValidConfig?
-                        <div className="solveCpDiv"><button className="solveCp" onClick={()=>props.setColorPickedCube()}>
+                        <div className="solveCpDiv"><button className="solveCp" onClick={solveCube}>
                             <strong style={{color:'green',fontSize:'1rem'}}>Solve</strong>
                         </button></div>:
                         []

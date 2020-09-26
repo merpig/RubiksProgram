@@ -14,7 +14,7 @@ class Menu extends Component {
     }
     render(){
         const props = this.props;
-        return (window.innerWidth > 760&&window.innerHeight>580)? 
+        return (window.innerWidth > 900&&window.innerHeight>580)? 
             <SideView {...props}/> 
                 : window.innerWidth > 600?
             <View {...props}/>:
