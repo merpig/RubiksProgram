@@ -66,7 +66,9 @@ const ColorPicker = (props) => {
             <Col style={{padding:"0px"}}>
                 <div className="warningPopup">
                     <div id="cpChangeData" data=""></div>
-                    <div className="cpMessage">Are you sure you want to leave Color Picker?</div>
+                    {props.isMobile?
+                        <div className="cpMessage">Progress will not be saved.</div>:
+                        <div className="cpMessage">Are you sure you want to leave Color Picker? Progress will not be saved.</div>}
                     <button onClick={stay} className="cpLeaveStay">Stay</button><button onClick={leave} className="cpLeaveStay">Leave</button>
                 </div>
                 <div className="colorButtonContainer">

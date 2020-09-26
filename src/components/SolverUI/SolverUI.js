@@ -91,7 +91,7 @@ class SolverUI extends Component {
         
         algorithms.forEach(algo=>algo.worksFor.includes(this.props.state.cubeDimension)?
             algorithmSet.push(<button id={algo.name} key={algo.name} className={this.props.state.activeAlgo===algo.name?
-                "algoButton algoActive":"algoButton"} onClick={(e)=>algoStart(e,this.props)}>{algo.name}</button>)
+                "algoButton algoActive":"algoButton"} onClick={()=>algoStart(algo.name,this.props)}>{algo.name}</button>)
                 :"")
 
         let previousMove = 
@@ -228,15 +228,16 @@ class SolverUI extends Component {
             }
         }
 
-        function algoStart(e,props){
+        function algoStart(name,props){
             let cD = props.state.cubeDimension;
-            let algo = null;
-            try{algo = e.target.id}catch{algo = e};
+            let algo = name;
             let algoSet = [];
             let generated = cube.generateSolved(cD,cD,cD);
-            algorithms.forEach(set=>{
-                if(set.moves&&set.name===algo&&set.worksFor.includes(cD)) algoSet.push(...set.moves.split(" "));
-            });
+            if(algo!=="None Selected")
+                algoSet = algorithms
+                    .find(
+                        set=>set.name===algo&&
+                        set.worksFor.includes(cD)).moves.split(" ");
             props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[]});
         }
 
@@ -270,9 +271,9 @@ class SolverUI extends Component {
                     {this.props.state.currentFunc==="Algorithms"?<><Row style={{paddingLeft:"15px"}}>
                         {/* <label htmlFor="patterns" style={{color:"lightgrey"}}>Choose a Pattern:</label> */}
 
-                        <select style={{color:"lightgrey",backgroundColor:"#343a40"}} id="patterns" onChange={(e) => algoStart(e.target.value.replace(" ",""),this.props)}>
+                        <select style={{color:"lightgrey",backgroundColor:"#343a40"}} id="patterns" onChange={(e) => algoStart(e.target.value,this.props)}>
                         {algorithms.map(algo=>algo.worksFor.includes(this.props.state.cubeDimension)?
-                            <option className="mobileAlgo" id={algo.name.replace(" ","")} value={algo.name} key={algo.name}>{algo.name}</option>
+                            <option className="mobileAlgo" id={algo.name} value={algo.name} key={algo.name}>{algo.name}</option>
                                 :"")}
                         </select>
                     </Row>
@@ -296,7 +297,10 @@ class SolverUI extends Component {
                 <Col id={(!this.props.mobile&&this.props.state.currentFunc==="Algorithms")?"centerControls":"centerControlsOther"} style={{paddingRight:0,paddingLeft:0,maxWidth:"300px"}}>
                         <div className="warningPopupSolver">
                                     <div id="solverChangeData" data=""></div>
-                                    <div className="solverMessage">Are you sure you want to leave Solver? Progress will not be saved.</div>
+                                    {this.props.mobile?
+                                        <div className="solverMessage"> Progress will not be saved.</div>:
+                                        <div className="solverMessage"> Are you sure you want to leave Solver? Progress will not be saved.</div>
+                                    }
                                     <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={(e)=>leave(e,this.props)} className="solverLeaveStay">Leave</button>
                         </div>
                     <div className="solverInterface">
