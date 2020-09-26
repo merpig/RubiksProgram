@@ -61,6 +61,7 @@ const MenuOptions = props => {
                     
                 }
                 else if(e.target.id==="Algorithms"){
+                    console.log(props.state.currentFunc);
                     //props.setState({activeMenu:"",currentFunc:"Reset",solvedSet:[],hoverData:[],prevSet:[],moveSet:[],isValidConfig:false,targetSolveIndex:-1, solveMoves : "",autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,activeAlgo:"none"});
                     props.setState({activeMenu:e.target.id,currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[],activeAlgo:""});
                 }

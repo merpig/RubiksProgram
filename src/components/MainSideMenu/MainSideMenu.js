@@ -9,17 +9,20 @@ const MainSideMenu = props => {
     let algorithmSet = algs.filter(algo=>algo.worksFor.includes(props.state.cubeDimension));
 
     function colorPicker(){
-        props.setState({activeMenu:"ColorPicker",isValidConfig:true});
-        props.beginColorPicker();
+        if(props.state.currentFunc==="None"){
+            props.setState({activeMenu:"ColorPicker",isValidConfig:true});
+            props.beginColorPicker();
+        }
     }
 
     function solver(){
-        props.setState({activeMenu:"Solver"},props.beginSolve());
+        if(props.state.currentFunc==="None")
+            props.setState({activeMenu:"Solver"},props.beginSolve());
     }
 
     function scramble(){
         if(props.state.currentFunc==="None"){
-            props.beginScramble();
+            props.setState({activeMenu:"Scrambling"},props.beginScramble());
         }
     }
 
@@ -28,7 +31,8 @@ const MainSideMenu = props => {
     }
 
     function algorithms(){
-        props.setState({activeMenu:"Algorithms",currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[]});
+        if(props.state.currentFunc==="None")
+            props.setState({activeMenu:"Algorithms",currentFunc:"Algorithms",solveOnce:false,solvedSet:[],prevSet:[],moveSet:[]});
     }
     
     return (
