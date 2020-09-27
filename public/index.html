@@ -82,9 +82,9 @@
           min-height:50%;   /* adjust as per your needs */
           margin-left:-37.5%;   /* negative half of width above */
           
-          background-color: black;
+          background-color: rgba(0,0,100,.8);
           border-radius: .25rem;
-          border: 1.5px solid #007bff;
+          border: 2px solid #007bff;
           color: lightgray;
         }
 
@@ -114,8 +114,16 @@
           }
         }
         @media (max-width:420px) {
+          .popupDiv{
+            width:90%!important;
+            /* display: none; */
+          }
           #infoBtn{
-            display: none;
+            padding-left: 10px!important;
+            padding-right: 10px!important;
+          }
+          .navbar{
+            padding: 1rem .5rem!important;
           }
           #divInfo{
             display: none;
