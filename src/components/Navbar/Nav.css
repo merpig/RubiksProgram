@@ -18,6 +18,7 @@
 
 .settingsDropDown{
     float: right;
+    margin-right: 4px;
 }
 
 .cubesDropdown > .cubes > .dropdown-menu{

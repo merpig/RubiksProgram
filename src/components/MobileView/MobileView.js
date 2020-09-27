@@ -5,6 +5,7 @@ import Controls from "../Controls";
 import SolverUI from "../SolverUI/SolverUI";
 import ColorPicker from "../ColorPicker/ColorPicker";
 import {Row, Col, Button} from "react-bootstrap";
+import algorithms from "../../cubeFunctions/algorithms";
 
 const optionLimitCP = 5;
 const optionLimitSOLVER = 5;
@@ -54,6 +55,9 @@ class Mobile extends Component {
     }
 
     render(){
+
+        const algoLength = algorithms.filter(set=>set.worksFor.includes(this.props.state.cubeDimension)).length;
+
         function otherOptionClick(e,props){
             switch(e.target.id){
                 case 'Reset':
@@ -99,7 +103,9 @@ class Mobile extends Component {
                             <button className="blankButton" key={1}></button>
                             <button className="blankButton" key={2}></button></>
                         } 
-                        <button className="mobileButton" id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} key={3}>Patterns</button> 
+                        {algoLength?
+                            <button className="mobileButton" id="Algorithms" data="Algorithms" onClick={(e)=>optionClick(e,this.props)} key={3}>Patterns</button>:""
+                        }
                     </Col>
                     <Col xs={6} style={{paddingLeft:"7.5px"}}>
                         {this.props.state.cubeDimension<1?
