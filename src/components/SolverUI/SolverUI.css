@@ -192,6 +192,7 @@ a > img {
       height: 2rem;
       pointer-events: auto;
       display: inline-block;
+      transition: background-color .4s ease;
       background: rgba(0, 0, 0, .7);
   }
 

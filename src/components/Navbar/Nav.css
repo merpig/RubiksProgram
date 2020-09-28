@@ -44,7 +44,7 @@
     border: none;
     /* border-bottom: 1px solid grey; */
     transition: all .4s;
-    background: rgba(0, 0, 0, .7);
+    background: rgba(0, 0, 0, .9);
     border-radius: .25rem;
     margin-bottom: 8px;
 }
@@ -70,7 +70,7 @@
     width: 100%;
     color: #007bff;
     transition: all .4s;
-    background: rgba(0, 0, 0, .7);
+    background: rgba(0, 0, 0, .9);
     border-radius: .25rem;
     list-style-type: none;
     padding-left: 20px;
@@ -78,6 +78,7 @@
     padding-top: 4px;
     padding-bottom: 4px;
     margin-bottom: 8px;
+    pointer-events: visible;
 }
 
 .navbar-brand{
@@ -108,4 +109,19 @@
 #infoBtn:hover,#fullscreenBtn:hover,.settings > button:hover,.cubes > button:hover{
     background-color: blue;
     border: 2px solid blue;
+}
+
+#closeBtn{
+    border-radius:50%;
+    -moz-border-radius:50%;
+    -webkit-border-radius:50%;
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid #007bff;
+    pointer-events: auto;
+}
+
+#closeBtn:hover{
+    border-color: #007bff!important;
+    background-color: rgba(100, 100, 100,.5);
 }

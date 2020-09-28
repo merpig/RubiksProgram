@@ -32,13 +32,19 @@
   }
 }
 
-.redoUndo:hover{
+.redoUndo{
+  background-repeat:no-repeat;
   border-radius: .25rem;
-  border: 1px solid lightgray!important;
-  background-color: transparent!important;
+  border: 2px solid #007bff;
+  background-position: 50% 50%;
+  transition: background-color .4s ease;
+  background-color: rgba(0,0,255,.10);
+}
+
+.redoUndo:hover{
+  background-color: rgba(0,0,255,.5);
 }
 
 .redoUndo:active{
-  border-radius: .25rem;
-  background-color: lightgray!important;
+  background-color: rgba(0,0,255,.25);
 }

@@ -2380,12 +2380,14 @@ class App extends Component {
         />
 
         {this.state.currentFunc==="Color Picker"?<></>:<p style={{position:"fixed", top: "110px", left: "10px",color: "lightgrey",fontSize:"1rem"}}>Speed: {this.state.currentSpeed}</p>}
-        <div style={{width:"100px",position:"absolute", top: "75px",marginLeft: "50%",left:"-50px"}}>
+        <div style={{width:"100%",position:"absolute", top: "85px",margin:"auto"}}>
+          <div style={{width:"116px", margin:"auto"}}>
           {this.state.currentFunc==="None"||this.state.currentFunc==="Undo"||this.state.currentFunc==="Redo"||this.state.currentFunc==="Drag Turn"?
-          [<button key="undo" className="redoUndo" style={{border:"none",marginRight:"2px",display:"inline-block", width:"45%",height:"50px",fontSize:"1rem",background: "url(https://image.flaticon.com/icons/svg/889/889590.svg)",backgroundRepeat:"no-repeat"}} onClick={() => this.undo()}></button>,
-          <button key="redo" className="redoUndo" style={{border:"none",marginLeft:"2px",display:"inline-block", width:"45%",height:"50px",fontSize:"1rem",background: "url(https://image.flaticon.com/icons/svg/889/889578.svg)",backgroundRepeat:"no-repeat"}} onClick={() => this.redo()}></button>]
+          [<button key="undo" className="redoUndo" style={{marginRight:"8px",float:"left", width:"50px",height:"50px",fontSize:"1rem",backgroundImage: "url(https://image.flaticon.com/icons/svg/889/889590.svg)",backgroundRepeat:"no-repeat"}} onClick={() => this.undo()}></button>,
+          <button key="redo" className="redoUndo" style={{marginLeft:"8px",float:"right", width:"50px",height:"50px",fontSize:"1rem",backgroundImage: "url(https://image.flaticon.com/icons/svg/889/889578.svg)",backgroundRepeat:"no-repeat"}} onClick={() => this.redo()}></button>]
           :""
           }
+          </div>
         </div>
 
         {this.state.currentFunc==="Color Picker"?[]:<Speeds //Top left with slider
