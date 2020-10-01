@@ -1,3 +1,7 @@
+function move(depth,side){
+   return ((depth<10? "0":"") + depth + side);
+}
+
 function alignYellowCorners(rubiksObject,cubeDimension,moveStringToArray,corners){
     let moveString = "";
     let cube = rubiksObject;
@@ -26,7 +30,10 @@ function alignYellowCorners(rubiksObject,cubeDimension,moveStringToArray,corners
 
    else if(solveCount === 2 && dim > 3) {
       //console.log("another parity encountered brother");
-      moveString = "02D2 01B2 02D2 02b2 02D2 02b2";
+      moveString = `02D2 01B2 02D2 02b2 02D2 02b2`;
+      // moveString = `${move(dim/2,"d2")} 01D2 01B2 ${move(dim/2,"d2")} 01D2 ${move(dim/2,"b2")} ${move(dim/2,"d2")} 01D2 ${move(dim/2,"b2")}`;
+
+      //04d2 01D2 01B2 04d2 01D2 04b2 04d2 01D2 04b2
       const moveArray = moveStringToArray(moveString);
       if(moveString.length) return {moveSet : moveArray,solveState:5};
    }

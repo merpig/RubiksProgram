@@ -4,7 +4,7 @@ import algorithms from "../../cubeFunctions/algorithms";
 import cube from '../../cubeFunctions/cube';
 
 const optionLimitCP = 5;
-const optionLimitSOLVER = 5;
+const optionLimitSOLVER = 10;
 
 const MenuOptions = props => {
         let algorithmSet = 

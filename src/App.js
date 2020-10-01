@@ -1595,6 +1595,7 @@ class App extends Component {
     let indexOccurence = 0;
     let error = false;
     let counter = 0;
+    let threeByThreeCounter = 0;
     if(tempState.currentFunc === 'Color Picker'){
       tempState.solveState = 0;
       tempState.currentFunc = "Solving";
@@ -1607,7 +1608,9 @@ class App extends Component {
         currentIndex=tempState.rubiksIndex;
         if(currentIndex===previousIndex) indexOccurence = indexOccurence+1;
         else indexOccurence = 0;
+        threeByThreeCounter++;
         let moves;
+
         moves = solver(tempState.solveState,tempState.rubiksObject,tempState.cubeDimension,this.moveStringToArray,
           tempState.solveMoves,tempState.rubiksIndex,tempState.middles,tempState.edges,tempState.corners);
         if (!moves) moves = {};
@@ -1628,7 +1631,12 @@ class App extends Component {
           }
           moves.moveSet = temp;
         }
-        if((indexOccurence>10 && tempState.solveState<1)||counter>10000||(moves.moveSet&&moves.moveSet[0]==='error')) {
+        if(threeByThreeCounter>500) {
+          error = true;
+          console.log(tempState.solveState);
+          moves.currentFunc="None";
+        }
+        else if((indexOccurence>10 && tempState.solveState<1)||counter>10000||(moves.moveSet&&moves.moveSet[0]==='error')) {
 
           console.log(indexOccurence,currentIndex,previousIndex,tempState.rubiksIndex);
           console.log(moves);

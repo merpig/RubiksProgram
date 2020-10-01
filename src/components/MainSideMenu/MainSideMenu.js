@@ -41,7 +41,7 @@ const MainSideMenu = props => {
                 name="Color Picker"
                 onClick={colorPicker}
             />:[]}
-            {props.state.cubeDimension<6?
+            {props.state.cubeDimension<10?
             <MainSideMenuButton 
                 name="Solver"
                 onClick={solver}
