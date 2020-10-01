@@ -1724,7 +1724,31 @@ class App extends Component {
     
 
     if(moveSet[0]==="stop'"&&moveSet[1]==="stop'"&&moveSet.length===2) moveSet = [];
+
+    console.log(tempState.rubiksObject.filter(piece => 
+      [piece[6],piece[7],piece[8]].join("")!==[piece[9],piece[10],piece[11]].join("")
+      )
+    );
   
+    let invalidAlignment = 0;
+    let invalidPlacement = 0;
+    tempState.rubiksObject.forEach(piece => {
+      let tempPiece = piece.slice(0,6);
+      let tempFiltered = tempPiece.filter(side=>side!=="black");
+      let validCount = 0
+      if([piece[6],piece[7],piece[8]].join("")!==[piece[9],piece[10],piece[11]].join("")){
+        if(tempFiltered.length>1) {invalidPlacement++; error=true;}
+      }
+      if(tempPiece[0]==="white"||tempPiece[0]==="black") validCount++;
+      if(tempPiece[1]==="blue"||tempPiece[1]==="black") validCount++;
+      if(tempPiece[2]==="red"||tempPiece[2]==="black") validCount++;
+      if(tempPiece[3]==="yellow"||tempPiece[3]==="black") validCount++;
+      if(tempPiece[4]==="orange"||tempPiece[4]==="black") validCount++;
+      if(tempPiece[5]==="green"||tempPiece[5]==="black") validCount++;
+      if(validCount<6) {invalidAlignment++; error=true;}
+    });
+    console.log(invalidAlignment,invalidPlacement);
+
     if(error) {
       //alert("Sorry for the inconvenience. This error is caused by an infinite loop issue with the solver and has been stopped to prevent freezing the application. The current move set has still been pushed and is playable for debugging purposes. Maybe you can figure out the issue before I can ;)");
       return {moveSet:[...moveSet],rubiksObject : beforeObject,solveable:false,solvedSet:[...moveSet],solvedSetIndex:0};
