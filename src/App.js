@@ -348,7 +348,7 @@ class App extends Component {
           piece[4]  // piece on left(4) is still on bottom(5)
         ].join(""),
         position:[
-          piece[8], 
+          max-piece[8], 
           piece[7],  
           max // becomes top
         ]
@@ -656,7 +656,6 @@ class App extends Component {
   checkValidMatchMiddle(validPiece,manualPiece){
     let newValidPiece = this.alignQuadrant(this.convertToBlueMiddle(validPiece));
     let newManualPiece = this.alignQuadrant(this.convertToBlueMiddle(manualPiece));
-
     if(newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position){
       return true;
     }
@@ -759,7 +758,6 @@ class App extends Component {
 
   checkColors = () => {
     let rubiksLength = this.state.rubiksObject.length;
-
     let whiteCount = 0,blueCount = 0,redCount = 0,yellowCount = 0,orangeCount = 0,greenCount = 0;
     let duplicateFace = false;
     let duplicateColors = [];
@@ -805,6 +803,7 @@ class App extends Component {
       newGenerated.push([]);
       let tempInvalidMatch = [];
       rubiks.forEach(([...rubik],i) => {
+        
         let validPiece = 0;
         piece.slice(0,6).sort().forEach((face,index) =>{
           if(rubik.slice(0,6).sort()[index]===face) {validPiece++;}
@@ -847,8 +846,6 @@ class App extends Component {
           invalidEdgeConfig="Invalid edge configuration.";
         else if(piece[12]==="middle"){
           invalidMiddleConfig = "Invalid middle configuration.";
-          console.log("Invalid middle configuration.");
-          console.log(tempInvalidMatch);
         }
     });
 
@@ -1724,15 +1721,13 @@ class App extends Component {
     
 
     if(moveSet[0]==="stop'"&&moveSet[1]==="stop'"&&moveSet.length===2) moveSet = [];
-
-    console.log(tempState.rubiksObject.filter(piece => 
-      [piece[6],piece[7],piece[8]].join("")!==[piece[9],piece[10],piece[11]].join("")
-      )
-    );
   
     let invalidAlignment = 0;
     let invalidPlacement = 0;
+
+    if(this.state.cubeDimension<6)
     tempState.rubiksObject.forEach(piece => {
+      if(piece.includes("middle")) return;
       let tempPiece = piece.slice(0,6);
       let tempFiltered = tempPiece.filter(side=>side!=="black");
       let validCount = 0
@@ -1747,9 +1742,10 @@ class App extends Component {
       if(tempPiece[5]==="green"||tempPiece[5]==="black") validCount++;
       if(validCount<6) {invalidAlignment++; error=true;}
     });
-    console.log(invalidAlignment,invalidPlacement);
+    
 
     if(error) {
+      console.log(invalidAlignment,invalidPlacement);
       //alert("Sorry for the inconvenience. This error is caused by an infinite loop issue with the solver and has been stopped to prevent freezing the application. The current move set has still been pushed and is playable for debugging purposes. Maybe you can figure out the issue before I can ;)");
       return {moveSet:[...moveSet],rubiksObject : beforeObject,solveable:false,solvedSet:[...moveSet],solvedSetIndex:0};
     }

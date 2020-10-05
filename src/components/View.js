@@ -53,7 +53,6 @@ class View extends Component {
     render(){
         //const props = this.props;
         let activeMenu;
-        let currentFunc = this.props.state.currentFunc;
         switch(this.props.state.activeMenu){
             case 'Moves':
                 activeMenu = <Controls {...this.props}/>

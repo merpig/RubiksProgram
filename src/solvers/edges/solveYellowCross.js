@@ -20,6 +20,10 @@ function inMiddle(coord,maxCoord,minCoord){
   return coord>minCoord&&coord<maxCoord;
 }
 
+function move(depth,side){
+  return ((depth<10? "0":"") + depth + side);
+}
+
 function solveYellowCross(rubiksObject,moveStringToArray,edges,dim){
 
     if(dim === 2) {return {solveState : 5};}
@@ -54,15 +58,20 @@ function solveYellowCross(rubiksObject,moveStringToArray,edges,dim){
 
     let skip = false;
 
-    if(dim===4){
+    if(dim%2&&dim>4){
       let counter = 0;
       for(let i = 0; i < 4; i++){
         if(cube[cubeIndex[i]][3] === "yellow") counter++;
       }
       if(counter%2){
-        //console.log("fix implemented");
+        console.log("fix implemented");
         skip=true;
-        moveString="02r 01B2 02r' 01B2 02r 01B2 02r 01B2 02l' 01B2 02r 01B2 02r' 01B2 01D2 02r2 01D2 04r'";
+        moveString=
+          `${move(dim/2,"r")} 01B2 ${move(dim/2,"r'")} 01B2 
+          ${move(dim/2,"r")} 01B2 ${move(dim/2,"r")} 01B2 
+          ${move(dim/2,"l'")} 01B2 ${move(dim/2,"r")} 01B2 
+          ${move(dim/2,"r'")} 01B2 01D2 
+          ${move(dim/2,"r2")} 01D2 ${move(dim,"r'")}`;
       };
     }
 

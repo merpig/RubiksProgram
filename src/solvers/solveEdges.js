@@ -8,15 +8,21 @@ function solveEdges(cube,dim,moveStringToArray,edges,index){
     const obj = {};
 
     if (index < numEdges){
-        moveString += ((moveString.length) ? " ":"") + solveEdgeLogic(dim,cube[edges[index]],index,cube,edges,);
+        moveString = solveEdgeLogic(dim,cube[edges[index]],index,cube,edges);
         moveString.trim().length ? obj.moveSet = moveStringToArray(moveString) : obj.rubiksIndex = index+1;
     }
 
     else {
-        obj.solveState = 1;
-        obj.rubiksIndex = 0;
-        obj.currentFunc = "Solving";
-        obj.moveSet = ['stop'];
+        if(dim<11){
+            obj.solveState = 1;
+            obj.rubiksIndex = 0;
+            obj.currentFunc = "Solving";
+            obj.moveSet = ['stop'];
+          } else {
+            obj.solveState = -1;
+            obj.rubiksIndex = 0;
+            obj.currentFunc = "None";
+          }
     }
 
     return obj;

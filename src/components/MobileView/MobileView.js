@@ -4,11 +4,10 @@ import "./MobileView.css"
 import Controls from "../Controls";
 import SolverUI from "../SolverUI/SolverUI";
 import ColorPicker from "../ColorPicker/ColorPicker";
-import {Row, Col, Button} from "react-bootstrap";
+import {Row, Col} from "react-bootstrap";
 import algorithms from "../../cubeFunctions/algorithms";
 
 const optionLimitCP = 5;
-const optionLimitSOLVER = 5;
 
 class Mobile extends Component {
 
