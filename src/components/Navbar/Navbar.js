@@ -27,9 +27,9 @@ const Navbar = props => {
 
                   <div className="checkbox-inline">
                     {props.state.showMoveInput ?
-                      <input type="checkbox" checked={true} data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
+                      <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
                       :
-                      <input type="checkbox" checked={false} data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
+                      <input type="checkbox" data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
                     }
                   </div>
               Move Input
