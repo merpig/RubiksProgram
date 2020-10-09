@@ -65,24 +65,24 @@ class SolverUI extends Component {
                     solverSet.push(<div 
                         id={i-1} 
                         className="solveMoveDiv nextSolveIndex" 
-                        key={i}>{el.replace("01","").replace("0","").replace("'","")+"2"}
+                        key={i}>{el.replace(`0${el[1]}`,el[1]).replace("'","")+"2"}
                     </div>):
                     solverSet.push(<div 
                         onClick={(e)=>setTarget(e,this.props)} 
                         id={i-1} 
                         className="solveMoveDiv" 
-                        key={i}>{el.replace("01","").replace("0","").replace("'","")+"2"}
+                        key={i}>{el.replace(`0${el[1]}`,el[1]).replace("'","")+"2"}
                     </div>):
                 i===this.props.state.solvedSetIndex||(i===this.props.state.solvedSetIndex+1&&el===this.props.state.solvedSet[i-1])?
                     solverSet.push(<div 
                         id={i} 
                         className="solveMoveDiv nextSolveIndex" 
-                        key={i}>{el.replace("01","").replace("0","")}
+                        key={i}>{el.replace(`0${el[1]}`,el[1])}
                     </div>):
                     solverSet.push(<div 
                         onClick={(e)=>setTarget(e,this.props)} 
                         id={i} className="solveMoveDiv" 
-                        key={i}>{el.replace("01","").replace("0","")}</div>)
+                        key={i}>{el.replace(`0${el[1]}`,el[1])}</div>)
         )
         
         let algorithmSet = 

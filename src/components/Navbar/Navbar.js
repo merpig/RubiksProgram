@@ -22,30 +22,18 @@ const Navbar = props => {
             <DropdownButton className="settings" aria-label="settings" id="settings" title={<i className='fa fa-cog'></i>}>
               <ul>
 
-                <li className="settingsDropDownItem" onClick={() => props.changeSettings('displayMoveInput')}>
-
-
+                <li className="settingsDropDownItem">
                   <div className="checkbox-inline">
-                    {props.state.showMoveInput ?
-                      <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
-                      :
                       <input type="checkbox" data-toggle="toggle" onClick={() => props.changeSettings('displayMoveInput')}></input>
-                    }
                   </div>
               Move Input
-
             </li>
 
                 <li className="settingsDropDownItem" onClick={() => props.changeSettings('displayHints')}>
 
 
                   <div className="checkbox-inline">
-
-                    {props.state.showHints ?
                       <input type="checkbox" defaultChecked data-toggle="toggle" onClick={() => props.changeSettings('displayHints')}></input>
-                      :
-                      <input type="checkbox" data-toggle="toggle" onClick={() => props.changeSettings('displayHints')}></input>
-                    }
                   </div>
               Move Hints
 

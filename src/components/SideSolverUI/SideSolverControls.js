@@ -54,16 +54,16 @@ class SideSolverControls extends Component {
                     prevSet[prevSet.length - 1] === "stop'" ?
                         prevSet[prevSet.length - 2] ?
                             prevSet[prevSet.length - 2] === prevSet[prevSet.length - 3] ?
-                                prevSet[prevSet.length - 2].replace("01", "").replace("0", "").replace("'", "") + 2
+                                prevSet[prevSet.length - 2].replace(`0`+prevSet[prevSet.length-2][1],prevSet[prevSet.length-2][1]).replace("'", "") + 2
                                 :
-                                prevSet[prevSet.length - 2].replace("01", "").replace("0", "")
+                                prevSet[prevSet.length - 2].replace(`0`+prevSet[prevSet.length-2][1],prevSet[prevSet.length-2][1])
                             :
                             "-"
                         :
                         prevSet[prevSet.length - 1] === prevSet[prevSet.length - 2] ?
-                            prevSet[prevSet.length - 1].replace("01", "").replace("0", "").replace("'", "") + 2
+                            prevSet[prevSet.length - 1].replace(`0`+prevSet[prevSet.length-1][1],prevSet[prevSet.length-1][1]).replace("'", "") + 2
                             :
-                            prevSet[prevSet.length - 1].replace("01", "").replace("0", "")
+                            prevSet[prevSet.length - 1].replace(`0`+prevSet[prevSet.length-1][1],prevSet[prevSet.length-1][1])
                     :
                     "-"}
             </div>
@@ -74,16 +74,16 @@ class SideSolverControls extends Component {
                     moveSet[0] === "stop'" ?
                         moveSet[1] ?
                             moveSet[1] === moveSet[2] ?
-                                moveSet[1].replace("01", "").replace("0", "").replace("'", "") + 2
+                                moveSet[1].replace(`0`+moveSet[1][1],moveSet[1][1]).replace("'", "") + 2
                                 :
-                                moveSet[1].replace("01", "").replace("0", "")
+                                moveSet[1].replace(`0`+moveSet[1][1],moveSet[1][1])
                             :
                             "-"
                         :
                         moveSet[0] === moveSet[1] ?
-                            moveSet[0].replace("01", "").replace("0", "").replace("'", "") + 2
+                            moveSet[0].replace(`0`+moveSet[0][1],moveSet[0][1]).replace("'", "") + 2
                             :
-                            moveSet[0].replace("01", "").replace("0", "")
+                            moveSet[0].replace(`0`+moveSet[0][1],moveSet[0][1])
                     :
                     "-"
                 }

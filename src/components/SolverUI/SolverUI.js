@@ -67,24 +67,24 @@ class SolverUI extends Component {
                     solverSet.push(<div 
                         id={i-1} 
                         className="solveMoveDiv nextSolveIndex" 
-                        key={i}>{el.replace("01","").replace("0","").replace("'","")+"2"}
+                        key={i}>{el.replace(`0`+el[1],el[1]).replace("'","")+"2"}
                     </div>):
                     solverSet.push(<div 
                         onClick={(e)=>setTarget(e,this.props)} 
                         id={i-1} 
                         className="solveMoveDiv" 
-                        key={i}>{el.replace("01","").replace("0","").replace("'","")+"2"}
+                        key={i}>{el.replace(`0`+el[1],el[1]).replace("'","")+"2"}
                     </div>):
                 i===this.props.state.solvedSetIndex||(i===this.props.state.solvedSetIndex+1&&el===this.props.state.solvedSet[i-1])?
                     solverSet.push(<div 
                         id={i} 
                         className="solveMoveDiv nextSolveIndex" 
-                        key={i}>{el.replace("01","").replace("0","")}
+                        key={i}>{el.replace(`0`+el[1],el[1])}
                     </div>):
                     solverSet.push(<div 
                         onClick={(e)=>setTarget(e,this.props)} 
                         id={i} className="solveMoveDiv" 
-                        key={i}>{el.replace("01","").replace("0","")}</div>)
+                        key={i}>{el.replace(`0`+el[1],el[1])}</div>)
         )
         
         let algorithmSet = [];
@@ -100,16 +100,16 @@ class SolverUI extends Component {
                     prevSet[prevSet.length-1]==="stop'"?
                         prevSet[prevSet.length-2]?
                             prevSet[prevSet.length-2]===prevSet[prevSet.length-3]?
-                                prevSet[prevSet.length-2].replace("01","").replace("0","").replace("'","")+2
+                                prevSet[prevSet.length-2].replace(`0`+prevSet[prevSet.length-2][1],prevSet[prevSet.length-2][1]).replace("'","")+2
                             :
-                                prevSet[prevSet.length-2].replace("01","").replace("0","")
+                                prevSet[prevSet.length-2].replace(`0`+prevSet[prevSet.length-2][1],prevSet[prevSet.length-2][1])
                         :
                             "-"
                     :
                         prevSet[prevSet.length-1]===prevSet[prevSet.length-2]?
-                            prevSet[prevSet.length-1].replace("01","").replace("0","").replace("'","")+2
+                            prevSet[prevSet.length-1].replace(`0`+prevSet[prevSet.length-1][1],prevSet[prevSet.length-1][1]).replace("'","")+2
                         :
-                            prevSet[prevSet.length-1].replace("01","").replace("0","")
+                            prevSet[prevSet.length-1].replace(`0`+prevSet[prevSet.length-1][1],prevSet[prevSet.length-1][1])
                 :
                     "-"}
             </div>
@@ -120,16 +120,16 @@ class SolverUI extends Component {
                     moveSet[0]==="stop'"?
                         moveSet[1]?
                             moveSet[1]===moveSet[2]?
-                                moveSet[1].replace("01","").replace("0","").replace("'","")+2
+                                moveSet[1].replace(`0`+moveSet[1][1],moveSet[1][1]).replace("'","")+2
                             :
-                                moveSet[1].replace("01","").replace("0","")
+                                moveSet[1].replace(`0`+moveSet[1][1],moveSet[1][1])
                         :
                             "-"
                     :
                         moveSet[0]===moveSet[1]?
-                            moveSet[0].replace("01","").replace("0","").replace("'","")+2
+                            moveSet[0].replace(`0`+moveSet[0][1],moveSet[0][1]).replace("'","")+2
                         :
-                            moveSet[0].replace("01","").replace("0","")
+                            moveSet[0].replace(`0`+moveSet[0][0],moveSet[0][1])
                 :
                     "-"
                 }
