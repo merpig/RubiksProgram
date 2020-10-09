@@ -22,16 +22,11 @@ const MenuOptions = props => {
                         {algo.name}
                     </button>
                     );
-                
-        // algorithms.forEach(algo=>algo.worksFor.includes(props.state.cubeDimension)?
-        //     algorithmSet.push(<button id={algo.name} key={algo.name} className={props.state.activeAlgo===algo.name?
-        //         "algoButton algoActive":"algoButton"} onClick={(e)=>algoStart(e,props)}>{algo.name}</button>)
-        //         :"")
 
         const baseOptions = <>
            {props.state.cubeDimension<=optionLimitCP?<button id="ColorPicker" key="Color Picker" data="Color Picker" onClick={optionClick} className="leftButton">Color Picker</button>:<button className="leftButton invis"></button>}
            {props.state.cubeDimension<=optionLimitSOLVER?<button id="Solver" key="Soler" data="Solving" onClick={optionClick} className="leftButton">Solver</button>:<button className="leftButton invis"></button>}
-           {algorithmSet.length?<button id="Algorithms" key="Algorithms" data="None" onClick={optionClick} className="leftButton">Algorithms</button>:<button className="leftButton invis"></button>}
+           {algorithmSet.length?<button id="Algorithms" key="Algorithms" data="None" onClick={optionClick} className="leftButton">Patterns</button>:<button className="leftButton invis"></button>}
         </>
 
         
@@ -46,7 +41,7 @@ const MenuOptions = props => {
                 if(e.moves&&e.name===algo&&e.worksFor.includes(cD)) algoSet.push(...e.moves.split(" "));
             })
             //console.log(algoSet);
-            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[],autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,});
+            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[],autoPlay:false,autoRewind:false,autoTarget: false,playOne : false,jumpToEnd:true});
         }
 
         function optionClick(e){

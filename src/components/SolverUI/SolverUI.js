@@ -5,6 +5,42 @@ import "./SolverUI.css";
 import algorithms from "../../cubeFunctions/algorithms";
 import cube from '../../cubeFunctions/cube';
 
+function setTarget(e,props){
+    //e.stopPropagation();
+    if(props.state.autoPlay||props.state.autoRewind){
+
+    }
+    else if(parseInt(e.target.id)-props.state.solvedSetIndex===1){
+        props.setState({targetSolveIndex:parseInt(e.target.id)});
+        props.playOne(props);
+    }
+    else if(props.state.solvedSetIndex<=parseInt(e.target.id)){
+        props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
+        let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
+        let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
+        let forwardMoves = props.state.solvedSet.slice(props.state.solvedSetIndex,parseInt(e.target.id));
+
+        props.setState({
+            solvedSetIndex:parseInt(e.target.id),
+            prevSet:prevSetNew,
+            moveSet:moveSetNew,
+            rubiksObject:props.autoJump(props.state,forwardMoves)})
+    }
+    else if(props.state.solvedSetIndex>parseInt(e.target.id)) {
+        props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
+        let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
+        let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
+        let backwardMoves= props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSetIndex)
+            .map(move=>move.length===4?move.slice(0,3):(move+"'"));
+
+        props.setState({
+            solvedSetIndex:parseInt(e.target.id),
+            prevSet:prevSetNew,
+            moveSet:moveSetNew,
+            rubiksObject:props.autoJump(props.state,backwardMoves.reverse())})
+    }
+}
+
 class SolverUI extends Component {
 
     // eslint-disable-next-line no-useless-constructor
@@ -36,6 +72,9 @@ class SolverUI extends Component {
         else if(nextProps.state.autoPlay===true && nextProps.state.solvedSetIndex >= nextProps.state.targetSolveIndex){
             //console.log("ending rewind");
             nextProps.setState({autoPlay:false});
+        }
+        if(nextProps.state.jumpToEnd){
+            nextProps.setState({jumpToEnd:false},setTarget({target:{id:nextProps.state.moveSet.length}},nextProps));
         }
     }
 
@@ -86,13 +125,6 @@ class SolverUI extends Component {
                         id={i} className="solveMoveDiv" 
                         key={i}>{el.replace(`0`+el[1],el[1])}</div>)
         )
-        
-        let algorithmSet = [];
-        
-        algorithms.forEach(algo=>algo.worksFor.includes(this.props.state.cubeDimension)?
-            algorithmSet.push(<button id={algo.name} key={algo.name} className={this.props.state.activeAlgo===algo.name?
-                "algoButton algoActive":"algoButton"} onClick={()=>algoStart(algo.name,this.props)}>{algo.name}</button>)
-                :"")
 
         let previousMove = 
             <div className="previousMove">
@@ -192,43 +224,10 @@ class SolverUI extends Component {
         }
 
         //add small fix for jumping to double moves
-        function setTarget(e,props){
-            e.stopPropagation();
-            if(props.state.autoPlay||props.state.autoRewind){
-
-            }
-            else if(parseInt(e.target.id)-props.state.solvedSetIndex===1){
-                props.setState({targetSolveIndex:parseInt(e.target.id)});
-                props.playOne(props);
-            }
-            else if(props.state.solvedSetIndex<=parseInt(e.target.id)){
-                props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
-                let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
-                let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
-                let forwardMoves = props.state.solvedSet.slice(props.state.solvedSetIndex,parseInt(e.target.id));
-
-                props.setState({
-                    solvedSetIndex:parseInt(e.target.id),
-                    prevSet:prevSetNew,
-                    moveSet:moveSetNew,
-                    rubiksObject:props.autoJump(props.state,forwardMoves)})
-            }
-            else if(props.state.solvedSetIndex>parseInt(e.target.id)) {
-                props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
-                let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
-                let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
-                let backwardMoves= props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSetIndex)
-                    .map(move=>move.length===4?move.slice(0,3):(move+"'"));
-
-                props.setState({
-                    solvedSetIndex:parseInt(e.target.id),
-                    prevSet:prevSetNew,
-                    moveSet:moveSetNew,
-                    rubiksObject:props.autoJump(props.state,backwardMoves.reverse())})
-            }
-        }
+        
 
         function algoStart(name,props){
+            console.log("setting algo");
             let cD = props.state.cubeDimension;
             let algo = name;
             let algoSet = [];
@@ -238,7 +237,7 @@ class SolverUI extends Component {
                     .find(
                         set=>set.name===algo&&
                         set.worksFor.includes(cD)).moves.split(" ");
-            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[]});
+            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[],jumpToEnd:true});
         }
 
         function optionClick(e,props){

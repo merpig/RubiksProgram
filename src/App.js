@@ -104,7 +104,8 @@ class App extends Component {
     solveTime:0,
     targetSolveIndex: -1,
     activeAlgo:"None Selected",
-    sliderSpeed:40
+    sliderSpeed:40,
+    jumpToEnd: false
   };
 
   // Bind keys to functions

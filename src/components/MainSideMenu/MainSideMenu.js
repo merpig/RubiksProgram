@@ -47,7 +47,7 @@ const MainSideMenu = props => {
                 onClick={solver}
             />:[]}  
             {algorithmSet.length>0?<MainSideMenuButton 
-                name="Algorithms"
+                name="Patterns"
                 onClick={algorithms}
             />:[]}
             {/* <MainSideMenuButton

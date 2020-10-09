@@ -154,7 +154,7 @@ let algorithms = [
     ...bundle("Rings",rings,6,6),
     ...generalizedBundle("Six Spots",sixSpots),
     ...generalizedBundle("Six-Two-One",sixTwoOne),
-    ...generalizedBundle("Snake Eyes",snakeEyes,4),
+    ...bundle("Snake Eyes",snakeEyes,3,3),
     ...generalizedBundle("Spiral",spiral),
     ...generalizedBundle("Staircase",staircase),
     ...generalizedBundle("Twin Peaks",twinPeaks),
