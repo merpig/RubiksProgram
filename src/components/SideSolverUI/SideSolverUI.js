@@ -6,7 +6,6 @@ import algorithms from "../../cubeFunctions/algorithms";
 import cube from '../../cubeFunctions/cube';
 
 function setTarget(e,props){
-    e.stopPropagation();
     if(props.state.autoPlay||props.state.autoRewind){
 
     }
