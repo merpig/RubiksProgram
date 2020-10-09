@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "143e17b7d201a98e8892a271f0234e46",
+    "revision": "ee314afee1849cb25452ce0450aa72e4",
     "url": "/RubiksProgram/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/RubiksProgram/static/css/2.b6c0fe55.chunk.css"
   },
   {
-    "revision": "53e8ee06deba012fe78d",
+    "revision": "655594c0a6470074b27c",
     "url": "/RubiksProgram/static/css/main.547026f8.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/RubiksProgram/static/js/2.b74d0230.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "53e8ee06deba012fe78d",
-    "url": "/RubiksProgram/static/js/main.7c8e7a5c.chunk.js"
+    "revision": "655594c0a6470074b27c",
+    "url": "/RubiksProgram/static/js/main.11cc92d2.chunk.js"
   },
   {
     "revision": "c0b09aae083631d78863",
