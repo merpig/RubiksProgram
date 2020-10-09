@@ -35,6 +35,9 @@ class SideSolverControls extends Component {
             //console.log("ending rewind");
             nextProps.setState({ autoPlay: false });
         }
+        // if(nextProps.state.jumpToEnd){
+        //     nextProps.setState({jumpToEnd:false},setTarget({target:{id:nextProps.state.moveSet.length}},nextProps));
+        // }
     }
 
     componentDidUpdate() {
