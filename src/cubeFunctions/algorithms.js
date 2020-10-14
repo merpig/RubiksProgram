@@ -72,7 +72,7 @@ let blankBundle = (name) => {
     }
 }
 
-let generalizedBundle = (name,moveSet) => {
+let generalizedBundle = (name,moveSet,moveSet2) => {
     let sets = [];
     for (let i = 3; i <= sizeLimit; i++){
         let algoName = name;
@@ -85,7 +85,7 @@ let generalizedBundle = (name,moveSet) => {
         sets.push(
             {
                 name : algoName,
-                moves : generalizerLower(i,moveSet),
+                moves : generalizerLower(i,moveSet,moveSet2),
                 worksFor: [i]
             }
         );
@@ -101,10 +101,11 @@ let generalizedBundle = (name,moveSet) => {
     return sets;
 }
 
-let generalizerLower = (size,moveSet) => {
+let generalizerLower = (size,moveSet,moveSet2) => {
     const moveParts = [];
     for(let i = 1; i<=Math.floor(size/2); i++){
-        moveParts.push(baseLower(i,moveSet));
+        if(moveSet2 && i%2) moveParts.push(baseLower(i,moveSet2));
+        else moveParts.push(baseLower(i,moveSet));
     }
     return moveParts.join(" ");
 }
@@ -137,7 +138,7 @@ let algorithms = [
     blankBundle("None Selected"),
     ...generalizedBundle("Anaconda",anaconda),
     ...generalizedBundle("Cross",cross),
-    ...bundle("Cube x2",cubex2,4,4),
+    ...bundle("Cube x2",cubex2,2,4),
     ...generalizedBundle("Cube x3",cubex3),
     ...bundle("Cube x4 Twisted",cubex4Twisted,4,4),
     ...generalizedBundle("Checkerboard",checkerboard),
@@ -153,6 +154,7 @@ let algorithms = [
     ...generalizedBundle("Python",python),
     ...bundle("Rings",rings,6,6),
     ...generalizedBundle("Six Spots",sixSpots),
+    ...generalizedBundle("Six Spots + Cross",sixSpots,cross),
     ...generalizedBundle("Six-Two-One",sixTwoOne),
     ...bundle("Snake Eyes",snakeEyes,3,3),
     ...generalizedBundle("Spiral",spiral),

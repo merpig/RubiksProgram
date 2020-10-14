@@ -41,6 +41,30 @@ function setTarget(e,props){
     }
 }
 
+function algoStart(name,props){
+    console.log("setting algo");
+    let cD = props.state.cubeDimension;
+    let algo = name;
+    let algoSet = [];
+    let generated = cube.generateSolved(cD,cD,cD);
+    if(algo!=="None Selected")
+        algoSet = algorithms
+            .find(
+                set=>set.name===algo&&
+                set.worksFor.includes(cD)).moves.split(" ");
+    props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[],jumpToEnd:true});
+}
+
+function algoNamesForSize(size){
+    let algoNames = [];
+    algorithms.forEach(algo=>{
+        if(algo.worksFor.includes(size)){
+            algoNames.push(algo.name);
+        }
+    });
+    return algoNames;
+}
+
 class SolverUI extends Component {
 
     // eslint-disable-next-line no-useless-constructor
@@ -75,6 +99,26 @@ class SolverUI extends Component {
         }
         if(nextProps.state.jumpToEnd){
             nextProps.setState({jumpToEnd:false},setTarget({target:{id:nextProps.state.moveSet.length}},nextProps));
+        }
+        else if(nextProps.state.algoUp){
+            let algoNames = algoNamesForSize(nextProps.state.cubeDimension);
+            let currentAlgoIndex = algoNames.indexOf(nextProps.state.activeAlgo);
+            if(currentAlgoIndex>0){
+                //nextProps.setState({algoUp:false,resized:true},algoStart(algoNames[currentAlgoIndex-1],nextProps));
+            }
+            else{
+                //nextProps.setState({algoUp:false,resized:true});
+            }
+        }
+        else if(nextProps.state.algoDown){
+            let algoNames = algoNamesForSize(nextProps.state.cubeDimension);
+            let currentAlgoIndex = algoNames.indexOf(nextProps.state.activeAlgo);
+            if(currentAlgoIndex<algoNames.length-1){
+                //nextProps.setState({algoDown:false,resized:true},algoStart(algoNames[currentAlgoIndex+1],nextProps));
+            }
+            else{
+                //nextProps.setState({algoDown:false,resized:true});
+            }
         }
     }
 
@@ -221,23 +265,6 @@ class SolverUI extends Component {
         function preSetTarget(e,props,setTarget){
             props.setState({autoScroll:true});
             setTarget(e,props);
-        }
-
-        //add small fix for jumping to double moves
-        
-
-        function algoStart(name,props){
-            console.log("setting algo");
-            let cD = props.state.cubeDimension;
-            let algo = name;
-            let algoSet = [];
-            let generated = cube.generateSolved(cD,cD,cD);
-            if(algo!=="None Selected")
-                algoSet = algorithms
-                    .find(
-                        set=>set.name===algo&&
-                        set.worksFor.includes(cD)).moves.split(" ");
-            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[],jumpToEnd:true});
         }
 
         function optionClick(e,props){

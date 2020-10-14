@@ -1,28 +1,106 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/icon.png" width="100" height="100">  
 </p>
-    
-[Click Here for Live site](https://merpig.github.io/RubiksProgram)
-  
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).  
+<div align="center">
+  <a href="https://merpig.github.io/RubiksProgram"><h1>Rubiks Program</h1></a>
 
-## Using the app
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+Development version live at [merpig.github.io/RubiksProgram](https://merpig.github.io/RubiksProgram)
+
+Hosted by [ruwix.com](https://ruwix.com/) at [cube-solver.com](https://cube-solver.com)
+
+<hr style="width: 50%;"/>
+
+## Table of Contents
+
+</div>
+
+- [How to use](#how-to-use)
+  - [Base Functions](#base-functions)
+    - [Mouse](#base-functions-mouse)
+    - [Keyboard](#base-functions-keyboard)
+  - [Base Options](#base-options)
+    - [Cubes](#cubes)
+    - [Info](#info)
+    - [Fullscreen](#fullscreen)
+    - [Settings](#settings)
+    - [Speed](#speed)
+    - [Undo/redo](#undo-redo)
+  - [Menu Options](#menu)
+    - [Color Picker](#colorpicker)
+    - [Patterns](#patterns)
+    - [Reset](#reset)
+    - [Scramble](#scramble)
+    - [Solver](#solver)
+
+
+<hr>
+
+<div id="how-to-use" align="center">
+
+  ## How to use
+  <hr style="width: 50%;"/>
+
+  
+</div>
+
+<u>
+
+### Base Functions
+</u>
+<a id="base-functions-mouse"></a>
+
+    - Mouse 
+
+      Left click, hold down, and drag along any slice of the cube to make a turn in the  direction you drag your mouse in. On mobile just drag your finger along the slice.
+
+      Left click, hold down, and drag anywhere in the space around the cube to rotate the camera. On mobile just drag your finger in that space.
+
+<a id="base-functions-keyboard"></a>
+
+
+    - Keyboard
+
+      Right arrow will redo a move if you have undone at least one. Hold down to have moves continuously redone.
+
+      Left arrow with undo a move if you made at least one. Hold down to have moves continuously undone.
+
+<hr style="width: 50%;"/>
+
+<div align="center">
+  
+  
+  ### Base Options
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/basic-options.png" height="100">
+  <hr style="width: 25%;"/>
+</div>
+
+<div align="center">
+  <hr style="width: 50%;"/>
+  
+  ### Menu Options
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/menu-options.png" height="100">
+  <hr style="width: 25%;"/>
+</div>
+
+
+
+
+
+
+
+<hr>
+
+<a name="about"></a>
+## About this project
 
 ### Control the turn speed of moves. Adjust speed with slider
-<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/speed.png" width="200"> 
+
 
 
 ### Builtin pattern functions. Click button to initiate pattern
-<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/patterns.png" width="200"> 
 
-### Move buttons. Click a button to initiate turn. Hover over button to see what it will turn
-  - key:
-    - Upper case letters  (F,U,R,B,L,D) signify single layer turns
-    - Lower case letters turn multiple layers at a time.
-    - 01...NN before the letter signify the depth of the turn
-    - ' signifies counter clockwise turn
-    - 04f' is equivalent to 01F' 02F' 03F' 04F'
-<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/movebuttons.png" width="200"> 
 
 ### Input field to enter moves
 <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/input.png" width="200"> 

@@ -105,7 +105,9 @@ class App extends Component {
     targetSolveIndex: -1,
     activeAlgo:"None Selected",
     sliderSpeed:40,
-    jumpToEnd: false
+    jumpToEnd: false,
+    algoUp: false,
+    algoDown: false
   };
 
   // Bind keys to functions
@@ -210,6 +212,16 @@ class App extends Component {
         }
         else if(this.state.currentFunc==='None'){
           this.redo();
+        }
+        break;
+      case 'ArrowDown':
+        if(this.state.currentFunc==="Algorithms"){
+          this.setState({algoDown:true,resized:true});
+        }
+        break;
+      case 'ArrowUp':
+        if(this.state.currentFunc==="Algorithms"){
+          this.setState({algoUp:true,resized:true});
         }
         break;
       default:
