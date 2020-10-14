@@ -10,11 +10,11 @@ Development version live at [merpig.github.io/RubiksProgram](https://merpig.gith
 
 Hosted by [ruwix.com](https://ruwix.com/) at [cube-solver.com](https://cube-solver.com)
 
-<hr style="width: 50%;"/>
-
-## Table of Contents
+<hr>
 
 </div>
+
+## Table of Contents
 
 - [How to use](#how-to-use)
   - [Base Functions](#base-functions)
@@ -28,67 +28,93 @@ Hosted by [ruwix.com](https://ruwix.com/) at [cube-solver.com](https://cube-solv
     - [Speed](#speed)
     - [Undo/redo](#undo-redo)
   - [Menu Options](#menu)
-    - [Color Picker](#colorpicker)
+    - [Color Picker](#color-picker)
     - [Patterns](#patterns)
     - [Reset](#reset)
     - [Scramble](#scramble)
     - [Solver](#solver)
 
-
 <hr>
 
-<div id="how-to-use" align="center">
-
-  ## How to use
-  <hr style="width: 50%;"/>
-
-  
-</div>
-
-<u>
+## How to use
 
 ### Base Functions
-</u>
 <a id="base-functions-mouse"></a>
 
     - Mouse 
 
-      Left click, hold down, and drag along any slice of the cube to make a turn in the  direction you drag your mouse in. On mobile just drag your finger along the slice.
+    Left click, hold down, and drag along any slice of the cube to make a turn in the  direction you drag your mouse in. On mobile just drag your finger along the slice.
 
-      Left click, hold down, and drag anywhere in the space around the cube to rotate the camera. On mobile just drag your finger in that space.
+    Left click, hold down, and drag anywhere in the space around the cube to rotate the camera. On mobile just drag your finger in that space.
 
 <a id="base-functions-keyboard"></a>
 
 
     - Keyboard
 
-      Right arrow will redo a move if you have undone at least one. Hold down to have moves continuously redone.
+    Right arrow will redo a move if you have undone at least one. Hold down to have moves continuously redone.
 
-      Left arrow with undo a move if you made at least one. Hold down to have moves continuously undone.
+    Left arrow with undo a move if you made at least one. Hold down to have moves continuously undone.
 
-<hr style="width: 50%;"/>
+### Base Options
+<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/basic-options.png" width="100%">
 
-<div align="center">
-  
-  
-  ### Base Options
-  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/basic-options.png" height="100">
-  <hr style="width: 25%;"/>
-</div>
+<a id="cubes"></a>
 
-<div align="center">
-  <hr style="width: 50%;"/>
-  
-  ### Menu Options
-  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/menu-options.png" height="100">
-  <hr style="width: 25%;"/>
-</div>
+    - Cubes 
+
+    Shows a drown list of cube sizes 2-10. Select any to generate that sized cube. To access larger cubes (up to 70 if your computer is able to handle it) change the url variable. 
+      
+    Example of 30x30: https://merpig.github.io/RubiksProgram/id=30
+
+<a id="info"></a>
 
 
+    - Info
+
+<a id="fullscreen"></a>
 
 
+    - Fullscreen
+
+<a id="settings"></a>
 
 
+    - Settings
+
+<a id="speed"></a>
+
+
+    - Speed
+
+
+### Menu Options
+<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/menu-options.png" width="100%">
+
+<a id="color-picker"></a>
+
+
+    - Color Picker
+
+<a id="patterns"></a>
+
+
+    - Patterns
+
+<a id="color-picker"></a>
+
+
+    - Reset
+
+<a id="color-picker"></a>
+
+
+    - Scramble
+
+<a id="color-picker"></a>
+
+
+    - Solver
 
 <hr>
 
