@@ -1,3 +1,19 @@
+<style>
+
+  #descriptor {
+    padding: 16px;
+    overflow: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f6f8fa;
+    color: #24292e;
+    border-radius: 6px;
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  }
+
+
+</style>
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/icon.png" width="100" height="100">  
 </p>
@@ -40,32 +56,39 @@ Hosted by [ruwix.com](https://ruwix.com/) at [cube-solver.com](https://cube-solv
 
 ### Base Functions
 <a id="base-functions-mouse"></a>
+<div id="descriptor">
 
-    - Mouse 
+<b>-</b> Mouse 
 
-    Left click, hold down, and drag along any slice of the cube to make a turn in the  direction you drag your mouse in. On mobile just drag your finger along the slice.
+Left click, hold down, and drag along any slice of the cube to make a turn in the direction you drag your mouse in. On mobile just drag your finger along the slice.
 
-    Left click, hold down, and drag anywhere in the space around the cube to rotate the camera. On mobile just drag your finger in that space.
+Left click, hold down, and drag anywhere in the space around the cube to rotate the camera. On mobile just drag your finger in that space.
+
+</div>
 
 <a id="base-functions-keyboard"></a>
+<div id="descriptor">
 
+<b>-</b> Keyboard
 
-    - Keyboard
+Right arrow will redo a move if you have undone at least one. Hold down to have moves continuously redone.
 
-    Right arrow will redo a move if you have undone at least one. Hold down to have moves continuously redone.
+Left arrow with undo a move if you made at least one. Hold down to have moves continuously undone.
 
-    Left arrow with undo a move if you made at least one. Hold down to have moves continuously undone.
+</div><br>
 
 ### Base Options
 <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/basic-options.png" width="100%">
 
 <a id="cubes"></a>
+<div id="descriptor">
 
-    - Cubes 
+<b>-</b> Cubes 
 
-    Shows a drown list of cube sizes 2-10. Select any to generate that sized cube. To access larger cubes (up to 70 if your computer is able to handle it) change the url variable. 
-      
-    Example of 30x30: https://merpig.github.io/RubiksProgram/id=30
+Shows a drown list of cube sizes 2-10. Select any to generate that sized cube. To access larger cubes (up to 70 if your computer is able to handle it) change the url variable. 
+  
+Example of 30x30: https://merpig.github.io/RubiksProgram/id=30
+</div>
 
 <a id="info"></a>
 
