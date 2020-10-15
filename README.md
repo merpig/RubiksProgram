@@ -82,7 +82,17 @@ Left arrow with undo a move if you made at least one. Hold down to have moves co
 
 <!-- -->
 <a id="cubes"></a>
-<div id="descriptor">
+<div  id="descriptor"
+      style="
+        padding: 16px;
+        overflow: auto;
+        font-size: 85%;
+        line-height: 1.45;
+        background-color: #f6f8fa;
+        color: #24292e;
+        border-radius: 6px;
+        font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;"
+>
 
   <p align="center">
     <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/cubes.png" height="50px" style="display: inline-block;">
