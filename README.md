@@ -1,6 +1,6 @@
 <style>
 
-  #descriptor {
+  #user-content-descriptor {
     padding: 16px;
     overflow: auto;
     font-size: 85%;
@@ -80,20 +80,32 @@ Left arrow with undo a move if you made at least one. Hold down to have moves co
 ### Base Options
 <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/basic-options.png" width="100%">
 
+<!-- -->
 <a id="cubes"></a>
 <div id="descriptor">
 
-<b>-</b> Cubes 
+  <p align="center">
+    <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/cubes.png" height="50px" style="display: inline-block;">
+  </p>
 
-Shows a drown list of cube sizes 2-10. Select any to generate that sized cube. To access larger cubes (up to 70 if your computer is able to handle it) change the url variable. 
-  
-Example of 30x30: https://merpig.github.io/RubiksProgram/id=30
+  <div style="width:100%"></div>
+
+  Shows a drown list of cube sizes 2-10. Select any to generate that sized cube. To access larger cubes (up to 70 if your computer is able to handle it) change the url variable. 
+    
+  Example of 30x30: https://merpig.github.io/RubiksProgram/id=30
 </div>
 
 <a id="info"></a>
+<div id="descriptor">
 
+  <p align="center">
+    <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/info.png" height="50px" style="display: inline-block;">
+  </p>
 
-    - Info
+  <div style="width:100%"></div>
+
+  Opens a model with basic overview of the application and how to use.
+</div>
 
 <a id="fullscreen"></a>
 
