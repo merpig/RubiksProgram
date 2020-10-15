@@ -52,9 +52,12 @@ Hosted by [ruwix.com](https://ruwix.com/) at [cube-solver.com](https://cube-solv
 
 <hr>
 
-## How to use
+<u><h2 align="center"> How to use </h2></u>
+
+<u>
 
 ### Base Functions
+</u>
 <a id="base-functions-mouse"></a>
 <div id="descriptor">
 
@@ -76,64 +79,61 @@ Right arrow will redo a move if you have undone at least one. Hold down to have 
 Left arrow with undo a move if you made at least one. Hold down to have moves continuously undone.
 
 </div><br>
+<u>
 
 ### Base Options
+</u>
 <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/basic-options.png" width="100%">
 
 <!-- -->
 <a id="cubes"></a>
-<div  id="descriptor"
-      style="
-        padding: 16px;
-        overflow: auto;
-        font-size: 85%;
-        line-height: 1.45;
-        background-color: #f6f8fa;
-        color: #24292e;
-        border-radius: 6px;
-        font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;"
->
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/cubes.png" height="50px" style="display: inline-block;">
+</p>
 
-  <p align="center">
-    <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/cubes.png" height="50px" style="display: inline-block;">
-  </p>
+- Shows a drown list of cube sizes 2-10.
 
-  <div style="width:100%"></div>
+- Select any to generate that sized cube.
 
-  Shows a drown list of cube sizes 2-10. Select any to generate that sized cube. To access larger cubes (up to 70 if your computer is able to handle it) change the url variable. 
-    
-  Example of 30x30: https://merpig.github.io/RubiksProgram/id=30
-</div>
+- To access larger cubes (up to 70) change the url variable. 
+
+- Example of 30x30: https://merpig.github.io/RubiksProgram/id=30
 
 <a id="info"></a>
-<div id="descriptor">
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/info.png" height="50px" style="display: inline-block;">
+</p>
 
-  <p align="center">
-    <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/info.png" height="50px" style="display: inline-block;">
-  </p>
-
-  <div style="width:100%"></div>
-
-  Opens a model with basic overview of the application and how to use.
-</div>
+- Opens a model with basic overview of the application and how to use.
 
 <a id="fullscreen"></a>
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/fullscreen.png" height="50px" style="display: inline-block;">
+</p>
 
+- Puts the application into fullscreen mode. Hit exit or escape to leave fullscreen.
 
-    - Fullscreen
 
 <a id="settings"></a>
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/settings.png" height="50px" style="display: inline-block;">
+</p>
 
-
-    - Settings
+- Shows a drown list of application features.
+- Click the checkbox to toggle on/off 
 
 <a id="speed"></a>
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/speed.png" height="50px" style="display: inline-block;">
+</p>
 
+- Puts the application into fullscreen mode. Hit exit or escape to leave fullscreen.
 
-    - Speed
-
+<br>
+<u>
 
 ### Menu Options
+</u>
 <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/menu-options.png" width="100%">
 
 <a id="color-picker"></a>
