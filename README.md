@@ -1,19 +1,3 @@
-<style>
-
-  #user-content-descriptor {
-    padding: 16px;
-    overflow: auto;
-    font-size: 85%;
-    line-height: 1.45;
-    background-color: #f6f8fa;
-    color: #24292e;
-    border-radius: 6px;
-    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
-  }
-
-
-</style>
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/icon.png" width="100" height="100">  
 </p>
@@ -49,39 +33,37 @@ Hosted by [ruwix.com](https://ruwix.com/) at [cube-solver.com](https://cube-solv
     - [Reset](#reset)
     - [Scramble](#scramble)
     - [Solver](#solver)
+- [Resources](#resources)
 
 <hr>
 
-<u><h2 align="center" text-color="green"> How to use </h2></u>
+<u><h2 align="center" id="how-to-use"> How to use </h2></u>
 
-<u>
-
-### Base Functions
-</u>
+<u><h3 align="" id="base-functions"> `Base Functions` </h3></u>
 <a id="base-functions-mouse"></a>
 <div id="descriptor">
 
-<b>-</b> Mouse 
+Mouse 
 
-Left click, hold down, and drag along any slice of the cube to make a turn in the direction you drag your mouse in. On mobile just drag your finger along the slice.
+- Left click, hold down, and drag along any slice of the cube to make a turn in the direction you drag your mouse in. On mobile just drag your finger along the slice.
 
-Left click, hold down, and drag anywhere in the space around the cube to rotate the camera. On mobile just drag your finger in that space.
+- Left click, hold down, and drag anywhere in the space around the cube to rotate the camera. On mobile just drag your finger in that space.
 
 </div>
 
 <a id="base-functions-keyboard"></a>
 <div id="descriptor">
 
-<b>-</b> Keyboard
+Keyboard
 
-Right arrow will redo a move if you have undone at least one. Hold down to have moves continuously redone.
+- Right arrow will redo a move if you have undone at least one. Hold down to have moves continuously redone.
 
-Left arrow with undo a move if you made at least one. Hold down to have moves continuously undone.
+- Left arrow with undo a move if you made at least one. Hold down to have moves continuously undone.
 
 </div><br>
 <u>
 
-### Base Options
+<u><h3 align="" id="base-options"> `Base Options` </h3></u>
 </u>
 <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/basic-options.png" width="100%">
 
@@ -91,7 +73,7 @@ Left arrow with undo a move if you made at least one. Hold down to have moves co
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/cubes.png" height="50px" style="display: inline-block;">
 </p>
 
-- Shows a drown list of cube sizes 2-10.
+- Shows a dropdown list of cube sizes 2-10.
 
 - Select any to generate that sized cube.
 
@@ -127,12 +109,12 @@ Left arrow with undo a move if you made at least one. Hold down to have moves co
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/speed.png" height="50px" style="display: inline-block;">
 </p>
 
-- Puts the application into fullscreen mode. Hit exit or escape to leave fullscreen.
+- Puts the application into fullscreen mode. Click exit or press escape to leave fullscreen.
 
 <br>
 <u>
 
-### Menu Options
+<u><h3 align="" id="menu-options"> `Menu Options` </h3></u>
 </u>
 <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/menu-options.png" width="100%">
 
@@ -140,44 +122,44 @@ Left arrow with undo a move if you made at least one. Hold down to have moves co
 <p align="">
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/colorpicker.png" width="300px" style="display: inline-block;">
 </p>
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/colors.png" width="300px" style="display: inline-block;">
+</p>
 
+- Select a color using either the mouse or keyboard by using the number beside the color.
+- Click any sticker on the cube to change the color to the current one.
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/solvecolorpicker.png" width="300px" style="display: inline-block;">
+</p>
+
+- When the cube is in a solvable state, the feedback panel will show a solve button.
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/invalidcolorpicker.png" width="300px" style="display: inline-block;">
+</p>
+
+
+- While the cube is in an unsolvable state, errors will show in the feedback panel.
 <a id="patterns"></a>
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/patterns.png" width="300px" style="display: inline-block;">
+</p>
 
+<a id="reset"></a>
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/colorpicker.png" width="300px" style="display: inline-block;">
+</p>
 
-    - Patterns
+<a id="scramble"></a>
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/scramble.png" width="300px" style="display: inline-block;">
+</p>
 
-<a id="color-picker"></a>
-
-
-    - Reset
-
-<a id="color-picker"></a>
-
-
-    - Scramble
-
-<a id="color-picker"></a>
-
-
-    - Solver
+<a id="solver"></a>
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/solver.png" width="300px" style="display: inline-block;">
+</p>
 
 <hr>
-
-<a name="about"></a>
-## About this project
-
-### Control the turn speed of moves. Adjust speed with slider
-
-
-
-### Builtin pattern functions. Click button to initiate pattern
-
-
-### Input field to enter moves
-<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/input.png" width="200"> 
-
-### Basic cube functions
-<img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/core.png" width="200"> 
 
 ## Resources
 
