@@ -52,7 +52,7 @@ Hosted by [ruwix.com](https://ruwix.com/) at [cube-solver.com](https://cube-solv
 
 <hr>
 
-<u><h2 align="center"> How to use </h2></u>
+<u><h2 align="center" text-color="green"> How to use </h2></u>
 
 <u>
 
@@ -137,9 +137,9 @@ Left arrow with undo a move if you made at least one. Hold down to have moves co
 <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/menu-options.png" width="100%">
 
 <a id="color-picker"></a>
-
-
-    - Color Picker
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/colorpicker.png" width="300px" style="display: inline-block;">
+</p>
 
 <a id="patterns"></a>
 
