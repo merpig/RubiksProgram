@@ -10,9 +10,15 @@ Development version live at [merpig.github.io/RubiksProgram](https://merpig.gith
 
 Hosted by [ruwix.com](https://ruwix.com/) at [cube-solver.com](https://cube-solver.com)
 
+</div>
+
 <hr>
 
-</div>
+## Description
+
+RubiksProgram simulates a rubiks cube. A user can try to solve the cube, input a real cube (2x2 through 5x5 currently) for a generated solution, or see various pattern algorithms (2x2 through 30x30) with a turn by turn visual guide.
+
+<hr>
 
 ## Table of Contents
 
@@ -93,7 +99,7 @@ Keyboard
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/fullscreen.png" height="50px" style="display: inline-block;">
 </p>
 
-- Puts the application into fullscreen mode. Hit exit or escape to leave fullscreen.
+- Puts the application into fullscreen mode. Click exit or press escape to leave fullscreen.
 
 
 <a id="settings"></a>
@@ -109,7 +115,7 @@ Keyboard
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/speed.png" height="50px" style="display: inline-block;">
 </p>
 
-- Puts the application into fullscreen mode. Click exit or press escape to leave fullscreen.
+- Slider to adjust the turn speed of moves on the cube.
 
 <br>
 <u>
@@ -143,16 +149,25 @@ Keyboard
 <p align="">
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/patterns.png" width="300px" style="display: inline-block;">
 </p>
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/algoPatterns.png" width="300px" style="display: inline-block;">
+</p>
+
+
 
 <a id="reset"></a>
 <p align="">
-  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/colorpicker.png" width="300px" style="display: inline-block;">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/reset.png" width="300px" style="display: inline-block;">
 </p>
+
+- Returns the cube back to its default state.
 
 <a id="scramble"></a>
 <p align="">
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/scramble.png" width="300px" style="display: inline-block;">
 </p>
+
+- Generates 25 random moves.
 
 <a id="solver"></a>
 <p align="">
@@ -166,6 +181,8 @@ Keyboard
 - [Threejs](https://www.npmjs.com/package/three) - Library for displaying 3D graphics in the browser
 - [OrbitControls](https://www.npmjs.com/package/three-orbitcontrols) - "Orbit controls allow the camera to orbit around a target."
 - [Stats](https://www.npmjs.com/package/stats-js) - "This class provides a simple info box that will help you monitor your code performance."
+
+<hr>
 
 ## Available Scripts
 
@@ -203,6 +220,8 @@ If you aren’t satisfied with the build tool and configuration choices, you can
 Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+<hr>
 
 ## Learn More
 
