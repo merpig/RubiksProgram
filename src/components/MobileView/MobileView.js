@@ -7,7 +7,7 @@ import ColorPicker from "../ColorPicker/ColorPicker";
 import {Row, Col} from "react-bootstrap";
 import algorithms from "../../cubeFunctions/algorithms";
 
-const optionLimitCP = 5;
+const optionLimitCP = 100;
 
 class Mobile extends Component {
 

@@ -1618,7 +1618,7 @@ class App extends Component {
         currentIndex=tempState.rubiksIndex;
         if(currentIndex===previousIndex) indexOccurence = indexOccurence+1;
         else indexOccurence = 0;
-        threeByThreeCounter++;
+        if(tempState.solveState>=1) threeByThreeCounter++;
         let moves;
 
         moves = solver(tempState.solveState,tempState.rubiksObject,tempState.cubeDimension,this.moveStringToArray,
@@ -1641,14 +1641,14 @@ class App extends Component {
           }
           moves.moveSet = temp;
         }
-        if(threeByThreeCounter>500) {
-          error = true;
-          console.log(tempState.solveState);
-          moves.currentFunc="None";
-        }
-        else if((indexOccurence>10 && tempState.solveState<1)||counter>10000||(moves.moveSet&&moves.moveSet[0]==='error')) {
+        if((indexOccurence>10 && tempState.solveState<1)||counter>10000||(moves.moveSet&&moves.moveSet[0]==='error')) {
 
-          console.log(indexOccurence,currentIndex,previousIndex,tempState.rubiksIndex);
+          console.log(
+            "Solve State: ",tempState.solveState,
+            "\nPiece attempts: ",indexOccurence,
+            "\nPiece: ",tempState.rubiksObject[tempState.middles[tempState.rubiksIndex]]
+          );
+          
           console.log(moves);
           error = true;
           //console.log(JSON.stringify({beforeObject}));

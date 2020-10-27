@@ -58,7 +58,7 @@ function solveYellowCross(rubiksObject,moveStringToArray,edges,dim){
 
     let skip = false;
 
-    if(dim%2&&dim>4){
+    if(dim%2===0&&dim>=4){
       let counter = 0;
       for(let i = 0; i < 4; i++){
         if(cube[cubeIndex[i]][3] === "yellow") counter++;

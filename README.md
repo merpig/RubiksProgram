@@ -1,3 +1,4 @@
+<a id="top"></a>
 <p align="center">
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/icon.png" width="100" height="100">  
 </p>
@@ -30,9 +31,9 @@ RubiksProgram simulates a rubiks cube. A user can try to solve the cube, input a
     - [Cubes](#cubes)
     - [Info](#info)
     - [Fullscreen](#fullscreen)
+    - [Redo/Undo](#redo-undo)
     - [Settings](#settings)
     - [Speed](#speed)
-    - [Undo/redo](#undo-redo)
   - [Menu Options](#menu)
     - [Color Picker](#color-picker)
     - [Patterns](#patterns)
@@ -40,9 +41,14 @@ RubiksProgram simulates a rubiks cube. A user can try to solve the cube, input a
     - [Scramble](#scramble)
     - [Solver](#solver)
 - [Resources](#resources)
+- [Available Scripts](#available-scripts)
+- [Learn More](#learn-more)
 
 <hr>
+<h4 align="right" id="how-to-use"> 
 
+[Back to top](#top)
+</h4>
 <u><h2 align="center" id="how-to-use"> How to use </h2></u>
 
 <u><h3 align="" id="base-functions"> `Base Functions` </h3></u>
@@ -57,7 +63,6 @@ Mouse
 
 </div>
 
-<a id="base-functions-keyboard"></a>
 <div id="descriptor">
 
 Keyboard
@@ -67,7 +72,11 @@ Keyboard
 - Left arrow with undo a move if you made at least one. Hold down to have moves continuously undone.
 
 </div><br>
-<u>
+
+<h4 align="right" id="how-to-use"> 
+
+[Back to top](#top)
+</h4>
 
 <u><h3 align="" id="base-options"> `Base Options` </h3></u>
 </u>
@@ -92,6 +101,10 @@ Keyboard
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/info.png" height="50px" style="display: inline-block;">
 </p>
 
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/infoPanel.png" width="300px" style="display: inline-block;">
+</p>
+
 - Opens a model with basic overview of the application and how to use.
 
 <a id="fullscreen"></a>
@@ -101,6 +114,14 @@ Keyboard
 
 - Puts the application into fullscreen mode. Click exit or press escape to leave fullscreen.
 
+<a id="redo-undo"></a>
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/redoUndo.png" height="50px" style="display: inline-block;">
+</p>
+
+- Click the left button to undo one move.
+- Click the right button to redo a move.
+- Use left and right arrow keys to undo and redo respectively.
 
 <a id="settings"></a>
 <p align="">
@@ -118,7 +139,11 @@ Keyboard
 - Slider to adjust the turn speed of moves on the cube.
 
 <br>
-<u>
+
+<h4 align="right" id="how-to-use"> 
+
+[Back to top](#top)
+</h4>
 
 <u><h3 align="" id="menu-options"> `Menu Options` </h3></u>
 </u>
@@ -128,6 +153,12 @@ Keyboard
 <p align="">
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/colorpicker.png" width="300px" style="display: inline-block;">
 </p>
+
+- Allows a cube to be inputted into the program to be solved.
+- Support for the color picker works for all cubes.
+- Support for the solve component work for 2x2 - 5x5.
+- Support for bigger cubes coming soon.
+
 <p align="">
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/colors.png" width="300px" style="display: inline-block;">
 </p>
@@ -153,7 +184,24 @@ Keyboard
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/algoPatterns.png" width="300px" style="display: inline-block;">
 </p>
 
+- Choose from a selection of patterns.
+- Selecting a pattern will automatically generate that pattern on the cube.
 
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/algoMoves.png" width="300px" style="display: inline-block;">
+</p>
+
+- Moves are selectable and the cube will jump to the selected move.
+- The current move will be highlighted.
+
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/movesControls.png" width="300px" style="display: inline-block;">
+</p>
+
+- Previous will go back one move.
+- Next with go forward one move.
+- Auto Rewind will continuously rewind until there are no moves left.
+- Auto Forward will continuously forward until there are no moves left.
 
 <a id="reset"></a>
 <p align="">
@@ -174,7 +222,30 @@ Keyboard
   <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/solver.png" width="300px" style="display: inline-block;">
 </p>
 
+Solver will solve the current state of the cube and display the moves.
+
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/solveMoves.png" width="300px" style="display: inline-block;">
+</p>
+
+- Moves are selectable and the cube will jump to the selected move.
+- The current move will be highlighted.
+
+<p align="">
+  <img src="https://raw.githubusercontent.com/merpig/RubiksProgram/master/public/movesControls.png" width="300px" style="display: inline-block;">
+</p>
+
+- Previous will go back one move.
+- Next with go forward one move.
+- Auto Rewind will continuously rewind until there are no moves left.
+- Auto Forward will continuously forward until there are no moves left.
+
 <hr>
+
+<h4 align="right" id="how-to-use"> 
+
+[Back to top](#top)
+</h4>
 
 ## Resources
 
@@ -183,6 +254,11 @@ Keyboard
 - [Stats](https://www.npmjs.com/package/stats-js) - "This class provides a simple info box that will help you monitor your code performance."
 
 <hr>
+
+<h4 align="right" id="how-to-use"> 
+
+[Back to top](#top)
+</h4>
 
 ## Available Scripts
 
@@ -222,6 +298,11 @@ Instead, it will copy all the configuration files and the transitive dependencie
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
 <hr>
+
+<h4 align="right" id="how-to-use"> 
+
+[Back to top](#top)
+</h4>
 
 ## Learn More
 

@@ -159,6 +159,67 @@ const cube = {
             }
           }
         }
+
+        // for(let i = 0; i < size-2; i++){
+        //   let row = [];
+        //   for(let j = 0; j < size-2; j++){
+        //     row.push(tempMiddles[3][i*(size-2)+j])
+        //   }
+        //   console.log(row);
+        // }
+        // Restructure last 3 middles for cubes 6x6 and greater
+        if(size >= 6){
+          let middleEdgeLength = size-2-1;
+          // loop through last 3 middles
+          for(let k = 3; k < 6; k++){
+            let middleCorners = [];
+            let middleRestructure = [];
+            let middleIndex = 0;
+
+            // generate empty arrays for each ring layer in middle
+            for(let i = 0; i < (half-1); i++) {
+              middleRestructure.push([]);
+            }
+            
+            // loop through each empty layer and populate
+            middleRestructure.forEach((layer,index) =>{
+              // treat 1d array as 2d matrix
+              for(let i = 0; i<= middleEdgeLength; i++){
+                for (let j = 0; j<= middleEdgeLength; j++){
+                  if((i===index||middleEdgeLength-i===index)
+                  &&(j>=index&&j<=middleEdgeLength-index)
+                  ){
+                    // pushes top row of ring
+                    ((j===0+index||j===middleEdgeLength-index)&&
+                      ((j<Math.ceil(middleEdgeLength/2)-1)||
+                      (j>Math.ceil(middleEdgeLength/2)+(size%2?1:0))))?
+                    middleCorners.push(tempMiddles[k][middleIndex]):
+                    layer.push(tempMiddles[k][middleIndex]);
+                  }
+                  else if((i>index&&middleEdgeLength-i>index)
+                  &&(j===index||j===middleEdgeLength-index)
+                  ){
+                    // pushes sides of ring
+                    layer.push(tempMiddles[k][middleIndex]);
+                  }
+                  else if(index===half-2&&i===j&&i===middleEdgeLength/2){
+                    // pushes last middle into center ring
+                    layer.push(tempMiddles[k][middleIndex]);
+                  }
+                  middleIndex+=1;
+                }
+              }
+              middleIndex=0;
+            });
+            let temp = middleRestructure[middleRestructure.length-1];
+            middleRestructure[middleRestructure.length-1]=middleCorners;
+            middleRestructure.push(temp);
+            middleRestructure.reverse();
+            //console.log(middleRestructure.flat(2));
+            tempMiddles[k] = middleRestructure.flat(2);
+          }
+        }
+
         
         for(let i = 0; i < 6; i++){
           for(let j = 0; j < (_x-2)*(_x-2); j++){
@@ -171,7 +232,6 @@ const cube = {
             edges.push(...tempEdges[i][j]);
           }
         }
-        //console.log(tempArr);
         return {tempArr,middles,edges,corners};
     },
 

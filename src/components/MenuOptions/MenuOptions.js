@@ -3,8 +3,8 @@ import "./MenuOptions.css"
 import algorithms from "../../cubeFunctions/algorithms";
 import cube from '../../cubeFunctions/cube';
 
-const optionLimitCP = 5;
-const optionLimitSOLVER = 5;
+const optionLimitCP = 100;
+const optionLimitSOLVER = 100;
 
 const MenuOptions = props => {
         let algorithmSet = 

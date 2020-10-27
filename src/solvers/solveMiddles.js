@@ -46,13 +46,10 @@ function solveMiddles(cube,dim,moveStringToArray,index,middles){
       }
 
       else{
-        if(dim<11){
-          obj.solveState = .1; obj.rubiksIndex = 0; obj.currentFunc = "Solving"; obj.moveSet = ['stop'];
-          // obj.solveState = -1; obj.rubiksIndex = 0; obj.currentFunc = "None";
-        } else {
-          // obj.solveState = .1; obj.rubiksIndex = 0; obj.currentFunc = "Solving"; obj.moveSet = ['stop'];
-          obj.solveState = -1; obj.rubiksIndex = 0; obj.currentFunc = "None";
-        }
+        obj.solveState = .1;
+        obj.rubiksIndex = 0;
+        obj.currentFunc = "Solving";
+        obj.moveSet = ['stop'];
       }
     }
 

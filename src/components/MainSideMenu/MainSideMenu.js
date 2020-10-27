@@ -37,11 +37,11 @@ const MainSideMenu = props => {
     
     return (
         <div className="sideMenuBox0 sideLimit">
-            {props.state.cubeDimension<=5?<MainSideMenuButton 
+            {props.state.cubeDimension<=100?<MainSideMenuButton 
                 name="Color Picker"
                 onClick={colorPicker}
             />:[]}
-            {props.state.cubeDimension<=5?
+            {props.state.cubeDimension<=100?
             <MainSideMenuButton 
                 name="Solver"
                 onClick={solver}
