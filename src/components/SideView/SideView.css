@@ -3,23 +3,24 @@
     bottom:0;
     left: 0;
     width: 100%;
-    height: 30vh;
+    height: 25vh;
 }
 
 .bottomExitDiv{
     visibility: visible;
     position:absolute;
-    bottom: 0px;
+    padding: 4px;
+    bottom: 4px;
     right: 0px;
     height: 50%;
-    width: 30vw;
+    width: 25vw;
     max-width: 400px;
     max-height: 150px;
-    font-size: 1rem;
+    font-size: 2rem;
 }
 
 .buttonWrapper{
-    height:30vh;
+    height:25vh;
     max-height: 300px;
     width: 100%;
 }
@@ -32,10 +33,9 @@
 }
 
 #controlsPopup{
-    position: relative;
-    width:30vw;
     max-height: 300px;
     margin:auto;
+    bottom: 4px;
 }
 
 .sideMenuWrapper{
@@ -56,6 +56,7 @@
 }
 
 .sideMenuBox{
+    padding: 4px;
     height:30vh;
     width:100%;
     border: 2px solid rgb(52, 58, 64);
@@ -64,6 +65,7 @@
 }
 
 .sideMenuBox0{
+    padding: 4px;
     height:60vh;
     width:100%;
     position: absolute;
@@ -78,15 +80,15 @@
 }
 
 .sideMenuBox2{
+    padding-top: 4px;
     height:49%;
     width:100%;
     border-radius: .25rem;
-    position: absolute;
     bottom: 0;
 }
 
 .sideMovesBox{
-    position: absolute;
+    
     height: 100%;
     width:100%;
     overflow-y: scroll;

@@ -1,18 +1,29 @@
-import React from "react";
+import React, {useState} from "react";
 import {Row, Col} from "react-bootstrap";
 import ColorButton from "./ColorButton";
 import "./ColorPicker.css";
 
 const ColorPicker = (props) => {
+    const [solveBtnText,setSolveBtnText] = useState("Solve");
+    const [checkBtnText,setCheckBtnText] = useState("Check");
+
     const colors = ["white","blue","red","yellow","orange","green"];
-    const li = [];
-    props.cpErrors.forEach(function(error,i){
-        li.push(<p key={i} style={{color:"red",fontSize:".8rem",textAlign:"left",listStyle:"none",margin:"2px",lineHeight: "15px"}}>
-            {"- "+error}
-        </p>);
-    });
+
+    const onSolveClick = () => {
+        setSolveBtnText("Configuring...");
+        setTimeout(function(){
+            props.setColorPickedCube();
+        }, 100);  
+    };
+
+    const onCheckClick = () => {
+        setCheckBtnText("Checking...");
+        setTimeout(function(){
+            props.runCheckColors();
+        }, 100);  
+    };
+
     function leave(){
-        //console.log(document.querySelector("#cpChangeData").data)
         props.endColorPicker();
 
         if( document.querySelector(".activeMenu")){
@@ -52,14 +63,17 @@ const ColorPicker = (props) => {
                 <div className="cpInfo">
                     {
                         props.isValidConfig?
-                        <div className="solveCpDiv"><button className="solveCp" onClick={()=>props.setColorPickedCube()}>
-                            <strong style={{color:'green',fontSize:'1rem'}}>Solve</strong>
-                        </button></div>:
-                        []
+                        <div className="solveCpDiv"><button className="solveCp" onClick={()=>onSolveClick()}>
+                            <strong style={{color:'green',fontSize:'1rem'}}>{solveBtnText}</strong>
+                        </button></div>:!props.cpErrors.length?
+                        <div className="checkCpDiv"><button className="checkCp" onClick={()=>onCheckClick()}>
+                            <strong style={{color:'blue',fontSize:'1rem'}}>{checkBtnText}</strong>
+                        </button></div>:[]
                     }
                     <div style={{fontSize:".5rem"}}>
-                        
-                            {li}
+                        {props.state.cpErrors.map((error,i)=>
+                            <p key={i} className="cpErrorMessage">{"- "+error}</p>
+                        )}
                     </div>
                 </div>
             </Col>

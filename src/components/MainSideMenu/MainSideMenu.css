@@ -1,6 +1,8 @@
 .mainSideMenuButton{
     width:100%;
-    padding: 4px;
+    max-width: 25vw;
+    float: right;
+    padding-bottom: 4px;
 }
 
 .sideMenuButton{

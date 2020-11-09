@@ -9,12 +9,24 @@ class Menu extends Component {
     }
     
     shouldComponentUpdate(nextProps, nextState) {
+        
         if(this.props.state.resized===true){
             this.props.setState({resized:false});
             return true;
         }
+
+        if(this.props.state.upDateCp!==nextProps.state.upDateCp){
+            return true;
+        }
+        if(this.props.state.solvedSet!==nextProps.state.solvedSet) {
+            //console.log(nextProps.state.solvedSet);
+            return true;
+        }
+
         if(this.props.state.currentFunc==="Scrambling") return true;
+
         if(this.props.state.activeMenu===nextProps.state.activeMenu&&this.props.state.activeMenu==="none") return false;
+
         if(
             (this.props.state.currentFunc==="Algorithms"||this.props.state.currentFunc==="Solving")&&
             this.props.state.moveSet===nextProps.state.moveSet&&

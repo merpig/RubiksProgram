@@ -29,10 +29,8 @@ let solveGreenMiddle = (current,solved,dim,index) => {
 
     const currentSide = checkSide(current,dim);
     const middle = Math.floor(dim/2);
-    const middleUpper = Math.ceil(dim/2);
     const max = middle+1;
     const min = middle-1;
-    // let isOddCube = dim%2;
     const moves = [];
 
     // Temp 4x4 solver

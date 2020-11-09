@@ -11,8 +11,9 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import cube from './cubeFunctions/cube';
-import solver from './solvers/solver';
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import moveFuncs from './cubeFunctions/move';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import ColorPickerUIFunctions from "./components/ColorPicker/ColorPickerUIFunctions";
 
 // TODO:
 /*
@@ -25,7 +26,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
  * 4. ISSUES:
  *  - Fix issue is yellow solver
  */
-
 
 class App extends Component {
   state = {
@@ -107,7 +107,8 @@ class App extends Component {
     sliderSpeed:40,
     jumpToEnd: false,
     algoUp: false,
-    algoDown: false
+    algoDown: false,
+    upDateCp: 0
   };
 
   // Bind keys to functions
@@ -233,16 +234,6 @@ class App extends Component {
     this.keyBinds(e.key);
   }
 
-  onMouseDown( event ) {
-    if(!this.state.mouseDown){
-      if(this.state.currentFunc==="Color Picker"&&this.state.previousPiece){
-        let toFace = [2,4,3,0,1,5];
-        this.changeFaceColor({x:this.state.facePosX,y:this.state.facePosY,z:this.state.facePosZ},toFace[this.state.faceSide],this.state.colorPicked)
-      }
-      this.setState({mouseDown : true});  
-    }
-  }
-
   onMouseUp( event ) {
     this.setState({mouseDown : false});  
   }
@@ -300,406 +291,21 @@ class App extends Component {
         i = tempObj.length;
       }  
     }
-    this.setState({rubiksObject:[...tempObj]},()=>{
+    this.setState({rubiksObject:[...tempObj],isValidConfig:false,upDateCp:this.state.upDateCp+1,cpErrors: []},()=>{
       this.reloadTurnedPieces('cp');
-      let obj = this.checkColors();
-      if(obj.error) this.setState({isValidConfig:false,cpErrors:[...obj.error]});
-      else if(obj.success) this.setState({isValidConfig:true,cpErrors:[]});
     });
   }
 
-  convertToBlueMiddle(_piece){
-    const piece = [..._piece];
-    const dim = this.state.cubeDimension;
-    const max = dim-1;
-    const white=0,blue=dim-1,red=dim-1,yellow=dim-1,orange=0,green=0;
-
-    if(piece[7]===white) {
-      return {
-        colors:[
-          piece[5], // color on bottom(face 5) is now on front(index 0)
-          piece[0], // color on front(0) is now on top(1)
-          piece[2], // color on right(2) is still on right(2)
-          piece[1], // color on top(1) is now on back(3)
-          piece[4], // color on left(4) is now on left(4)
-          piece[3]  // color on back(3) is now on bottom(5)
-        ].join(""),
-        position:[
-          piece[6],
-          piece[8],
-          max // becomes top
-        ]
-      }
-    }
-
-    if(piece[8]===blue) {
-      return {
-        colors:[
-          piece[0], // piece on front(0) is now on front(0)
-          piece[1], // piece on top(1) is still on top(1)
-          piece[2], // piece on right(2) is now on right(2)
-          piece[3], // piece on back(3) is now on back(3)
-          piece[4], // piece on left(4) is now on left(4)
-          piece[5] // piece on bottom(5) is still on bottom(5)
-        ].join(""),
-        position:[
-          piece[6], // stays same
-          piece[7],  // stays same
-          max // becomes top
-        ]
-      }
-    }
-
-    if(piece[6]===red) {
-      return {
-        colors:[
-          piece[0], // piece on front(index 0) remains the same
-          piece[2], // piece on right(2) is still on top(1)
-          piece[5], // piece on bottom(5) is now on right(2)
-          piece[3], // piece on back(3) remains the same
-          piece[1], // piece on top(1) is now on left(4)
-          piece[4]  // piece on left(4) is still on bottom(5)
-        ].join(""),
-        position:[
-          max-piece[8], 
-          piece[7],  
-          max // becomes top
-        ]
-      }
-    }
-
-    if(piece[7]===yellow) {
-      return {
-        colors:[
-          piece[1], // piece on front(0) is now on bottom(5)
-          piece[3], // piece on top(1) is still on front(0)
-          piece[2], // piece on right(2) is now on right(2)
-          piece[5], // piece on back(3) is now on top(1)
-          piece[4], // piece on left(4) is now on left(4)
-          piece[0] // piece on bottom(5) is still on back(3)
-        ].join(""),
-        position:[
-          piece[6], // inverse y becomes x
-          max-piece[8],  // y becomes 0
-          max // becomes top
-        ]
-      }
-    }
-
-    if(piece[6]===orange) {
-      return {
-        colors:[
-          piece[0], // piece on front(0) is now on front(0)
-          piece[4], // piece on top(1) is still on right(2)
-          piece[1], // piece on right(2) is now on bottom(5)
-          piece[3], // piece on back(3) is now on back(3)
-          piece[5], // piece on left(4) is now on top(1)
-          piece[2] // piece on bottom(5) is still on left(4)
-        ].join(""),
-        position:[
-          piece[8], // inverse y becomes x
-          piece[7],  // y becomes 0
-          max // becomes top
-        ]
-      }
-    }
-
-    if(piece[8]===green) {
-      return {
-        colors:[
-          piece[0], // piece on front(0) is now on front(0)
-          piece[5], // piece on top(1) is still on bottom(5)
-          piece[4], // piece on right(2) is now on left(4)
-          piece[3], // piece on back(3) is now on back(3)
-          piece[2], // piece on left(4) is now on right(2)
-          piece[1] // piece on bottom(5) is still on top(1)
-        ].join(""),
-        position:[
-          max-piece[6], // inverse y becomes x
-          piece[7],  // y becomes 0
-          max // becomes top
-        ]
-      }
-    }
-
-  }
-
-  convertToBlueWhiteEdge(_piece){
-    const piece = [..._piece];
-    const dim = this.state.cubeDimension;
-    const max = dim-1;
-    const white=0,blue=dim-1,red=dim-1,yellow=dim-1,orange=0,green=0;
-
-    // colors according to the solved cube
-    if(piece[7]===white&&piece[8]===blue) {
-      return {
-        colors:[
-          piece[0], // piece on front(0) is now on front(0)
-          piece[1], // piece on top(1) is still on top(1)
-          piece[2], // piece on right(2) is now on right(2)
-          piece[3], // piece on back(3) is now on back(3)
-          piece[4], // piece on left(4) is now on left(4)
-          piece[5] // piece on bottom(5) is still on bottom(5)
-        ].join(""),
-        position:[
-          piece[6], // inverse y becomes x
-          0,  // y becomes 0
-          max // becomes top
-        ].join("")
-      }
-    }
-
-    if(piece[6]===orange&&piece[8]===blue) {
-      return {
-        colors:[
-          piece[4], // piece on left(4) is now on front(0)
-          piece[1], // piece on top(1) is still on top(1)
-          piece[0], // piece on front(0) is now on right(2)
-          piece[2], // piece on right(2) is now on back(3)
-          piece[3], // piece on back(3) is now on left(4)
-          piece[5] // piece on bottom(5) is still on bottom(5)
-        ].join(""),
-        position:[
-          max-piece[7], // inverse y becomes x
-          0,  // y becomes 0
-          max // becomes top
-        ].join("")
-      }
-    }
-
-    if(piece[7]===yellow&&piece[8]===blue){
-      return {
-        colors:[
-          piece[3], // piece on back(3) is now on front(0)
-          piece[1], // piece on top(1) is still on top(1)
-          piece[4], // piece on left(4) is now on right(2)
-          piece[0], // piece on front(0) is now on back(3)
-          piece[2], // piece on right(2) is now on left(4)
-          piece[5] // piece on bottom(5) is still on bottom(5)
-        ].join(""),
-        position:[
-          dim-(piece[6]+1), // inverse x becomes x
-          0,  // y becomes 0
-          max // becomes top
-        ].join("")
-      }
-    }
-
-    if(piece[6]===red&&piece[8]===blue){
-      return {
-        colors:[
-          piece[2], // piece on right(2) is now on front(0)
-          piece[1], // piece on top(1) is still on top(1)
-          piece[3], // piece on back(3) is now on right(2)
-          piece[4], // piece on left(4) is now on back(3)
-          piece[0], // piece on front(0) is now on left(4)
-          piece[5] // piece on bottom(5) is still on bottom(5)
-        ].join(""),
-        position:[
-          piece[7], // inverse y becomes x
-          0,  // y becomes 0
-          max // becomes tops
-        ].join("")
-      }
-    }
-
-    if(piece[6]===orange&&piece[7]===white){
-      return {
-        colors:[
-          piece[0], // piece on front(0) is still on front(0)
-          piece[4], // piece on left(4) is now on top(1)
-          piece[1], // piece on top(1) is now on right(2)
-          piece[3], // piece on back(3) is still on back(3)
-          piece[5], // piece on bottom(5) is now on left(4)
-          piece[2] // piece on right(2) is now on bottom(5)
-        ].join(""),
-        position:[
-          piece[8], // z becomes x
-          0,  // y 0
-          max // becomes tops
-        ].join("")
-      }
-    }
-
-    if(piece[6]===red&&piece[7]===white){
-      return {
-        colors:[
-          piece[0], // piece on front(0) is still on front(0)
-          piece[2], // piece on right(2) is now on top(1)
-          piece[5], // piece on bottom(5) is now on right(2)
-          piece[3], // piece on back(3) is still on back(3)
-          piece[1], // piece on top(1) is now on left(4)
-          piece[4] // piece on left(4) is now on bottom(5)
-        ].join(""),
-        position:[
-          max-piece[8], // inverse z becomes x
-          0,  // y remains the same
-          max // becomes tops
-        ].join("")
-      }
-    }
-
-    if(piece[6]===orange&&piece[7]===yellow){
-      return {
-        colors:[
-          piece[4], // piece on left(4) is now on front(0)
-          piece[3], // piece on back(3) is now on top(1)
-          "black",
-          "black",
-          "black",
-          "black",
-        ].join(""),
-        position:[
-          piece[8], // z becomes x
-          0,  // y remains the same
-          max // becomes tops
-        ].join("")
-      }
-    }
-
-    if(piece[6]===red&&piece[7]===yellow){
-      return {
-        colors:[
-          piece[2], // piece on right(2) is now on front(0)
-          piece[3], // piece on back(1) is still on top(1)
-          "black",
-          "black",
-          "black",
-          "black",
-        ].join(""),
-        position:[
-          max-piece[8], // inverse z becomes x
-          0,  // y remains the same
-          max // becomes tops
-        ].join("")
-      }
-    }
-
-    if(piece[7]===white&&piece[8]===green){
-      return {
-        colors:[
-          piece[0], // piece on front(0) is still on front(0)
-          piece[5], // piece on bottom(5) is now on top(1)
-          "black",
-          "black",
-          "black",
-          "black",
-        ].join(""),
-        position:[
-          max-piece[6], // inverse x becomes x
-          0,  // y remains the same
-          max // becomes tops
-        ].join("")
-      }
-    }
-
-    if(piece[6]===orange&&piece[8]===green){
-      return {
-        colors:[
-          piece[4], // piece on left(4) is now on front(0)
-          piece[5], // piece on bottom(5) is now on top(1)
-          "black",
-          "black",
-          "black",
-          "black",
-        ].join(""),
-        position:[
-          piece[7], // y becomes x
-          0,  // y remains the same
-          max // becomes tops
-        ].join("")
-      }
-    }
-
-    if(piece[7]===yellow&&piece[8]===green){
-      return {
-        colors:[
-          piece[3], // piece on back(3) is now on front(0)
-          piece[5], // piece on bottom(5) is now on top(1)
-          "black",
-          "black",
-          "black",
-          "black",
-        ].join(""),
-        position:[
-          piece[6], // x becomes x
-          0,  // y remains the same
-          max // becomes tops
-        ].join("")
-      }
-    }
-
-    if(piece[6]===red&&piece[8]===green){
-      return {
-        colors:[
-          piece[2], // piece on right(2) is now on front(0)
-          piece[5], // piece on bottom(5) is now on top(1)
-          "black",
-          "black",
-          "black",
-          "black",
-        ].join(""),
-        position:[
-          max-piece[7], // inverse y becomes x
-          0,  // y remains the same
-          max // becomes tops
-        ].join("")
-      }
-    }
-    
-    console.log("failed to register piece",piece);
-    return null;
-  }
-
-  checkValidMatch(validPiece,manualPiece){
-    let max = this.state.cubeDimension-1;
-    let newValidPiece = this.convertToBlueWhiteEdge([...validPiece]);
-    let newManualPiece = this.convertToBlueWhiteEdge([...manualPiece]); 
-    if((newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position)||validPiece.includes("center")){
-      return true;
-    }
-    else if(newValidPiece.colors!==newManualPiece.colors&&parseInt(newValidPiece.position[0])===max-parseInt(newManualPiece.position[0])){
-      //console.log("valid");
-      //console.log(newValidPiece,newManualPiece)
-      return true;
-    }
-    else return false;
-  }
-
-  checkValidMatchMiddle(validPiece,manualPiece){
-    let newValidPiece = this.alignQuadrant(this.convertToBlueMiddle(validPiece));
-    let newManualPiece = this.alignQuadrant(this.convertToBlueMiddle(manualPiece));
-    if(newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position){
-      return true;
-    }
-    
-    return false;
-  }
-
-  alignQuadrant(_piece){
-    let pos = _piece.position;
-    let piece = {colors:_piece.colors}
-    const dim = this.state.cubeDimension;
-    const max = dim-1;
-    const X = 0, Y = 1, Z = 2;
-
-    if(pos[X] < Math.floor(dim/2) && pos[Y] >= Math.floor(dim/2)){
-      piece.position = [ (max - pos[Y]), pos[X], pos[Z] ].join("");
-    }
-    else if(pos[X] >= Math.floor(dim/2) && pos[Y] >= Math.ceil(dim/2)){
-      piece.position = [ (max - pos[X]), max - pos[Y], pos[Z] ].join("");
-    }
-    else if(pos[X] >= Math.ceil(dim/2) && pos[Y] < Math.ceil(dim/2)){
-      piece.position = [ pos[Y], (max-pos[X]), pos[Z]].join("");
-    }
-    else piece.position=pos.join("");
-
-    return piece;
+  runCheckColors(){
+    let obj = ColorPickerUIFunctions.checkColors(this.state);
+    if(obj.error) this.setState({cpErrors:[...obj.error]});
+    else if(obj.success) this.setState({isValidConfig:true,cpErrors:[]});
   }
 
   setColorPickedCube = () => {
     let rubiks = [...this.state.rubiksObject];
-    let generated = cube.generateSolved(this.state.cubeDimension,this.state.cubeDimension,this.state.cubeDimension);
+    let size = this.state.cubeDimension;
+    let generated = cube.generateSolved(size,size,size);
     let newGenerated = [];
     let checked = [];
     let otherChecked = [];
@@ -715,7 +321,7 @@ class App extends Component {
           let validEdgePlacement = false;
           let validMiddlePlacement = false;
           if(piece.includes("edge")){
-            validEdgePlacement = this.checkValidMatch(piece,rubik);
+            validEdgePlacement = ColorPickerUIFunctions.checkValidMatchEdge(piece,rubik,size);
             // A center edge cannot match with a non center edge
             if((piece[13]==="center"&&rubik[13]!=="center")||
               (rubik[13]==="center"&&piece[13]!=="center")){
@@ -726,7 +332,7 @@ class App extends Component {
             }
           }
           else if(piece.includes("middle")){
-            validMiddlePlacement = this.checkValidMatchMiddle(piece,rubik);
+            validMiddlePlacement = ColorPickerUIFunctions.checkValidMatchMiddle(piece,rubik,size);
           }
           else{
             validEdgePlacement = true;
@@ -751,193 +357,11 @@ class App extends Component {
     });
   }
 
-  checkOccurences = (a1, a2) => {
-    let success = true;
-    let amount = 0;
-    let failedColors = [];
-    for(var i = 0; i < a1.length; i++) {
-      var count = 0;
-      for(var z = 0; z < a2.length; z++) {
-        if (a2[z] === a1[i]) count++;
-      }
-      if(count>1) {
-        success = false;
-        if(!failedColors.includes(a1[i])) failedColors.push(a1[i])
-      }
-
-    }
-    return {success,failedColors,amount}
-  }
-
-  checkColors = () => {
-    let rubiksLength = this.state.rubiksObject.length;
-    let whiteCount = 0,blueCount = 0,redCount = 0,yellowCount = 0,orangeCount = 0,greenCount = 0;
-    let duplicateFace = false;
-    let duplicateColors = [];
-    let matchedCount = 0;
-    let obj = {error:[]};
-    let validAmount = this.state.cubeDimension*this.state.cubeDimension;
-    let rubiks = [...this.state.rubiksObject];
-    let generated = cube.generateSolved(this.state.cubeDimension,this.state.cubeDimension,this.state.cubeDimension);
-    let newGenerated = [];
-    let invalidMiddleConfig;
-    let invalidEdgeConfig;
-    for(let i = 0; i < rubiks.length; i++){
-      let rubik = [...rubiks[i]];
-      const colors = ['white','blue','red','yellow','orange','green'];
-      if(rubik.includes('white')) whiteCount+=1;
-      if(rubik.includes('blue')) blueCount+=1;
-      if(rubik.includes('red')) redCount+=1;
-      if(rubik.includes('yellow')) yellowCount+=1;
-      if(rubik.includes('orange')) orangeCount+=1;
-      if(rubik.includes('green')) greenCount+=1;
-
-      let res = this.checkOccurences(colors,rubik);
-      if(!res.success){
-        duplicateFace = true;
-        let tempColors = []
-        res.failedColors.forEach(color => {
-          if(!tempColors.includes(color)) {
-            tempColors.push(color);
-          }
-        })
-        duplicateColors=tempColors;
-      }
-    }
-
-    let checked = [];
-    let otherChecked = [];
-    //For each cube piece in the generated solved cube, find the matching
-    //manually inputted piece and overwrite the solved position from the unsolved
-    //piece with the solved piece's solved position to a new generated cube. For 
-    //edge pieces, an extra check was needed to ensure first half segments weren't
-    //getting assigned or assigning to second half segments(becomes unsolvable).
-    generated.tempArr.forEach(([...piece],pieceIndex) =>{
-      newGenerated.push([]);
-      let tempInvalidMatch = [];
-      rubiks.forEach(([...rubik],i) => {
-        
-        let validPiece = 0;
-        piece.slice(0,6).sort().forEach((face,index) =>{
-          if(rubik.slice(0,6).sort()[index]===face) {validPiece++;}
-        });
-        if(validPiece===6&&!checked.includes(pieceIndex)&&!otherChecked.includes(i)){
-          let validEdgePlacement = false;
-          let validMiddlePlacement = false;
-          if(piece.includes("edge")){
-            validEdgePlacement = this.checkValidMatch(piece,rubik);
-            // A center edge cannot match with a non center edge
-            if((piece[13]==="center"&&rubik[13]!=="center")||
-              (rubik[13]==="center"&&piece[13]!=="center")){
-                validEdgePlacement = false;
-            }
-            else if (piece[13]==="center"&&rubik[13]==="center"){
-              validEdgePlacement = true;
-            }
-          }
-          else if(piece.includes("middle")){
-            validMiddlePlacement = this.checkValidMatchMiddle(piece,rubik);
-            if(!validMiddlePlacement) tempInvalidMatch.push([piece,rubik]);
-          }
-          else{
-            validEdgePlacement = true;
-            validMiddlePlacement = true;
-          }
-          if(validEdgePlacement||validMiddlePlacement){
-            matchedCount++;
-            checked.push(pieceIndex);
-            otherChecked.push(i);
-            newGenerated[pieceIndex]=[
-              ...rubik.slice(0,9),
-              ...piece.slice(9,15)
-            ];
-          }
-        }
-      })
-      if(newGenerated[pieceIndex].length===0)
-        if(piece[12]==="edge")
-          invalidEdgeConfig="Invalid edge configuration.";
-        else if(piece[12]==="middle"){
-          invalidMiddleConfig = "Invalid middle configuration.";
-        }
-    });
-
-
-    
-    let invalidAmounts = [];
-    if(whiteCount!==validAmount){
-      invalidAmounts.push("white");
-    }
-    if(blueCount!==validAmount){
-      invalidAmounts.push("blue");
-    }
-    if(redCount!==validAmount){
-      invalidAmounts.push("red");
-    }
-    if(yellowCount!==validAmount){
-      invalidAmounts.push("yellow");
-    }
-    if(orangeCount!==validAmount){
-      invalidAmounts.push("orange");
-    }
-    if(greenCount!==validAmount){
-      invalidAmounts.push("green");
-    }
-    if(invalidAmounts.length){
-      invalidAmounts=invalidAmounts.join(', ');
-      obj.error.push(`Invalid ${invalidAmounts} sticker count.`);
-    }
-
-    if(duplicateFace){
-      duplicateColors=duplicateColors.join(', ');
-      obj.error.push(`More than one occurence of ${duplicateColors} found on a piece.`);
-    }
-
-    if(matchedCount!==rubiksLength&&this.state.cubeDimension<4){
-      obj.error.push(`[${matchedCount-1}] out of [${rubiksLength-1}] matched. Missing [${(rubiksLength-1)-(matchedCount-1)}]`);
-    }
-
-    if(invalidEdgeConfig){
-      obj.error.push(invalidEdgeConfig);
-    }
-    if(invalidMiddleConfig){
-      obj.error.push(invalidMiddleConfig);
-    }
-
-    if(!obj.error.length){
-      const solveData = {...this.generateAllSolveMoves(this.state,newGenerated)};
-      if(solveData.solveable===false){
-        //console.log(newGenerated);
-        obj.error.push(`This configuration of the cube is not solveable,
-        please check that you've entered all pieces correctly.`);
-      }
-      else{
-        if(solveData.tempObject){
-          //console.log(solveData.tempObject);
-          for(let i = 0; i<solveData.tempObject.length; i++){
-            if((solveData.tempObject[i].slice(0,6).sort().join("")!==generated.tempArr[i].slice(0,6).sort().join(""))&&solveData.tempObject[i][12]==="corner"){
-              // console.log(solveData.tempObject[i].slice(0,6).sort().join(""),generated.tempArr[i].slice(0,6).sort().join(""));
-              // obj.error.push(`Invalid corner alignment`);
-              // break;
-            }
-          }
-          if(!obj.error.length) obj.error = undefined;
-        }
-        else{
-          obj.error = undefined;
-        }
-      }
-    }
-
-    if(!obj.error) {obj.success = true;obj.newGenerated = newGenerated}
-    return obj;
-  }
-
   // Allows the user to undo a move
   undo = () => {
     let undoIndex = this.state.undoIndex;
     let moveString = this.state.moveLog;
-    const moveArray = this.moveStringToArray(moveString);
+    const moveArray = moveFuncs.moveStringToArray(moveString);
     if(moveString === "") return;
 
     else if(this.state.currentFunc !== "None") return;
@@ -956,7 +380,7 @@ class App extends Component {
     let moveString = this.state.moveLog;
     if(moveString === "") return;
     
-    const moveArray = this.moveStringToArray(moveString);
+    const moveArray = moveFuncs.moveStringToArray(moveString);
     
     let backwardsMove = moveArray[moveArray.length-undoIndex];
     try{
@@ -985,7 +409,7 @@ class App extends Component {
       let solveMoves = this.state.solveMoves;
       let solveState = this.state.solveState;
       let end = this.state.end;
-      let obj = this.rotateCubeFace(vals[0],vals[1],vals[2],vals[3],blockMoveLog,moveLog,solveMoves,end,solveState);
+      let obj = cube.rotateCubeFace(vals[0],vals[1],vals[2],vals[3],blockMoveLog,moveLog,solveMoves,end,solveState);
 
       obj.currentFunc = e;
       obj.rubiksObject = cube.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
@@ -994,141 +418,19 @@ class App extends Component {
     }
   }
 
-  // Changes values in state to trigger face rotation
-  rotateCubeFace = (face,direction,cubeDepth,isMulti,blockMoveLog,moveLog,solveMoves,end,solveState) => {
-    let obj = {};
-    if(!blockMoveLog){
-      
-      let tempMove = "";
-      cubeDepth<10 ? tempMove+="0"+cubeDepth : tempMove += cubeDepth;
-      if(face === 0) !isMulti ? tempMove += "F" : tempMove += "f";
-      else if(face === 1) !isMulti ? tempMove += "U" : tempMove += "u";
-      else if(face === 2) !isMulti ? tempMove += "R" : tempMove += "r";
-      else if(face === 3) !isMulti ? tempMove += "B" : tempMove += "b";
-      else if(face === 4) !isMulti ? tempMove += "L" : tempMove += "l";
-      else if(face === 5) !isMulti ? tempMove += "D" : tempMove += "d";
-      if(direction === -1) tempMove += "'";
-
-      moveLog&&moveLog.length > 0 ?
-        obj.moveLog = (moveLog + " " + tempMove) :
-        obj.moveLog = (tempMove);
-      
-      // Keeps tracks of solver's moves
-      if(solveState > -1) 
-        obj.solveMoves = (solveMoves.length ? solveMoves + " " + tempMove : solveMoves + tempMove);
-    }
-
-    // Faces on opposite side of cube rotate backwards
-    if(face>2 && direction === -1) direction = 0;
-
-    else if (face>2 && direction === 0) direction = -1;
-
-    obj.blockMoveLog = false;
-    obj.face = face; // used
-    obj.turnDirection = direction; // used
-    obj.end = end + 90; 
-    obj.cubeDepth = cubeDepth; // used
-    obj.isMulti = isMulti; // used
-    
-
-    return obj;
-  }
-
-  // Takes prebuilt algorithms and converts to moves
-  // allow for C,c
-  // **************************
-  // If during solve or algorithm state and the drag move is the same as the
-  // next move then allow the move to be queued as playOne
-
   // Small bug, account for double turns
   algorithm = (moveString,moveName) => {
     if(this.state.currentFunc === "Solving"||this.state.currentFunc === "Algorithms"){
       if(this.state.moveSet[0]){
-        if(this.checkMoveEquivalence(moveString,this.state.moveSet[0])){
+        if(moveFuncs.checkMoveEquivalence(moveString,this.state.moveSet[0],this.state.cubeDimension)){
           this.playOne(this);
         }
       }
       return;
     }
     if(this.state.currentFunc !== "None") return;
-    const moveArray = this.moveStringToArray(moveString);
+    const moveArray = moveFuncs.moveStringToArray(moveString);
     this.setState({currentFunc : moveName, moveSet : moveArray});
-  }
-
-  // Compares dragged move with the next move in algorithm or solver
-  checkMoveEquivalence(dragMove,nextMove){
-    // Check both ways a move can be made, on a 3x3 02U is the same as 02D
-    if(dragMove===nextMove||this.invertMove(dragMove)===nextMove){
-      return true;
-    }
-    return false;
-  }
-
-  // converts a move into it's equivalent other move, 
-  // ex: (on a 3x3) 03F === 01B'
-  // invertMove("03F") => "01B'"
-  invertMove(_move){
-    const move =_move.split('');
-    let inverted = '';
-    let depth;
-    if(move[0]==='0'){
-      depth = this.state.cubeDimension - parseInt(move[1]) + 1;
-    }
-    else{
-      depth = this.state.cubeDimension - parseInt(move[0]+move[1]) + 1;
-    }
-
-    if(depth<10){
-      inverted+=`0${depth}`
-    }
-    else{
-      inverted+=`${depth}`
-    }
-
-    switch(move[2]){
-      case 'F':
-        inverted+='B';
-        break;
-      case 'f':
-        inverted+='b';
-        break;
-      case 'U':
-        inverted+='D';
-        break;
-      case 'u':
-        inverted+='d';
-        break;
-      case 'R':
-        inverted+='L';
-        break;
-      case 'r':
-        inverted+='l';
-        break;
-      case 'B':
-        inverted+='F';
-        break;
-      case 'b':
-        inverted+='f';
-        break;
-      case 'L':
-        inverted+='R';
-        break;
-      case 'l':
-        inverted+='r';
-        break;
-      case 'D':
-        inverted+='U';
-        break;
-      case 'd':
-        inverted+='u';
-        break;
-      default:
-    }
-
-    if(move.length<4) inverted+="'";
-    
-    return inverted;
-    
   }
 
   // Resets the cube and the move log
@@ -1141,44 +443,13 @@ class App extends Component {
     });
   }
 
-  // Generates a random move
-  generateMove = () => {
-    let maxDepth = Math.ceil((this.state.cubeDimension/2));
-    let randFace = Math.floor((Math.random() * 6));
-    let randTurn = Math.floor((Math.random() * 2)-1);
-    let randIsMulti = Math.floor((Math.random() * 2));
-    let randDepth = 1;
-    let cD = this.state.cubeDimension;
-
-    if(randFace>2&&cD%2) maxDepth-=1;
-
-    if(cD>2) 
-      randDepth = Math.floor((Math.random() * maxDepth)) + 1;
-
-    if(randDepth===1) randIsMulti = 0;
-
-    if(randDepth === Math.ceil(cD/2) && cD%2)
-      randIsMulti=0;
-
-    return this.convertDataToMove([randFace, randTurn,randDepth,randIsMulti]);
-  }
-
-  convertDataToMove = (data) => {
-    let move = "";
-    let face = ['F','U','R','B','L','D']
-    move+=data[2].toString().length<2?"0".concat(data[2]):data[2];
-    move+=(data[3]?face[data[0]].toLowerCase():face[data[0]])
-    data[1]===-1?move+="":move+="'"
-    return move;
-  }
-
   // Changes state active function to begin scrambling
   beginScramble = () => {
     
     if(this.state.currentFunc === "None") {
       let moveSet = [];
       while (moveSet.length<25){
-        let temp = this.generateMove();
+        let temp = moveFuncs.generateMove(this.state.cubeDimension);
         if(moveSet[moveSet.length-1]&&
            moveSet[moveSet.length-1].slice(0,3)===temp.slice(0,3)&&
            moveSet[moveSet.length-1].length!==temp.length);
@@ -1259,30 +530,6 @@ class App extends Component {
     })
   }
 
-  rewindAllSolve = () => {
-    if(this.state.playOne) return;
-    let newMoveSet = [];
-    let tempMoveSet = this.state.moveSet;
-    let tempPrev = this.state.prevSet;
-    let lastElArray = [];
-    let poppedArray = [];
-    for(let i = 0; i < tempMoveSet.length; i++){
-      let lastEl = tempPrev[tempPrev.length-1];
-      let popped = tempPrev.pop();
-      if(!popped) return;
-      popped[popped.length-1]==="'" ? popped=popped.slice(0,3) : popped+="'";
-      poppedArray.push(popped);
-      lastElArray.push(lastEl);
-    }
-    
-    newMoveSet.push(...poppedArray,...lastElArray,...tempMoveSet);
-    this.setState({
-      playOne:true,
-      prevSet:tempPrev,
-      moveSet:newMoveSet
-    })
-  }
-
   handleDragInput = (e, ui) => {
     const {x, y} = this.state.deltaPositionInput;
     this.setState({
@@ -1301,35 +548,6 @@ class App extends Component {
     this.setState({activeDragsInput: this.state.activeDragsInput-1});
   };
 
-  handleDragControls = (e, ui) => {
-    const {x, y} = this.state.deltaPositionControls;
-    this.setState({
-      deltaPositionControls: {
-        x: x + ui.deltaX,
-        y: y + ui.deltaY,
-      }
-    });
-  };
-
-  onStartControls = () => {
-    this.setState({activeDragsControls: this.state.activeDragsControls+1});
-  };
-
-  onStopControls = () => {
-    this.setState({activeDragsControls: this.state.activeDragsControls-1});
-  };
-
-  convertMoveToData = (move) => {
-    if(move.length < 2) return false;
-    let data = [];
-    let face = ['F','U','R','B','L','D']
-    data.push(face.indexOf(move[2].toUpperCase()));
-    move.length < 4 ? data.push(-1) : data.push(0);
-    move[0]==='0' ? data.push(parseInt(move[1])) : data.push(parseInt(move.substring(0, 2)))
-    move[2].toUpperCase() === move[2] ? data.push(false) : data.push(true);
-    return data;
-  }
-
   mouseOver = (name,data,e) => {
     if(this.state.showHints)
       this.setState({
@@ -1345,59 +563,9 @@ class App extends Component {
     });
   }
 
-  // Converts move string to move array
-  // handle move short hand characters. ex: fx => 01Fx 02Fx; x = "" or "'" or "2"
-  moveStringToArray = str => {
-    let tempArray = str.split(" ");
-    let moveArray = [];
-
-    // Run through split string and create duplicates where needed
-    // Handle other short hands
-    for(let i = 0; i < tempArray.length;i++){
-      if(tempArray[i].length === 4 && tempArray[i].slice(3,4)==="2") {
-        let tempMove = tempArray[i].slice(0,3);
-        moveArray.push(tempMove);
-        moveArray.push(tempMove);
-      }
-      else {
-        moveArray.push(tempArray[i]);
-      }
-    }
-    return moveArray;
-  }
-
-  // Generalized move function. Takes in array of moves and parse the moves
-  parseMoveArray = (moveArray) =>{
-    //if(typeof moveArray === 'string') moveArray = [moveArray];
-    let shifted = moveArray.shift();
-
-    let tempFace = 0;
-    let tempDirection = -1;
-    let tempDepth = 1;
-    let tempIsMulti = false;
-
-    if(shifted){
-      if(shifted.length === 4) tempDirection=0;
-      tempDepth = parseInt(shifted.slice(0,2));
-
-      if(shifted.slice(2,3) === shifted.slice(2,3).toLowerCase()){
-        tempIsMulti = true;
-      }
-
-      if(shifted.slice(2,3).toUpperCase() === "U") tempFace = 1;
-      else if(shifted.slice(2,3).toUpperCase() === "F") tempFace = 0;
-      else if(shifted.slice(2,3).toUpperCase() === "B") tempFace = 3;
-      else if(shifted.slice(2,3).toUpperCase() === "R") tempFace = 2;
-      else if(shifted.slice(2,3).toUpperCase() === "L") tempFace = 4;
-      else if(shifted.slice(2,3).toUpperCase() === "D") tempFace = 5;
-
-      return [tempFace,tempDirection,tempDepth,tempIsMulti];
-    }
-  }
-
-  /* Each piece that's rotated has it's rotation disrupted on other planes.
+  /* Each piece that's rotated has its rotation disrupted on other planes.
    *
-   * This function solves that issue by setting all piece rotation back to zero
+   * This function solves that issue by setting all piece rotations back to zero
    * and then placing colors to look as though the piece were still rotated.
    * 
    * Some optimizations have been added. Undersides and insides of some pieces
@@ -1571,217 +739,8 @@ class App extends Component {
     });
   }
 
-  autoJump = (state,moves) =>{
-
-    let tempState = {...state};
-    tempState.moveSet = moves;
-    
-    while(tempState.moveSet.length){
-        //console.log(tempState.rubiksObject);
-        let cD = tempState.cubeDimension;
-        let blockMoveLog = tempState.blockMoveLog;
-        let moveLog = tempState.moveLog;
-        let solveMoves = tempState.solveMoves;
-        let rubiksObject = tempState.rubiksObject;
-        let end = tempState.end;
-        let solveState = tempState.solveState;
-        let moveData = 
-          this.parseMoveArray(tempState.moveSet); // generates data for next move
-        let obj = 
-          this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
-        obj.rubiksObject = 
-          cube.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
-        tempState = {...tempState,...obj};
-    }
-    return [...tempState.rubiksObject];
-  }
-
-  generateAllSolveMoves = (state,rubiksObject) =>{
-    let beforeObject = rubiksObject.map(e=>[...e]);
-    //console.log(beforeObject);
-    let tempState = {...state}, solvedSet = "";
-    let currentIndex = null;
-    let previousIndex = null;
-    let indexOccurence = 0;
-    let error = false;
-    let counter = 0;
-    let threeByThreeCounter = 0;
-    if(tempState.currentFunc === 'Color Picker'){
-      tempState.solveState = 0;
-      tempState.currentFunc = "Solving";
-      tempState.rubiksObject = rubiksObject.map(e=>[...e]);
-    }
-    while(tempState.currentFunc==="Solving"){
-      
-      if(!tempState.moveSet || !tempState.moveSet.length) {
-        //console.log(tempState.rubiksIndex);
-        currentIndex=tempState.rubiksIndex;
-        if(currentIndex===previousIndex) indexOccurence = indexOccurence+1;
-        else indexOccurence = 0;
-        if(tempState.solveState>=1) threeByThreeCounter++;
-        let moves;
-
-        moves = solver(tempState.solveState,tempState.rubiksObject,tempState.cubeDimension,this.moveStringToArray,
-          tempState.solveMoves,tempState.rubiksIndex,tempState.middles,tempState.edges,tempState.corners);
-        if (!moves) moves = {};
-        if(moves.moveSet && moves.moveSet[0]==='stop'){
-          if(this.state.currentFunc==="Solving"){
-            moves.solveMoves = tempState.solveMoves + ` ${moves.moveSet[0]}`;
-            moves.moveSet.pop();
-          }
-          else moves.moveSet.pop();
-        }
-        
-        if(moves.moveSet){
-          let temp = [];
-          for(let i = 0; i<moves.moveSet.length; i++){
-            
-            if(moves.moveSet[i]===''||moves.moveSet[i]===' '||moves.moveSet[i][0]==="N"||moves.moveSet[i]==="'");
-            else temp.push(moves.moveSet[i]);
-          }
-          moves.moveSet = temp;
-        }
-        if((indexOccurence>10 && tempState.solveState<1)||counter>10000||(moves.moveSet&&moves.moveSet[0]==='error')) {
-
-          console.log(
-            "Solve State: ",tempState.solveState,
-            "\nPiece attempts: ",indexOccurence,
-            "\nPiece: ",tempState.rubiksObject[tempState.middles[tempState.rubiksIndex]]
-          );
-          
-          console.log(moves);
-          error = true;
-          //console.log(JSON.stringify({beforeObject}));
-          moves.currentFunc="None";
-        }
-        if(moves.currentFunc && moves.currentFunc==="None") solvedSet = tempState.solveMoves;
-        counter++;
-        tempState = {...tempState,...moves};
-        previousIndex=currentIndex;
-      }
-      else{
-        let cD = tempState.cubeDimension;
-        let blockMoveLog = tempState.blockMoveLog;
-        let moveLog = tempState.moveLog;
-        let solveMoves = tempState.solveMoves;
-        let rubiksObject = tempState.rubiksObject;
-        let end = tempState.end;
-        let solveState = tempState.solveState;
-        let moveData = this.parseMoveArray(tempState.moveSet); // generates data for next move
-        let obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
-        obj.rubiksObject = cube.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,rubiksObject);
-        tempState = {...tempState,...obj};
-      }
-    }
-    let splitSet = solvedSet.split(" ");
-    if(splitSet[0][0]==="N"||splitSet[0][0]==="'") splitSet.shift();
-    let moveSet = []
-    splitSet.forEach(e => e[e.length-1]==="'"? moveSet.push(e.replace("'","")):moveSet.push(e+"'"));
-
-    //console.log(moveSet);
-    for(let i = 0; i<moveSet.length; i++){
-      if(moveSet[i]===''||moveSet[i]===' '||moveSet[i][0]==="N"||moveSet[i]==="'"||moveSet[i]===undefined){
-        //console.log("removed invalid move");
-        moveSet.splice(i,1);
-      }
-    }
-
-    let maxDepth = Math.floor(tempState.cubeDimension/2);
-    moveSet = moveSet.map(move=>{
-      if(move==="stop'") return move;
-      //console.log(move);
-      let dataMove = this.convertMoveToData(move);
-      if(parseInt(dataMove[2])>maxDepth&&!dataMove[3]){
-        //console.log("Found over reaching move: [ " + move + " ]");
-        dataMove[2]=(tempState.cubeDimension-dataMove[2])+1
-        if(parseInt(dataMove[0])===0) dataMove[0] = 3;
-        else if(parseInt(dataMove[0])===1) dataMove[0] = 5;
-        else if(parseInt(dataMove[0])===2) dataMove[0] = 4;
-        else if(parseInt(dataMove[0])===3) dataMove[0] = 0;
-        else if(parseInt(dataMove[0])===4) dataMove[0] = 2;
-        else if(parseInt(dataMove[0])===5) dataMove[0] = 1;
-        dataMove[1]===0?dataMove[1]=-1:dataMove[1]=0;
-
-        //console.log("Converted to: [ " + this.convertDataToMove(dataMove) + " ]");
-        return this.convertDataToMove(dataMove);
-      }
-      return this.convertDataToMove(dataMove);
-    })
-    
-    //console.log(moveSet.length);
-
-
-    let moveSetLength = 0;
-    while(moveSet.length!==moveSetLength){
-      moveSetLength = moveSet.length;
-      for(let i = 0; i < moveSet.length-2; i++){
-        
-        if(moveSet[i].substring(0,3)===moveSet[i+1].substring(0,3) && moveSet[i].length!==moveSet[i+1].length){
-          moveSet.splice(i,2);
-        }
-      }
-
-      for(let i = 0; i < moveSet.length-2; i++){
-        if(moveSet[i]===moveSet[i+1] && moveSet[i]===moveSet[i+2]){
-          if(moveSet[i].length===3){moveSet[i]+="'"}
-          else{moveSet[i]=moveSet[i].substring(0,3)}
-          moveSet.splice(i+1,2);
-        }
-      }
-      //console.log(moveSet.length);
-    }
-
-    
-
-    if(moveSet[0]==="stop'"&&moveSet[1]==="stop'"&&moveSet.length===2) moveSet = [];
-  
-    let invalidAlignment = 0;
-    let invalidPlacement = 0;
-
-    if(this.state.cubeDimension<6)
-    tempState.rubiksObject.forEach(piece => {
-      if(piece.includes("middle")) return;
-      let tempPiece = piece.slice(0,6);
-      let tempFiltered = tempPiece.filter(side=>side!=="black");
-      let validCount = 0
-      if([piece[6],piece[7],piece[8]].join("")!==[piece[9],piece[10],piece[11]].join("")){
-        if(tempFiltered.length>1) {invalidPlacement++; error=true;}
-      }
-      if(tempPiece[0]==="white"||tempPiece[0]==="black") validCount++;
-      if(tempPiece[1]==="blue"||tempPiece[1]==="black") validCount++;
-      if(tempPiece[2]==="red"||tempPiece[2]==="black") validCount++;
-      if(tempPiece[3]==="yellow"||tempPiece[3]==="black") validCount++;
-      if(tempPiece[4]==="orange"||tempPiece[4]==="black") validCount++;
-      if(tempPiece[5]==="green"||tempPiece[5]==="black") validCount++;
-      if(validCount<6) {invalidAlignment++; error=true;}
-    });
-    
-
-    if(error) {
-      console.log(invalidAlignment,invalidPlacement);
-      //alert("Sorry for the inconvenience. This error is caused by an infinite loop issue with the solver and has been stopped to prevent freezing the application. The current move set has still been pushed and is playable for debugging purposes. Maybe you can figure out the issue before I can ;)");
-      return {moveSet:[...moveSet],rubiksObject : beforeObject,solveable:false,solvedSet:[...moveSet],solvedSetIndex:0};
-    }
-    return {moveSet:[...moveSet],rubiksObject : beforeObject,solveable:true,solvedSet:[...moveSet],solvedSetIndex:0,tempObject:tempState.rubiksObject};
-  }
-
-  animateRotation(tempCubes){
-    cube.rotatePieces(cube.rotatePoint,tempCubes);
-  }
-
   windowResized = () => {
     this.setState({resized:true});
-  }
-
-  menuToggle(el){
-    let menu = document.querySelector(".menuWrapper")||document.querySelector(".menuWrapperOptions");
-
-    menu.style.display==="none"?menu.style.display="inline":menu.style.display="none";
-
-    console.log(el.target.innerHTML);
-    
-    (el.target.innerHTML==="˅")?
-      el.target.innerHTML="˄":el.target.innerHTML="˅";
   }
 
   // Initialization and animation functions
@@ -2010,10 +969,6 @@ class App extends Component {
     renderer.setSize( window.innerWidth, window.innerHeight);
     document.body.children[5].appendChild( renderer.domElement );
 
-    // stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-    // document.body.appendChild( stats.dom);
-    // document.body.children[9].style.display = "none"
-
     // Prevents bluring
     loader.anisotropy = renderer.capabilities.getMaxAnisotropy();
     moveHintImage.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -2111,79 +1066,11 @@ class App extends Component {
     // Function runs continuously to animate cube
     let animate = () => {
 
-      // clear visible move hints
+      requestAnimationFrame( animate );
+
       for(let i = 0; i < groups.length;i++){
         groups[i].forEach(group => group.visible = false)
       }
-
-      // stats.begin();
-      requestAnimationFrame( animate );
-
-      // Mouse stuff here
-      // Consider moving into another function to unclutter animate
-      // Very expensive operation
-      if(this.state.currentFunc === "Color Picker" || this.state.currentFunc === "None"|| this.state.currentFunc === "Solving"|| this.state.currentFunc === "Algorithms") {
-
-        //check here that data isn't the same as previous so not running this every time
-        // Data on move button triggers visual move hints
-        if(this.state.isVisible){
-          let [hFace,hDir,hDepth,hMulti] = this.state.hoverData;
-          if(hFace<3){
-            if(hDir === -1){
-              if(!hMulti){
-                groups[hFace][hDepth-1].visible=true;
-              }
-              else
-                for(let i = 0; i <= hDepth-1; i++){
-                  groups[hFace][i].visible=true;
-                }
-            }
-            else {
-              if(!hMulti){
-                groups[hFace+3][hDepth-1].visible=true;
-              }
-              else
-              for(let i = 0; i <= hDepth-1; i++){
-                groups[hFace+3][i].visible=true;
-              }
-            }
-          }
-          else{
-            if(hFace===3) hFace=0;
-            if(hFace===4) hFace=2;
-            if(hFace===5) hFace=1;
-
-            if(hDir === -1){
-              if(!hMulti){
-                groups[hFace+3][(groups[hFace+3].length-1)-(hDepth-1)].visible=true;
-              }
-              else
-                for(let i = groups[hFace+3].length-1; i >= (groups[hFace+3].length-1)-(hDepth-1); i--){
-                  groups[hFace+3][i].visible=true;
-                }
-            }
-            else {
-              if(!hMulti){
-                groups[hFace][(groups[hFace].length-1)-(hDepth-1)].visible=true;
-              }
-              else
-                for(let i = groups[hFace].length-1; i >= (groups[hFace+3].length-1)-(hDepth-1); i--){
-                  groups[hFace][i].visible=true;
-                }
-            }
-          }
-        }
-
-        // let previousPiece = this.state.previousPiece;
-
-        // // Projects mouse onto scene to find intersected objects
-        // raycaster.setFromCamera( mouse, camera );
-
-        // // calculate objects intersecting the picking ray
-        // let intersects = raycaster.intersectObjects( scene.children );
-        // // 
-      }
-      
       // Animate queued rotation
       if(this.state.start<=this.state.end){
         this.setState(cube.rotatePieces(cube.rotatePoint,tempCubes,this.state));
@@ -2191,6 +1078,61 @@ class App extends Component {
 
       // Handles move queueing based on function
       else {
+        
+
+        if(this.state.currentFunc === "Color Picker" || this.state.currentFunc === "None"|| this.state.currentFunc === "Solving"|| this.state.currentFunc === "Algorithms") {
+
+          //check here that data isn't the same as previous so not running this every time
+          // Data on move button triggers visual move hints
+          if(this.state.isVisible){
+            let [hFace,hDir,hDepth,hMulti] = this.state.hoverData;
+            if(hFace<3){
+              if(hDir === -1){
+                if(!hMulti){
+                  groups[hFace][hDepth-1].visible=true;
+                }
+                else
+                  for(let i = 0; i <= hDepth-1; i++){
+                    groups[hFace][i].visible=true;
+                  }
+              }
+              else {
+                if(!hMulti){
+                  groups[hFace+3][hDepth-1].visible=true;
+                }
+                else
+                for(let i = 0; i <= hDepth-1; i++){
+                  groups[hFace+3][i].visible=true;
+                }
+              }
+            }
+            else{
+              if(hFace===3) hFace=0;
+              if(hFace===4) hFace=2;
+              if(hFace===5) hFace=1;
+
+              if(hDir === -1){
+                if(!hMulti){
+                  groups[hFace+3][(groups[hFace+3].length-1)-(hDepth-1)].visible=true;
+                }
+                else
+                  for(let i = groups[hFace+3].length-1; i >= (groups[hFace+3].length-1)-(hDepth-1); i--){
+                    groups[hFace+3][i].visible=true;
+                  }
+              }
+              else {
+                if(!hMulti){
+                  groups[hFace][(groups[hFace].length-1)-(hDepth-1)].visible=true;
+                }
+                else
+                  for(let i = groups[hFace].length-1; i >= (groups[hFace+3].length-1)-(hDepth-1); i--){
+                    groups[hFace][i].visible=true;
+                  }
+              }
+            }
+          }
+        }
+
         if(this.state.reload) this.reloadTurnedPieces(this.state.face);
         if(this.state.currentFunc !== "None"){
 
@@ -2198,14 +1140,12 @@ class App extends Component {
           if(this.state.currentFunc === "Undo" ||
              this.state.currentFunc === "Redo"){}
 
-          // Keeps undo/redo updated with other moves
-          // find the error in this logic
           else {
             let moveLog = this.state.moveLog;
             let index = this.state.undoIndex;
 
             if(index > 0){
-              let moveArray = this.moveStringToArray(moveLog);
+              let moveArray = moveFuncs.moveStringToArray(moveLog);
 
               if(this.state.currentFunc[0]==='0' || this.state.currentFunc[0]==='1' ||
                  this.state.currentFunc[1]==='1' || this.state.currentFunc[1]==='2' || this.state.currentFunc[1]==='3'){
@@ -2247,11 +1187,11 @@ class App extends Component {
                 this.setState({moveSet});
               }
               else{
-                let moveData = this.parseMoveArray(this.state.moveSet);
+                let moveData = moveFuncs.parseMoveArray(this.state.moveSet);
 
 
                 if(moveData){
-                  let obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
+                  let obj = cube.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
       
                   obj.rubiksObject = cube.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,tempRubiks);
 
@@ -2262,13 +1202,7 @@ class App extends Component {
             else{
               this.setState({currentFunc : "None",moves : 0});
             }
-
-            // let randFace = Math.floor((Math.random() * 6));
-            // let randTurn = Math.floor((Math.random() * 2)-1);
-            // let randIsMulti = Math.floor((Math.random() * 2));
-            // this.state.moves < 25 ?
-            //   this.scramble(randFace,randTurn,randIsMulti) :
-            //   this.setState({currentFunc : "None",moves : 0});
+            
           }
           else if (this.state.currentFunc==="Solving"||this.state.currentFunc==="Algorithms"){
             
@@ -2277,19 +1211,6 @@ class App extends Component {
               this.setState({autoTarget:false},()=>this.reloadTurnedPieces('check'))
             }
 
-            else if(this.state.solveOnce){
-              this.setState({solveOnce:false},()=>{
-                let a = performance.now();
-                this.setState(this.generateAllSolveMoves(this.state,this.state.rubiksObject));
-                let b = performance.now();
-                //console.log('It took ' + ((b - a)/1000).toFixed(3) + ' seconds to solve.');
-                this.setState({solveTime:((b - a)/1000).toFixed(3)})
-              });
-
-            }
-            // If there are no moves queued, check to see if more moves can be queued
-            else if(!this.state.moveSet.length){
-            }
             // If playone or autoplay is true, progress accordingly
             else if(this.state.playOne){
               let cD = this.state.cubeDimension;
@@ -2310,12 +1231,12 @@ class App extends Component {
               else{
 
                 // generates data for next move
-                let moveData = this.parseMoveArray(moveSet);
+                let moveData = moveFuncs.parseMoveArray(moveSet);
 
                 // takes next move data and queues changes to be made to state
                 
                 if(moveData){
-                  obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
+                  obj = cube.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
                 }
 
                 // Turn off play one so only runs once
@@ -2345,7 +1266,7 @@ class App extends Component {
                 obj.moveSet=moveSet;
               }
               else{
-                let data = this.convertMoveToData(moveSet[0]);
+                let data = moveFuncs.convertMoveToData(moveSet[0]);
                 if(data){
                   this.mouseOver(this.state.moveSet[0],data);
                 }
@@ -2381,11 +1302,11 @@ class App extends Component {
                 this.setState({moveSet});
               }
               else{
-                let moveData = this.parseMoveArray(this.state.moveSet);
+                let moveData = moveFuncs.parseMoveArray(this.state.moveSet);
 
 
                 if(moveData){
-                  let obj = this.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
+                  let obj = cube.rotateCubeFace(...moveData,blockMoveLog,moveLog,solveMoves,end,solveState);
       
                   obj.rubiksObject = cube.rotateFace(obj.face,obj.turnDirection,obj.cubeDepth,obj.isMulti,cD,tempRubiks);
 
@@ -2403,7 +1324,6 @@ class App extends Component {
       
       controls.update();
       renderer.render( scene, camera );
-      // stats.end();     
     };
   }
 
@@ -2476,6 +1396,7 @@ class App extends Component {
           isValidConfig={this.state.isValidConfig}
           setColorPickedCube={this.setColorPickedCube}
           cpErrors={this.state.cpErrors}
+          runCheckColors={this.runCheckColors}
 
           //Solver
           beginSolve={this.beginSolve}
@@ -2483,12 +1404,7 @@ class App extends Component {
           playOne={this.playOne}
           rewindOne={this.rewindSolve}
           reload={this.reloadTurnedPieces}
-          autoJump={this.autoJump}
         />
-
-        {/* <button className="menuToggle cpButton" onClick={this.menuToggle}>˅</button> */}
-
-        {/* add button-> center bottom hide/show menu. let user make rotations for solve moves with swipes */}
   
       </div>
     );

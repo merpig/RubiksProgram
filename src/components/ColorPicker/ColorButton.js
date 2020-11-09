@@ -25,7 +25,11 @@ const ColorPicker = (props) => {
                 backgroundColor:unselected?`rgba(0,0,255,.10)`:`rgba(${colors[props.color]},.5)`,
                 color:props.color
             }} 
-            onClick={(e)=>{e.stopPropagation();e.nativeEvent.stopImmediatePropagation();props.changeColor(props.color);}}>
+            onClick={(e)=>
+                {e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
+                props.changeColor(props.color);
+            }}>
                 {props.isMobile?capitalized:`${props.index}. ${capitalized}`}
         </button>
         </div>
