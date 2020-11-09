@@ -8,7 +8,7 @@ import { Route, BrowserRouter as Router } from 'react-router-dom'
 const routing = (
     <Router>
       <div>
-        <Route path="*/" component={App} />
+        <Route path="*" component={App} />
       </div>
     </Router>
   )
