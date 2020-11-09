@@ -644,10 +644,9 @@ class App extends Component {
   // Gets the url to be parsed
   getSizeFromUrl(checkLocal) {
     let limit = 75;
-    let cD;
-    
+    let size;
     let parts = window.location.href.split('/');
-    let checkID = parts[parts.length-1][0]+parts[parts.length-1][1]+parts[parts.length-1][2];
+    let checkID = parts[parts.length-1].slice(0,4);
 
     if(checkLocal){
       if(parts[2].substr(0,9)==='localhost'){
@@ -658,11 +657,11 @@ class App extends Component {
       }
     }
 
-    if(checkID === 'id='){
-      cD = parseInt(parts[parts.length-1].substr(3));
+    if(checkID === '#id='){
+      size = parseInt(parts[parts.length-1].substr(4));
     }
 
-    if (cD <= limit && cD >= 1) return cD; else return 3;
+    if (size <= limit && size >= 1) return size; else return 3;
   }
 
   calculateTurn(current,previous,piece,pieceFace,cD){
