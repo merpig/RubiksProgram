@@ -19,7 +19,9 @@ const SideColorPicker = (props) => {
         setCheckBtnText("Checking...");
         setTimeout(function(){
             props.runCheckColors();
+            setCheckBtnText("Check");
         }, 100);  
+        
     };
     
     return (

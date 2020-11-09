@@ -20,6 +20,7 @@ const ColorPicker = (props) => {
         setCheckBtnText("Checking...");
         setTimeout(function(){
             props.runCheckColors();
+            setCheckBtnText("Check");
         }, 100);  
     };
 
