@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/RubiksProgram/static/css/main.6259b839.chunk.css",
-    "main.js": "/RubiksProgram/static/js/main.3b3eb057.chunk.js",
-    "main.js.map": "/RubiksProgram/static/js/main.3b3eb057.chunk.js.map",
+    "main.js": "/RubiksProgram/static/js/main.13da2f6f.chunk.js",
+    "main.js.map": "/RubiksProgram/static/js/main.13da2f6f.chunk.js.map",
     "runtime-main.js": "/RubiksProgram/static/js/runtime-main.ba42e7eb.js",
     "runtime-main.js.map": "/RubiksProgram/static/js/runtime-main.ba42e7eb.js.map",
     "static/css/2.605d0aab.chunk.css": "/RubiksProgram/static/css/2.605d0aab.chunk.css",
@@ -18,6 +18,6 @@
     "static/css/2.605d0aab.chunk.css",
     "static/js/2.0a519b42.chunk.js",
     "static/css/main.6259b839.chunk.css",
-    "static/js/main.3b3eb057.chunk.js"
+    "static/js/main.13da2f6f.chunk.js"
   ]
 }
