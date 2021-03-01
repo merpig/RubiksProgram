@@ -24,7 +24,7 @@
     "react-scripts": "^4.0.0",
     "reactjs-popup": "^1.5.0",
     "stats.js": "^0.17.0",
-    "three": "^0.109.0",
+    "three": "^0.125.0",
     "three-orbitcontrols": "^2.110.3"
   },
   "scripts": {
