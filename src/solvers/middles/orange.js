@@ -15,19 +15,6 @@ function move(depth,side){
     return ((depth<10? "0":"") + depth + side);
 }
 
-function unsolveCorner(current,dim){
-    return [
-        move(dim-current.z,"B'"),
-        "01L",
-        move(current.y+1,"F"),
-        "01L'",
-        move(dim-current.z,"B"),
-        "01L",
-        move(current.y+1,"F'"),
-        "01L'"
-    ];
-}
-
 let solveOrangeMiddle = (current,solved,dim) => {
     let middle = Math.floor(dim/2);
     let oddCube = dim%2;

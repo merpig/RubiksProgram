@@ -25,11 +25,10 @@ function checkSide(current,dim){
     return currentSide;
 }
 
-let solveGreenMiddle = (current,solved,dim,index) => {
+let solveGreenMiddle = (current,solved,dim) => {
 
     const currentSide = checkSide(current,dim);
     const middle = Math.floor(dim/2);
-    const middleUpper = Math.ceil(dim/2);
     const max = middle+1;
     const min = middle-1;
     // let isOddCube = dim%2;

@@ -64,7 +64,6 @@ function solveYellowCross(rubiksObject,moveStringToArray,edges,dim){
         if(cube[cubeIndex[i]][3] === "yellow") counter++;
       }
       if(counter%2){
-        console.log("fix implemented");
         skip=true;
         moveString=
           `${move(dim/2,"r")} 01B2 ${move(dim/2,"r'")} 01B2 
