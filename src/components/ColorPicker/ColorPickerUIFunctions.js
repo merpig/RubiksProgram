@@ -7,7 +7,6 @@ const ColorPickerUIFunctions = {
         let piece = {colors:_piece.colors}
         const max = size-1;
         const X = 0, Y = 1, Z = 2;
-        console.log("piece before: ",pos,Math.floor(size/2));
         if(pos[X] < Math.floor(size/2) && pos[Y] >= Math.floor(size/2)){
           piece.position = [ (max - pos[Y]), pos[X], pos[Z] ].join("");
         }
@@ -18,7 +17,6 @@ const ColorPickerUIFunctions = {
           piece.position = [ pos[Y], (max-pos[X]), pos[Z]].join("");
         }
         else piece.position=pos.join("");
-        console.log("piece after: ",piece);
         return piece;
     },
 
@@ -161,8 +159,6 @@ const ColorPickerUIFunctions = {
         if(newValidPiece.colors===newManualPiece.colors&&newValidPiece.position===newManualPiece.position){
           return true;
         }
-        
-        console.log(newValidPiece,newManualPiece)
         return false;
     },
     
@@ -497,7 +493,6 @@ const ColorPickerUIFunctions = {
             if(piece[12]==="edge")
               invalidEdgeConfig="Invalid edge configuration.";
             else if(piece[12]==="middle"){
-              console.log(tempInvalidMatch);
               invalidMiddleConfig = "Invalid middle configuration.";
             }
         });
