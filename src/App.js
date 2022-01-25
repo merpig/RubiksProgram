@@ -786,54 +786,6 @@ class App extends Component {
       resized();
     }
 
-    function ontouchstart( event ){
-      console.log("happening?")
-      controls.enabled = true;
-      ignoreChange = false;
-      mouse.x = ( event.touches[0].clientX / window.innerWidth ) * 2 - 1;
-      mouse.y = - ( event.touches[0].clientY / window.innerHeight ) * 2 + 1;
-
-
-      // Projects mouse onto scene to find intersected objects
-      raycaster.setFromCamera( mouse, camera );
-
-      // Calculate objects intersecting the picking ray
-      let intersects = raycaster.intersectObjects( scene.children );
-
-      // Check if anything is intersected
-      if(intersects.length){
-        ignoreChange = true;
-        controls.saveState();
-        controls.enabled = false;
-        let faceInteresected = intersects[0].faceIndex;
-        let tempIndex = -1;
-        for(let i = 0; i < 6; i++){
-          if(faceInteresected===i*2 || faceInteresected=== i*2+1) {
-            tempIndex = i;
-            //this.setState({mouseFace : i});
-            break;
-          }
-        }
-        if(this.state.currentFunc==="Color Picker"){
-          console.log("should change color")
-          let toFace = [2,4,3,0,1,5];
-          this.changeFaceColor({x:intersects[0].object.position.x,y:intersects[0].object.position.y,z:intersects[0].object.position.z},toFace[tempIndex],this.state.colorPicked)
-        }
-        if(intersects[0].object.material[tempIndex] && tempIndex > -1){
-          if(intersects[0].object.material[tempIndex].color){
-            previousPiece = intersects[0];
-            previousPieceIndex = tempIndex;
-            intersects[0].object.material[tempIndex].opacity=.8;
-          }
-        }
-      }
-      else{
-        controls.enabled = true;
-        previousPiece = null;
-        previousPieceIndex = null;
-      }
-    }
-
     function onmousedown( event ){
       
       controls.enabled = true;
@@ -879,38 +831,6 @@ class App extends Component {
         controls.enabled = true;
         previousPiece = null;
         previousPieceIndex = null;
-      }
-    }
-
-    function ontouchmove( event ){
-      
-      if(previousPiece) controls.enabled = false;
-      mouse.x = ( event.touches[0].clientX / window.innerWidth ) * 2 - 1;
-      mouse.y = - ( event.touches[0].clientY / window.innerHeight ) * 2 + 1;
-
-      // Projects mouse onto scene to find intersected objects
-      raycaster.setFromCamera( mouse, camera );
-
-      // calculate objects intersecting the picking ray
-      let intersects = raycaster.intersectObjects( scene.children );
-
-      if(previousPiece){
-        if(intersects.length){
-          let current = intersects[0].point;
-          let toFace = [2,4,3,0,1,5];
-          let tempPrev = {...previousPiece.point};
-          let tempPos = {...previousPiece.object.position};
-          let intersected = Math.floor(previousPiece.faceIndex/2);
-          let calculated = calculateTurn(current,tempPrev,tempPos,toFace[intersected],cD);
-          //console.log(calculated);
-          if(calculated!==null&&!calculated.includes("null")){
-            //console.log("Drag turn");
-            algorithmFunc(calculated,"Drag Turn");
-            previousPiece.object.material[previousPieceIndex].opacity=1;
-            previousPiece = null;
-            previousPieceIndex = null;
-          }
-        }
       }
     }
 
@@ -1344,11 +1264,11 @@ class App extends Component {
         />
 
         {this.state.currentFunc==="Color Picker"?<></>:<p style={{position:"fixed", top: "110px", left: "10px",color: "lightgrey",fontSize:"1rem"}}>Speed: {this.state.currentSpeed}</p>}
-        <div style={{width:"100%",position:"absolute", top: "85px",margin:"auto"}}>
-          <div style={{width:"116px", margin:"auto"}}>
+        <div style={{width:"100%",position:"absolute", top: "85px",margin:"auto",display:"flex"}}>
+          <div style={{margin:"auto", display:"inline-flex",}}>
           {this.state.currentFunc==="None"||this.state.currentFunc==="Undo"||this.state.currentFunc==="Redo"||this.state.currentFunc==="Drag Turn"?
-          [<button key="undo" className="redoUndo" style={{marginRight:"8px",float:"left", width:"50px",height:"50px",fontSize:"1rem",backgroundImage: "url(https://image.flaticon.com/icons/svg/889/889590.svg)",backgroundRepeat:"no-repeat"}} onClick={() => this.undo()}></button>,
-          <button key="redo" className="redoUndo" style={{marginLeft:"8px",float:"right", width:"50px",height:"50px",fontSize:"1rem",backgroundImage: "url(https://image.flaticon.com/icons/svg/889/889578.svg)",backgroundRepeat:"no-repeat"}} onClick={() => this.redo()}></button>]
+          [<button key="undo" className="redoUndo" style={{marginRight:"8px",fontSize:"2rem", color: "lightgrey",lineHeight:"2rem"}} onClick={() => this.undo()}>🠔</button>,
+          <button key="redo" className="redoUndo" style={{marginLeft:"8px",fontSize:"2rem", color: "lightgrey",lineHeight:"2rem"}} onClick={() => this.redo()}>🠖</button>]
           :""
           }
           </div>
