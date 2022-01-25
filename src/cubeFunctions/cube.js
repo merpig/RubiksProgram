@@ -991,7 +991,47 @@ const cube = {
       }
   
       return rubiksObject;
+    },
+
+    // Changes values in state to trigger face rotation
+    rotateCubeFace : function (face,direction,cubeDepth,isMulti,blockMoveLog,moveLog,solveMoves,end,solveState) {
+    let obj = {};
+    if(!blockMoveLog){
+      
+      let tempMove = "";
+      cubeDepth<10 ? tempMove+="0"+cubeDepth : tempMove += cubeDepth;
+      if(face === 0) !isMulti ? tempMove += "F" : tempMove += "f";
+      else if(face === 1) !isMulti ? tempMove += "U" : tempMove += "u";
+      else if(face === 2) !isMulti ? tempMove += "R" : tempMove += "r";
+      else if(face === 3) !isMulti ? tempMove += "B" : tempMove += "b";
+      else if(face === 4) !isMulti ? tempMove += "L" : tempMove += "l";
+      else if(face === 5) !isMulti ? tempMove += "D" : tempMove += "d";
+      if(direction === -1) tempMove += "'";
+
+      moveLog&&moveLog.length > 0 ?
+        obj.moveLog = (moveLog + " " + tempMove) :
+        obj.moveLog = (tempMove);
+      
+      // Keeps tracks of solver's moves
+      if(solveState > -1) 
+        obj.solveMoves = (solveMoves.length ? solveMoves + " " + tempMove : solveMoves + tempMove);
     }
+
+    // Faces on opposite side of cube rotate backwards
+    if(face>2 && direction === -1) direction = 0;
+
+    else if (face>2 && direction === 0) direction = -1;
+
+    obj.blockMoveLog = false;
+    obj.face = face; // used
+    obj.turnDirection = direction; // used
+    obj.end = end + 90; 
+    obj.cubeDepth = cubeDepth; // used
+    obj.isMulti = isMulti; // used
+    
+
+    return obj;
+  }
 }
 
 export default cube;

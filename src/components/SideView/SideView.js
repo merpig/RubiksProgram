@@ -1,8 +1,8 @@
 import React,{Component} from "react";
 import Controls from "../Controls";
 import ColorPicker from "../ColorPicker/SideColorPicker";
-import SideSolverUI from "../SideSolverUI/SideSolverUI";
-import SideSolverControls from "../SideSolverUI/SideSolverControls";
+import SideSolverUI from "../SolverUI/SideSolverUI";
+import SideSolverControls from "../SolverUI/SideSolverControls";
 import SideColorPickerController from "../ColorPicker/SideColorPickerController";
 import MainSideMenu from "../MainSideMenu/MainSideMenu";
 import "./SideView.css";
@@ -15,8 +15,13 @@ class SideView extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-
-        
+        if(this.props.state.upDateCp!==nextProps.state.upDateCp){
+            return true;
+        }
+        if(this.props.state.solvedSet!==nextProps.state.solvedSet) {
+            //console.log(nextProps.state.solvedSet);
+            return true;
+        }
 
         if(this.props.state.currentFunc!==nextProps.state.currentFunc) return true;
 
@@ -161,14 +166,14 @@ class SideView extends Component {
                 className="exitButton">Exit</button>
 
         let confirmLeavePopup =
-            <div id="controlsPopup" className="warningPopupSolver" style={{position:"absolute", left:"35vw", width:"30vw"}}>
+            <div id="controlsPopup" className="warningPopupSolver" style={{position:"absolute", left:"35vw", width:"30vw", bottom: "8px"}}>
                 <div id="solverChangeData" data=""></div>
                 <div className="solverMessage">Are you sure you want to leave Solver? Progress will not be saved.</div>
                 <button onClick={stay} className="solverLeaveStay">Stay</button><button onClick={(e) => leave(e, this.props)} className="solverLeaveStay">Leave</button>
             </div>
         
         let confirmLeavePopupCp=
-            <div className="warningPopup" style={{position:"absolute", left:"35vw", width:"30vw"}}>
+            <div id="controlsPopup" className="warningPopup" style={{position:"absolute", left:"35vw", width:"30vw", bottom: "8px"}}>
                 <div id="cpChangeData" data=""></div>
                 <div className="cpMessage">Are you sure you want to leave Color Picker? Progress will not be saved.</div>
                 <button onClick={stayCp} className="cpLeaveStay">Stay</button><button onClick={leaveCp} className="cpLeaveStay">Leave</button>

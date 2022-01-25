@@ -15,9 +15,13 @@ class View extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-
-        
-
+        if(this.props.state.upDateCp!==nextProps.state.upDateCp){
+            return true;
+        }
+        if(this.props.state.solvedSet!==nextProps.state.solvedSet) {
+            //console.log(nextProps.state.solvedSet);
+            return true;
+        }
         if(this.props.state.currentFunc!==nextProps.state.currentFunc) return true;
 
         if(this.props.state.activeAlgo!==nextProps.state.activeAlgo) return true;

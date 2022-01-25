@@ -3,67 +3,11 @@ import React,{Component} from "react";
 import {Row, Col} from "react-bootstrap";
 import "./SolverUI.css";
 import algorithms from "../../cubeFunctions/algorithms";
-import cube from '../../cubeFunctions/cube';
+import LazyLoad from 'react-lazyload';
+import solverMain from '../../solvers/solverMain';
 
-function setTarget(e,props){
-    //e.stopPropagation();
-    if(props.state.autoPlay||props.state.autoRewind){
-
-    }
-    else if(parseInt(e.target.id)-props.state.solvedSetIndex===1){
-        props.setState({targetSolveIndex:parseInt(e.target.id)});
-        props.playOne(props);
-    }
-    else if(props.state.solvedSetIndex<=parseInt(e.target.id)){
-        props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
-        let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
-        let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
-        let forwardMoves = props.state.solvedSet.slice(props.state.solvedSetIndex,parseInt(e.target.id));
-
-        props.setState({
-            solvedSetIndex:parseInt(e.target.id),
-            prevSet:prevSetNew,
-            moveSet:moveSetNew,
-            rubiksObject:props.autoJump(props.state,forwardMoves)})
-    }
-    else if(props.state.solvedSetIndex>parseInt(e.target.id)) {
-        props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
-        let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
-        let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
-        let backwardMoves= props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSetIndex)
-            .map(move=>move.length===4?move.slice(0,3):(move+"'"));
-
-        props.setState({
-            solvedSetIndex:parseInt(e.target.id),
-            prevSet:prevSetNew,
-            moveSet:moveSetNew,
-            rubiksObject:props.autoJump(props.state,backwardMoves.reverse())})
-    }
-}
-
-function algoStart(name,props){
-    console.log("setting algo");
-    let cD = props.state.cubeDimension;
-    let algo = name;
-    let algoSet = [];
-    let generated = cube.generateSolved(cD,cD,cD);
-    if(algo!=="None Selected")
-        algoSet = algorithms
-            .find(
-                set=>set.name===algo&&
-                set.worksFor.includes(cD)).moves.split(" ");
-    props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[],jumpToEnd:true});
-}
-
-function algoNamesForSize(size){
-    let algoNames = [];
-    algorithms.forEach(algo=>{
-        if(algo.worksFor.includes(size)){
-            algoNames.push(algo.name);
-        }
-    });
-    return algoNames;
-}
+import UI from './SolverUIFunctions';
+let {setTarget, algoStart} = UI;
 
 class SolverUI extends Component {
 
@@ -100,32 +44,15 @@ class SolverUI extends Component {
         if(nextProps.state.jumpToEnd){
             nextProps.setState({jumpToEnd:false},setTarget({target:{id:nextProps.state.moveSet.length}},nextProps));
         }
-        else if(nextProps.state.algoUp){
-            let algoNames = algoNamesForSize(nextProps.state.cubeDimension);
-            let currentAlgoIndex = algoNames.indexOf(nextProps.state.activeAlgo);
-            if(currentAlgoIndex>0){
-                //nextProps.setState({algoUp:false,resized:true},algoStart(algoNames[currentAlgoIndex-1],nextProps));
-            }
-            else{
-                //nextProps.setState({algoUp:false,resized:true});
-            }
-        }
-        else if(nextProps.state.algoDown){
-            let algoNames = algoNamesForSize(nextProps.state.cubeDimension);
-            let currentAlgoIndex = algoNames.indexOf(nextProps.state.activeAlgo);
-            if(currentAlgoIndex<algoNames.length-1){
-                //nextProps.setState({algoDown:false,resized:true},algoStart(algoNames[currentAlgoIndex+1],nextProps));
-            }
-            else{
-                //nextProps.setState({algoDown:false,resized:true});
-            }
-        }
     }
 
-    componentDidUpdate() {
-        if(document.querySelector(".nextSolveIndex")&&this.props.state.autoScroll) {
-            document.querySelector(".nextSolveIndex").scrollIntoView(true);
-            this.props.setState({autoScroll:false});
+    componentDidMount(){
+        let setState = this.props.setState;
+        let state = this.props.state;
+        if(state.solveOnce){
+            setTimeout(function(){
+                    setState({...solverMain(state,state.rubiksObject),solveOnce:false});
+            }, 50);
         }
     }
 
@@ -134,8 +61,10 @@ class SolverUI extends Component {
         let solverSet = [];
         let prevSet = this.props.state.prevSet;
         let moveSet = this.props.state.moveSet;
-        let defaultMessage = this.props.state.currentFunc==="Solving"?"Already solved":"None Selected";
+        let defaultSolver = this.props.state.solveOnce?"Loading, please wait...":"Already Solved";
+        let defaultMessage = this.props.state.currentFunc==="Solving"?defaultSolver:"None Selected";
         let jumperButtons = [<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={0} className="solveMoveDiv jumper" key={-1}>Top</div>];
+
         !this.props.state.solvedSet.length?
         solverSet.push(defaultMessage):
         this.props.state.solvedSet.forEach((el,i)=>el===this.props.state.solvedSet[i+1]?
@@ -169,6 +98,9 @@ class SolverUI extends Component {
                         id={i} className="solveMoveDiv" 
                         key={i}>{el.replace(`0`+el[1],el[1])}</div>)
         )
+
+        solverSet.map(el=><LazyLoad height="2rem">el</LazyLoad>);
+
 
         let previousMove = 
             <div className="previousMove">

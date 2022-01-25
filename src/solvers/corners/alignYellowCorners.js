@@ -29,7 +29,7 @@ function alignYellowCorners(rubiksObject,cubeDimension,moveStringToArray,corners
        cube[pieceTwo][6] === maxCoord && cube[pieceTwo][8] === maxCoord);
 
    else if(solveCount === 2 && dim > 3) {
-      console.log("another parity encountered brother");
+      //console.log("another parity encountered brother");
       moveString = `02D2 01B2 02D2 02b2 02D2 02b2`;
       moveString = `${move(dim/2,"d2")} 01D2 01B2 ${move(dim/2,"d2")} 01D2 ${move(dim/2,"b2")} ${move(dim/2,"d2")} 01D2 ${move(dim/2,"b2")}`;
 

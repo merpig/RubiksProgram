@@ -112,7 +112,10 @@ let generalizerLower = (size,moveSet,moveSet2) => {
 
 let baseLower = (depth,moveSet) => {
     const moves = [];
-    moveSet.split(" ").forEach(e=>moves.push(move(depth,e.substring(2).toLowerCase())));
+    if (depth>1){
+        moveSet.split(" ").forEach(e=>moves.push(move(depth,e.substring(2).toLowerCase())));
+    }
+    else moveSet.split(" ").forEach(e=>moves.push(move(depth,e.substring(2).toUpperCase())));
     return moves.join(" ");
 }
 

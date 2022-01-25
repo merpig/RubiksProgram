@@ -6,9 +6,15 @@ import Popup from "reactjs-popup";
 
 const Navbar = props => {
   const navCubes = [];
+
+  function reloadPage(){
+    setTimeout(function(){
+      window.location.reload();
+    }, 50);
+  }
   for (let i = 2; i <= 10; i++) {
     navCubes.push(
-      <Dropdown.Item key={i} href={`/RubiksProgram/id=${i}`}>{i} X {i}</Dropdown.Item>
+      <Dropdown.Item key={i} href={`/RubiksProgram/#id=${i}`} onClick={reloadPage}>{i} X {i}</Dropdown.Item>
     )
   }
   return (

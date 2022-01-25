@@ -103,7 +103,7 @@ function solveYellowCorners(rubiksObject,cubeDimension,moveStringToArray,solveMo
               return obj;
             }
             else {
-              console.log("last parity brother");
+              //console.log("last parity brother");
               moveString = "02R2 01B2 02R2 01B2 02B2 02R2 02B2";
               moveString = `${move(dim/2,"r2")} 01R2 01B2 ${move(dim/2,"r2")} 01R2 01B2 ${move(dim/2,"b2")} 01B2 ${move(dim/2,"r2")} 01R2 ${move(dim/2,"b2")} 01B2`;
               moveArray = moveStringToArray(moveString);

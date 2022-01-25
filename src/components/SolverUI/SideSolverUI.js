@@ -1,44 +1,13 @@
 import "../SideView/SideView.css";
 import React,{Component} from "react";
 import "./SideSolverUI.css";
-import "../SolverUI/SolverUI.css";
+import "./SolverUI.css";
 import algorithms from "../../cubeFunctions/algorithms";
-import cube from '../../cubeFunctions/cube';
+import LazyLoad from 'react-lazyload';
+import solverMain from '../../solvers/solverMain';
 
-function setTarget(e,props){
-    if(props.state.autoPlay||props.state.autoRewind){
-
-    }
-    else if(parseInt(e.target.id)-props.state.solvedSetIndex===1){
-        props.setState({targetSolveIndex:parseInt(e.target.id)});
-        props.playOne(props);
-    }
-    else if(props.state.solvedSetIndex<=parseInt(e.target.id)){
-        props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
-        let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
-        let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
-        let forwardMoves = props.state.solvedSet.slice(props.state.solvedSetIndex,parseInt(e.target.id));
-
-        props.setState({
-            solvedSetIndex:parseInt(e.target.id),
-            prevSet:prevSetNew,
-            moveSet:moveSetNew,
-            rubiksObject:props.autoJump(props.state,forwardMoves)})
-    }
-    else if(props.state.solvedSetIndex>parseInt(e.target.id)) {
-        props.setState({targetSolveIndex:parseInt(e.target.id),autoTarget:true});
-        let prevSetNew = props.state.solvedSet.slice(0,parseInt(e.target.id));
-        let moveSetNew = props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSet.length);
-        let backwardMoves= props.state.solvedSet.slice(parseInt(e.target.id),props.state.solvedSetIndex)
-            .map(move=>move.length===4?move.slice(0,3):(move+"'"));
-
-        props.setState({
-            solvedSetIndex:parseInt(e.target.id),
-            prevSet:prevSetNew,
-            moveSet:moveSetNew,
-            rubiksObject:props.autoJump(props.state,backwardMoves.reverse())})
-    }
-}
+import UI from './SolverUIFunctions';
+let {setTarget,algoStart} = UI;
 
 class SolverUI extends Component {
 
@@ -77,17 +46,21 @@ class SolverUI extends Component {
         }
     }
 
-    componentDidUpdate() {
-        if(document.querySelector(".nextSolveIndex")&&this.props.state.autoScroll) {
-            document.querySelector(".nextSolveIndex").scrollIntoView(true);
-            this.props.setState({autoScroll:false});
+    componentDidMount() {
+        let setState = this.props.setState;
+        let state = this.props.state;
+        if(state.solveOnce){
+            setTimeout(function(){
+                    setState({...solverMain(state,state.rubiksObject),solveOnce:false});
+            }, 50);
         }
     }
 
     render(){
         
         let solverSet = [];
-        let defaultMessage = this.props.state.currentFunc==="Solving"?"Already solved":"None Selected";
+        let defaultSolver = this.props.state.solveOnce?"Loading, please wait...":"Already Solved";
+        let defaultMessage = this.props.state.currentFunc==="Solving"?defaultSolver:"None Selected";
         let jumperButtons = [<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={0} className="solveMoveDiv jumper" key={-1}>Top</div>];
         !this.props.state.solvedSet.length?
         solverSet.push(defaultMessage):
@@ -122,6 +95,8 @@ class SolverUI extends Component {
                         id={i} className="solveMoveDiv" 
                         key={i}>{el.replace(`0${el[1]}`,el[1])}</div>)
         )
+
+        solverSet.map(el=><LazyLoad height="2rem">el</LazyLoad>);
         
         let algorithmSet = 
             algorithms
@@ -134,7 +109,7 @@ class SolverUI extends Component {
                             this.props.state.activeAlgo===algo.name?
                                 "algoButton algoActive":"algoButton"
                         }
-                        onClick={(e)=>algoStart(e,this.props)}>
+                        onClick={()=>algoStart(algo.name,this.props)}>
                         {algo.name}
                     </button>
                     );
@@ -144,49 +119,33 @@ class SolverUI extends Component {
             setTarget(e,props);
         }
 
-        //add small fix for jumping to double moves
-        
-
-        function algoStart(e,props){
-            let cD = props.state.cubeDimension;
-            let algo = null;
-            try{algo = e.target.id}catch{algo = e};
-            let algoSet = [];
-            let generated = cube.generateSolved(cD,cD,cD);
-            if(algo!=="None Selected")
-                algoSet = algorithms
-                    .find(
-                        set=>set.name===algo&&
-                        set.worksFor.includes(cD)).moves.split(" ");
-            
-            props.setState({activeAlgo:algo,moveSet:[...algoSet],rubiksObject : generated.tempArr,solveable:true,solvedSet:[...algoSet],solvedSetIndex:0,prevSet:[],jumpToEnd:true});
-        }
-
-        return(<div className="sideMenu">
-                    <div className="sideMenuBox0 sideLimit">
-                        {this.props.state.currentFunc==="Solving"?
+        return(
+            <div className="sideMenu">
+                <div className="sideMenuBox0 sideLimit">
+                    {this.props.state.currentFunc==="Solving"?
+                    <div className="sideMovesBox">
+                        
+                        {solverSet}
+                        
+                    </div>:
+                    [
+                    <div className="sideMenuBox1" key="sideMenuBox1">
+                        <div className="algoList" style={{maxWidth:"400px"}}>
+                            {algorithmSet}  
+                        </div>
+                    </div>,
+                    <div className="sideMenuBox2" key="sideMenuBox2">
                         <div className="sideMovesBox">
-                            
+                        
                             {solverSet}
                             
-                        </div>:
-                        [
-                        <div className="sideMenuBox1" key="sideMenuBox1">
-                            <div className="algoList" style={{maxWidth:"400px"}}>
-                                {algorithmSet}  
-                            </div>
-                        </div>,
-                        <div className="sideMenuBox2" key="sideMenuBox2">
-                            <div className="sideMovesBox">
-                            
-                                {solverSet}
-                                
-                            </div>
                         </div>
-                        ]
-                        }
                     </div>
-                </div>);
+                    ]
+                    }
+                </div>
+            </div>
+        );
     }
 }
 

@@ -45,11 +45,20 @@
     background-color: rgba(0,0,255,.25)!important;
   }
 
-.solveCpDiv{
+.solveCpDiv,.checkCpDiv{
   margin-top: 20%;
 }
 
-.solveCp{
+.cpErrorMessage{
+  color:red;
+  font-size:.8rem;
+  text-align:left;
+  list-style:none;
+  margin:2px;
+  line-height: 15px;
+}
+
+.solveCp,.checkCp{
   width:50%;
   min-width: 100px;
   min-height: 50px;
@@ -62,6 +71,10 @@
 
 .solveCp:hover{
   background-color: rgba(0,100,0,.5)!important
+}
+
+.checkCp:hover{
+  background-color: rgba(0,0,100,.5)!important
 }
 
   .triggerBtn{

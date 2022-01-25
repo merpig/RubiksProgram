@@ -1,42 +1,50 @@
-import React from "react";
+import React, {useState} from "react";
 import "./ColorPicker.css";
 import "../SideView/SideView.css"
 
 const SideColorPicker = (props) => {
-    const li = [];
-    props.cpErrors.forEach(function(error,i){
-        li.push(<p key={i} style={{color:"red",fontSize:".8rem",textAlign:"left",listStyle:"none",margin:"2px",lineHeight: "15px"}}>
-            {"- "+error}
-        </p>);
-    });
+    const [solveBtnText,setSolveBtnText] = useState("Solve");
+    const [checkBtnText,setCheckBtnText] = useState("Check");
 
-    function solveCube(){
-        document.querySelector(".warningPopup").style.display = "none";
-        document.querySelector(".bottomExitDiv").style.visibility="visible";
-        props.setColorPickedCube()
-    }
+    const onSolveClick = () => {
+        setSolveBtnText("Configuring...");
+        setTimeout(function(){
+            document.querySelector(".warningPopup").style.display = "none";
+            document.querySelector(".bottomExitDiv").style.visibility="visible";
+            props.setColorPickedCube();
+        }, 100);  
+    };
+
+    const onCheckClick = () => {
+        setCheckBtnText("Checking...");
+        setTimeout(function(){
+            props.runCheckColors();
+            setCheckBtnText("Check");
+        }, 100);  
+        
+    };
     
-
     return (
         <div className="sideMenuBox0 sideLimit">
           <div className="sideMenuBox1">
             <div className="cpInfo" style={{width:"100%"}}>
                     {
                         props.isValidConfig?
-                        <div className="solveCpDiv"><button className="solveCp" onClick={solveCube}>
-                            <strong style={{color:'green',fontSize:'1rem'}}>Solve</strong>
-                        </button></div>:
-                        []
+                        <div className="solveCpDiv"><button className="solveCp" onClick={onSolveClick}>
+                            <strong style={{color:'green',fontSize:'1rem'}}>{solveBtnText}</strong>
+                        </button></div>:!props.cpErrors.length?
+                        <div className="checkCpDiv"><button className="checkCp" onClick={onCheckClick}>
+                            <strong style={{color:'blue',fontSize:'1rem'}}>{checkBtnText}</strong>
+                        </button></div>:[]
                     }
                     <div style={{fontSize:".5rem"}}>
-                        
-                            {li}
+                        {props.state.cpErrors.map((error,i)=>
+                            <p key={i} className="cpErrorMessage">{"- "+error}</p>
+                        )}
                     </div>
                 </div>   
             </div>  
-        </div>
-        
-              
+        </div>        
     );
 };
 
