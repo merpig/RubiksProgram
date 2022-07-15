@@ -224,7 +224,7 @@ a > img {
 
 .nextSolveIndex{
   background-color: rgba(100, 100, 100,.5);
-  color: lightgray;
+  /* color: lightgray; */
 }
 
 .targetSolveIndex{
