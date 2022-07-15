@@ -787,19 +787,18 @@ class App extends Component {
     }
 
     function onmousedown( event ){
-      
       controls.enabled = true;
       ignoreChange = false;
-
+      
       mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
       mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
       // Projects mouse onto scene to find intersected objects
       raycaster.setFromCamera( mouse, camera );
-
+      
       // Calculate objects intersecting the picking ray
       let intersects = raycaster.intersectObjects( scene.children );
-
+      
       // Check if anything is intersected
       if(intersects.length){
         ignoreChange = true;
@@ -814,6 +813,7 @@ class App extends Component {
             break;
           }
         }
+        
         if(this.state.currentFunc==="Color Picker"){
           
           let toFace = [2,4,3,0,1,5];
