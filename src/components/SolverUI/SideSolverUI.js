@@ -66,7 +66,7 @@ class SolverUI extends Component {
         const buttonClassColor = e => {
             e=e.toLowerCase();
             if(e.includes("f")) return "white";
-            if(e.includes("u")) return "blue";
+            //if(e.includes("u")) return "blue";
             if(e.includes("r")) return "red";
             if(e.includes("b")) return "yellow";
             if(e.includes("l")) return "orange";
