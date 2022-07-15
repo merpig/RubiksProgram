@@ -955,7 +955,7 @@ class App extends Component {
     this.setState({
       cubes : tempCubes,
       cubeDimension : cD,
-      cameraZ : -(2+cD),
+      cameraZ : (2+cD),
       cameraX : (2+cD),
       cameraY : -(2+cD),
       rubiksObject,
@@ -1267,8 +1267,8 @@ class App extends Component {
         <div style={{width:"100%",position:"absolute", top: "85px",margin:"auto",display:"flex"}}>
           <div style={{margin:"auto", display:"inline-flex",}}>
           {this.state.currentFunc==="None"||this.state.currentFunc==="Undo"||this.state.currentFunc==="Redo"||this.state.currentFunc==="Drag Turn"?
-          [<button key="undo" className="redoUndo" style={{marginRight:"8px",fontSize:"2rem", color: "lightgrey",lineHeight:"2rem"}} onClick={() => this.undo()}>🠔</button>,
-          <button key="redo" className="redoUndo" style={{marginLeft:"8px",fontSize:"2rem", color: "lightgrey",lineHeight:"2rem"}} onClick={() => this.redo()}>🠖</button>]
+          [<button key="undo" className="redoUndo" style={{marginRight:"8px",fontSize:"2rem", color: "lightgrey",lineHeight:"2rem"}} onClick={() => this.undo()}><i className="fas fa-arrow-left"></i></button>,
+          <button key="redo" className="redoUndo" style={{marginLeft:"8px",fontSize:"2rem", color: "lightgrey",lineHeight:"2rem"}} onClick={() => this.redo()}><i className="fas fa-arrow-right"></i></button>]
           :""
           }
           </div>

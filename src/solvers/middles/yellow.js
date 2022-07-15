@@ -26,43 +26,8 @@ let solveYellowMiddle = (current,solved,dim,index) => {
     else if(current.y === dim-1) currentSide = "B";
     else if(current.z === 0) currentSide = "D";
     else if(current.z === dim-1) currentSide = "U";
-    // console.log(`Currently on side: ${currentSide}`);
-    // console.log(`Current position: ${JSON.stringify(current)}`);
-    // console.log(`Solved position: ${JSON.stringify(solved)}`);
     
-    
-    //let opposite = "01L'";
-
-    // This can be written smarter. Has a small flaw with extracting pieces from the back
     if(currentSide==="B"){
-        // moveString += move(" ",current.z+1,"D'");
-
-        // if(current.z!==solved.z){
-        //     if(current.z === middle){
-        //         moveString += " 01R";
-        //     }
-        //     else moveString += " 01R2";
-        // }
-
-        // else {
-        //     if(current.x===current.z){
-        //         moveString += " 01L'";
-        //         opposite = "01L";
-        //     }
-        //     else if(((current.x>= middle &&current.z>=middle))  ||
-        //         (current.x< middle &&current.z<middle) ||
-        //         (current.x> middle &&current.z<middle))
-        //         moveString += " 01L";
-        //     else{
-        //         moveString += " 01L'";
-        //         opposite = "01L";
-        //     }
-
-        //     moveString += move(" ",dim-current.x,"F");
-        //     moveString += " " + opposite;
-            
-        // }
-        // moveString += move(" ",current.z+1,"D");
         moveString += move(" ",current.z+1,"D'");
 
         moveString += (dim%2&&current.z===middle)? " 01R" : " 01R2";

@@ -185,8 +185,8 @@ a > img {
   }
 
   .solveMoveDiv{
-      margin:2px;
-      border: 1px solid transparent;
+      margin:2px!important;
+      border: 1px solid transparent!important;
       border-radius: .25rem;
       width: 2rem;
       height: 2rem;

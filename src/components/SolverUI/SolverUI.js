@@ -65,6 +65,16 @@ class SolverUI extends Component {
         let defaultMessage = this.props.state.currentFunc==="Solving"?defaultSolver:"None Selected";
         let jumperButtons = [<div onClick={(e)=>preSetTarget(e,this.props,setTarget)} id={0} className="solveMoveDiv jumper" key={-1}>Top</div>];
 
+        const buttonClassColor = e => {
+            e=e.toLowerCase();
+            if(e.includes("f")) return "white";
+            if(e.includes("u")) return "blue";
+            if(e.includes("r")) return "red";
+            if(e.includes("b")) return "yellow";
+            if(e.includes("l")) return "orange";
+            if(e.includes("d")) return "green";
+        }
+
         !this.props.state.solvedSet.length?
         solverSet.push(defaultMessage):
         this.props.state.solvedSet.forEach((el,i)=>el===this.props.state.solvedSet[i+1]?
@@ -78,24 +88,24 @@ class SolverUI extends Component {
                 i===this.props.state.solvedSetIndex||(i===this.props.state.solvedSetIndex+1&&el===this.props.state.solvedSet[i-1])?
                     solverSet.push(<div 
                         id={i-1} 
-                        className="solveMoveDiv nextSolveIndex" 
+                        className={`solveMoveDiv nextSolveIndex ${buttonClassColor(el)}`} 
                         key={i}>{el.replace(`0`+el[1],el[1]).replace("'","")+"2"}
                     </div>):
                     solverSet.push(<div 
                         onClick={(e)=>setTarget(e,this.props)} 
                         id={i-1} 
-                        className="solveMoveDiv" 
+                        className={`solveMoveDiv ${buttonClassColor(el)}`} 
                         key={i}>{el.replace(`0`+el[1],el[1]).replace("'","")+"2"}
                     </div>):
                 i===this.props.state.solvedSetIndex||(i===this.props.state.solvedSetIndex+1&&el===this.props.state.solvedSet[i-1])?
                     solverSet.push(<div 
                         id={i} 
-                        className="solveMoveDiv nextSolveIndex" 
+                        className={`solveMoveDiv nextSolveIndex ${buttonClassColor(el)}`} 
                         key={i}>{el.replace(`0`+el[1],el[1])}
                     </div>):
                     solverSet.push(<div 
                         onClick={(e)=>setTarget(e,this.props)} 
-                        id={i} className="solveMoveDiv" 
+                        id={i} className={`solveMoveDiv ${buttonClassColor(el)}`} 
                         key={i}>{el.replace(`0`+el[1],el[1])}</div>)
         )
 
