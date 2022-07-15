@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/RubiksProgram/static/css/main.34344ed1.chunk.css",
-    "main.js": "/RubiksProgram/static/js/main.e6fa430b.chunk.js",
-    "main.js.map": "/RubiksProgram/static/js/main.e6fa430b.chunk.js.map",
+    "main.js": "/RubiksProgram/static/js/main.ceb94054.chunk.js",
+    "main.js.map": "/RubiksProgram/static/js/main.ceb94054.chunk.js.map",
     "runtime-main.js": "/RubiksProgram/static/js/runtime-main.8ddb94a0.js",
     "runtime-main.js.map": "/RubiksProgram/static/js/runtime-main.8ddb94a0.js.map",
     "static/css/2.cce07776.chunk.css": "/RubiksProgram/static/css/2.cce07776.chunk.css",
-    "static/js/2.7f1c13dc.chunk.js": "/RubiksProgram/static/js/2.7f1c13dc.chunk.js",
-    "static/js/2.7f1c13dc.chunk.js.map": "/RubiksProgram/static/js/2.7f1c13dc.chunk.js.map",
+    "static/js/2.3af2107b.chunk.js": "/RubiksProgram/static/js/2.3af2107b.chunk.js",
+    "static/js/2.3af2107b.chunk.js.map": "/RubiksProgram/static/js/2.3af2107b.chunk.js.map",
     "index.html": "/RubiksProgram/index.html",
-    "precache-manifest.466235ea1f95354152a69b16da7ba208.js": "/RubiksProgram/precache-manifest.466235ea1f95354152a69b16da7ba208.js",
+    "precache-manifest.e1cea365cab2e35cb3d5cc2df649eb71.js": "/RubiksProgram/precache-manifest.e1cea365cab2e35cb3d5cc2df649eb71.js",
     "service-worker.js": "/RubiksProgram/service-worker.js",
     "static/css/2.cce07776.chunk.css.map": "/RubiksProgram/static/css/2.cce07776.chunk.css.map",
     "static/css/main.34344ed1.chunk.css.map": "/RubiksProgram/static/css/main.34344ed1.chunk.css.map",
-    "static/js/2.7f1c13dc.chunk.js.LICENSE.txt": "/RubiksProgram/static/js/2.7f1c13dc.chunk.js.LICENSE.txt"
+    "static/js/2.3af2107b.chunk.js.LICENSE.txt": "/RubiksProgram/static/js/2.3af2107b.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.8ddb94a0.js",
     "static/css/2.cce07776.chunk.css",
-    "static/js/2.7f1c13dc.chunk.js",
+    "static/js/2.3af2107b.chunk.js",
     "static/css/main.34344ed1.chunk.css",
-    "static/js/main.e6fa430b.chunk.js"
+    "static/js/main.ceb94054.chunk.js"
   ]
 }
