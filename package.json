@@ -20,7 +20,7 @@
     "react-dropdown": "^1.9.0",
     "react-lazyload": "^3.2.0",
     "react-router-dom": "^6.2.1",
-    "react-scripts": "^3.4.4",
+    "react-scripts": "^5.0.1",
     "reactjs-popup": "^2.0.5",
     "stats.js": "^0.17.0",
     "three": "^0.125.0",
