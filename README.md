@@ -13,8 +13,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Development version live at [merpig.github.io/RubiksProgram](https://merpig.github.io/RubiksProgram)
 
-Hosted by [ruwix.com](https://ruwix.com/) at [cube-solver.com](https://cube-solver.com)
-
 </div>
 
 <hr>
