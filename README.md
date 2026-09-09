@@ -19,7 +19,7 @@ Development version live at [merpig.github.io/RubiksProgram](https://merpig.gith
 
 ## Description
 
-RubiksProgram simulates a rubiks cube. A user can try to solve the cube, input a real cube (2x2 through 5x5 currently) for a generated solution, or see various pattern algorithms (2x2 through 30x30) with a turn by turn visual guide.
+RubiksProgram simulates a rubiks cube. A user can try to solve the cube, input a real cube (2x2 through 10x10) for a generated solution, or see various pattern algorithms (2x2 through 10x10) with a turn by turn visual guide.
 
 <hr>
 
