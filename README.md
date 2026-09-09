@@ -7,7 +7,7 @@
 
 # **Any commercial use of this application is prohibitted without permission of the author.**
 
-# **The application is free for educational use.**
+# **Copying or distributing this code without consent is a direct violation of GitHub copyright policy.**
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
