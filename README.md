@@ -5,9 +5,9 @@
 <div align="center">
   <a href="https://merpig.github.io/RubiksProgram"><h1>Rubiks Program</h1></a>
 
-- Any commercial use of this application is prohibitted without permission of the author.
+# **Any commercial use of this application is prohibitted without permission of the author.**
 
-- The application is free for educational, personal and non-profit use.
+# **The application is free for educational, personal and non-profit use.**
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
